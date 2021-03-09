@@ -1,0 +1,9 @@
+<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
+    <script>
+      window.frameworkData = window.frameworkData || [];
+      window.frameworkData.push(<?php echo $this->configuration; ?>);
+    </script>
+    <div style="display: none">
+        <?php echo $this->searchHTML; ?>
+    </div>
+</div>

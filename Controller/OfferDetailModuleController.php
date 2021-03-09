@@ -1,0 +1,410 @@
+<?php
+
+
+namespace gutesio\OperatorBundle\Controller;
+
+
+use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\CoreBundle\Classes\ResourceLoader;
+use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailContactField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailHeadlineField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailHTMLField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailMapLocationField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailModalFormButtonField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailTagField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailTextField;
+use con4gis\FrameworkBundle\Classes\DetailFields\PDFDetailField;
+use con4gis\FrameworkBundle\Classes\DetailPage\DetailPage;
+use con4gis\FrameworkBundle\Classes\DetailPage\DetailPageSection;
+use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
+use con4gis\FrameworkBundle\Classes\SearchConfiguration;
+use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
+use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileLists\TileList;
+use con4gis\FrameworkBundle\Traits\AutoItemTrait;
+use con4gis\MapsBundle\Classes\MapDataConfigurator;
+use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
+use Contao\ContentModel;
+use Contao\Controller;
+use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\Database;
+use Contao\ModuleModel;
+use Contao\PageModel;
+use Contao\System;
+use Contao\Template;
+use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+
+class OfferDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
+{
+    use AutoItemTrait;
+
+    protected $model = null;
+    protected $request = null;
+    protected $tileItems = [];
+
+    /**
+     * @var OfferLoaderService
+     */
+    private $offerService = null;
+
+    private $languageRefs = [];
+
+    const CC_FORM_SUBMIT_URL = '/gutesio/main/showcase_child_cc_form_submit';
+
+    /**
+     * OfferDetailModuleController constructor.
+     * @param OfferLoaderService|null $offerService
+     */
+    public function __construct(?OfferLoaderService $offerService)
+    {
+        $this->offerService = $offerService;
+    }
+
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    {
+        $this->model = $model;
+        $this->offerService->setModel($model);
+        $this->setAlias();
+        $pageUrl = "";
+        $page = PageModel::findByPk($this->model->gutesio_offer_list_page);
+        if ($page) {
+            $pageUrl = $page->getAbsoluteUrl();
+        }
+        $this->offerService->setPageUrl($pageUrl);
+        $this->offerService->setRequest($request);
+        $this->request = $request;
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
+        $this->setupLanguage();
+        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
+//        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+
+        if ($this->alias !== "") {
+            $data = $this->offerService->getDetailData($this->alias);
+            $conf = $this->getDetailFrontendConfiguration($data);
+            if (!empty($data)) {
+                if ($this->model->gutesio_data_render_searchHtml) {
+                    $sc = new SearchConfiguration();
+                    $sc->addData($data, ['name', 'description']);
+                }
+            } else {
+                throw new RedirectResponseException($pageUrl);
+            }
+            $template->entrypoint = 'entrypoint_'.$this->model->id;
+            $strConf = json_encode($conf);
+            $error = json_last_error_msg();
+            if ($error && (strtoupper($error) !== "NO ERROR")) {
+                C4gLogModel::addLogEntry("operator", $error);
+            }
+            $template->configuration = $strConf;
+            if ($this->model->gutesio_data_render_searchHtml) {
+                $template->searchHTML = $sc->getHTML();
+            }
+        } else {
+            throw new RedirectResponseException($pageUrl);
+        }
+
+
+        return $template->getResponse();
+    }
+
+    private function setupLanguage()
+    {
+        System::loadLanguageFile("tl_gutesio_data_child");
+        System::loadLanguageFile("tl_gutesio_data_element");
+        System::loadLanguageFile("gutesio_frontend");
+        System::loadLanguageFile("operator_showcase_list");
+        $this->languageRefs = $GLOBALS['TL_LANG']['tl_gutesio_data_child'];
+    }
+
+    private function getDetailFrontendConfiguration(array $data)
+    {
+        $conf = new FrontendConfiguration('entrypoint_'.$this->model->id);
+        $conf->addDetailPage(
+            $this->getDetailPage(),
+            $this->getDetailFields(),
+            $data
+        );
+        $conf->addTileList(
+            $this->getElementTileList(),
+            $this->getElementFields(),
+            $this->offerService->getElementData($data['uuid'])
+        );
+
+        return $conf;
+    }
+
+
+
+    protected function getDetailPage()
+    {
+        $page = new DetailPage();
+        $page->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['headline']);
+        $settings = GutesioOperatorSettingsModel::findSettings();
+        $mapData = MapDataConfigurator::prepareMapData(
+            ContentModel::findById($settings->detail_map),
+            Database::getInstance(),
+            ["profile" => $settings->detail_profile],
+            true
+        );
+        $mapData['geopicker']['input_geo_x'] = "#geox";
+        $mapData['geopicker']['input_geo_y'] = "#geoy";
+        MapsResourceLoader::loadResources(["router" => true], $mapData);
+        $page->setMapData($mapData);
+        $page->setSections($this->getSections());
+        $page->setShowAnchorMenu(true);
+        $page->setMenuSectionIndex(2);
+        return $page;
+    }
+
+    private function getSections()
+    {
+        $sections = [];
+        $section = new DetailPageSection('', false, "detail-view__section-headline", false);
+        $sections[] = $section;
+
+        $section = new DetailPageSection('', true, "detail-view__section-two", false);
+        $sections[] = $section;
+
+        $section = new DetailPageSection('Beschreibung', true, "detail-view__section-description", true);
+        $sections[] = $section;
+
+        $section = new DetailPageSection('Detaildaten', true, "detail-view__section-detaildata", true);
+        $sections[] = $section;
+
+        $section = new DetailPageSection('Tags', true, "detail-view__section-tags", false);
+        $sections[] = $section;
+
+        $section = new DetailPageSection('Kontakt', true, "detail-view__section-contact", true);
+        $sections[] = $section;
+
+        return $sections;
+    }
+
+    protected function getDetailFields()
+    {
+        $fields = [];
+
+        $field = new DetailHeadlineField();
+        $field->setName('name')
+            ->setClass("detail-view__headline")
+            ->setLevel(1)
+            ->setSection(1);
+        $fields[] = $field;
+
+        $field = new DetailHTMLField();
+        $field->setName('description');
+        $field->setSection(3);
+        $field->setClass("detail-view__description");
+        $fields[] = $field;
+
+        $field = new DetailFancyboxImageGallery();
+        $field->setName("imageGallery");
+        $field->setClass("detail-view__image-gallery");
+        $field->setSection(3);
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("strikePrice");
+        $field->setClass('detail-view__strike-price');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("price");
+        $field->setClass('detail-view__price');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("color");
+        $field->setLabel("Farbe");
+        $field->setClass('detail-view__color');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("size");
+        $field->setLabel("Größe");
+        $field->setClass('detail-view__size');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("beginDate");
+        $field->setClass('detail-view__begin-date');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("beginTime");
+        $field->setClass('detail-view__begin-time');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("appointmentUponAgreement");
+        $field->setClass('detail-view__appointment-upon-agreement');
+        $fields[] = $field;
+
+        $field = new DetailModalFormButtonField();
+        $field->setSection(4);
+        $field->setName('cc');
+        $field->setClass('cc detail-view__modal');
+        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+        $field->setUrlField('uuid');
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
+        $field->setConditionField('clickCollect');
+        $field->setConditionValue('1');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setName("displayType");
+        $field->setClass("displayType detail-view__display-type");
+        $field->setSection(5);
+        $field->setLabel("Kategorie:");
+        $fields[] = $field;
+
+        $field = new DetailTagField();
+        $field->setSection(5);
+        $field->setName("tags");
+        $field->setClass('detail-view__tags');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(5);
+        $field->setName('taxNote');
+        $field->setClass('taxNote detail-view__taxnote');
+        $fields[] = $field;
+
+        $field = new PDFDetailField();
+        $field->setName("infoFile");
+        $field->setLabel("Weitere Informationen");
+        $field->setTitle("Weitere Informationen ansehen");
+        $field->setClass("infoFile");
+        $field->setSection(5);
+        $fields[] = $field;
+
+        $contactField = new DetailContactField();
+        $contactField->setSection(6);
+        $contactField->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['contact']);
+        $contactField->setEmailFieldName('email');
+        $contactField->setPhoneFieldName('phone');
+        $contactField->setWebsiteFieldName('website');
+        $contactField->setWebsiteTextFieldName("websiteLabel");
+        $contactField->setOpeningTimesFieldName("opening_hours");
+        $contactField->setAddressFieldnamePrefix("contact");
+        $contactField->setAddressFieldnameFallbackPrefix("location");
+        $contactField->setClass("detail-view__contact-wrapper");
+        $contactField->setWithSocialMedia(true);
+        $fields[] = $contactField;
+
+        $field = new DetailMapLocationField();
+        $field->setSection(6);
+        $field->setClass("detail-view__map");
+        $field->setName('mapLocation');
+        $field->setGeoxField('geox');
+        $field->setGeoyField('geoy');
+        $fields[] = $field;
+
+        return $fields;
+    }
+
+    protected function getElementTileList() : TileList
+    {
+        $this->tileList = new TileList('showcase-tiles');
+        $this->tileList->setHeadline('Angeboten von folgenden Anbietern:');
+        $this->tileList->setClassName("showcase-tiles c4g-list-outer");
+        $this->tileList->setLayoutType("list");
+        $this->tileList->setTileClassName("showcase-tile");
+        return $this->tileList;
+    }
+
+    protected function getElementFields() : array
+    {
+
+        $field = new ImageTileField();
+        $field->setName("imageList");
+        $field->setRenderSection(TileField::RENDERSECTION_HEADER);
+        $field->setWrapperClass("c4g-list-element__image-wrapper");
+        $field->setClass("c4g-list-element__image");
+        $this->tileItems[] = $field;
+
+        $field = new HeadlineTileField();
+        $field->setName("name");
+        $field->setWrapperClass("c4g-list-element__title-wrapper");
+        $field->setClass("c4g-list-element__title");
+        $field->setLevel(4);
+        $this->tileItems[] = $field;
+
+        $field = new TextTileField();
+        $field->setName("types");
+        $field->setWrapperClass("c4g-list-element__types-wrapper");
+        $field->setClass("c4g-list-element__types");
+        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['types'][0]);
+        $this->tileItems[] = $field;
+
+        $field = new TagTileField();
+        $field->setName("tags");
+        $field->setWrapperClass("c4g-list-element__tags-wrapper");
+        $field->setClass("c4g-list-element__tag");
+        $this->tileItems[] = $field;
+
+        $field = new DistanceField();
+        $field->setName("distance");
+        $field->setWrapperClass("c4g-list-element__distance-wrapper");
+        $field->setClass("c4g-list-element__distance");
+        $field->setLabel($GLOBALS['TL_LANG']['operator_showcase_list']['distance'][0]);
+        $field->setGeoxField("geox");
+        $field->setGeoyField("geoy");
+        $this->tileItems[] = $field;
+
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link put-on-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
+        $field->setLinkText("Merken");
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->setAsyncCall(true);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setAddDataAttributes(true);
+        $this->tileItems[] = $field;
+
+        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}"), '.html')) {
+            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}"));
+        } else {
+            $href = Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}") . '/alias';
+        }
+        $field = new LinkButtonTileField();
+        $field->setName("alias");
+        $field->setWrapperClass("c4g-list-element__more-wrapper");
+        $field->setClass("c4g-list-element__more-link");
+        $field->setHrefField("alias");
+        $field->setHref($href);
+        $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['alias_link_text']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->setExternalLinkField('foreignLink');
+        $field->setExternalFieldCondition(true);
+        $field->setConditionField("directLink");
+        $field->setConditionValue("1");
+        $this->tileItems[] = $field;
+
+        return $this->tileItems;
+    }
+}

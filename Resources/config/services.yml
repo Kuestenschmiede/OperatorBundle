@@ -1,0 +1,130 @@
+services:
+    _defaults:
+      autowire: true
+      autoconfigure: true
+
+    gutesio\OperatorBundle\Controller\ShowcaseListModuleController:
+        public: true
+        tags:
+            - {name: contao.frontend_module,
+                   category: gutesio,
+                   renderer: forward,
+                   template: mod_gutesio_showcase_list_module}
+
+    gutesio\OperatorBundle\Controller\ShowcaseDetailModuleController:
+      public: true
+      tags:
+        - { name: contao.frontend_module,
+            category: gutesio,
+            renderer: forward,
+            template: mod_gutesio_showcase_detail_module }
+
+    gutesio\OperatorBundle\Controller\OfferListModuleController:
+        public: true
+        tags:
+            - {name: contao.frontend_module,
+                   category: gutesio,
+                   renderer: forward,
+                   template: mod_gutesio_offer_list_module}
+
+    gutesio\OperatorBundle\Controller\OfferDetailModuleController:
+      public: true
+      tags:
+        - { name: contao.frontend_module,
+            category: gutesio,
+            renderer: forward,
+            template: mod_gutesio_offer_detail_module }
+
+
+
+    gutesio\OperatorBundle\Controller\ShowcaseCarouselModuleController:
+        tags:
+            - {name: contao.frontend_module,
+                   category: gutesio,
+                   renderer: forward,
+                   template: mod_gutesio_showcase_carousel_module}
+
+    gutesio\OperatorBundle\Controller\WishlistModuleController:
+        tags:
+            - { name: contao.frontend_module,
+                   category: gutesio,
+                   renderer: forward,
+                   template: mod_gutesio_wishlist_module }
+
+    gutesio\OperatorBundle\Controller\MiniWishlistModuleController:
+      tags:
+            - { name: contao.frontend_module,
+                    category: gutesio,
+                    renderer: forward,
+                    template: mod_gutesio_mini_wishlist_module }
+
+    gutesio\OperatorBundle\Classes\Services\ShowcaseService:
+      factory: ['gutesio\OperatorBundle\Classes\Services\ShowcaseService', 'getInstance']
+      lazy: true
+      public: true
+
+    gutesio\OperatorBundle\Classes\Services\OfferLoaderService:
+      lazy: true
+      public: true
+
+    gutesio\OperatorBundle\Classes\ShowcaseInsertTag:
+      tags:
+        - { name: contao.hook, hook: replaceInsertTags, method: replaceShowcaseTags, priority: 1 }
+
+    gutesio\OperatorBundle\Classes\OfferInsertTag:
+      tags:
+        - { name: contao.hook, hook: replaceInsertTags, method: replaceShowcaseTags, priority: 2 }
+
+    gutesio\OperatorBundle\Classes\WishlistInsertTag:
+      tags:
+        - { name: contao.hook, hook: replaceInsertTags, method: replaceWishlistTags, priority: 3 }
+      arguments:
+        - "@request_stack"
+
+    gutesio\OperatorBundle\Classes\ImportInsertTags:
+      tags:
+        - { name: contao.hook, hook: replaceInsertTags, method: replaceImportTags, priority: 4 }
+
+    gutesio.onLoadLayersLoadDirectories:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadLayersListener
+      tags:
+        - { name: kernel.event_listener, event: maps.layers.load, method: onLoadLayersLoadDirectories, priority: 42069 }
+      arguments:
+        - "@con4gis.layer_service"
+    gutesio.onLoadLayersLoadElement:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadLayersListener
+      tags:
+        - { name: kernel.event_listener, event: maps.layers.load, method: onLoadLayersLoadElement, priority: 42070 }
+      arguments:
+        - "@con4gis.layer_service"
+    gutesio.onLoadPopupDoIt:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadPopupListener
+      tags:
+        - { name: kernel.event_listener, event: maps.popup.load, method: onLoadPopupDoIt, priority: 422 }
+      arguments:
+        - "@request_stack"
+
+    gutesio.onLoadFeatureFilterCreateTagFilter:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadFeatureFilterListener
+      tags:
+        - { name: kernel.event_listener, event: maps.filters.load, method: onLoadFeatureFilters, priority: 422 }
+      arguments:
+        - "@con4gis.filter_service"
+
+    gutesio.onAfterImportGutesData:
+      class: gutesio\OperatorBundle\Classes\Listener\AfterImportListener
+      arguments:
+        - "@contao.crawl.escargot_factory"
+        - "@filesystem"
+      tags:
+        - { name: kernel.event_listener, event: con4gis.import.basedata.after, method: afterImportBaseData, priority: 1000 }
+
+    gutesio.onAdditionalImportProxyData:
+      class: gutesio\OperatorBundle\Classes\Listener\AdditionalImportProxyDataListener
+      tags:
+        - { name: kernel.event_listener, event: con4gis.import.proxy.data, method: importProxyData, priority: 1000 }
+
+    gutesio.onBeforeLoadImportButtons:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadImportButtonsListener
+      tags:
+        - { name: kernel.event_listener, event: con4gis.import.button.load, method: beforeLoadImportButtons, priority: 1000 }

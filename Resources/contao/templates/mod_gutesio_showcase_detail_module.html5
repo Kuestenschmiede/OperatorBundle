@@ -1,0 +1,62 @@
+{{showcase::meta}}
+
+<?php if (\Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
+
+    <?php
+    $uuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}");
+    $image = \Contao\FilesModel::findByUuid($uuid);
+
+    $imageXS = $this->getImage($image->path, 1024, 768, null);
+    $imageXL = $this->getImage($image->path, 1920, 1200, null);
+
+    /**
+     * For Contao Users:
+     * You can use srcset image url by adding the id of image-size configured in contao backend
+     * $imageResized = $this->getImage($image->path, null, null, 1);
+     */
+    ?>
+
+    <style>
+        @media screen and (max-width: 900px) {
+            .detail-hero {
+                background-image: url("<?= $imageXS?>");
+            }
+        }
+
+        @media screen and (min-width: 901px) {
+            .detail-hero {
+                background-image: url("<?= $imageXL ?>");
+            }
+        }
+    </style>
+<?php endif; ?>
+
+<div class="detail-hero">
+    <div class="detail-hero__inner-overlay">
+
+        <div class="detail-hero__inner-wrapper">
+            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::name}}")): ?>
+                <div class="detail-hero__title">
+                    {{showcase::name}}
+                </div>
+            <?php endif; ?>
+
+            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
+                <div class="detail-hero__logo">
+                    {{showcase::logo}}
+                </div>
+            <?php endif ?>
+        </div>
+    </div>
+</div>
+
+
+<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
+    <script>
+        window.frameworkData = window.frameworkData || [];
+        window.frameworkData.push(<?php echo $this->configuration; ?>);
+    </script>
+    <div style="display: none">
+        <?php echo $this->searchHTML; ?>
+    </div>
+</div>

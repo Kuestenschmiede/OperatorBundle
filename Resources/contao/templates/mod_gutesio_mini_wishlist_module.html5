@@ -1,0 +1,8 @@
+<div id="mini-wishlist" class="memo-popup popup">
+    <script>
+      window.c4gConfiguration = window.c4gConfiguration || {};
+      window.c4gConfiguration['mini-wishlist'] = <?php echo $this->configuration ?>;
+    </script>
+</div>
+
+<!--<script src="/bundles/con4gisframework/build/c4g-framework.js" defer></script>-->

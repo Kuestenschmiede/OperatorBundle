@@ -1,0 +1,42 @@
+<?php
+
+//Palettes
+// only add field if operator is installed
+$packages = \Contao\System::getContainer()->getParameter('kernel.packages');
+if ($packages['gutesio/operator']) {
+    Contao\CoreBundle\DataContainer\PaletteManipulator::create()
+        ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
+        ->addField(['syncDataAutomaticly', 'updateSearchIndex', 'deleteSearchIndex'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->applyToPalette('default', 'tl_c4g_settings');
+
+
+    $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['syncDataAutomaticly'] = array
+    (
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_settings']['syncDataAutomaticly'],
+        'exclude'                 => true,
+        'default'                 => true,
+        'inputType'               => 'checkbox',
+        'eval'                    => ['tl_class'=>'clr'],
+        'sql'                     => "char(1) NOT NULL default '1'"
+    );
+
+    $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['updateSearchIndex'] = array
+    (
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_settings']['updateSearchIndex'],
+        'exclude'                 => true,
+        'default'                 => true,
+        'inputType'               => 'checkbox',
+        'eval'                    => ['tl_class'=>'clr'],
+        'sql'                     => "char(1) NOT NULL default '1'"
+    );
+
+    $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['deleteSearchIndex'] = array
+    (
+        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_settings']['deleteSearchIndex'],
+        'exclude'                 => true,
+        'default'                 => true,
+        'inputType'               => 'checkbox',
+        'eval'                    => ['tl_class'=>'clr'],
+        'sql'                     => "char(1) NOT NULL default '1'"
+    );
+}

@@ -1,34 +1,29 @@
 <?php
 /**
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package   	con4gis
- * @version    7
- * @author  	    con4gis contributors (see "authors.txt")
- * @license 	    LGPL-3.0-or-later
- * @copyright 	Küstenschmiede GmbH Software & Design
- * @link              https://www.con4gis.org
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
+
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
  */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
 use con4gis\CoreBundle\Classes\Events\BeforeImportButtonLoadEvent;
 use Contao\Database;
-use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LoadImportButtonsListener
 {
     public function beforeLoadImportButtons(BeforeImportButtonLoadEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
-
         $database = Database::getInstance();
-        $vendor = "gutesio";
+        $vendor = 'gutesio';
         $releaseCompatible = false;
         $importCompatible = true;
 
-        $c4gSettings = $database->prepare("SELECT * FROM tl_c4g_settings")->execute()->fetchAssoc();
-        if ($c4gSettings['syncDataAutomaticly'] == "") {
+        $c4gSettings = $database->prepare('SELECT * FROM tl_c4g_settings')->execute()->fetchAssoc();
+        if ($c4gSettings['syncDataAutomaticly'] == '') {
             $updateCompatible = true;
         } else {
             $updateCompatible = false;
@@ -44,6 +39,5 @@ class LoadImportButtonsListener
         $event->setImportCompatible($importCompatible);
         $event->setReleaseCompatible($releaseCompatible);
         $event->setUpdateCompatible($updateCompatible);
-
     }
 }

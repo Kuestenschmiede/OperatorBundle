@@ -1,17 +1,12 @@
 <?php
 /**
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package   	con4gis
- * @version    7
- * @author  	    con4gis contributors (see "authors.txt")
- * @license 	    LGPL-3.0-or-later
- * @copyright 	Küstenschmiede GmbH Software & Design
- * @link              https://www.con4gis.org
- *
- */
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
 
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
+ */
 namespace gutesio\OperatorBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;

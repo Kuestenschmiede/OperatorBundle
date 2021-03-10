@@ -1,29 +1,23 @@
 <?php
-/*
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package    con4gis
- * @version    7
- * @author     con4gis contributors (see "authors.txt")
- * @license    LGPL-3.0-or-later
- * @copyright  Küstenschmiede GmbH Software & Design
- * @link       https://www.con4gis.org
+/**
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
+
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
  */
 namespace gutesio\OperatorBundle\Classes\Cache;
 
-use con4gis\CoreBundle\Classes\C4GApiCache;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ShowcaseListApiCache
 {
-    
     /**
      * @var FilesystemAdapter
      */
     protected $cacheInstance;
-    
+
     /**
      * @var ShowcaseListApiCache
      */
@@ -49,30 +43,30 @@ class ShowcaseListApiCache
             $directory = $cacheDir
         );
     }
-    
+
     public function hasCacheData($cacheChecksum)
     {
         return $this->cacheInstance->hasItem($cacheChecksum);
     }
-    
+
     public function getCacheData($strChecksum)
     {
 //        $strChecksum = $this->getCacheKey($strApiEndpoint, $arrFragments);
         if ($this->hasCacheData($strChecksum)) {
             return $this->cacheInstance->getItem($strChecksum)->get();
         }
-        
+
         return false;
     }
-    
+
     private function saveCacheData($strChecksum, $strContent)
     {
         $cacheData = $this->cacheInstance->getItem($strChecksum);
         $cacheData->set($strContent);
-        
+
         return $this->cacheInstance->save($cacheData);
     }
-    
+
     public function putCacheData($strChecksum, $strContent)
     {
 //        $strChecksum = $this->getCacheKey($strApiEndpoint, $arrFragments);

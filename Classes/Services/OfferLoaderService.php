@@ -1,8 +1,13 @@
 <?php
+/**
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
 
-
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
+ */
 namespace gutesio\OperatorBundle\Classes\Services;
-
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
@@ -24,23 +29,23 @@ class OfferLoaderService
      * @var ModuleModel
      */
     private $model = null;
-    
-    private $pageUrl = "";
-    
+
+    private $pageUrl = '';
+
     /**
      * @var Request
      */
     private $request;
-    
+
     private $randomSeed;
-    
+
     const LIMIT = 10;
-    
+
     private function setup()
     {
         $this->createRandomSeed($this->request);
     }
-    
+
     public function getListData($search, $offset, $type, $filterData)
     {
         $this->setup();
@@ -56,7 +61,7 @@ class OfferLoaderService
             $tmpOffset = $offset;
             $offset = 0;
         }
-        
+
         if ($search !== '') {
             $terms = explode(' ', $search);
             $results = $this->getFullTextData($terms, $offset, $type, $limit);
@@ -67,15 +72,15 @@ class OfferLoaderService
             // filter using actual limit & offset
             $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, self::LIMIT);
         }
-        
+
         if ($dateFilter) {
             $results = $this->applyRangeFilter($results, $filterData['filterFrom'], $filterData['filterUntil']);
         }
         if ($sortFilter) {
-            if ($filterData['sorting'] === "price_asc") {
-                $sort = "asc";
+            if ($filterData['sorting'] === 'price_asc') {
+                $sort = 'asc';
             } else {
-                $sort = "desc";
+                $sort = 'desc';
             }
             usort($results, function ($a, $b) use ($sort) {
                 $aPrice = $a['rawPrice'];
@@ -86,40 +91,40 @@ class OfferLoaderService
                 if ($bPrice === null) {
                     return -1;
                 }
-                if ($sort === "asc") {
+                if ($sort === 'asc') {
                     if ($aPrice > $bPrice) {
                         return 1;
-                    } else if ($aPrice < $bPrice) {
+                    } elseif ($aPrice < $bPrice) {
                         return -1;
-                    } else {
-                        return 0;
                     }
-                } else {
-                    if ($aPrice > $bPrice) {
-                        return -1;
-                    } else if ($aPrice < $bPrice) {
-                        return 1;
-                    } else {
-                        return 0;
-                    }
+
+                    return 0;
                 }
+                if ($aPrice > $bPrice) {
+                    return -1;
+                } elseif ($aPrice < $bPrice) {
+                    return 1;
+                }
+
+                return 0;
             });
         }
         if ($hasFilter) {
             $results = array_slice($results, $tmpOffset, self::LIMIT);
         }
-        
+
         // data cleaning
         foreach ($results as $key => $result) {
             $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
         }
-        
+
         return $results;
     }
-    
-    public function getFullTextData(array $terms, $offset = 0, string $type = '', int $limit = 0) {
-        System::loadLanguageFile("gutesio_frontend");
-        $rawTermString = implode(" ", $terms);
+
+    public function getFullTextData(array $terms, $offset = 0, string $type = '', int $limit = 0)
+    {
+        System::loadLanguageFile('gutesio_frontend');
+        $rawTermString = implode(' ', $terms);
         $database = Database::getInstance();
         foreach ($terms as $key => $term) {
             $terms[$key] = "$term*";
@@ -129,28 +134,28 @@ class OfferLoaderService
         if ($updater->isFullText() !== true) {
             $updater->addFullText();
         }
-        
+
         $childDataMode = $this->model->gutesio_child_data_mode;
-        
+
         $types = [];
         $categories = [];
         if ($childDataMode == '1') {
             $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-        } else if ($childDataMode == '2') {
+        } elseif ($childDataMode == '2') {
             $categories = StringUtil::deserialize($this->model->gutesio_child_category, true);
-        } else if ($childDataMode == '3') {
+        } elseif ($childDataMode == '3') {
             $tags = StringUtil::deserialize($this->model->gutesio_child_tag, true);
         }
-        
+
         $arrTagFieldClause = $this->createTagFieldClause();
         $strTagFieldClause = $arrTagFieldClause['str'];
         $fieldCount = $arrTagFieldClause['count'];
-        
+
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
                 for ($i = 0; $i < $fieldCount; $i++) {
-                    $parameters[] = "%".$rawTermString."%";
+                    $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = $limit;
                 $parameters[] = (int) $offset;
@@ -173,20 +178,20 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid '.'
+                LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' . '
-                AND tl_gutesio_data_child_tag.tagId '.C4GUtils::buildInString($tags).
-                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'.
+                AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
+                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
                 )->execute($parameters)->fetchAllAssoc();
             } else {
                 $parameters = [];
                 for ($i = 0; $i < $fieldCount; $i++) {
-                    $parameters[] = "%".$rawTermString."%";
+                    $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = $limit;
-                $parameters[] = (int)$offset;
+                $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -214,10 +219,10 @@ class OfferLoaderService
                         $parameters
                     )->fetchAllAssoc();
             }
-        } else if (empty($categories)) {
+        } elseif (empty($categories)) {
             $parameters = $types;
             for ($i = 0; $i < $fieldCount; $i++) {
-                $parameters[] = "%".$rawTermString."%";
+                $parameters[] = '%' . $rawTermString . '%';
             }
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
@@ -241,15 +246,15 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
-                WHERE a.published = 1 AND type '.C4GUtils::buildInString($types).
+                WHERE a.published = 1 AND type ' . C4GUtils::buildInString($types) .
                 'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' .
-                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'.
+                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
             for ($i = 0; $i < $fieldCount; $i++) {
-                $parameters[] = "%".$rawTermString."%";
+                $parameters[] = '%' . $rawTermString . '%';
             }
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
@@ -274,57 +279,57 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' . '
-                AND a.parentChildId '.C4GUtils::buildInString($categories).
-                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'.
+                AND a.parentChildId ' . C4GUtils::buildInString($categories) .
+                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();
         }
-        
+
         foreach ($childRows as $key => $row) {
             $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($imageModel !== null) {
                 $childRows[$key]['image'] = [
                     'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
                 ];
             }
             unset($childRows[$key]['imageOffer']);
-            
+
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-                $href = str_replace('.html', '/'.strtolower(str_replace(['{', '}'], '', $row['uuid'])).'.html', $this->pageUrl);
+                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $row['uuid'])) . '.html', $this->pageUrl);
             } else {
-                $href = $this->pageUrl . '/'.strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
             }
-            
+
             $childRows[$key]['tagLinks'] = [
                 'icons' => [],
-                'links' => []
+                'links' => [],
             ];
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
-            
+
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
         }
-        
+
         return $this->getAdditionalData($childRows);
     }
-    
+
     public function getFullTextDataWithoutTerms($offset = 0, string $type = '', int $limit = 0)
     {
-        System::loadLanguageFile("gutesio_frontend");
+        System::loadLanguageFile('gutesio_frontend');
         $database = Database::getInstance();
-        
+
         $childDataMode = $this->model->gutesio_child_data_mode;
-        
+
         $types = [];
         $categories = [];
         if ($childDataMode == '1') {
             $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-        } else if ($childDataMode == '2') {
+        } elseif ($childDataMode == '2') {
             $categories = StringUtil::deserialize($this->model->gutesio_child_category, true);
-        } else if ($childDataMode == '3') {
+        } elseif ($childDataMode == '3') {
             $tags = StringUtil::deserialize($this->model->gutesio_child_tag, true);
         }
-        
+
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
@@ -348,16 +353,16 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid '.'
+                LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
-                WHERE a.published = 1 AND tl_gutesio_data_child_tag.tagId '.C4GUtils::buildInString($tags).
-                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'.
-                    ' ORDER BY RAND('.$this->randomSeed.') LIMIT ? OFFSET ?'
+                WHERE a.published = 1 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
+                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
                 )->execute($parameters)->fetchAllAssoc();
             } else {
                 $parameters = [];
                 $parameters[] = $limit;
-                $parameters[] = (int)$offset;
+                $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink,  
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -378,12 +383,12 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
-                ORDER BY RAND('.$this->randomSeed.') LIMIT ? OFFSET ?')
+                ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?')
                     ->execute(
                         $parameters
                     )->fetchAllAssoc();
             }
-        } else if (empty($categories)) {
+        } elseif (empty($categories)) {
             $parameters = $types;
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
@@ -405,9 +410,9 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                WHERE a.published = 1 AND type '.C4GUtils::buildInString($types).
-                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'.
-                ' ORDER BY RAND('.$this->randomSeed.') LIMIT ? OFFSET ?'
+                WHERE a.published = 1 AND type ' . C4GUtils::buildInString($types) .
+                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
@@ -431,171 +436,171 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                WHERE a.published = 1 AND a.typeId '.C4GUtils::buildInString($categories).
-                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'.
-                ' ORDER BY RAND('.$this->randomSeed.') LIMIT ? OFFSET ?'
+                WHERE a.published = 1 AND a.typeId ' . C4GUtils::buildInString($categories) .
+                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();
         }
-        
+
         foreach ($childRows as $key => $row) {
             $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($imageModel !== null) {
                 $childRows[$key]['image'] = [
                     'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
                 ];
             }
             unset($childRows[$key]['imageOffer']);
-            
+
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-                $href = str_replace('.html', '/'.strtolower(str_replace(['{', '}'], '', $row['uuid'])).'.html', $this->pageUrl);
+                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $row['uuid'])) . '.html', $this->pageUrl);
             } else {
-                $href = $this->pageUrl . '/'.strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
             }
-            
+
             $childRows[$key]['tagLinks'] = [
                 'icons' => [],
-                'links' => []
+                'links' => [],
             ];
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
-            
+
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
         }
-        
+
         return $this->getAdditionalData($childRows);
     }
-    
+
     public function getDetailData($alias)
     {
         return $this->getSingleDataset($alias, true);
     }
-    
+
     public function getPreviewData($alias)
     {
         $previewData = $this->getSingleDataset($alias, false, true);
-        
+
         return $previewData;
     }
-    
+
     private function getSingleDataset($alias, $published, $isPreview = false)
     {
         $database = Database::getInstance();
-    
+
         $childDataMode = $this->model->gutesio_child_data_mode;
         $alias = $this->cleanAlias($alias);
         $types = [];
         $categories = [];
         if ($childDataMode == '1') {
             $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-        } else if ($childDataMode == '2') {
+        } elseif ($childDataMode == '2') {
             $categories = StringUtil::deserialize($this->model->gutesio_child_category, true);
-        } else if ($childDataMode == '3') {
+        } elseif ($childDataMode == '3') {
             $tags = StringUtil::deserialize($this->model->gutesio_child_tag);
         }
-    
+
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
-                array_unshift($parameters, '{'.$alias.'}');
-                $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, '.'
-                a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, '.'
-                (CASE '.'
-                    WHEN a.description IS NOT NULL THEN a.description '.'
-                    WHEN b.description IS NOT NULL THEN b.description '.'
-                    WHEN c.description IS NOT NULL THEN c.description '.'
-                    WHEN d.description IS NOT NULL THEN d.description '.'
-                ELSE NULL END) AS description, '.'
-                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a '.'
-                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid '.'
-                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid '.'
-                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid '.'
-                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId '.'
-                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId '.'
-                LEFT JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId '.'
-                JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid '.'
-                WHERE a.uuid = ? AND tl_gutesio_data_child_tag.tagId '.C4GUtils::buildInString($tags);
+                array_unshift($parameters, '{' . $alias . '}');
+                $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+                a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, ' . '
+                (CASE ' . '
+                    WHEN a.description IS NOT NULL THEN a.description ' . '
+                    WHEN b.description IS NOT NULL THEN b.description ' . '
+                    WHEN c.description IS NOT NULL THEN c.description ' . '
+                    WHEN d.description IS NOT NULL THEN d.description ' . '
+                ELSE NULL END) AS description, ' . '
+                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+                LEFT JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
+                WHERE a.uuid = ? AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags);
                 if ($published) {
-                    $sql .= " AND a.published = 1";
+                    $sql .= ' AND a.published = 1';
                 }
                 $rows = $database->prepare($sql)->execute($parameters)->fetchAllAssoc();
             } else {
-                $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, '.'
-            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile,'.'
-            (CASE '.'
-                WHEN a.description IS NOT NULL THEN a.description '.'
-                WHEN b.description IS NOT NULL THEN b.description '.'
-                WHEN c.description IS NOT NULL THEN c.description '.'
-                WHEN d.description IS NOT NULL THEN d.description '.'
-            ELSE NULL END) AS description, '.'
-            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a '.'
-            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid '.'
-            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid '.'
-            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid '.'
-            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId '.'
-            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId '.'
-            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId '.'
+                $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile,' . '
+            (CASE ' . '
+                WHEN a.description IS NOT NULL THEN a.description ' . '
+                WHEN b.description IS NOT NULL THEN b.description ' . '
+                WHEN c.description IS NOT NULL THEN c.description ' . '
+                WHEN d.description IS NOT NULL THEN d.description ' . '
+            ELSE NULL END) AS description, ' . '
+            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE a.uuid = ?';
                 if ($published) {
-                    $sql .= " AND a.published = 1";
+                    $sql .= ' AND a.published = 1';
                 }
-                $rows = $database->prepare($sql)->execute('{'.$alias.'}')->fetchAllAssoc();
+                $rows = $database->prepare($sql)->execute('{' . $alias . '}')->fetchAllAssoc();
             }
-        } else if (empty($categories)) {
+        } elseif (empty($categories)) {
             $parameters = $types;
-            array_unshift($parameters, '{'.$alias.'}');
-            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, '.'
-            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, '.'
-            (CASE '.'
-                WHEN a.description IS NOT NULL THEN a.description '.'
-                WHEN b.description IS NOT NULL THEN b.description '.'
-                WHEN c.description IS NOT NULL THEN c.description '.'
-                WHEN d.description IS NOT NULL THEN d.description '.'
-            ELSE NULL END) AS description, '.'
-            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a '.'
-            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid '.'
-            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid '.'
-            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid '.'
-            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId '.'
-            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId '.'
-            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId '.'
-            WHERE a.uuid = ? AND tl_gutesio_data_child_type.type '.C4GUtils::buildInString($types);
+            array_unshift($parameters, '{' . $alias . '}');
+            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, ' . '
+            (CASE ' . '
+                WHEN a.description IS NOT NULL THEN a.description ' . '
+                WHEN b.description IS NOT NULL THEN b.description ' . '
+                WHEN c.description IS NOT NULL THEN c.description ' . '
+                WHEN d.description IS NOT NULL THEN d.description ' . '
+            ELSE NULL END) AS description, ' . '
+            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+            WHERE a.uuid = ? AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types);
             if ($published) {
-                $sql .= " AND a.published = 1";
+                $sql .= ' AND a.published = 1';
             }
             $rows = $database->prepare($sql)->execute($parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
-            array_unshift($parameters, '{'.$alias.'}');
-            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, '.'
-            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, '.'
-            (CASE '.'
-                WHEN a.description IS NOT NULL THEN a.description '.'
-                WHEN b.description IS NOT NULL THEN b.description '.'
-                WHEN c.description IS NOT NULL THEN c.description '.'
-                WHEN d.description IS NOT NULL THEN d.description '.'
-            ELSE NULL END) AS description, '.'
-            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a '.'
-            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid '.'
-            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid '.'
-            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid '.'
-            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId '.'
-            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId '.'
-            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId '.'
-            WHERE a.uuid = ? AND tl_gutesio_data_child_type.uuid '.C4GUtils::buildInString($categories);
+            array_unshift($parameters, '{' . $alias . '}');
+            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, ' . '
+            (CASE ' . '
+                WHEN a.description IS NOT NULL THEN a.description ' . '
+                WHEN b.description IS NOT NULL THEN b.description ' . '
+                WHEN c.description IS NOT NULL THEN c.description ' . '
+                WHEN d.description IS NOT NULL THEN d.description ' . '
+            ELSE NULL END) AS description, ' . '
+            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+            WHERE a.uuid = ? AND tl_gutesio_data_child_type.uuid ' . C4GUtils::buildInString($categories);
             if ($published) {
-                $sql .= " AND a.published = 1";
+                $sql .= ' AND a.published = 1';
             }
             $rows = $database->prepare($sql)->execute($parameters)->fetchAllAssoc();
         }
-    
+
         if (empty($rows)) {
             return [];
         }
-    
+
         foreach ($rows as $key => $row) {
             $result = $database->prepare(
                 'SELECT * FROM tl_gutesio_data_child_connection WHERE childId = ? LIMIT 1'
-            )->execute('{'.strtoupper($alias).'}')->fetchAssoc();
+            )->execute('{' . strtoupper($alias) . '}')->fetchAssoc();
             $result = $database->prepare(
                 'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
             )->execute($result['elementId'])->fetchAssoc();
@@ -627,13 +632,13 @@ class OfferLoaderService
                         'name' => $infoFile->name,
                         'path' => $infoFile->path,
                         'changed' => false,
-                        'data' => []
+                        'data' => [],
                     ];
                 } else {
                     unset($rows[$key]['infoFile']);
                 }
             }
-        
+
             if ($row['imageGallery']) {
                 $images = StringUtil::deserialize($row['imageGallery']);
                 if ($isPreview) {
@@ -653,27 +658,26 @@ class OfferLoaderService
                                 'x' => $model->importantPartX,
                                 'y' => $model->importantPartY,
                                 'width' => $model->importantPartWidth,
-                                'height'=> $model->importantPartHeight
-                            ]
+                                'height' => $model->importantPartHeight,
+                            ],
                         ];
                         $idx++;
                     }
                 }
                 unset($rows[$key]['imageGallery']);
             }
-        
-            unset($rows[$key]['imageOffer']);
-            unset($rows[$key]['image']);
-        
+
+            unset($rows[$key]['imageOffer'], $rows[$key]['image']);
+
             $tagStmt = $database->prepare(
-                'SELECT tl_gutesio_data_tag.* FROM tl_gutesio_data_tag JOIN tl_gutesio_data_child_tag ON '.
-                'tl_gutesio_data_child_tag.tagId = tl_gutesio_data_tag.uuid WHERE tl_gutesio_data_tag.published = 1'.
-                ' AND tl_gutesio_data_child_tag.childId = ? AND (tl_gutesio_data_tag.validFrom = 0'.
-                ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0'.
+                'SELECT tl_gutesio_data_tag.* FROM tl_gutesio_data_tag JOIN tl_gutesio_data_child_tag ON ' .
+                'tl_gutesio_data_child_tag.tagId = tl_gutesio_data_tag.uuid WHERE tl_gutesio_data_tag.published = 1' .
+                ' AND tl_gutesio_data_child_tag.childId = ? AND (tl_gutesio_data_tag.validFrom = 0' .
+                ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
                 ' OR tl_gutesio_data_tag.validUntil <= UNIX_TIMESTAMP()))'
             );
             $rows[$key]['tags'] = $tagStmt->execute($rows[$key]['uuid'])->fetchAllAssoc();
-        
+
             foreach ($rows[$key]['tags'] as $tagKey => $tagRow) {
                 $imageModel = FilesModel::findByUuid($tagRow['image']);
                 if ($imageModel !== null) {
@@ -683,43 +687,43 @@ class OfferLoaderService
                             'x' => $imageModel->importantPartX,
                             'y' => $imageModel->importantPartY,
                             'width' => $imageModel->importantPartWidth,
-                            'height' => $imageModel->importantPartHeight
+                            'height' => $imageModel->importantPartHeight,
                         ],
                         'name' => $imageModel->name,
                         'path' => $imageModel->path,
-                        'src' => $imageModel->path
+                        'src' => $imageModel->path,
                     ];
                 } else {
                     unset($rows[$key]['tags'][$tagKey]['image']);
                 }
-            
+
                 if ((string) $tagRow['technicalKey'] !== '') {
                     $fields = TagDetailFieldGenerator::getFieldsForTag($tagRow['technicalKey']);
                     foreach ($fields as $field) {
                         $rows[$key]['tags'][$tagKey]['fields'][] = $field->getConfiguration();
                     }
-                
+
                     $tagValues = $database->prepare(
                         'SELECT tagFieldKey, tagFieldValue FROM tl_gutesio_data_child_tag_values WHERE childId = ?'
                     )->execute($rows[$key]['uuid'])->fetchAllAssoc();
                     foreach ($tagValues as $tagValue) {
-                    
+
                         //hotfix
-                        if (strpos(strtoupper($tagValue['tagFieldKey']),'LINK')) {
+                        if (strpos(strtoupper($tagValue['tagFieldKey']), 'LINK')) {
                             $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
                         }
-                    
+
                         $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
                     }
                 }
             }
-        
+
             $rows[$key]['internal_type'] = $row['type'];
             // translate type for detail display
             $rows[$key]['displayType'] = $row['typeName'];
             $clientUuid = $this->checkCookieForClientUuid($this->request);
             $wishlist = $database->prepare(
-                "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ? ".
+                'SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ? ' .
                 "AND `dataTable` = 'tl_gutesio_data_child' LIMIT 1"
             )->execute($clientUuid, $row['uuid'])->fetchAssoc();
             if (!empty($wishlist)) {
@@ -728,67 +732,70 @@ class OfferLoaderService
                 $rows[$key]['on_wishlist'] = 0;
             }
         }
-    
+
         $rows = $this->getAdditionalData($rows, !$isPreview);
+
         return $rows[0];
     }
-    
-    private function getTagData($uuid, $childRows, $key) {
+
+    private function getTagData($uuid, $childRows, $key)
+    {
         $database = Database::getInstance();
-        
-        $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag '.
-            'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId '.
-            'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0'.
-            ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0'.
+
+        $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+            'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
+            'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
+            ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
             ' OR tl_gutesio_data_tag.validUntil <= UNIX_TIMESTAMP())) AND tl_gutesio_data_child_tag.childId = ?')
             ->execute($uuid)->fetchAllAssoc();
-        
+
         foreach ($result as $r) {
             $model = FilesModel::findByUuid($r['image']);
             if ($model !== null) {
                 $icon = [
                     'imageSource' => $model->path,
-                    'imageAlt' => $r['name']
+                    'imageAlt' => $r['name'],
                 ];
-                switch($r['technicalKey']) {
+                switch ($r['technicalKey']) {
                     case 'tag_delivery':
                         $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values '.
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                         $icon['linkHref'] = $stmt->execute(
                             $uuid,
                             'deliveryServiceLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values '.
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+
                         break;
                     case 'tag_online_reservation':
                         $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values '.
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                         $icon['linkHref'] = $stmt->execute(
                             $uuid,
                             'onlineReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values '.
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                         //$icon['linkLabel'] = 'Onlinereservierung';
                         break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values '.
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                         $icon['linkHref'] = $stmt->execute(
                             $uuid,
                             'onlineShopLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values '.
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                         //$icon['linkLabel'] = 'Onlineshop';
-                        
+
                         break;
                     default:
                         break;
@@ -798,90 +805,91 @@ class OfferLoaderService
                 $childRows[$key]['tagLinks']['icons'][] = $icon;
             }
         }
-        
+
         return $childRows;
     }
-    
+
     private function createTagFieldClause()
     {
         $fieldNames = TagFieldUtil::getTagFieldnames();
         $response = [];
         $response['count'] = count($fieldNames);
-        $strQuery = "";
+        $strQuery = '';
         foreach ($fieldNames as $key => $fieldName) {
             $strQuery .= "`tagFieldKey` = '$fieldName' AND `tagFieldValue` LIKE ?";
             if (array_key_last($fieldNames) !== $key) {
-                $strQuery .= " OR ";
+                $strQuery .= ' OR ';
             }
         }
         $response['str'] = $strQuery;
-        
+
         return $response;
     }
-    
-    public function getAdditionalData($childRows, $checkEventTime = true) {
+
+    public function getAdditionalData($childRows, $checkEventTime = true)
+    {
         $database = Database::getInstance();
         foreach ($childRows as $key => $row) {
             $tooOld = false;
             switch ($row['type']) {
                 case 'product':
-                    $productData = $database->prepare('SELECT '.'
-                        (CASE '.'
-                            WHEN a.price IS NOT NULL THEN a.price '.'
-                            WHEN b.price IS NOT NULL THEN b.price '.'
-                            WHEN c.price IS NOT NULL THEN c.price '.'
-                            WHEN d.price IS NOT NULL THEN d.price '.'
-                        ELSE NULL END) AS price, '.'
-                        (CASE '.'
-                            WHEN a.strikePrice IS NOT NULL THEN a.strikePrice '.'
-                            WHEN b.strikePrice IS NOT NULL THEN b.strikePrice '.'
-                            WHEN c.strikePrice IS NOT NULL THEN c.strikePrice '.'
-                            WHEN d.strikePrice IS NOT NULL THEN d.strikePrice '.'
-                        ELSE NULL END) AS strikePrice, '.'
-                        (CASE '.'
-                            WHEN a.priceStartingAt IS NOT NULL THEN a.priceStartingAt '.'
-                            WHEN b.priceStartingAt IS NOT NULL THEN b.priceStartingAt '.'
-                            WHEN c.priceStartingAt IS NOT NULL THEN c.priceStartingAt '.'
-                            WHEN d.priceStartingAt IS NOT NULL THEN d.priceStartingAt '.'
-                        ELSE NULL END) AS priceStartingAt, '.'
-                        (CASE '.'
-                            WHEN a.priceReplacer IS NOT NULL THEN a.priceReplacer '.'
-                            WHEN b.priceReplacer IS NOT NULL THEN b.priceReplacer '.'
-                            WHEN c.priceReplacer IS NOT NULL THEN c.priceReplacer '.'
-                            WHEN d.priceReplacer IS NOT NULL THEN d.priceReplacer '.'
-                        ELSE NULL END) AS priceReplacer, '.'
-                        (CASE '.'
-                            WHEN a.tax IS NOT NULL THEN a.tax '.'
-                            WHEN b.tax IS NOT NULL THEN b.tax '.'
-                            WHEN c.tax IS NOT NULL THEN c.tax '.'
-                            WHEN d.tax IS NOT NULL THEN d.tax '.'
-                        ELSE NULL END) AS taxNote, '.'
-                        (CASE '.'
-                            WHEN a.discount IS NOT NULL THEN a.discount '.'
-                            WHEN b.discount IS NOT NULL THEN b.discount '.'
-                            WHEN c.discount IS NOT NULL THEN c.discount '.'
-                            WHEN d.discount IS NOT NULL THEN d.discount '.'
-                        ELSE NULL END) AS discount, '.'
-                        (CASE '.'
-                            WHEN a.color IS NOT NULL THEN a.color '.'
-                            WHEN b.color IS NOT NULL THEN b.color '.'
-                            WHEN c.color IS NOT NULL THEN c.color '.'
-                            WHEN d.color IS NOT NULL THEN d.color '.'
-                        ELSE NULL END) AS color, '.'
-                        (CASE '.'
-                            WHEN a.size IS NOT NULL THEN a.size '.'
-                            WHEN b.size IS NOT NULL THEN b.size '.'
-                            WHEN c.size IS NOT NULL THEN c.size '.'
-                            WHEN d.size IS NOT NULL THEN d.size '.'
-                        ELSE NULL END) AS size  '.'
-                        FROM tl_gutesio_data_child_product a '.'
-                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child_product b ON b.childId = cb.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child_product c ON c.childId = cc.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child_product d ON d.childId = cd.uuid '.'
+                    $productData = $database->prepare('SELECT ' . '
+                        (CASE ' . '
+                            WHEN a.price IS NOT NULL THEN a.price ' . '
+                            WHEN b.price IS NOT NULL THEN b.price ' . '
+                            WHEN c.price IS NOT NULL THEN c.price ' . '
+                            WHEN d.price IS NOT NULL THEN d.price ' . '
+                        ELSE NULL END) AS price, ' . '
+                        (CASE ' . '
+                            WHEN a.strikePrice IS NOT NULL THEN a.strikePrice ' . '
+                            WHEN b.strikePrice IS NOT NULL THEN b.strikePrice ' . '
+                            WHEN c.strikePrice IS NOT NULL THEN c.strikePrice ' . '
+                            WHEN d.strikePrice IS NOT NULL THEN d.strikePrice ' . '
+                        ELSE NULL END) AS strikePrice, ' . '
+                        (CASE ' . '
+                            WHEN a.priceStartingAt IS NOT NULL THEN a.priceStartingAt ' . '
+                            WHEN b.priceStartingAt IS NOT NULL THEN b.priceStartingAt ' . '
+                            WHEN c.priceStartingAt IS NOT NULL THEN c.priceStartingAt ' . '
+                            WHEN d.priceStartingAt IS NOT NULL THEN d.priceStartingAt ' . '
+                        ELSE NULL END) AS priceStartingAt, ' . '
+                        (CASE ' . '
+                            WHEN a.priceReplacer IS NOT NULL THEN a.priceReplacer ' . '
+                            WHEN b.priceReplacer IS NOT NULL THEN b.priceReplacer ' . '
+                            WHEN c.priceReplacer IS NOT NULL THEN c.priceReplacer ' . '
+                            WHEN d.priceReplacer IS NOT NULL THEN d.priceReplacer ' . '
+                        ELSE NULL END) AS priceReplacer, ' . '
+                        (CASE ' . '
+                            WHEN a.tax IS NOT NULL THEN a.tax ' . '
+                            WHEN b.tax IS NOT NULL THEN b.tax ' . '
+                            WHEN c.tax IS NOT NULL THEN c.tax ' . '
+                            WHEN d.tax IS NOT NULL THEN d.tax ' . '
+                        ELSE NULL END) AS taxNote, ' . '
+                        (CASE ' . '
+                            WHEN a.discount IS NOT NULL THEN a.discount ' . '
+                            WHEN b.discount IS NOT NULL THEN b.discount ' . '
+                            WHEN c.discount IS NOT NULL THEN c.discount ' . '
+                            WHEN d.discount IS NOT NULL THEN d.discount ' . '
+                        ELSE NULL END) AS discount, ' . '
+                        (CASE ' . '
+                            WHEN a.color IS NOT NULL THEN a.color ' . '
+                            WHEN b.color IS NOT NULL THEN b.color ' . '
+                            WHEN c.color IS NOT NULL THEN c.color ' . '
+                            WHEN d.color IS NOT NULL THEN d.color ' . '
+                        ELSE NULL END) AS color, ' . '
+                        (CASE ' . '
+                            WHEN a.size IS NOT NULL THEN a.size ' . '
+                            WHEN b.size IS NOT NULL THEN b.size ' . '
+                            WHEN c.size IS NOT NULL THEN c.size ' . '
+                            WHEN d.size IS NOT NULL THEN d.size ' . '
+                        ELSE NULL END) AS size  ' . '
+                        FROM tl_gutesio_data_child_product a ' . '
+                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_product b ON b.childId = cb.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_product c ON c.childId = cc.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_product d ON d.childId = cd.uuid ' . '
                         WHERE a.childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
                     if (!empty($productData)) {
@@ -893,11 +901,11 @@ class OfferLoaderService
                                     2,
                                     ',',
                                     ''
-                                ).' €*';
+                                ) . ' €*';
                             if ($productData['priceStartingAt']) {
                                 $productData['strikePrice'] =
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['startingAt'].
-                                    ' '.$productData['strikePrice'];
+                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['startingAt'] .
+                                    ' ' . $productData['strikePrice'];
                             }
                         } else {
                             unset($productData['strikePrice']);
@@ -915,113 +923,118 @@ class OfferLoaderService
                                     2,
                                     ',',
                                     ''
-                                ).' €';
+                                ) . ' €';
                             if ($productData['price'] > 0) {
                                 $productData['price'] .= '*';
                             }
                             if ($productData['priceStartingAt']) {
                                 $productData['price'] =
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['startingAt'].
-                                    ' '.$productData['price'];
+                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['startingAt'] .
+                                    ' ' . $productData['price'];
                             }
                         }
-                        
+
                         $productData['color'] = $productData['color'] ?: '';
                         $productData['size'] = $productData['size'] ?: '';
-                        
+
                         $settings = GutesioOperatorSettingsModel::findSettings();
                         switch ($productData['taxNote']) {
-                            case 'regular';
+                            case 'regular':
                                 $productData['taxNote'] = sprintf(
                                     $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['taxInfo'],
                                     ($settings->taxRegular ?: '16') . '%'
                                 );
-                                breaK;
-                            case 'reduced';
+
+                                break;
+                            case 'reduced':
                                 $productData['taxNote'] = sprintf(
                                     $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['taxInfo'],
                                     ($settings->taxReduced ?: '5') . '%'
                                 );
-                                breaK;
-                            case 'none';
+
+                                break;
+                            case 'none':
                                 $productData['taxNote'] =
                                     $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['noTaxInfo'];
-                                breaK;
+
+                                break;
                             default:
                                 $productData['taxNote'] =
                                     $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['list']['taxInfo'];
+
                                 break;
                         }
                         $childRows[$key] = array_merge($row, $productData);
                     }
+
                     break;
                 case 'event':
-                    $eventData = $database->prepare('SELECT '.'
-                        (CASE '.'
-                            WHEN a.beginDate IS NOT NULL THEN a.beginDate '.'
-                            WHEN b.beginDate IS NOT NULL THEN b.beginDate '.'
-                            WHEN c.beginDate IS NOT NULL THEN c.beginDate '.'
-                            WHEN d.beginDate IS NOT NULL THEN d.beginDate '.'
-                        ELSE NULL END) AS beginDate, '.'
-                        (CASE '.'
-                            WHEN a.beginTime IS NOT NULL THEN a.beginTime '.'
-                            WHEN b.beginTime IS NOT NULL THEN b.beginTime '.'
-                            WHEN c.beginTime IS NOT NULL THEN c.beginTime '.'
-                            WHEN d.beginTime IS NOT NULL THEN d.beginTime '.'
-                        ELSE NULL END) AS beginTime, '.'
-                        (CASE '.'
-                            WHEN a.endDate IS NOT NULL THEN a.endDate '.'
-                            WHEN b.endDate IS NOT NULL THEN b.endDate '.'
-                            WHEN c.endDate IS NOT NULL THEN c.endDate '.'
-                            WHEN d.endDate IS NOT NULL THEN d.endDate '.'
-                        ELSE NULL END) AS endDate, '.'
-                        (CASE '.'
-                            WHEN a.endTime IS NOT NULL THEN a.endTime '.'
-                            WHEN b.endTime IS NOT NULL THEN b.endTime '.'
-                            WHEN c.endTime IS NOT NULL THEN c.endTime '.'
-                            WHEN d.endTime IS NOT NULL THEN d.endTime '.'
-                        ELSE NULL END) AS endTime, '.'
-                        (CASE '.'
-                            WHEN a.locationElementId IS NOT NULL THEN a.locationElementId '.'
-                            WHEN b.locationElementId IS NOT NULL THEN b.locationElementId '.'
-                            WHEN c.locationElementId IS NOT NULL THEN c.locationElementId '.'
-                            WHEN d.locationElementId IS NOT NULL THEN d.locationElementId '.'
-                        ELSE NULL END) AS locationElementId, '.'
-                        (CASE '.'
-                            WHEN a.locationElementId IS NOT NULL THEN a.recurring '.'
-                            WHEN b.locationElementId IS NOT NULL THEN b.recurring '.'
-                            WHEN c.locationElementId IS NOT NULL THEN c.recurring '.'
-                            WHEN d.locationElementId IS NOT NULL THEN d.recurring '.'
-                        ELSE NULL END) AS recurring, '.'
-                        (CASE '.'
-                            WHEN a.locationElementId IS NOT NULL THEN a.recurrences '.'
-                            WHEN b.locationElementId IS NOT NULL THEN b.recurrences '.'
-                            WHEN c.locationElementId IS NOT NULL THEN c.recurrences '.'
-                            WHEN d.locationElementId IS NOT NULL THEN d.recurrences '.'
-                        ELSE NULL END) AS recurrences, '.'
-                        (CASE '.'
-                            WHEN a.locationElementId IS NOT NULL THEN a.repeatEach '.'
-                            WHEN b.locationElementId IS NOT NULL THEN b.repeatEach '.'
-                            WHEN c.locationElementId IS NOT NULL THEN c.repeatEach '.'
-                            WHEN d.locationElementId IS NOT NULL THEN d.repeatEach '.'
-                        ELSE NULL END) AS repeatEach, '.'
-                        (CASE '.'
-                            WHEN a.appointmentUponAgreement IS NOT NULL THEN a.appointmentUponAgreement '.'
-                            WHEN b.appointmentUponAgreement IS NOT NULL THEN b.appointmentUponAgreement '.'
-                            WHEN c.appointmentUponAgreement IS NOT NULL THEN c.appointmentUponAgreement '.'
-                            WHEN d.appointmentUponAgreement IS NOT NULL THEN d.appointmentUponAgreement '.'
-                        ELSE NULL END) AS appointmentUponAgreement '.'
-                        FROM tl_gutesio_data_child_event a '.'
-                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child_event b ON b.childId = cb.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid '.'
-                        LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid '.'
+                    $eventData = $database->prepare('SELECT ' . '
+                        (CASE ' . '
+                            WHEN a.beginDate IS NOT NULL THEN a.beginDate ' . '
+                            WHEN b.beginDate IS NOT NULL THEN b.beginDate ' . '
+                            WHEN c.beginDate IS NOT NULL THEN c.beginDate ' . '
+                            WHEN d.beginDate IS NOT NULL THEN d.beginDate ' . '
+                        ELSE NULL END) AS beginDate, ' . '
+                        (CASE ' . '
+                            WHEN a.beginTime IS NOT NULL THEN a.beginTime ' . '
+                            WHEN b.beginTime IS NOT NULL THEN b.beginTime ' . '
+                            WHEN c.beginTime IS NOT NULL THEN c.beginTime ' . '
+                            WHEN d.beginTime IS NOT NULL THEN d.beginTime ' . '
+                        ELSE NULL END) AS beginTime, ' . '
+                        (CASE ' . '
+                            WHEN a.endDate IS NOT NULL THEN a.endDate ' . '
+                            WHEN b.endDate IS NOT NULL THEN b.endDate ' . '
+                            WHEN c.endDate IS NOT NULL THEN c.endDate ' . '
+                            WHEN d.endDate IS NOT NULL THEN d.endDate ' . '
+                        ELSE NULL END) AS endDate, ' . '
+                        (CASE ' . '
+                            WHEN a.endTime IS NOT NULL THEN a.endTime ' . '
+                            WHEN b.endTime IS NOT NULL THEN b.endTime ' . '
+                            WHEN c.endTime IS NOT NULL THEN c.endTime ' . '
+                            WHEN d.endTime IS NOT NULL THEN d.endTime ' . '
+                        ELSE NULL END) AS endTime, ' . '
+                        (CASE ' . '
+                            WHEN a.locationElementId IS NOT NULL THEN a.locationElementId ' . '
+                            WHEN b.locationElementId IS NOT NULL THEN b.locationElementId ' . '
+                            WHEN c.locationElementId IS NOT NULL THEN c.locationElementId ' . '
+                            WHEN d.locationElementId IS NOT NULL THEN d.locationElementId ' . '
+                        ELSE NULL END) AS locationElementId, ' . '
+                        (CASE ' . '
+                            WHEN a.locationElementId IS NOT NULL THEN a.recurring ' . '
+                            WHEN b.locationElementId IS NOT NULL THEN b.recurring ' . '
+                            WHEN c.locationElementId IS NOT NULL THEN c.recurring ' . '
+                            WHEN d.locationElementId IS NOT NULL THEN d.recurring ' . '
+                        ELSE NULL END) AS recurring, ' . '
+                        (CASE ' . '
+                            WHEN a.locationElementId IS NOT NULL THEN a.recurrences ' . '
+                            WHEN b.locationElementId IS NOT NULL THEN b.recurrences ' . '
+                            WHEN c.locationElementId IS NOT NULL THEN c.recurrences ' . '
+                            WHEN d.locationElementId IS NOT NULL THEN d.recurrences ' . '
+                        ELSE NULL END) AS recurrences, ' . '
+                        (CASE ' . '
+                            WHEN a.locationElementId IS NOT NULL THEN a.repeatEach ' . '
+                            WHEN b.locationElementId IS NOT NULL THEN b.repeatEach ' . '
+                            WHEN c.locationElementId IS NOT NULL THEN c.repeatEach ' . '
+                            WHEN d.locationElementId IS NOT NULL THEN d.repeatEach ' . '
+                        ELSE NULL END) AS repeatEach, ' . '
+                        (CASE ' . '
+                            WHEN a.appointmentUponAgreement IS NOT NULL THEN a.appointmentUponAgreement ' . '
+                            WHEN b.appointmentUponAgreement IS NOT NULL THEN b.appointmentUponAgreement ' . '
+                            WHEN c.appointmentUponAgreement IS NOT NULL THEN c.appointmentUponAgreement ' . '
+                            WHEN d.appointmentUponAgreement IS NOT NULL THEN d.appointmentUponAgreement ' . '
+                        ELSE NULL END) AS appointmentUponAgreement ' . '
+                        FROM tl_gutesio_data_child_event a ' . '
+                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_event b ON b.childId = cb.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid ' . '
                         WHERE a.childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
-                    
+
                     $beginDateTime = new \DateTime();
                     $beginDateTime->setTimestamp($eventData['beginDate']);
                     // Add one day so events are still shown on the day they expire
@@ -1032,7 +1045,7 @@ class OfferLoaderService
                     );
                     $endDateTime = new \DateTime();
                     $endDateTime->setTimestamp($eventData['endDate']);
-                    
+
                     if ($beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
@@ -1045,43 +1058,48 @@ class OfferLoaderService
                                         $beginDateTime->setDate(
                                             $beginDateTime->format('Y'),
                                             $beginDateTime->format('m'),
-                                            ((int)$beginDateTime->format('d')) + ($value * 7)
+                                            ((int) $beginDateTime->format('d')) + ($value * 7)
                                         );
+
                                         break;
                                     case 'months':
                                         $beginDateTime->setDate(
                                             $beginDateTime->format('Y'),
-                                            ((int)$beginDateTime->format('m')) + $value,
+                                            ((int) $beginDateTime->format('m')) + $value,
                                             $beginDateTime->format('d')
                                         );
+
                                         break;
                                     case 'years':
                                         $beginDateTime->setDate(
-                                            ((int)$beginDateTime->format('Y')) + $value,
+                                            ((int) $beginDateTime->format('Y')) + $value,
                                             $beginDateTime->format('m'),
                                             $beginDateTime->format('d')
                                         );
+
                                         break;
                                     default:
                                         $beginDateTime->setDate(
                                             $beginDateTime->format('Y'),
                                             $beginDateTime->format('m'),
-                                            ((int)$beginDateTime->format('d')) + $value
+                                            ((int) $beginDateTime->format('d')) + $value
                                         );
+
                                         break;
                                 }
                                 if ($beginDateTime->getTimestamp() >= time()) {
                                     break;
                                 } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
                                     $tooOld = true;
+
                                     break;
                                 }
                             }
-                        } else if (($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
+                        } elseif (($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
                             $tooOld = true;
                         }
                     }
-                    
+
                     // remove the extra day added previously
                     $beginDateTime->setDate(
                         $beginDateTime->format('Y'),
@@ -1091,46 +1109,46 @@ class OfferLoaderService
                     $eventData['beginDate'] = $beginDateTime->format('d.m.Y');
                     $eventData['endDate'] = $endDateTime->format('d.m.Y');
                     if ($eventData['beginTime'] !== null) {
-                        $eventData['beginTime'] = gmdate('H:i', $eventData['beginTime']).' Uhr'; //ToDo
+                        $eventData['beginTime'] = gmdate('H:i', $eventData['beginTime']) . ' Uhr'; //ToDo
                     }
                     if ($eventData['endTime'] !== null) {
                         $eventData['endTime'] = gmdate('H:i', $eventData['endTime']);
                     }
-                    if ($eventData['beginDate'] === "01.01.1970") {
-                        $eventData['beginDate'] = "";
+                    if ($eventData['beginDate'] === '01.01.1970') {
+                        $eventData['beginDate'] = '';
                     }
-                    if ($eventData['endDate'] === "01.01.1970") {
-                        $eventData['endDate'] = "";
+                    if ($eventData['endDate'] === '01.01.1970') {
+                        $eventData['endDate'] = '';
                     }
                     if ($eventData['appointmentUponAgreement']) {
-                        $fieldValue = "Termin nach Absprache";
+                        $fieldValue = 'Termin nach Absprache';
                         if ($eventData['beginDate']) {
-                            $fieldValue .= " (";
+                            $fieldValue .= ' (';
                             if (!$eventData['endDate']) {
-                                $fieldValue .= "ab ";
+                                $fieldValue .= 'ab ';
                             }
                             $fieldValue .= $eventData['beginDate'];
                             if ($eventData['beginTime']) {
-                                $fieldValue .= " " . $eventData['beginTime'];
+                                $fieldValue .= ' ' . $eventData['beginTime'];
                             }
                             if ($eventData['endDate']) {
-                                $fieldValue .= " - " . $eventData['endDate'];
+                                $fieldValue .= ' - ' . $eventData['endDate'];
                                 if ($eventData['endTime']) {
-                                    $fieldValue .= " " . $eventData['endTime'];
+                                    $fieldValue .= ' ' . $eventData['endTime'];
                                 }
                             }
-                            $fieldValue .= ")";
+                            $fieldValue .= ')';
                         }
-                        $eventData['beginDate'] = "";
-                        $eventData['beginTime'] = "";
-                        $eventData['endDate'] = "";
-                        $eventData['endTime'] = "";
+                        $eventData['beginDate'] = '';
+                        $eventData['beginTime'] = '';
+                        $eventData['endDate'] = '';
+                        $eventData['endTime'] = '';
                         $eventData['appointmentUponAgreement'] = $fieldValue;
                         $tooOld = false;
                     } else {
-                        $eventData['appointmentUponAgreement'] = "";
+                        $eventData['appointmentUponAgreement'] = '';
                     }
-                    
+
                     $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
                     if ($elementModel !== null) {
                         $eventData['locationElementId'] = $elementModel->name;
@@ -1138,11 +1156,12 @@ class OfferLoaderService
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);
                     }
+
                     break;
                 case 'job':
-                    $jobData = $database->prepare('SELECT beginDate AS beginDate '.
-                        'FROM tl_gutesio_data_child_job '.
-                        'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_job.childId = tl_gutesio_data_child.uuid '.
+                    $jobData = $database->prepare('SELECT beginDate AS beginDate ' .
+                        'FROM tl_gutesio_data_child_job ' .
+                        'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_job.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
                     if ((string) $jobData['beginDate'] === '') {
@@ -1153,74 +1172,75 @@ class OfferLoaderService
                     if (!empty($jobData)) {
                         $childRows[$key] = array_merge($row, $jobData);
                     }
+
                     break;
                 default:
                     break;
             }
-            
+
             if (!$tooOld || $eventData['appointmentUponAgreement'] || !$checkEventTime) {
                 $vendorUuid = $database->prepare(
-                    "SELECT * FROM tl_gutesio_data_child_connection WHERE childId = ? LIMIT 1"
+                    'SELECT * FROM tl_gutesio_data_child_connection WHERE childId = ? LIMIT 1'
                 )->execute($row['uuid'])->fetchAssoc();
-                
+
                 $vendor = $database->prepare(
-                    "SELECT * FROM tl_gutesio_data_element WHERE uuid = ?"
+                    'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
                 )->execute($vendorUuid['elementId'])->fetchAssoc();
                 $childRows[$key]['elementName'] = $vendor['name'] ?: '';
-                
+
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
-                $url = Controller::replaceInsertTags("{{link_url::".$objSettings->showcaseDetailPage."}}");
-                
+                $url = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
+
                 if (C4GUtils::endsWith($url, '.html')) {
-                    $href = str_replace('.html', '/'.strtolower(str_replace(['{', '}'], '', $vendor['alias'])).'.html', $url);
+                    $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
                 } else {
-                    $href = $url . '/'.strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                    $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
                 }
-                
+
                 $childRows[$key]['elementLink'] = $href ?: '';
             } else {
                 unset($childRows[$key]);
             }
-            
         }
-        
+
         return array_values($childRows);
     }
-    
-    public function getElementData($childId) {
+
+    public function getElementData($childId)
+    {
         $service = ShowcaseService::getInstance();
         $result = $service->loadByChildId($childId);
-        
+
         foreach ($result as $key => $row) {
             $result[$key]['types'] = implode(', ', array_column($row['types'], 'label'));
         }
-        
+
         return $result;
     }
-    
+
     public function applyTagFilter($data, $tagIds, $offset, $limit)
     {
         $result = [];
         $db = Database::getInstance();
         $tagString = C4GUtils::buildInString($tagIds);
         foreach ($data as $datum) {
-            $sql = "SELECT * FROM tl_gutesio_data_child_tag WHERE `childId` = ? AND `tagId` " . $tagString;
+            $sql = 'SELECT * FROM tl_gutesio_data_child_tag WHERE `childId` = ? AND `tagId` ' . $tagString;
             $params = array_merge([$datum['uuid']], $tagIds);
             $tagChildConnections = $db->prepare($sql)->execute($params)->fetchAllAssoc();
             if (count($tagChildConnections) > 0) {
                 $result[] = $datum;
             }
         }
-        
+
         return $result;
     }
-    
+
     private function applyRangeFilter(array $data, int $filterFrom, int $filterUntil)
     {
         $result = [];
         $appendList = [];
         foreach ($data as $datum) {
-            if ($datum['type'] !== "event") {
+            if ($datum['type'] !== 'event') {
                 $appendList[] = $datum;
             } else {
                 if ($datum['appointmentUponAgreement']) {
@@ -1236,53 +1256,54 @@ class OfferLoaderService
                 }
             }
         }
-        
+
         usort($result, function ($a, $b) {
-           $aTstamp = strtotime($a['beginDate']);
-           $bTstamp = strtotime($b['beginDate']);
-           if ($aTstamp < $bTstamp) {
-               return -1;
-           } else if ($aTstamp > $bTstamp) {
-               return 1;
-           } else {
-               return 0;
-           }
+            $aTstamp = strtotime($a['beginDate']);
+            $bTstamp = strtotime($b['beginDate']);
+            if ($aTstamp < $bTstamp) {
+                return -1;
+            } elseif ($aTstamp > $bTstamp) {
+                return 1;
+            }
+
+            return 0;
         });
-        
+
         $result = array_merge($result, $appendList);
-        
+
         return $result;
     }
-    
+
     /*
      * Utility functions
      */
-    
+
     private function createRandomSeed(Request $request)
     {
         $sessionFragment = $request->getSession()->getId();
         $floatVal = hexdec(substr(sha1($sessionFragment), 0, 12));
         $this->randomSeed = (int) $floatVal;
     }
-    
+
     private function checkCookieForClientUuid(Request $request)
     {
-        $clientUuidCookie = $request->cookies->get("clientUuid");
+        $clientUuidCookie = $request->cookies->get('clientUuid');
+
         return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
-    
+
     /**
      * Strips the curly braces and converts $alias to lowercase, if needed.
      * @param string $alias
      */
     private function cleanAlias(string $alias)
     {
-        $containsCurlyBraces = (strpos($alias, "{") !== false)
-            || (strpos($alias, "}") !== false);
+        $containsCurlyBraces = (strpos($alias, '{') !== false)
+            || (strpos($alias, '}') !== false);
         if ($containsCurlyBraces) {
-            $alias = str_replace(["{", "}"], ["", ""], $alias);
+            $alias = str_replace(['{', '}'], ['', ''], $alias);
         }
-        
+
         return strtoupper($alias);
     }
 
@@ -1293,7 +1314,7 @@ class OfferLoaderService
     {
         return $this->model;
     }
-    
+
     /**
      * @param ModuleModel $model
      */
@@ -1301,7 +1322,7 @@ class OfferLoaderService
     {
         $this->model = $model;
     }
-    
+
     /**
      * @return string
      */
@@ -1309,7 +1330,7 @@ class OfferLoaderService
     {
         return $this->pageUrl;
     }
-    
+
     /**
      * @param string $pageUrl
      */
@@ -1317,7 +1338,7 @@ class OfferLoaderService
     {
         $this->pageUrl = $pageUrl;
     }
-    
+
     /**
      * @return Request
      */
@@ -1325,7 +1346,7 @@ class OfferLoaderService
     {
         return $this->request;
     }
-    
+
     /**
      * @param Request $request
      */

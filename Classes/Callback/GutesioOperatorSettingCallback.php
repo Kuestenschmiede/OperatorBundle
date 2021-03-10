@@ -1,19 +1,13 @@
 <?php
 /**
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package   	con4gis
- * @version        6
- * @author  	    con4gis contributors (see "authors.txt")
- * @license 	    LGPL-3.0-or-later
- * @copyright 	Küstenschmiede GmbH Software & Design
- * @link              https://www.con4gis.org
- *
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
+
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
  */
-
 namespace gutesio\OperatorBundle\Classes\Callback;
-
 
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use Contao\Backend;
@@ -25,9 +19,9 @@ class GutesioOperatorSettingCallback extends Backend
 {
     public function redirectToDetails()
     {
-        $result = Database::getInstance()->prepare("SELECT id FROM tl_gutesio_operator_settings")
+        $result = Database::getInstance()->prepare('SELECT id FROM tl_gutesio_operator_settings')
             ->execute()->fetchAllAssoc();
-        
+
         if (!Input::get('act')) {
             if (sizeof($result) === 0) {
                 $this->redirect($this->addToUrl('act=create'));
@@ -35,7 +29,6 @@ class GutesioOperatorSettingCallback extends Backend
                 $this->redirect($this->addToUrl('act=edit&id=' . $result[0]['id']));
             }
         }
-        
     }
 
     public function loadIoUrl()
@@ -59,6 +52,7 @@ class GutesioOperatorSettingCallback extends Backend
         if ($value) {
             Database::getInstance()->prepare('UPDATE tl_c4g_settings SET con4gisIoUrl = ?')
                 ->execute($value);
+
             return;
         }
 

@@ -1,15 +1,18 @@
 <?php
+/**
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
 
-
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
+ */
 namespace gutesio\OperatorBundle\Classes;
 
 use Contao\Database;
-use Contao\System;
-use con4gis\CoreBundle\Classes\Callback\C4GImportDataCallback;
 
 class ImportInsertTags
 {
-
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
      * {{gutesio::version}}
@@ -28,7 +31,8 @@ class ImportInsertTags
                     case 'version':
                         $import = $db->prepare("SELECT caption, importVersion FROM tl_c4g_import_data WHERE type='gutesio' && source='gutesio'")
                                     ->execute()->fetchAssoc();
-                        return $import['importVersion'] ? $import['importVersion'] : "not-installed";
+
+                        return $import['importVersion'] ? $import['importVersion'] : 'not-installed';
                     default:
                         return 'unknown';
                 }

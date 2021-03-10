@@ -1,14 +1,11 @@
 <?php
 /**
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package   	con4gis
- * @version    7
- * @author  	    con4gis contributors (see "authors.txt")
- * @license 	    LGPL-3.0-or-later
- * @copyright 	Küstenschmiede GmbH Software & Design
- * @link              https://www.con4gis.org
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
+
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
  */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
@@ -22,12 +19,9 @@ use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Contao\CoreBundle\Crawl\Escargot\Factory;
 use Contao\Database;
-use Doctrine\DBAL\Connection;
-use Contao\CoreBundle\Framework\ContaoFramework;
 use Symfony\Component\Filesystem\Filesystem;
 use Terminal42\Escargot\Escargot;
 use Terminal42\Escargot\Queue\InMemoryQueue;
-
 
 class AfterImportListener
 {
@@ -48,27 +42,29 @@ class AfterImportListener
 
     private $rootDir;
 
-    public function __construct(Factory $escargotFactory, Filesystem $filesystem) {
+    public function __construct(Factory $escargotFactory, Filesystem $filesystem)
+    {
         $this->escargotFactory = $escargotFactory;
         $this->filesystem = $filesystem;
     }
 
-    public function afterImportBaseData(AfterImportEvent $event, $eventName, EventDispatcherInterface $eventDispatcher) {
+    public function afterImportBaseData(AfterImportEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
+    {
         try {
             $this->rootDir = $rootDir = System::getContainer()->getParameter('kernel.project_dir');
             $importType = $event->getImportType();
-            if ($importType == "gutesio") {
+            if ($importType == 'gutesio') {
                 $contentUpdate = new ChildFullTextContentUpdater();
                 $contentUpdate->update();
 
                 $database = Database::getInstance();
-                $c4gSettings = $memberData = $database->prepare("SELECT * FROM tl_c4g_settings")->execute()->fetchAssoc();
+                $c4gSettings = $memberData = $database->prepare('SELECT * FROM tl_c4g_settings')->execute()->fetchAssoc();
 
                 //Delete Search Index
                 if ($c4gSettings['deleteSearchIndex'] == 1) {
                     //Delete Search Index
-                    $database->prepare("TRUNCATE tl_search")->execute();
-                    $database->prepare("TRUNCATE tl_search_index")->execute();
+                    $database->prepare('TRUNCATE tl_search')->execute();
+                    $database->prepare('TRUNCATE tl_search_index')->execute();
                 }
 
                 //Update Search Index
@@ -91,19 +87,20 @@ class AfterImportListener
                 }
             }
         } catch (\Exception $e) {
-            $event->setError("Fehler beim Erneuern/Löschen des Suchindexes. Mehr Informationen siehe Log.");
+            $event->setError('Fehler beim Erneuern/Löschen des Suchindexes. Mehr Informationen siehe Log.');
             C4gLogModel::addLogEntry('operator', 'Error while crawling: ' . $e);
         }
     }
 
-    private function createLogger() {
+    private function createLogger()
+    {
         $handlers = [];
 
-        if ($this->filesystem->exists($this->rootDir."/var/logs/gutesio_crawl_log.csv")) {
-            $this->filesystem->remove($this->rootDir."/var/logs/gutesio_crawl_log.csv");
+        if ($this->filesystem->exists($this->rootDir . '/var/logs/gutesio_crawl_log.csv')) {
+            $this->filesystem->remove($this->rootDir . '/var/logs/gutesio_crawl_log.csv');
         }
 
-        $csvDebugHandler = new CrawlCsvLogHandler($this->rootDir."/var/logs/gutes_crawl_log.csv", Logger::DEBUG);
+        $csvDebugHandler = new CrawlCsvLogHandler($this->rootDir . '/var/logs/gutes_crawl_log.csv', Logger::DEBUG);
         $handlers[] = $csvDebugHandler;
 
         $groupHandler = new GroupHandler($handlers);

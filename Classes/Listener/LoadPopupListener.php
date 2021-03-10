@@ -1,8 +1,13 @@
 <?php
+/**
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
 
-
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
+ */
 namespace gutesio\OperatorBundle\Classes\Listener;
-
 
 use con4gis\MapsBundle\Classes\Events\LoadInfoWindowEvent;
 use Contao\Controller;
@@ -15,7 +20,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class LoadPopupListener
 {
-
     private $Database;
 
     /**
@@ -34,55 +38,55 @@ class LoadPopupListener
     ) {
         $popup = $event->getPopup();
         $requestString = $event->getPopupString();
-        $reqParams = explode("::", $requestString);
-        if ($reqParams[0] === "showcase" && $reqParams[1]) {
-            $objElement = $this->Database->prepare("SELECT * FROM tl_gutesio_data_element WHERE uuid = ?")->execute($reqParams[1])->fetchAssoc();
+        $reqParams = explode('::', $requestString);
+        if ($reqParams[0] === 'showcase' && $reqParams[1]) {
+            $objElement = $this->Database->prepare('SELECT * FROM tl_gutesio_data_element WHERE uuid = ?')->execute($reqParams[1])->fetchAssoc();
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
-            $url = Controller::replaceInsertTags("{{link_url::" . $objSettingsModel->showcaseDetailPage . "}}");
-            $strQueryTags = "SELECT tag.uuid, tag.image, tag.name FROM tl_gutesio_data_tag AS tag
+            $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
+            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name FROM tl_gutesio_data_tag AS tag
                                         INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
-                                        WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC";
+                                        WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
             $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
             $popup = array_merge($this->getPopup($objElement, $url, $arrTags));
-
         }
         $event->setPopup($popup);
     }
-    private function getPopup ($element, $url, $arrTags) {
+    private function getPopup($element, $url, $arrTags)
+    {
         $name = $element['name'];
-        $strQueryTypes = "SELECT type.name FROM tl_gutesio_data_type AS type 
+        $strQueryTypes = 'SELECT type.name FROM tl_gutesio_data_type AS type 
                                         INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
-                                        WHERE typeElem.elementId = ?";
+                                        WHERE typeElem.elementId = ?';
         $arrTypes = $this->Database->prepare($strQueryTypes)->execute($element['uuid'])->fetchAllAssoc();
-        $strTypes = "";
+        $strTypes = '';
         foreach ($arrTypes as $type) {
-            $strTypes .= $type['name'] . ", ";
+            $strTypes .= $type['name'] . ', ';
         }
-        $strTypes = rtrim($strTypes, ", ");
+        $strTypes = rtrim($strTypes, ', ');
         $imageUuid = StringUtil::binToUuid($element['imagePopup']);
         $file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
 
         $strImage = $file->path;
         if ($strImage) {
             $alt = $file->meta && unserialize($file->meta)['de'] ? unserialize($file->meta)['de']['alt'] : $name;
-            $image ="<img class='entry-content' src='$strImage' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='$strImage' alt='$alt' title='$name'>";
         }
-        $tags = "";
+        $tags = '';
         foreach ($arrTags as $tag) {
             $imageTagUuid = StringUtil::binToUuid($tag['image']);
             $fileTag = FilesModel::findByUuid($imageTagUuid);
             $tags .= "<div class='item " . $tag['name'] . "'>
-                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='". $tag['name'] ."' title='". $tag['name'] ."'>
+                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div>";
         }
-        $href = $url . "/" . $element['alias'];
+        $href = $url . '/' . $element['alias'];
 
         $clientUuid = $this->requestStack->getCurrentRequest()->cookies->get('clientUuid');
         if ($clientUuid) {
-            $selectWishlistEntry = "SELECT * FROM tl_gutesio_data_wishlist WHERE clientUuid = ? AND dataUuid = ?";
+            $selectWishlistEntry = 'SELECT * FROM tl_gutesio_data_wishlist WHERE clientUuid = ? AND dataUuid = ?';
             $wishListEntry = $this->Database->prepare($selectWishlistEntry)->execute($clientUuid, $element['uuid'])->fetchAssoc();
-            $urlAdd = "gutesio/operator/wishlist/add/showcase/" . $element['uuid'];
-            $urlRemove = "gutesio/operator/wishlist/remove/" . $element['uuid'];
+            $urlAdd = 'gutesio/operator/wishlist/add/showcase/' . $element['uuid'];
+            $urlRemove = 'gutesio/operator/wishlist/remove/' . $element['uuid'];
             $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).removeClass(\"btn-primary\").addClass(\"btn-warning\");";
             $onclickRm = "jQuery.post(\"$urlRm\");this.innerText = \"Merken\";jQuery(this).removeClass(\"btn-warning\").addClass(\"btn-primary\");";
             if (!$wishListEntry) {
@@ -120,12 +124,12 @@ class LoadPopupListener
                     </div>
                 </div>";
         $popup = [
-            "async"             => false,
-            "content"           => $html,
-            "showPopupOnActive" => "",
-            "routing_link" => true
+            'async' => false,
+            'content' => $html,
+            'showPopupOnActive' => '',
+            'routing_link' => true,
         ];
+
         return $popup;
     }
-
 }

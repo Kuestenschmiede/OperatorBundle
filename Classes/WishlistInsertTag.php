@@ -1,10 +1,14 @@
 <?php
+/**
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
 
-
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
+ */
 namespace gutesio\OperatorBundle\Classes;
 
-
-use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
@@ -15,17 +19,17 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class WishlistInsertTag
 {
-    const TAG = "wishlist";
-    
-    const TAG_PAYLOAD = ["items"];
-    
-    const COOKIE_WISHLIST = "clientUuid";
-    
+    const TAG = 'wishlist';
+
+    const TAG_PAYLOAD = ['items'];
+
+    const COOKIE_WISHLIST = 'clientUuid';
+
     /**
      * @var RequestStack
      */
     private $requestStack = null;
-    
+
     /**
      * WishlistInsertTag constructor.
      * @param RequestStack|null $requestStack
@@ -34,14 +38,14 @@ class WishlistInsertTag
     {
         $this->requestStack = $requestStack;
     }
-    
+
     /**
      * @param string $insertTag
      * @return string|bool
      */
     public function replaceWishlistTags(string $insertTag)
     {
-        $arrTags = explode("::", $insertTag);
+        $arrTags = explode('::', $insertTag);
         if (count($arrTags) === 2 &&
             $arrTags[0] === self::TAG &&
             in_array($arrTags[1], self::TAG_PAYLOAD)
@@ -50,30 +54,30 @@ class WishlistInsertTag
             $clientUuid = $this->checkCookieForClientUuid($request);
             if ($clientUuid === null) {
                 // no items found
-                return "";
-            } else {
-                $db = Database::getInstance();
-                $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? ORDER BY `tstamp` DESC LIMIT 3";
-                $arrItems = $db->prepare($sql)->execute($clientUuid)->fetchAllAssoc();
-                $arrItems = $this->convertToRealData($arrItems);
-                $innerHTML = "";
-                foreach ($arrItems as $arrItem) {
-                    $innerHTML .= $this->generateHTMLForItem($arrItem);
-                }
-                
-                return $innerHTML;
+                return '';
             }
-        } else {
-            return false;
+            $db = Database::getInstance();
+            $sql = 'SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? ORDER BY `tstamp` DESC LIMIT 3';
+            $arrItems = $db->prepare($sql)->execute($clientUuid)->fetchAllAssoc();
+            $arrItems = $this->convertToRealData($arrItems);
+            $innerHTML = '';
+            foreach ($arrItems as $arrItem) {
+                $innerHTML .= $this->generateHTMLForItem($arrItem);
+            }
+
+            return $innerHTML;
         }
+
+        return false;
     }
-    
+
     private function checkCookieForClientUuid(Request $request)
     {
         $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
+
         return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
-    
+
     /**
      * Takes an array of wishlist items and converts them into a displayable structure.
      * @param $arrItems
@@ -87,37 +91,37 @@ class WishlistInsertTag
             $uuid = $item['dataUuid'];
             $sql = "SELECT * FROM $table WHERE `uuid` = ?";
             $entry = $db->prepare($sql)->execute($uuid)->fetchAssoc();
-            if ($table === "tl_gutesio_data_element") {
-                $entry['internal_type'] = "showcase";
+            if ($table === 'tl_gutesio_data_element') {
+                $entry['internal_type'] = 'showcase';
             } else {
                 $typeId = $entry['typeId'];
-                $sql = "SELECT * FROM tl_gutesio_data_child_type WHERE `uuid` = ?";
+                $sql = 'SELECT * FROM tl_gutesio_data_child_type WHERE `uuid` = ?';
                 $arrType = $db->prepare($sql)->execute($typeId)->fetchAssoc();
                 $entry['internal_type'] = $arrType['type'];
             }
-            
+
             $arrResult[] = $entry;
         }
-        
+
         return $arrResult;
     }
-    
+
     private function getImagePath($arrItem)
     {
-        if ($arrItem['internal_type'] === "showcase") {
+        if ($arrItem['internal_type'] === 'showcase') {
             $image = $arrItem['imageList'] ? $arrItem['imageList'] : $arrItem['image'];
         } else {
             $image = $arrItem['imageOffer'] ? $arrItem['imageOffer'] : $arrItem['image'];
         }
         $objImage = FilesModel::findByUuid(StringUtil::binToUuid($image));
-        $imagePath = "";
+        $imagePath = '';
         if ($objImage !== null) {
             $imagePath = $objImage->path;
         }
-        
+
         return $imagePath;
     }
-    
+
     /**
      * Generates HTML output for one item on the wishlist.
      * @param $arrItem
@@ -126,24 +130,24 @@ class WishlistInsertTag
     {
         $name = $arrItem['name'];
         $imagePath = $this->getImagePath($arrItem);
-        $deleteRoute = "/gutesio/operator/wishlist/remove/" . $arrItem['uuid'];
-        $arrItem['uuid'] = str_replace(["{", "}"], ["", ""], $arrItem['uuid']);
+        $deleteRoute = '/gutesio/operator/wishlist/remove/' . $arrItem['uuid'];
+        $arrItem['uuid'] = str_replace(['{', '}'], ['', ''], $arrItem['uuid']);
         $objSettings = GutesioOperatorSettingsModel::findSettings();
-        if ($arrItem['internal_type'] === "product") {
-            $detailRoute = Controller::replaceInsertTags("{{link_url::".$objSettings->productDetailPage."}}") . "/" .$arrItem['uuid'];
+        if ($arrItem['internal_type'] === 'product') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->productDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
-                         src="'.$imagePath.'">
+                         src="' . $imagePath . '">
                 </div>
                 <div class="col-8">
-                    <div class="title">'.$name.'</div>
-                    <div class="price">'.$arrItem['price'].'</div>
+                    <div class="title">' . $name . '</div>
+                    <div class="price">' . $arrItem['price'] . '</div>
     
                     <div class="row mt-2">
                         <div class="col-6">
     
-                            <a href="'.$detailRoute.'" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
                             </a>
     
                         </div>
@@ -153,21 +157,21 @@ class WishlistInsertTag
     
                 </div>
             </div>';
-        } else if ($arrItem['internal_type'] === "showcase") {
+        } elseif ($arrItem['internal_type'] === 'showcase') {
             $postal = $arrItem['contactZip'] ? $arrItem['contactZip'] : $arrItem['locationZip'];
             $city = $arrItem['contactCity'] ? $arrItem['contactCity'] : $arrItem['locationCity'];
-            $detailRoute = Controller::replaceInsertTags("{{link_url::".$objSettings->showcaseDetailPage."}}") . "/" .$arrItem['alias'];
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}') . '/' . $arrItem['alias'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
-                         src="'.$imagePath.'">
+                         src="' . $imagePath . '">
                 </div>
                 <div class="col-8">
-                    <div class="title">'.$name.'</div>
+                    <div class="title">' . $name . '</div>
                     <div class="row mt-2">
                         <div class="col-6">
     
-                            <a href="'.$detailRoute.'" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
                             </a>
     
                         </div>
@@ -177,20 +181,20 @@ class WishlistInsertTag
     
                 </div>
             </div>';
-        } else if ($arrItem['internal_type'] === "job") {
-            $detailRoute = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}") . "/" .$arrItem['uuid'];
+        } elseif ($arrItem['internal_type'] === 'job') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->jobDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
-                         src="'.$imagePath.'">
+                         src="' . $imagePath . '">
                 </div>
                 <div class="col-8">
-                    <div class="title">'.$name.'</div>
+                    <div class="title">' . $name . '</div>
     
                     <div class="row mt-2">
                         <div class="col-6">
     
-                            <a href="'.$detailRoute.'" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
                             </a>
     
                         </div>
@@ -200,20 +204,20 @@ class WishlistInsertTag
     
                 </div>
             </div>';
-        } else if ($arrItem['internal_type'] === "event") {
-            $detailRoute = Controller::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}") . "/" .$arrItem['uuid'];
+        } elseif ($arrItem['internal_type'] === 'event') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->eventDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
-                         src="'.$imagePath.'">
+                         src="' . $imagePath . '">
                 </div>
                 <div class="col-8">
-                    <div class="title">'.$name.'</div>
+                    <div class="title">' . $name . '</div>
     
                     <div class="row mt-2">
                         <div class="col-6">
     
-                            <a href="'.$detailRoute.'" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
                             </a>
     
                         </div>
@@ -223,20 +227,20 @@ class WishlistInsertTag
     
                 </div>
             </div>';
-        } else if ($arrItem['internal_type'] === "arrangement") {
-            $detailRoute = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}") . "/" .$arrItem['uuid'];
+        } elseif ($arrItem['internal_type'] === 'arrangement') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->arrangementDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
-                         src="'.$imagePath.'">
+                         src="' . $imagePath . '">
                 </div>
                 <div class="col-8">
-                    <div class="title">'.$name.'</div>
+                    <div class="title">' . $name . '</div>
     
                     <div class="row mt-2">
                         <div class="col-6">
     
-                            <a href="'.$detailRoute.'" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
                             </a>
     
                         </div>
@@ -247,7 +251,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         }
-        
+
         return $resultHtml;
     }
 }

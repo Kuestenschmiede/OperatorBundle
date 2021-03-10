@@ -593,6 +593,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
+        $field->setCondition('type', 'product');
         $fields[] = $field;
         
         return $fields;

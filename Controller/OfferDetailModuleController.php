@@ -13,6 +13,7 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailContactField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHeadlineField;
@@ -65,7 +66,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     private $languageRefs = [];
 
-    const CC_FORM_SUBMIT_URL = '/gutesio/main/showcase_child_cc_form_submit';
+    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
 
     /**
      * OfferDetailModuleController constructor.
@@ -199,6 +200,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     protected function getDetailFields()
     {
+        $settings = C4gSettingsModel::findSettings();
         $fields = [];
 
         $field = new DetailHeadlineField();
@@ -273,7 +275,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setUrlField('uuid');
         $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setConditionField('clickCollect');
         $field->setConditionValue('1');
         $fields[] = $field;

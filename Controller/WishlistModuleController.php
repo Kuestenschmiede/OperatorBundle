@@ -13,6 +13,7 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
@@ -46,7 +47,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishlistModuleController extends AbstractFrontendModuleController
 {
     const TYPE = 'wishlist_module';
-    const CC_FORM_SUBMIT_URL = '/gutesio/main/showcase_child_cc_form_submit';
+    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
     
     private $model = null;
     
@@ -295,6 +296,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
     
     private function getListFields()
     {
+        $settings = C4gSettingsModel::findSettings();
         System::loadLanguageFile('tl_gutesio_data_child');
         $fields = [];
     
@@ -408,7 +410,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setUrlField('uuid');
         $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
         $field->setCondition('internal_type', 'product');
         $field->setCondition('internal_type', 'showcase', true);

@@ -13,6 +13,7 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\DateRangeField;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
@@ -63,7 +64,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     
     protected $tileList = null;
     
-    const CC_FORM_SUBMIT_URL = '/gutesio/main/showcase_child_cc_form_submit';
+    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
     const COOKIE_WISHLIST = "clientUuid";
     
     /**
@@ -209,6 +210,11 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     {
         System::loadLanguageFile('tl_gutesio_data_child', 'de');
         $formFields = [];
+
+        $comkey = C4GUtils::getKey(
+            C4gSettingsModel::findSettings(),
+            9
+        );
         
         $uuid = $alias;
         if (C4GUtils::startsWith($uuid, '{') !== true) {
@@ -221,6 +227,11 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field = new HiddenFormField();
         $field->setName('uuid');
         $field->setValue($uuid);
+        $formFields[] = $field->getConfiguration();
+
+        $field = new HiddenFormField();
+        $field->setName('key');
+        $field->setValue((string) $comkey);
         $formFields[] = $field->getConfiguration();
         
         $field = new TextFormField();
@@ -467,6 +478,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     
     protected function getFullTextTileFields() : array
     {
+        $settings = C4gSettingsModel::findSettings();
         $fields = [];
         
         $field = new ImageTileField();
@@ -591,7 +603,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setUrlField('uuid');
         $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
         $field->setCondition('type', 'product');
         $fields[] = $field;

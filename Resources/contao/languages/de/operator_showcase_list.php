@@ -19,6 +19,10 @@ $strName = "operator_showcase_list";
  */
 $GLOBALS['TL_LANG'][$strName]['distance'] = ["Entfernung: ", ""];
 $GLOBALS['TL_LANG'][$strName]['alias_link_text'] = "Mehr";
+$GLOBALS['TL_LANG'][$strName]['no_results'] = "Keine Ergebnisse vorhanden";
+$GLOBALS['TL_LANG'][$strName]['putOnWishlist'] = "Merken";
+$GLOBALS['TL_LANG'][$strName]['removeFromWishlist'] = "Gemerkt";
+$GLOBALS['TL_LANG'][$strName]['filter_placeholder'] = "Suchbegriff";
 
 /*
  * Detail page

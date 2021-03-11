@@ -111,7 +111,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     $childData = $this->getChildTileData();
                     if (count($childData) > 0) {
                         $link = new DetailAnchorMenuLink(
-                            "Unsere Angebote",
+                            $GLOBALS['TL_LANG']["tl_gutesio_data_element"]['our_offers'],
                             "#" . $this->getChildTileList()->getName()
                         );
                         $detailPage->addAdditionalLink($link);
@@ -248,9 +248,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $fields[] = $field;
 
         if (is_array($detailData['types']) && count($detailData['types']) > 1) {
-            $typeFieldLabel = "Kategorien:";
+            $typeFieldLabel = $GLOBALS['TL_LANG']["tl_gutesio_data_element"]['typeSingular'];
         } else {
-            $typeFieldLabel = "Kategorie:";
+            $typeFieldLabel = $GLOBALS['TL_LANG']["tl_gutesio_data_element"]['typePlural'];
         }
 
         $field = new DetailTextField();
@@ -298,7 +298,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setSection(7);
         $field->setName("facebook");
         $field->setIcon("fab fa-facebook");
-        $field->setLinkText("Facebook");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['facebook']);
         $field->setClass("social-media-link");
         $contactField->addSocialMediaField($field);
 
@@ -307,7 +307,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName("instagram");
         $field->setIcon("fab fa-instagram");
         $field->setClass("social-media-link");
-        $field->setLinkText("Instagram");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['instagram']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
@@ -315,7 +315,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName("twitter");
         $field->setIcon("fab fa-twitter");
         $field->setClass("social-media-link");
-        $field->setLinkText("Twitter");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['twitter']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
@@ -323,7 +323,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName("whatsapp");
         $field->setIcon("fab fa-whatsapp");
         $field->setClass("social-media-link");
-        $field->setLinkText("Whatsapp");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['whatsapp']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
@@ -331,7 +331,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName("youtubeChannelLink");
         $field->setIcon("fab fa-youtube");
         $field->setClass("social-media-link");
-        $field->setLinkText("YouTube-Kanal");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['youtubeChannelLink']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
@@ -339,7 +339,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName("vimeoChannelLink");
         $field->setIcon("fab fa-vimeo");
         $field->setClass("social-media-link");
-        $field->setLinkText("Vimeo-Kanal");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['vimeoChannelLink']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
@@ -347,7 +347,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName("wikipediaLink");
         $field->setIcon("fab fa-wikipedia-w");
         $field->setClass("wikipedia-link");
-        $field->setLinkText("Wikipedia");
+        $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['wikipedia']);
         $contactField->addSocialMediaField($field);
 
         return $fields;
@@ -432,7 +432,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
     private function getChildTileList()
     {
         $tileList = new TileList();
-        $tileList->setHeadline("Unsere Angebote");
+        $tileList->setHeadline($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['our_offers']);
         $tileList->setLayoutType('list');
         $tileList->setClassName("offer-tiles c4g-list-outer");
         return $tileList;
@@ -496,18 +496,39 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
         $fields[] = $field;
-
+    
         $field = new LinkButtonTileField();
         $field->setName("uuid");
+        $field->setHrefFields(["type", "uuid"]);
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
-        $field->setHrefFields(["type", "uuid"]);
         $field->setHref("/gutesio/operator/wishlist/add/type/uuid");
-        $field->setLinkText("Merken");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['putOnWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAsyncCall(true);
+        $field->setConditionField("not_on_wishlist");
+        $field->setConditionValue(true);
         $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToWishlist");
+        $fields[] = $field;
+    
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/remove/uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['removeFromWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->setAsyncCall(true);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setConditionField("on_wishlist");
+        $field->setConditionValue(true);
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("removeFromWishlist");
         $fields[] = $field;
 
         return $fields;
@@ -825,7 +846,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $list->setLayoutType("list");
         $list->setClassName("related-showcase-list c4g-list-outer");
         $list->setTileClassName("container");
-        $list->setHeadline("Auch interessant");
+        $list->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_data_element']['alsoInteresting']);
         return $list;
     }
 
@@ -858,7 +879,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $fields[] = $field;
 
         $field = new LinkButtonTileField();
-        $field->setLinkText("Mehr");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_data_element']['more']);
 //        $field->setButtonClass("btn btn-primary mt-2");
         $field->setWrapperClass("c4g-list-element__more-wrapper");
         $field->setClass("c4g-list-element__more-link");

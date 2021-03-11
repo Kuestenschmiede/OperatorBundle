@@ -182,16 +182,16 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $section = new DetailPageSection('', true, "detail-view__section-two", false);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Beschreibung', true, "detail-view__section-description", true);
+        $section = new DetailPageSection($this->languageRefs['description'], true, "detail-view__section-description", true);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Detaildaten', true, "detail-view__section-detaildata", true);
+        $section = new DetailPageSection($this->languageRefs['detailData'], true, "detail-view__section-detaildata", true);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Tags', true, "detail-view__section-tags", false);
+        $section = new DetailPageSection($this->languageRefs['tags'], true, "detail-view__section-tags", false);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Kontakt', true, "detail-view__section-contact", true);
+        $section = new DetailPageSection($this->languageRefs['contact'], true, "detail-view__section-contact", true);
         $sections[] = $section;
 
         return $sections;
@@ -235,14 +235,14 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field = new DetailTextField();
         $field->setSection(4);
         $field->setName("color");
-        $field->setLabel("Farbe");
+        $field->setLabel($this->languageRefs['color'][0]);
         $field->setClass('detail-view__color');
         $fields[] = $field;
 
         $field = new DetailTextField();
         $field->setSection(4);
         $field->setName("size");
-        $field->setLabel("Größe");
+        $field->setLabel($this->languageRefs['size'][0]);
         $field->setClass('detail-view__size');
         $fields[] = $field;
 
@@ -282,7 +282,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setName("displayType");
         $field->setClass("displayType detail-view__display-type");
         $field->setSection(5);
-        $field->setLabel("Kategorie:");
+        $field->setLabel($this->languageRefs['displayType']);
         $fields[] = $field;
 
         $field = new DetailTagField();
@@ -299,8 +299,8 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         $field = new PDFDetailField();
         $field->setName("infoFile");
-        $field->setLabel("Weitere Informationen");
-        $field->setTitle("Weitere Informationen ansehen");
+        $field->setLabel($this->languageRefs['infoFile_label']);
+        $field->setTitle($this->languageRefs['infoFile_title']);
         $field->setClass("infoFile");
         $field->setSection(5);
         $fields[] = $field;
@@ -333,7 +333,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     protected function getElementTileList() : TileList
     {
         $this->tileList = new TileList('showcase-tiles');
-        $this->tileList->setHeadline('Angeboten von folgenden Anbietern:');
+        $this->tileList->setHeadline($this->languageRefs['offeredBy']);
         $this->tileList->setClassName("showcase-tiles c4g-list-outer");
         $this->tileList->setLayoutType("list");
         $this->tileList->setTileClassName("showcase-tile");
@@ -385,7 +385,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
         $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
-        $field->setLinkText("Merken");
+        $field->setLinkText($this->languageRefs['frontend']['putOnWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");

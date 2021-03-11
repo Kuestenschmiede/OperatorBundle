@@ -353,7 +353,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             $field->setUntilFieldname("filterUntil");
             $field->setFromPlaceholderText("Datum von");
             $field->setUntilPlaceholderText("Datum bis");
-            $field->setHeadline("Zeitraum auswählen");
+            $field->setHeadline($this->languageRefs['chooseDateRange']);
             $field->setHeadlineClass("form-view__period-title");
             $field->setClassName("offer-filter__period form-view__period");
             $field->setDescription("Hier können Sie einen Filterzeitraum auswählen, um die Veranstaltungen einzugrenzen.");
@@ -553,7 +553,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
         $field->setHref("/gutesio/operator/wishlist/add/type/uuid");
-        $field->setLinkText("Merken");
+        $field->setLinkText($this->languageRefs['frontend']['putOnWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAsyncCall(true);
@@ -570,7 +570,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
         $field->setHref("/gutesio/operator/wishlist/remove/uuid");
-        $field->setLinkText("Gemerkt");
+        $field->setLinkText($this->languageRefs['frontend']['removeFromWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");

@@ -147,7 +147,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $tileList->setMaxData($this->model->gutesio_data_max_data);
         $tileList->setLoadStep($this->model->gutesio_data_limit);
         $tileList->setLoadingText(" ");
-        $tileList->setTextAfterUpdate("Keine Ergebnisse vorhanden"); //ToDo
+        $tileList->setTextAfterUpdate($this->languageRefs['no_results']); //ToDo
         $tileList->setUniqueField("uuid");
         $tileList->setScrollThreshold(0.1);
         $tileList->setSetAsyncAfterFilter(true);
@@ -379,7 +379,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
         $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
-        $field->setLinkText("Merken");
+        $field->setLinkText($this->languageRefs['putOnWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAsyncCall(true);
@@ -396,7 +396,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
         $field->setHref("/gutesio/operator/wishlist/remove/uuid");
-        $field->setLinkText("Gemerkt");
+        $field->setLinkText($this->languageRefs['removeFromWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
@@ -451,7 +451,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter = new TextFormField();
         $textFilter->setName("filter");
         $textFilter->setClassName("form-group");
-        $textFilter->setPlaceholder("Suchbegriff");
+        $textFilter->setPlaceholder($this->languageRefs['filter_placeholder']);
         $textFilter->setWrappingDiv(true);
         $textFilter->setWrappingDivClass("form-view__searchinput");
         $fields[] = $textFilter;

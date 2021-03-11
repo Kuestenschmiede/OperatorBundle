@@ -121,12 +121,9 @@ class GutesioModuleCallback
             if (in_array($type, $listModuleTypes)) {
                 $message = '';
                 if ($type !== 'showcase_carousel_module') {
-                    $message .= "Das Feld 'Überschrift' ist optional.
-                    Die Überschrift wird zwischen Filter und Liste ausgegeben.";
+                    $message .= $GLOBALS['TL_LANG']['tl_module']['optional_heading_hint'];
                 }
-                $message .= 'Die Auswahl des h-Tags (z.B. h3) entscheidet auch über die jeweilige Überschrift der Listenelemente.
-                    Beispiel: Wird für die Überschrift h3 gewählt,
-                    erhalten die Listenelemente darunter jeweils eine h4-Überschrift.';
+                $message .= $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'];
                 Message::addInfo($message);
             }
         }

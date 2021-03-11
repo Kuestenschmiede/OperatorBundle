@@ -17,7 +17,7 @@ $GLOBALS['TL_LANG'][$strName]['types'] = ['Kategorie(n)', 'Die Schaufensterkateg
 
 $GLOBALS['TL_LANG'][$strName]['our_offers'] = "Unsere Angebote";
 $GLOBALS['TL_LANG'][$strName]['typeSingular'] = "Kategorie:";
-$GLOBALS['TL_LANG'][$strName]['typePlural'] = "Kategorie:";
+$GLOBALS['TL_LANG'][$strName]['typePlural'] = "Kategorien:";
 $GLOBALS['TL_LANG'][$strName]['facebook'] = "Facebook";
 $GLOBALS['TL_LANG'][$strName]['instagram'] = "Instagram";
 $GLOBALS['TL_LANG'][$strName]['twitter'] = "Twitter";

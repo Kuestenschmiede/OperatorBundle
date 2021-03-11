@@ -2,11 +2,11 @@
 /**
  * This file belongs to gutes.io and is published exclusively for use
  * in gutes.io operator or provider pages.
-
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
+
 namespace gutesio\OperatorBundle\Controller;
 
 
@@ -92,8 +92,10 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
-//        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+
+        if ($this->model->gutesio_data_layoutType !== "plain") {
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+        }
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
@@ -106,7 +108,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             } else {
                 throw new RedirectResponseException($pageUrl);
             }
-            $template->entrypoint = 'entrypoint_'.$this->model->id;
+            $template->entrypoint = 'entrypoint_' . $this->model->id;
             $strConf = json_encode($conf);
             $error = json_last_error_msg();
             if ($error && (strtoupper($error) !== "NO ERROR")) {
@@ -135,7 +137,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     private function getDetailFrontendConfiguration(array $data)
     {
-        $conf = new FrontendConfiguration('entrypoint_'.$this->model->id);
+        $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->addDetailPage(
             $this->getDetailPage(),
             $this->getDetailFields(),
@@ -149,7 +151,6 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         return $conf;
     }
-
 
 
     protected function getDetailPage()
@@ -330,7 +331,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         return $fields;
     }
 
-    protected function getElementTileList() : TileList
+    protected function getElementTileList(): TileList
     {
         $this->tileList = new TileList('showcase-tiles');
         $this->tileList->setHeadline('Angeboten von folgenden Anbietern:');
@@ -340,7 +341,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         return $this->tileList;
     }
 
-    protected function getElementFields() : array
+    protected function getElementFields(): array
     {
 
         $field = new ImageTileField();
@@ -392,10 +393,10 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setAddDataAttributes(true);
         $this->tileItems[] = $field;
 
-        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}"), '.html')) {
-            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}"));
+        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"), '.html')) {
+            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"));
         } else {
-            $href = Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}") . '/alias';
+            $href = Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}") . '/alias';
         }
         $field = new LinkButtonTileField();
         $field->setName("alias");

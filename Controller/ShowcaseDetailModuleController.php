@@ -297,7 +297,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("facebook");
-        $field->setIcon("fab fa-facebook");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['facebook']);
         $field->setClass("social-media-link");
         $contactField->addSocialMediaField($field);
@@ -305,7 +304,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("instagram");
-        $field->setIcon("fab fa-instagram");
         $field->setClass("social-media-link");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['instagram']);
         $contactField->addSocialMediaField($field);
@@ -313,7 +311,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("twitter");
-        $field->setIcon("fab fa-twitter");
         $field->setClass("social-media-link");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['twitter']);
         $contactField->addSocialMediaField($field);
@@ -321,7 +318,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("whatsapp");
-        $field->setIcon("fab fa-whatsapp");
         $field->setClass("social-media-link");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['whatsapp']);
         $contactField->addSocialMediaField($field);
@@ -329,7 +325,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("youtubeChannelLink");
-        $field->setIcon("fab fa-youtube");
         $field->setClass("social-media-link");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['youtubeChannelLink']);
         $contactField->addSocialMediaField($field);
@@ -337,7 +332,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("vimeoChannelLink");
-        $field->setIcon("fab fa-vimeo");
         $field->setClass("social-media-link");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['vimeoChannelLink']);
         $contactField->addSocialMediaField($field);
@@ -345,7 +339,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("wikipediaLink");
-        $field->setIcon("fab fa-wikipedia-w");
         $field->setClass("wikipedia-link");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['wikipedia']);
         $contactField->addSocialMediaField($field);

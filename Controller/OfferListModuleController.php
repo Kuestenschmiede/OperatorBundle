@@ -2,11 +2,11 @@
 /**
  * This file belongs to gutes.io and is published exclusively for use
  * in gutes.io operator or provider pages.
-
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
+
 namespace gutesio\OperatorBundle\Controller;
 
 
@@ -57,22 +57,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 {
     use AutoItemTrait;
-    
+
     protected $model = null;
     protected $request = null;
-    
+
     protected $tileList = null;
-    
+
     const CC_FORM_SUBMIT_URL = '/gutesio/main/showcase_child_cc_form_submit';
     const COOKIE_WISHLIST = "clientUuid";
-    
+
     /**
      * @var OfferLoaderService
      */
     private $offerService = null;
-    
+
     private $languageRefs = [];
-    
+
     /**
      * OfferListModuleController constructor.
      * @param OfferLoaderService|null $offerService
@@ -82,7 +82,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $framework->initialize();
         $this->offerService = $offerService;
     }
-    
+
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
@@ -99,16 +99,19 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
-        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
+
+        if ($this->model->gutesio_data_layoutType !== "plain") {
+//        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
+        }
         $search = "";
         $conf = $this->getListFrontendConfiguration($search, $this->model->gutesio_child_type);
         if ($this->model->gutesio_data_render_searchHtml) {
             $sc = new SearchConfiguration();
             $sc->addData($this->getSearchLinks(), ['link']);
         }
-    
-        $template->entrypoint = 'entrypoint_'.$this->model->id;
+
+        $template->entrypoint = 'entrypoint_' . $this->model->id;
         $strConf = json_encode($conf);
         $error = json_last_error_msg();
         if ($error && (strtoupper($error) !== "NO ERROR")) {
@@ -120,7 +123,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         return $template->getResponse();
     }
-    
+
     /**
      * @Route(
      *     "/gutesio/operator/showcase_child_list_data/{offset}",
@@ -135,15 +138,15 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     public function getFilteredListDataAjax(Request $request, $offset)
     {
         $this->setAlias();
-        $search = (string) $request->query->get('search');
+        $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
-        $tagIds = (array) $request->query->get('tags');
+        $tagIds = (array)$request->query->get('tags');
         $moduleId = $request->query->get('moduleId');
         $filterData = [
             'tagIds' => $tagIds,
-            'filterFrom' => intval((string) $request->query->get('filterFrom')),
-            'filterUntil' => intval((string) $request->query->get('filterUntil')),
-            'sorting' => (string) $request->query->get('sorting')
+            'filterFrom' => intval((string)$request->query->get('filterFrom')),
+            'filterUntil' => intval((string)$request->query->get('filterUntil')),
+            'sorting' => (string)$request->query->get('sorting')
         ];
         $module = ModuleModel::findByPk($moduleId);
         if ($module) {
@@ -176,25 +179,25 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             }
             $results[$key] = $row;
         }
-        
-        
+
+
         return new JsonResponse($results);
     }
-    
+
     private function checkCookieForClientUuid(Request $request)
     {
         $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
         return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
-    
+
     private function cleanupSearchString($search)
     {
         $search = C4GUtils::secure_ugc($search);
         $search = str_replace("+", "", $search);
-        
+
         return $search;
     }
-    
+
     /**
      * @Route(
      *     "/gutesio/operator/showcase_child_cc_form/{alias}",
@@ -205,24 +208,24 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
      * @param string $alias
      * @return JsonResponse
      */
-    public function getClickCollectForm(Request $request, string $alias) : JsonResponse
+    public function getClickCollectForm(Request $request, string $alias): JsonResponse
     {
         System::loadLanguageFile('tl_gutesio_data_child', 'de');
         $formFields = [];
-        
+
         $uuid = $alias;
         if (C4GUtils::startsWith($uuid, '{') !== true) {
-            $uuid = '{'.$uuid;
+            $uuid = '{' . $uuid;
         }
         if (C4GUtils::endsWith($uuid, '}') !== true) {
             $uuid .= '}';
         }
-        
+
         $field = new HiddenFormField();
         $field->setName('uuid');
         $field->setValue($uuid);
         $formFields[] = $field->getConfiguration();
-        
+
         $field = new TextFormField();
         $field->setName('email');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['email'][0]);
@@ -230,7 +233,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setRequired();
         $field->setPattern(RegularExpression::EMAIL);
         $formFields[] = $field->getConfiguration();
-        
+
         $field = new SelectFormField();
         $field->setName('earliest');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['earliest'][0]);
@@ -238,24 +241,25 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setRequired();
         $field->setOptions($this->getEarliestOptions());
         $formFields[] = $field->getConfiguration();
-        
+
         $field = new TextAreaFormField();
         $field->setName('notes');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['notes'][0]);
         $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['notes'][1]);
         $formFields[] = $field->getConfiguration();
-        
-        
+
+
         return new JsonResponse([
             'formFields' => $formFields
         ]);
     }
-    
-    private function getEarliestOptions() : array {
+
+    private function getEarliestOptions(): array
+    {
         System::loadLanguageFile('gutesio_frontend', 'de');
         $options = [];
         foreach ($GLOBALS['TL_LANG']['gutesio_frontend']['cc']['earliest'] as $key => $value) {
-            if ($key === 'afternoon' && (int) date('H') >= 12) {
+            if ($key === 'afternoon' && (int)date('H') >= 12) {
                 continue;
             }
             $options[] = [
@@ -265,7 +269,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         return $options;
     }
-    
+
     private function setupLanguage()
     {
         System::loadLanguageFile("tl_gutesio_data_child");
@@ -274,10 +278,10 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         System::loadLanguageFile("operator_showcase_list");
         $this->languageRefs = $GLOBALS['TL_LANG']['tl_gutesio_data_child'];
     }
-    
+
     private function getListFrontendConfiguration(string $search, $type)
     {
-        $conf = new FrontendConfiguration('entrypoint_'.$this->model->id);
+        $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->addForm(
             $this->getForm(),
             $this->getFormFields(),
@@ -296,10 +300,10 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             $this->getFullTextTileFields(),
             $fullTextData
         );
-        
+
         return $conf;
     }
-    
+
     protected function getForm()
     {
         $form = new ToggleableForm(new Form());
@@ -309,16 +313,17 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $form->setToggleableOnLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['filter']['close_filter']);
         $form->setToggleableOffLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
-        
+
         return $form;
     }
-    
-    protected function getFormFields() {
+
+    protected function getFormFields()
+    {
         $fields = [];
-        
+
         $field = new RequestTokenFormField();
         $fields[] = $field;
-        
+
         $useProductFilter = false;
         $useEventFilter = false;
         $filter = StringUtil::deserialize($this->model->gutesio_child_filter, true);
@@ -337,7 +342,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setDescription($this->model->gutesio_child_search_description);
         $field->setWrappingDiv();
         $field->setWrappingDivClass("form-view__searchinput");
-        
+
         if ($this->model->gutesio_enable_tag_filter) {
             if ($useEventFilter || $useProductFilter) {
                 $field->setClassName("offer-filter__searchinput form-view__searchinput");
@@ -345,7 +350,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
                 $field->setClassName("offer-filter__searchinput form-view__searchinput");
             }
         }
-        
+
         $fields[] = $field;
         if ($useEventFilter) {
             $field = new DateRangeField();
@@ -372,11 +377,11 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
             $fields[] = $sortFilter;
         }
-        
+
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();
             $tagFilter->setName("tags");
-            $tagFilter->setClassName( "form-view__tag-filter");
+            $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item offer tag-filter__filter-item");
             $fields[] = $tagFilter;
@@ -386,15 +391,15 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $moduleId->setName("moduleId");
         $moduleId->setValue($this->model->id);
         $fields[] = $moduleId;
-        
+
         return $fields;
     }
-    
+
     private function getTagOptions()
     {
         $optionData = [];
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
-        
+
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom = 0 OR validFrom >= UNIX_TIMESTAMP() AND (validUntil = 0 OR validUntil <= UNIX_TIMESTAMP()))";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
@@ -415,14 +420,14 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
                 }
             }
         }
-        
+
         return $optionData;
     }
-    
+
     protected function getFormButtons()
     {
         $buttons = [];
-        
+
         $button = new FilterButton();
         $button->setClassName("c4g-btn c4g-btn-filter");
         $button->setTargetComponent("full-text-tiles");
@@ -430,16 +435,16 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $button->setCaption($GLOBALS['TL_LANG']['con4gis']['framework']['frontend']['button']['filter']);
         $button->setOuterClass("c4g-btn-filter-wrapper");
         $buttons[] = $button;
-        
+
         return $buttons;
     }
-    
-    protected function getFullTextTileList(bool $updated) : TileList
+
+    protected function getFullTextTileList(bool $updated): TileList
     {
         $this->tileList = new TileList('full-text-tiles');
         $headline = StringUtil::deserialize($this->model->headline);
         $this->tileList->setHeadline($headline['value']);
-        $this->tileList->setHeadlineLevel((int) str_replace("h", "", $headline['unit']));
+        $this->tileList->setHeadlineLevel((int)str_replace("h", "", $headline['unit']));
         $this->tileList->setTileClassName("offer-tile");
         $this->tileList->setTextBeforeUpdate($this->model->gutesio_child_text_search);
         $this->tileList->setTextAfterUpdate($this->model->gutesio_child_text_no_results);
@@ -448,7 +453,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $this->tileList->setUpdated($updated);
         $layoutType = $this->model->gutesio_data_layoutType;
         $class = "offer-tiles";
-        $class .= " c4g-". $layoutType . "-outer";
+        $class .= " c4g-" . $layoutType . "-outer";
         $this->tileList->setClassName($class);
         $this->tileList->setLayoutType($layoutType);
         $this->tileList->setLoadStep($this->offerService::LIMIT);
@@ -459,35 +464,35 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $this->tileList->setSetAsyncAfterFilter(true);
         $this->tileList->setCheckAsyncWhileUpdate(true);
         if ($this->model->gutesio_data_change_layout_filter) {
-            $this->tileList->setClassAfterFilter("c4g-".$this->model->gutesio_data_layout_filter."-outer");
+            $this->tileList->setClassAfterFilter("c4g-" . $this->model->gutesio_data_layout_filter . "-outer");
         }
-        
+
         return $this->tileList;
     }
-    
-    protected function getFullTextTileFields() : array
+
+    protected function getFullTextTileFields(): array
     {
         $fields = [];
-        
+
         $field = new ImageTileField();
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
         $field->setName('image');
         $fields[] = $field;
-        
+
         $field = new HeadlineTileField();
         $field->setName('name');
         $field->setLevel($this->tileList->getHeadlineLevel() + 1);
         $field->setWrapperClass("c4g-list-element__name-wrapper");
         $field->setClass("c4g-list-element__name");
         $fields[] = $field;
-        
+
         $field = new TextTileField();
         $field->setName('typeName');
         $field->setWrapperClass("c4g-list-element__typename-wrapper");
         $field->setClass("c4g-list-element__typename");
         $fields[] = $field;
-        
+
         $field = new LinkTileField();
         $field->setName('elementName');
         $field->setWrapperClass("c4g-list-element__elementname-wrapper");
@@ -496,7 +501,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setHref($_SERVER['HTTP_HOST'] . "/" . "elementLink");
         $field->setHrefName('elementLink');
         $fields[] = $field;
-        
+
         $field = new TextTileField();
         $field->setName('shortDescription');
         $field->setWrapperClass("c4g-list-element__shortdescription-wrapper");
@@ -508,7 +513,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setWrapperClass("c4g-list-element__strikeprice-wrapper");
         $field->setClass("c4g-list-element__strikePrice");
         $fields[] = $field;
-        
+
         $field = new TextTileField();
         $field->setName('price');
         $field->setWrapperClass("c4g-list-element__price-wrapper");
@@ -520,13 +525,13 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setWrapperClass("c4g-list-element__begindate-wrapper");
         $field->setClass("c4g-list-element__beginDate");
         $fields[] = $field;
-        
+
         $field = new TextTileField();
         $field->setName('beginTime');
         $field->setWrapperClass("c4g-list-element__begintime-wrapper");
         $field->setClass("c4g-list-element__beginTime");
         $fields[] = $field;
-        
+
         $field = new TagTileField();
         $field->setName('tagLinks');
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
@@ -546,7 +551,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setCondition('clickCollect', '1');
         $field->setCondition('type', 'product');
         $fields[] = $field;
-    
+
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
@@ -580,7 +585,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
-        
+
         $field = new LinkButtonTileField();
         $field->setName("href");
         $field->setWrapperClass("c4g-list-element__more-wrapper");
@@ -598,8 +603,9 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
         return $fields;
     }
-    
-    protected function getRedirectUrl() {
+
+    protected function getRedirectUrl()
+    {
         $url = $this->alias;
         $model = $this->model;
         if ($model && $model->gutesio_child_type) {
@@ -628,15 +634,15 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             }
             return $url;
         }
-        
+
         return Controller::replaceInsertTags("{{link_url::" . $url . "}}");
     }
-    
+
     protected function getSearchLinks()
     {
         $database = Database::getInstance();
-        $result = $database->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c '.
-            'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid '.
+        $result = $database->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
+            'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'where c.published = 1')->execute()->fetchAllAssoc();
         $links = [];
         foreach ($result as $row) {
@@ -666,9 +672,9 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             }
             $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
             if (C4GUtils::endsWith($url, '.html')) {
-                $href = str_replace('.html', '/'.$alias.'.html', $url);
+                $href = str_replace('.html', '/' . $alias . '.html', $url);
             } else {
-                $href = $url . '/'.$alias;
+                $href = $url . '/' . $alias;
             }
             $links[] = [
                 'link' => "<a href=\"$href\"></a>"
@@ -676,14 +682,14 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         return $links;
     }
-    
+
     public function onGetSearchablePages(array $pages, int $rootId = null, bool $isSitemap = false, string $language = null): array
     {
         $db = Database::getInstance();
-        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c '.
-            'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid '.
+        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
+            'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'where c.published = 1')->execute()->fetchAllAssoc();
-        
+
         foreach ($result as $row) {
             switch ($row['type']) {
                 case 'product':
@@ -710,19 +716,19 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
                     continue 2;
             }
             $parents = PageModel::findParentsById($page);
-            if (sizeof($parents) < 2 || (int) $parents[sizeof($parents) - 1]->id !== (int) $rootId) {
+            if (sizeof($parents) < 2 || (int)$parents[sizeof($parents) - 1]->id !== (int)$rootId) {
                 continue;
             }
             $url = Controller::replaceInsertTags("{{link_url::" . $page . "}}");
             $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
             if (C4GUtils::endsWith($url, '.html')) {
-                $url = str_replace('.html', '/'.$alias.'.html', $url);
+                $url = str_replace('.html', '/' . $alias . '.html', $url);
             } else {
-                $url = $url . '/'.$alias;
+                $url = $url . '/' . $alias;
             }
-            $pages[] = Controller::replaceInsertTags("{{env::url}}").'/'.$url;
+            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
         }
-        
+
         return $pages;
     }
 }

@@ -2,11 +2,11 @@
 /**
  * This file belongs to gutes.io and is published exclusively for use
  * in gutes.io operator or provider pages.
-
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
+
 namespace gutesio\OperatorBundle\Controller;
 
 
@@ -50,25 +50,25 @@ use Symfony\Component\Routing\Annotation\Route;
 class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 {
     use AutoItemTrait;
-    
+
     protected $tileList = null;
     protected $tileItems = [];
     protected $model = null;
-    
+
     const AJAX_GET_ROUTE = '/gutesio/operator/showcase_tile_list_data/{offset}';
     const FILTER_ROUTE = '/gutesio/operator/showcase_tile_list/filter';
     const TYPE = 'showcase_list_module';
     const COOKIE_WISHLIST = "clientUuid";
-    
+
     private $showcaseService = null;
-    
+
     private $languageRefs = [];
 
     public function __construct(ShowcaseService $showcaseService)
     {
         $this->showcaseService = $showcaseService;
     }
-    
+
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
@@ -90,11 +90,11 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         System::loadLanguageFile("tl_gutesio_data_element");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
-    
+
         $tileList = $this->getTileList();
         $fields = $this->getFields();
         $data = $this->getInitialData();
-        $conf = new FrontendConfiguration('entrypoint_'.$this->model->id);
+        $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $arrFilter = $this->buildFilter();
         $conf->addForm(
             $arrFilter['form'],
@@ -118,30 +118,33 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $template->configuration = $jsonConf;
         }
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
 
-        $template->entrypoint = 'entrypoint_'.$this->model->id;
+        if ($this->model->gutesio_data_layoutType !== "plain") {
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
+        }
+
+        $template->entrypoint = 'entrypoint_' . $this->model->id;
 
         if ($this->model->gutesio_data_render_searchHtml) {
             $sc = new SearchConfiguration();
             $sc->addData($this->getSearchLinks(), ['link']);
             $template->searchHTML = $sc->getHTML();
         }
-    
+
         return $template->getResponse();
     }
-    
-    protected function getTileList() : TileList
+
+    protected function getTileList(): TileList
     {
         $tileList = new TileList();
         $headline = StringUtil::deserialize($this->model->headline, true);
-        $tileList->setHeadline((string) $headline['value']);
-        $tileList->setHeadlineLevel((int) str_replace("h", "", $headline['unit']));
+        $tileList->setHeadline((string)$headline['value']);
+        $tileList->setHeadlineLevel((int)str_replace("h", "", $headline['unit']));
         $tileList->setAsyncUrl(self::AJAX_GET_ROUTE);
         $tileList->setTileClassName("showcase-tile");
         $layoutType = $this->model->gutesio_data_layoutType;
         $class = "showcase-tiles";
-        $class .= " c4g-". $layoutType . "-outer";
+        $class .= " c4g-" . $layoutType . "-outer";
         $tileList->setClassName($class);
         $tileList->setLayoutType($layoutType);
         $tileList->setMaxData($this->model->gutesio_data_max_data);
@@ -156,12 +159,12 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $tileList->setConditionalTileClassField('releaseType');
         $tileList->setConditionalTileClassValue('interregional');
         if ($this->model->gutesio_data_change_layout_filter) {
-            $tileList->setClassAfterFilter("c4g-".$this->model->gutesio_data_layout_filter."-outer");
+            $tileList->setClassAfterFilter("c4g-" . $this->model->gutesio_data_layout_filter . "-outer");
         }
-        
+
         return $tileList;
     }
-    
+
     /**
      * @Route("/gutesio/operator/showcase_tile_list_data/{offset}", name="showcase_tile_list_data", methods={"GET"}, requirements={"offset"="\d+"})
      * @param Request $request
@@ -181,7 +184,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tagFilterIds = explode(",", $tagFilterIds);
         }
-        
+
         $moduleModel = ModuleModel::findByPk($moduleId);
         $limit = intval($moduleModel->gutesio_data_limit);
         $params = $request->query->all();
@@ -206,7 +209,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tmpOffset = $offset;
         }
-        
+
         $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds);
         if (is_array($data) && count($data) > 0 && !$data[0]) {
             // single data entry
@@ -222,7 +225,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $data = array_slice($data, $tmpOffset, $limit);
             }
         }
-        
+
         $clientUuid = $this->checkCookieForClientUuid($request);
         foreach ($data as $key => $row) {
             $types = [];
@@ -242,16 +245,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
             $data[$key] = $row;
         }
-        
+
         return new JsonResponse($data);
     }
-    
+
     private function checkCookieForClientUuid(Request $request)
     {
         $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
         return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
-    
+
     private function getTypeConstraintForModule(ModuleModel $moduleModel)
     {
         $db = Database::getInstance();
@@ -287,7 +290,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         return $typeIds;
     }
-    
+
     private function getTagConstraintForModule(ModuleModel $moduleModel)
     {
         $mode = intval($moduleModel->gutesio_data_mode);
@@ -295,10 +298,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             return [];
         }
         $tagUuids = StringUtil::deserialize($moduleModel->gutesio_data_tags, true);
-        
+
         return $tagUuids;
     }
-    
+
     private function applyTagFilter(array $tagIds, array $data)
     {
         $result = [];
@@ -322,48 +325,48 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 }
             }
         }
-        
+
         return $result;
     }
-    
-    protected function getFields() : array
+
+    protected function getFields(): array
     {
         $fields = [];
-    
+
         $fields = [];
-    
+
         $field = new ImageTileField();
         $field->setName("imageList");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
         $fields[] = $field;
-    
+
         $headline = StringUtil::deserialize($this->model->headline, true);
-        $level = (int) str_replace("h", "", $headline['unit']);
+        $level = (int)str_replace("h", "", $headline['unit']);
         // tile headlines should be smaller than the list headline
         $level = $level + 1;
-    
+
         $field = new HeadlineTileField();
         $field->setName("name");
         $field->setWrapperClass("c4g-list-element__title-wrapper");
         $field->setClass("c4g-list-element__title");
         $field->setLevel($level);
         $fields[] = $field;
-    
+
         $field = new TextTileField();
         $field->setName("types");
         $field->setWrapperClass("c4g-list-element__types-wrapper");
         $field->setClass("c4g-list-element__types");
         $fields[] = $field;
-    
+
         $field = new TagTileField();
         $field->setName("tags");
         $field->setWrapperClass("c4g-list-element__tags-wrapper");
         $field->setClass("c4g-list-element__tag");
         $field->setInnerClass("c4g-list-element__tag-image");
         $fields[] = $field;
-    
+
         $field = new DistanceField();
         $field->setName("distance");
         $field->setWrapperClass("c4g-list-element__distance-wrapper");
@@ -372,7 +375,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $fields[] = $field;
-    
+
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefField("uuid");
@@ -389,7 +392,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
         $fields[] = $field;
-    
+
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefField("uuid");
@@ -425,15 +428,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setConditionField("directLink");
         $field->setConditionValue("1");
         $fields[] = $field;
-    
+
         return $fields;
     }
-    
-    private function getInitialData() : array
+
+    private function getInitialData(): array
     {
         return ['randKey' => $this->showcaseService->createRandomKey()];
     }
-    
+
     private function buildFilter()
     {
         $arrFilter = [];
@@ -446,7 +449,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $form->setToggleableOffLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
         $arrFilter['form'] = $form;
-        
+
         $fields = [];
         $textFilter = new TextFormField();
         $textFilter->setName("filter");
@@ -455,7 +458,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter->setWrappingDiv(true);
         $textFilter->setWrappingDivClass("form-view__searchinput");
         $fields[] = $textFilter;
-        
+
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();
             $tagFilter->setName("tags");
@@ -464,7 +467,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");
             $fields[] = $tagFilter;
         }
-        
+
         $sortFilter = new RadioGroupFormField();
         $sortFilter->setName("sorting");
         $sortFilter->setOptions([
@@ -478,15 +481,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $sortFilter->setChecked("random");
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
         $fields[] = $sortFilter;
-        
+
         // module id field so the id gets transferred when loading data async
         $moduleId = new HiddenFormField();
         $moduleId->setName("moduleId");
         $moduleId->setValue($this->model->id);
         $fields[] = $moduleId;
-        
+
         $arrFilter['fields'] = $fields;
-        
+
         $buttons = [];
         $filterButton = new FilterButton();
         $filterButton->setTargetComponent("tiles");
@@ -496,15 +499,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $filterButton->setOuterClass("c4g-btn-filter-wrapper");
         $buttons[] = $filterButton;
         $arrFilter['buttons'] = $buttons;
-        
+
         return $arrFilter;
     }
-    
+
     private function getTagOptions()
     {
         $optionData = [];
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
-        
+
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom = 0 OR validFrom >= UNIX_TIMESTAMP() AND (validUntil = 0 OR validUntil <= UNIX_TIMESTAMP())) ";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
@@ -525,20 +528,21 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 }
             }
         }
-        
+
         return $optionData;
     }
-    
-    protected function getSearchLinks() : array {
+
+    protected function getSearchLinks(): array
+    {
         $database = Database::getInstance();
         $result = $database->prepare('SELECT alias FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
         $links = [];
         foreach ($result as $row) {
             $alias = $row['alias'];
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-                $href = str_replace('.html', '/'.$alias.'.html', $this->pageUrl);
+                $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
             } else {
-                $href = $this->pageUrl . '/'.$alias;
+                $href = $this->pageUrl . '/' . $alias;
             }
             $links[] = [
                 'link' => "<a href=\"$href\"></a>"
@@ -546,29 +550,29 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         return $links;
     }
-    
+
     public function onGetSearchablePages(array $pages, int $rootId = null, bool $isSitemap = false, string $language = null): array
     {
         $db = Database::getInstance();
-        
+
         $stmt = $db->prepare("SELECT alias FROM tl_gutesio_data_element");
         $result = $stmt->execute()->fetchAllAssoc();
-        
+
         foreach ($result as $res) {
             $objSettings = GutesioOperatorSettingsModel::findSettings();
             $parents = PageModel::findParentsById($objSettings->showcaseDetailPage);
-            if (sizeof($parents) < 2 || (int) $parents[sizeof($parents) - 1]->id !== (int) $rootId) {
+            if (sizeof($parents) < 2 || (int)$parents[sizeof($parents) - 1]->id !== (int)$rootId) {
                 continue;
             }
             $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
             if (C4GUtils::endsWith($url, '.html')) {
-                $url = str_replace('.html', '/'.$res['alias'].'.html', $url);
+                $url = str_replace('.html', '/' . $res['alias'] . '.html', $url);
             } else {
-                $url = $url . '/'.$res['alias'];
+                $url = $url . '/' . $res['alias'];
             }
-            $pages[] = Controller::replaceInsertTags("{{env::url}}").'/'.$url;
+            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
         }
-        
+
         return $pages;
     }
 }

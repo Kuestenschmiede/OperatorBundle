@@ -13,6 +13,7 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\DateRangeField;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
@@ -62,8 +63,8 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     protected $request = null;
 
     protected $tileList = null;
-
-    const CC_FORM_SUBMIT_URL = '/gutesio/main/showcase_child_cc_form_submit';
+    
+    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
     const COOKIE_WISHLIST = "clientUuid";
 
     /**
@@ -213,6 +214,11 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         System::loadLanguageFile('tl_gutesio_data_child', 'de');
         $formFields = [];
 
+        $comkey = C4GUtils::getKey(
+            C4gSettingsModel::findSettings(),
+            9
+        );
+        
         $uuid = $alias;
         if (C4GUtils::startsWith($uuid, '{') !== true) {
             $uuid = '{' . $uuid;
@@ -226,6 +232,11 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setValue($uuid);
         $formFields[] = $field->getConfiguration();
 
+        $field = new HiddenFormField();
+        $field->setName('key');
+        $field->setValue((string) $comkey);
+        $formFields[] = $field->getConfiguration();
+        
         $field = new TextFormField();
         $field->setName('email');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['email'][0]);
@@ -472,6 +483,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
     protected function getFullTextTileFields(): array
     {
+        $settings = C4gSettingsModel::findSettings();
         $fields = [];
 
         $field = new ImageTileField();
@@ -498,7 +510,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setWrapperClass("c4g-list-element__elementname-wrapper");
         $field->setClass("c4g-list-element__elementname-link");
         $field->setLinkTextName('elementName');
-        $field->setHref($_SERVER['HTTP_HOST'] . "/" . "elementLink");
+        $field->setHref("/elementLink");
         $field->setHrefName('elementLink');
         $fields[] = $field;
 
@@ -600,7 +612,21 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setConditionField("directLink");
         $field->setConditionValue("1");
         $fields[] = $field;
-
+        
+        $field = new ModalButtonTileField();
+        $field->setName('cc');
+        $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
+        $field->setClass("c4g-list-element__clickcollect-link");
+        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+        $field->setUrlField('uuid');
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
+        $field->setCondition('clickCollect', '1');
+        $field->setCondition('type', 'product');
+        $fields[] = $field;
+        
         return $fields;
     }
 

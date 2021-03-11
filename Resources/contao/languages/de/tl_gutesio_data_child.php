@@ -64,11 +64,11 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Dienstleistung';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'ab';
 
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['modal_button_label'] = 'Click and Collect';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'Bestätigen';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'jetzt bestellen';
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'Schließen';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Emailadresse', 'Eine Emailadresse für Rückfragen.'];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Frühester Abholzeitpunkt', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Notizen', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Ihre E-Mailadresse für Rückfragen', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Abholzeitpunkt', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Anmerkungen', ''];
 
 $GLOBALS['TL_LANG'][$strName]['notification']['error'] = 'Fehler';
 $GLOBALS['TL_LANG'][$strName]['notification']['form_invalid'] = 'Fehler in den Formulardaten.';

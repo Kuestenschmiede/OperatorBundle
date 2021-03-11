@@ -297,56 +297,56 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("facebook");
-        $field->setIcon("fab fa-facebook");
+//        $field->setIcon("fab fa-facebook");
         $field->setLinkText("Facebook");
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-facebook");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("instagram");
-        $field->setIcon("fab fa-instagram");
-        $field->setClass("social-media-link");
+//        $field->setIcon("fab fa-instagram");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-instagram");
         $field->setLinkText("Instagram");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("twitter");
-        $field->setIcon("fab fa-twitter");
-        $field->setClass("social-media-link");
+//        $field->setIcon("fab fa-twitter");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-twitter");
         $field->setLinkText("Twitter");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("whatsapp");
-        $field->setIcon("fab fa-whatsapp");
-        $field->setClass("social-media-link");
+//        $field->setIcon("fab fa-whatsapp");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-whatsapp");
         $field->setLinkText("Whatsapp");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("youtubeChannelLink");
-        $field->setIcon("fab fa-youtube");
-        $field->setClass("social-media-link");
+//        $field->setIcon("fab fa-youtube");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-youtube");
         $field->setLinkText("YouTube-Kanal");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("vimeoChannelLink");
-        $field->setIcon("fab fa-vimeo");
-        $field->setClass("social-media-link");
+//        $field->setIcon("fab fa-vimeo");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-vimeo");
         $field->setLinkText("Vimeo-Kanal");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("wikipediaLink");
-        $field->setIcon("fab fa-wikipedia-w");
-        $field->setClass("wikipedia-link");
+//        $field->setIcon("fab fa-wikipedia-w");
+        $field->setClass("wikipedia-link c4g-icon-wrapper icon-wikipedia");
         $field->setLinkText("Wikipedia");
         $contactField->addSocialMediaField($field);
 

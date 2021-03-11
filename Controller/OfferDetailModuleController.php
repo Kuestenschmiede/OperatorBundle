@@ -276,7 +276,9 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
         $field->setConditionField('clickCollect');
+        $field->setConditionField('type');
         $field->setConditionValue('1');
+        $field->setConditionValue('product');
         $fields[] = $field;
 
         $field = new DetailTextField();

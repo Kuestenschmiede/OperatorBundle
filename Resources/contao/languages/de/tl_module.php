@@ -64,3 +64,9 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['range'] = "Datu
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType']['options']['plain'] = "Minimales Styling";
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType']['options']['list'] = "Listenansicht";
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType']['options']['grid'] = "Grid-Ansicht";
+
+$GLOBALS['TL_LANG']['tl_module']['optional_heading_hint'] = "Das Feld 'Überschrift' ist optional.
+                    Die Überschrift wird zwischen Filter und Liste ausgegeben.";
+$GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'Die Auswahl des h-Tags (z.B. h3) entscheidet auch über die jeweilige Überschrift der Listenelemente.
+                    Beispiel: Wird für die Überschrift h3 gewählt,
+                    erhalten die Listenelemente darunter jeweils eine h4-Überschrift.';

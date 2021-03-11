@@ -55,9 +55,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
     {
         $this->model = $model;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-//        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery.min.js");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing_wishlist.css");
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
+        System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $list = $this->getList();
         $fields = $this->getListFields();
         $clientUuid = $this->checkCookieForClientUuid($request);
@@ -287,9 +287,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $tileList->setClassName("wishlist");
         $tileList->setTileClassName("item");
         $tileList->setLayoutType("list");
-        $tileList->setHeadline("Merkzettel");
-        $tileList->setTextAfterUpdate("Keine Elemente auf dem Merkzettel.");
-        $tileList->setTextBeforeUpdate("Keine Elemente auf dem Merkzettel.");
+        $tileList->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['headline']);
+        $tileList->setTextAfterUpdate($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['textBeforeUpdate']);
+        $tileList->setTextBeforeUpdate($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['textAfterUpdate']);
     
         return $tileList;
     }
@@ -338,7 +338,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__more-link');
         $field->setHref("$showcaseUrl/alias");
         $field->setHrefField("alias");
-        $field->setLinkText("Mehr Infos");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("showcase");
         $fields[] = $field;
@@ -349,7 +349,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__more-link');
         $field->setHref("$productUrl/uuid");
         $field->setHrefField("uuid");
-        $field->setLinkText("Mehr Infos");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("product");
         $field->setExternalLinkField("external_link");
@@ -361,7 +361,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__more-link');
         $field->setHref("$eventUrl/uuid");
         $field->setHrefField("uuid");
-        $field->setLinkText("Mehr Infos");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("event");
         $field->setExternalLinkField("external_link");
@@ -373,7 +373,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__more-link');
         $field->setHref("$jobUrl/uuid");
         $field->setHrefField("uuid");
-        $field->setLinkText("Mehr Infos");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("job");
         $field->setExternalLinkField("external_link");
@@ -385,7 +385,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__more-link');
         $field->setHref("$arrangementUrl/uuid");
         $field->setHrefField("uuid");
-        $field->setLinkText("Mehr Infos");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("arrangement");
         $field->setExternalLinkField("external_link");

@@ -51,6 +51,7 @@ class AfterImportListener
     public function afterImportBaseData(AfterImportEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         try {
+            System::loadLanguageFile("import");
             $this->rootDir = $rootDir = System::getContainer()->getParameter('kernel.project_dir');
             $importType = $event->getImportType();
             if ($importType == 'gutesio') {
@@ -87,7 +88,7 @@ class AfterImportListener
                 }
             }
         } catch (\Exception $e) {
-            $event->setError('Fehler beim Erneuern/Löschen des Suchindexes. Mehr Informationen siehe Log.');
+            $event->setError($GLOBALS['TL_LANG']['import']['error_updating_index']);
             C4gLogModel::addLogEntry('operator', 'Error while crawling: ' . $e);
         }
     }

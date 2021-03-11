@@ -1121,11 +1121,11 @@ class OfferLoaderService
                         $eventData['endDate'] = '';
                     }
                     if ($eventData['appointmentUponAgreement']) {
-                        $fieldValue = 'Termin nach Absprache';
+                        $fieldValue = $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreementContent'];
                         if ($eventData['beginDate']) {
                             $fieldValue .= ' (';
                             if (!$eventData['endDate']) {
-                                $fieldValue .= 'ab ';
+                                $fieldValue .= $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreement_startingAt']. ' ';
                             }
                             $fieldValue .= $eventData['beginDate'];
                             if ($eventData['beginTime']) {

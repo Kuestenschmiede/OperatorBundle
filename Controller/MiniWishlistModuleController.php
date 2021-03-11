@@ -45,6 +45,7 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $list = $this->getList();
         $fields = $this->getListFields();
         $clientUuid = $this->checkCookieForClientUuid($request);
+        \System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $data = $this->getListData($clientUuid);
         if (is_array($data) && !($data[0])) {
             $data = [$data];
@@ -90,9 +91,9 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $tileList->setClassName("memo-popup popup");
         $tileList->setTileClassName("item");
         $tileList->setLayoutType("mini-list");
-        $tileList->setHeadline("Merkzettel");
-        $tileList->setTextAfterUpdate("Keine Elemente auf dem Merkzettel.");
-        $tileList->setTextBeforeUpdate("Keine Elemente auf dem Merkzettel.");
+        $tileList->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['headline']);
+        $tileList->setTextAfterUpdate($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['textBeforeUpdate']);
+        $tileList->setTextBeforeUpdate($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['textAfterUpdate']);
     
         return $tileList;
     }
@@ -108,7 +109,6 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
     
         $field = new WrapperTileField();
         $field->setClass("col-8");
-        // TODO hier müssen auch price, eventDate etc. wrapped werden
         $field->setWrappedFields(["name"]);
         $fields[] = $field;
     
@@ -116,16 +116,6 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $field->setName("name");
         $field->setLevel(3);
         $fields[] = $field;
-    
-//        $field = new TextTileField();
-//        $field->setName("types");
-//        $field->setIconClass("fas fa-list");
-//        $fields[] = $field;
-        
-        // TODO hier brauche ich noch eine redirect page
-        // TODO muss dann auf die detail seite weiterleiten (?)
-        // TODO passt dann aber nicht unbedingt
-        // TODO weil die detail seiten unterschiedliche URLs haben...
         
         $field = new WrapperTileField();
         $field->setClass("row mt-2");
@@ -137,8 +127,7 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $field->setHref("/bummeln/alias");
         $field->setHrefField("alias");
         $field->setButtonClass("btn btn-primary");
-        $field->setIconClass("fas fa-angle-right");
-        $field->setLinkText("Mehr Infos");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("showcase");
         $fields[] = $field;
@@ -148,8 +137,7 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $field->setHref("/angebote/alias");
         $field->setHrefField("alias");
         $field->setButtonClass("btn btn-primary");
-        $field->setIconClass("fas fa-angle-right");
-        $field->setLinkText("Jetzt kaufen");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['buyNow']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("product");
         $fields[] = $field;
@@ -159,8 +147,7 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $field->setHref("/veranstaltungen/alias");
         $field->setHrefField("alias");
         $field->setButtonClass("btn btn-primary");
-        $field->setIconClass("fas fa-angle-right");
-        $field->setLinkText("Jetzt buchen");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['bookNow']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("event");
         $fields[] = $field;
@@ -170,8 +157,7 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $field->setHref("/jobs/alias");
         $field->setHrefField("alias");
         $field->setButtonClass("btn btn-primary");
-        $field->setIconClass("fas fa-angle-right");
-        $field->setLinkText("Jetzt bewerben");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['applyNow']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("job");
         $fields[] = $field;
@@ -180,9 +166,8 @@ class MiniWishlistModuleController extends AbstractFrontendModuleController
         $field->setName("uuid");
         $field->setHrefField("uuid");
         $field->setHref("/gutesio/operator/wishlist/remove/uuid");
-        $field->setLinkText("Löschen");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['delete']);
         $field->setButtonClass("btn btn-primary");
-        $field->setIconClass("fas fa-trash");
         $field->setAsyncCall(true);
         $fields[] = $field;
         

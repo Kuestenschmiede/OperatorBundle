@@ -19,6 +19,9 @@ $GLOBALS['TL_LANG'][$strName]['strikePrice'] = ['Streichpreis', 'Streichpreis in
 $GLOBALS['TL_LANG'][$strName]['discount'] = ['Rabatt', 'Rabatt des Produktes in Prozent.'];
 $GLOBALS['TL_LANG'][$strName]['color'] = ['Farbe', 'Farbe des Produktes.'];
 $GLOBALS['TL_LANG'][$strName]['size'] = ['Größe', 'Größe des Produktes.'];
+$GLOBALS['TL_LANG'][$strName]['appointmentUponAgreementContent'] = "Termin nach Absprache";
+$GLOBALS['TL_LANG'][$strName]['appointmentUponAgreement_startingAt'] = "ab";
+
 
 $GLOBALS['TL_LANG'][$strName]['beginDate'] = ['Beginndatum', ''];
 $GLOBALS['TL_LANG'][$strName]['beginTime'] = ['Beginnzeit', ''];
@@ -31,6 +34,19 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['details']['taxInfo'] = '*Preise inkl.
 $GLOBALS['TL_LANG'][$strName]['frontend']['details']['noTaxInfo'] = '*Preise frei von MwSt.';
 $GLOBALS['TL_LANG'][$strName]['frontend']['details']['headline'] = 'Details';
 $GLOBALS['TL_LANG'][$strName]['frontend']['details']['contact'] = 'Kontakt';
+$GLOBALS['TL_LANG'][$strName]['frontend']['putOnWishlist'] = 'Merken';
+$GLOBALS['TL_LANG'][$strName]['frontend']['removeFromWishlist'] = 'Gemerkt';
+
+$GLOBALS['TL_LANG'][$strName]['description'] = "Beschreibung";
+$GLOBALS['TL_LANG'][$strName]['detailData'] = "Detaildaten";
+$GLOBALS['TL_LANG'][$strName]['tags'] = "Tags";
+$GLOBALS['TL_LANG'][$strName]['contact'] = "Kontakt";
+$GLOBALS['TL_LANG'][$strName]['displayType'] = "Kategorie:";
+$GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "Weitere Informationen";
+$GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "Weitere Informationen ansehen";
+$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Angeboten von folgenden Anbietern:";
+$GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Zeitraum auswählen";
+
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
     'free' => 'kostenfrei',

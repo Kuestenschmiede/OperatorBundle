@@ -2,11 +2,11 @@
 /**
  * This file belongs to gutes.io and is published exclusively for use
  * in gutes.io operator or provider pages.
-
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
+
 namespace gutesio\OperatorBundle\Controller;
 
 
@@ -93,8 +93,10 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
-//        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+
+        if ($this->model->gutesio_data_layoutType !== "plain") {
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+        }
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
@@ -107,7 +109,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             } else {
                 throw new RedirectResponseException($pageUrl);
             }
-            $template->entrypoint = 'entrypoint_'.$this->model->id;
+            $template->entrypoint = 'entrypoint_' . $this->model->id;
             $strConf = json_encode($conf);
             $error = json_last_error_msg();
             if ($error && (strtoupper($error) !== "NO ERROR")) {
@@ -136,7 +138,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     private function getDetailFrontendConfiguration(array $data)
     {
-        $conf = new FrontendConfiguration('entrypoint_'.$this->model->id);
+        $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->addDetailPage(
             $this->getDetailPage(),
             $this->getDetailFields(),
@@ -150,7 +152,6 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         return $conf;
     }
-
 
 
     protected function getDetailPage()
@@ -183,16 +184,16 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $section = new DetailPageSection('', true, "detail-view__section-two", false);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Beschreibung', true, "detail-view__section-description", true);
+        $section = new DetailPageSection($this->languageRefs['description'], true, "detail-view__section-description", true);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Detaildaten', true, "detail-view__section-detaildata", true);
+        $section = new DetailPageSection($this->languageRefs['detailData'], true, "detail-view__section-detaildata", true);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Tags', true, "detail-view__section-tags", false);
+        $section = new DetailPageSection($this->languageRefs['tags'], true, "detail-view__section-tags", false);
         $sections[] = $section;
 
-        $section = new DetailPageSection('Kontakt', true, "detail-view__section-contact", true);
+        $section = new DetailPageSection($this->languageRefs['contact'], true, "detail-view__section-contact", true);
         $sections[] = $section;
 
         return $sections;
@@ -237,14 +238,14 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field = new DetailTextField();
         $field->setSection(4);
         $field->setName("color");
-        $field->setLabel("Farbe");
+        $field->setLabel($this->languageRefs['color'][0]);
         $field->setClass('detail-view__color');
         $fields[] = $field;
 
         $field = new DetailTextField();
         $field->setSection(4);
         $field->setName("size");
-        $field->setLabel("Größe");
+        $field->setLabel($this->languageRefs['size'][0]);
         $field->setClass('detail-view__size');
         $fields[] = $field;
 
@@ -277,14 +278,16 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setConditionField('clickCollect');
+        $field->setConditionField('type');
         $field->setConditionValue('1');
+        $field->setConditionValue('product');
         $fields[] = $field;
 
         $field = new DetailTextField();
         $field->setName("displayType");
         $field->setClass("displayType detail-view__display-type");
         $field->setSection(5);
-        $field->setLabel("Kategorie:");
+        $field->setLabel($this->languageRefs['displayType']);
         $fields[] = $field;
 
         $field = new DetailTagField();
@@ -301,8 +304,8 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         $field = new PDFDetailField();
         $field->setName("infoFile");
-        $field->setLabel("Weitere Informationen");
-        $field->setTitle("Weitere Informationen ansehen");
+        $field->setLabel($this->languageRefs['infoFile_label']);
+        $field->setTitle($this->languageRefs['infoFile_title']);
         $field->setClass("infoFile");
         $field->setSection(5);
         $fields[] = $field;
@@ -332,17 +335,17 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         return $fields;
     }
 
-    protected function getElementTileList() : TileList
+    protected function getElementTileList(): TileList
     {
         $this->tileList = new TileList('showcase-tiles');
-        $this->tileList->setHeadline('Angeboten von folgenden Anbietern:');
+        $this->tileList->setHeadline($this->languageRefs['offeredBy']);
         $this->tileList->setClassName("showcase-tiles c4g-list-outer");
         $this->tileList->setLayoutType("list");
         $this->tileList->setTileClassName("showcase-tile");
         return $this->tileList;
     }
 
-    protected function getElementFields() : array
+    protected function getElementFields(): array
     {
 
         $field = new ImageTileField();
@@ -387,17 +390,17 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
         $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
-        $field->setLinkText("Merken");
+        $field->setLinkText($this->languageRefs['frontend']['putOnWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAddDataAttributes(true);
         $this->tileItems[] = $field;
 
-        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}"), '.html')) {
-            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}"));
+        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"), '.html')) {
+            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"));
         } else {
-            $href = Controller::replaceInsertTags("{{link_url::".$this->model->gutesio_child_showcase_link."}}") . '/alias';
+            $href = Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}") . '/alias';
         }
         $field = new LinkButtonTileField();
         $field->setName("alias");

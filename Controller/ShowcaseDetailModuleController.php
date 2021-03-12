@@ -110,7 +110,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 if (!empty($detailData)) {
                     $detailData['internal_type'] = "showcase";
                     $detailPage = $this->getDetailPage();
-                    $childData = $this->getChildTileData();
+                    $childData = $this->getChildTileData($request);
                     if (count($childData) > 0) {
                         $link = new DetailAnchorMenuLink(
                             $GLOBALS['TL_LANG']["tl_gutesio_data_element"]['our_offers'],
@@ -530,7 +530,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         return $fields;
     }
 
-    private function getChildTileData()
+    private function getChildTileData($request)
     {
         $database = Database::getInstance();
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
@@ -599,6 +599,18 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $row['uuid'])) . '.html', $url);
             } else {
                 $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            }
+
+            $clientUuid = $this->checkCookieForClientUuid($request);
+            if ($clientUuid !== null) {
+                $db = Database::getInstance();
+                $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
+                $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
+                if ($result) {
+                    $row['on_wishlist'] = "1";
+                } else {
+                    $row['not_on_wishlist'] = "1";
+                }
             }
 
             $childRows[$key]['tagLinks'] = [

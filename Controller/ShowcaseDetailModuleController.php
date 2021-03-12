@@ -119,7 +119,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                         $detailPage->addAdditionalLink($link);
                     }
                     $conf->addDetailPage($detailPage, $this->getDetailFields($detailData), $detailData);
-                    $relatedShowcaseData = $this->getRelatedShowcaseData($detailData);
+                    $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
                     $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
                     $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
                     $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
@@ -831,7 +831,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         return $childRows;
     }
 
-    private function getRelatedShowcaseData($arrShowcase): array
+    private function getRelatedShowcaseData($arrShowcase, $request): array
     {
         $relatedShowcases = $this->showcaseService->loadRelatedShowcases($arrShowcase);
 
@@ -841,6 +841,19 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $types[] = $type['label'];
                 $row['types'] = implode(', ', $types);
             }
+
+            $clientUuid = $this->checkCookieForClientUuid($request);
+            if ($clientUuid !== null) {
+                $db = Database::getInstance();
+                $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
+                $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
+                if ($result) {
+                    $row['on_wishlist'] = "1";
+                } else {
+                    $row['not_on_wishlist'] = "1";
+                }
+            }
+
             $relatedShowcases[$key] = $row;
         }
 
@@ -886,13 +899,82 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setClass("c4g-list-element__types");
         $fields[] = $field;
 
+        $field = new TagTileField();
+        $field->setName("tags");
+        $field->setWrapperClass("c4g-list-element__tags-wrapper");
+        $field->setClass("c4g-list-element__tag");
+        $field->setInnerClass("c4g-list-element__tag-image");
+        $fields[] = $field;
+
+        $field = new DistanceField();
+        $field->setName("distance");
+        $field->setWrapperClass("c4g-list-element__distance-wrapper");
+        $field->setClass("c4g-list-element__distance");
+        $field->setLabel($this->languageRefs['distance'][0]);
+        $field->setGeoxField("geox");
+        $field->setGeoyField("geoy");
+        $fields[] = $field;
+
+//        $field = new LinkButtonTileField();
+//        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_data_element']['more']);
+////        $field->setButtonClass("btn btn-primary mt-2");
+//        $field->setWrapperClass("c4g-list-element__more-wrapper");
+//        $field->setClass("c4g-list-element__more-link");
+//        $field->setHref($this->pageUrl . "/alias");
+//        $field->setHrefField("alias");
+//        $field->setExternalLinkField('foreignLink');
+//        $field->setExternalFieldCondition(true);
+//        $field->setConditionField("directLink");
+//        $field->setConditionValue("1");
+//        $fields[] = $field;
+
         $field = new LinkButtonTileField();
-        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_data_element']['more']);
-//        $field->setButtonClass("btn btn-primary mt-2");
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link put-on-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
+        $field->setLinkText($this->languageRefs['putOnWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setAsyncCall(true);
+        $field->setConditionField("not_on_wishlist");
+        $field->setConditionValue(true);
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToWishlist");
+        $fields[] = $field;
+
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/remove/uuid");
+        $field->setLinkText($this->languageRefs['removeFromWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->setAsyncCall(true);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setConditionField("on_wishlist");
+        $field->setConditionValue(true);
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("removeFromWishlist");
+        $fields[] = $field;
+
+        if (C4GUtils::endsWith($this->pageUrl, '.html')) {
+            $href = str_replace('.html', '/alias.html', $this->pageUrl);
+        } else {
+            $href = $this->pageUrl . '/alias';
+        }
+        $field = new LinkButtonTileField();
+        $field->setName("alias");
+        $field->setHrefField("alias");
         $field->setWrapperClass("c4g-list-element__more-wrapper");
         $field->setClass("c4g-list-element__more-link");
-        $field->setHref($this->pageUrl . "/alias");
-        $field->setHrefField("alias");
+        $field->setHref($href);
+        $field->setLinkText($this->languageRefs['alias_link_text']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
         $field->setExternalFieldCondition(true);
         $field->setConditionField("directLink");

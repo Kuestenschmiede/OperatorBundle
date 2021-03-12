@@ -264,6 +264,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setName('notes');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['notes'][0]);
         $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['notes'][1]);
+        $field->setMaxLength(10000);
         $formFields[] = $field->getConfiguration();
 
 

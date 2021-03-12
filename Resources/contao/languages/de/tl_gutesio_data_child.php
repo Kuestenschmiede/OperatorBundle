@@ -67,6 +67,7 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['modal_button_label'] = 'Cl
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'jetzt bestellen';
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'Schließen';
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Ihre E-Mailadresse für Rückfragen', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['name'] = ['Name', ''];
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Abholzeitpunkt', ''];
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Anmerkungen', ''];
 

@@ -245,6 +245,13 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setPattern(RegularExpression::EMAIL);
         $formFields[] = $field->getConfiguration();
 
+        $field = new TextFormField();
+        $field->setName('name');
+        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['name'][0]);
+        $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['name'][1]);
+        $field->setRequired();
+        $formFields[] = $field->getConfiguration();
+
         $field = new SelectFormField();
         $field->setName('earliest');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['earliest'][0]);

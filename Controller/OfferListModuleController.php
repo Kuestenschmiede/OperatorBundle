@@ -86,6 +86,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        global $objPage;
         $this->model = $model;
         $this->offerService->setModel($model);
         $this->setAlias();
@@ -107,6 +108,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         $search = "";
         $conf = $this->getListFrontendConfiguration($search, $this->model->gutesio_child_type);
+        $conf->setLanguage($objPage->language);
         if ($this->model->gutesio_data_render_searchHtml) {
             $sc = new SearchConfiguration();
             $sc->addData($this->getSearchLinks(), ['link']);

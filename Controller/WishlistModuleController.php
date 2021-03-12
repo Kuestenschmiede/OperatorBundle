@@ -415,11 +415,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__delete-link js-deleteFromGlobalList');
         $field->setHrefField("uuid");
         $field->setHref("/gutesio/operator/wishlist/removeWithResult/uuid");
-        $field->setLinkText("Löschen");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['delete']);
         $field->setAsyncCall(true);
         $fields[] = $field;
-
-
 
         return $fields;
     }

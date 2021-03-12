@@ -286,6 +286,14 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setConditionField('type');
         $field->setConditionValue('1');
         $field->setConditionValue('product');
+        $field->setInnerFields([
+            'name',
+            'imageGallery',
+            'strikePrice',
+            'price',
+            'beginDate',
+            'beginTime',
+        ]);
         $fields[] = $field;
 
         $field = new DetailTextField();

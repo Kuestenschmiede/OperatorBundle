@@ -579,6 +579,15 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
         $field->setCondition('type', 'product');
+        $field->setInnerFields([
+            'image',
+            'name',
+            'typeName',
+            'strikePrice',
+            'price',
+            'beginDate',
+            'beginTime',
+        ]);
         $fields[] = $field;
 
         $field = new LinkButtonTileField();

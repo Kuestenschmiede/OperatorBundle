@@ -348,6 +348,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setCondition('clickCollect', '1');
         $field->setCondition('internal_type', 'product');
         $field->setCondition('internal_type', 'showcase', true);
+        $field->setInnerFields([
+            'imageList',
+            'name',
+            'types'
+        ]);
         $fields[] = $field;
 
         $field = new LinkButtonTileField();

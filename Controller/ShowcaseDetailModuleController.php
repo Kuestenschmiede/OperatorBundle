@@ -95,6 +95,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("tl_gutesio_data_child");
         System::loadLanguageFile("tl_gutesio_data_element");
@@ -298,48 +299,48 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setSection(7);
         $field->setName("facebook");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['facebook']);
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-facebook");
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("instagram");
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-instagram");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['instagram']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("twitter");
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-twitter");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['twitter']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("whatsapp");
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-whatsapp");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['whatsapp']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("youtubeChannelLink");
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-youtube");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['youtubeChannelLink']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("vimeoChannelLink");
-        $field->setClass("social-media-link");
+        $field->setClass("social-media-link c4g-icon-wrapper icon-vimeo");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['vimeoChannelLink']);
         $contactField->addSocialMediaField($field);
 
         $field = new DetailLinkField();
         $field->setSection(7);
         $field->setName("wikipediaLink");
-        $field->setClass("wikipedia-link");
+        $field->setClass("wikipedia-link c4g-icon-wrapper icon-wikipedia");
         $field->setLinkText($GLOBALS['TL_LANG']["tl_gutesio_data_element"]['wikipedia']);
         $contactField->addSocialMediaField($field);
 

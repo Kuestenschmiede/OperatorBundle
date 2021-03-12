@@ -122,6 +122,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
         }
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
+
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 

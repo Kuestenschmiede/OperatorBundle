@@ -56,7 +56,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $this->model = $model;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing_wishlist.css");
-        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
+//        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
+
         System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $list = $this->getList();
         $fields = $this->getListFields();
@@ -331,7 +333,22 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $eventUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}");
         $jobUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
         $arrangementUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
-        
+
+        $field = new ModalButtonTileField();
+        $field->setName('cc');
+        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
+        $field->setClass('c4g-list-element__clickcollect');
+        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+        $field->setUrlField('uuid');
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
+        $field->setCondition('clickCollect', '1');
+        $field->setCondition('internal_type', 'product');
+        $field->setCondition('internal_type', 'showcase', true);
+        $fields[] = $field;
+
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
@@ -401,20 +418,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setAsyncCall(true);
         $fields[] = $field;
 
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
-        $field->setClass('c4g-list-element__clickcollect');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('internal_type', 'product');
-        $field->setCondition('internal_type', 'showcase', true);
-        $fields[] = $field;
+
 
         return $fields;
     }

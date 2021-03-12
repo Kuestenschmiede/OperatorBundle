@@ -2,11 +2,11 @@
 /**
  * This file belongs to gutes.io and is published exclusively for use
  * in gutes.io operator or provider pages.
-
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
+
 namespace gutesio\OperatorBundle\Controller;
 
 
@@ -36,11 +36,11 @@ use Symfony\Component\HttpFoundation\Response;
 class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
-    
+
     const TYPE = 'showcase_tile_list_module';
-    
+
     private $showcaseService = null;
-    
+
     private $model = null;
 
     /**
@@ -50,7 +50,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
     {
         $this->showcaseService = ShowcaseService::getInstance();
     }
-    
+
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
@@ -58,7 +58,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $tileList = $this->getTileList();
         $fields = $this->getFields();
         $data = $this->getData();
-        $fc = new FrontendConfiguration('entrypoint_'.$this->model->id);
+        $fc = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $fc->addTileList($tileList, $fields, $data);
         $jsonConf = json_encode($fc);
         if ($jsonConf === false) {
@@ -68,17 +68,18 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         } else {
             $template->configuration = $jsonConf;
         }
-        $template->entrypoint = 'entrypoint_'.$this->model->id;
+        $template->entrypoint = 'entrypoint_' . $this->model->id;
 
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing_carousel.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/owl.carousel.min.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/owl.theme.default.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/owl.carousel.min.js");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
 
         return $template->getResponse();
     }
-    
-    protected function getTileList() : TileList
+
+    protected function getTileList(): TileList
     {
         $tileList = new TileList();
         $tileList->setClassName("showcase-tiles c4g-carousel");
@@ -90,38 +91,40 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
             $tileList->setHeadline($arrHeadline['value']);
             $tileList->setHeadlineLevel(intval(str_replace("h", "", $arrHeadline['unit'])));
         }
-        
+
         return $tileList;
     }
-    
-    protected function getFields() : array
+
+    protected function getFields(): array
     {
         $arrHeadline = StringUtil::deserialize($this->model->headline);
-        
+
         $tileItems = [];
         $field = new ImageTileField();
         $field->setName("imageList");
-        $field->setClass("c4g-item-image-wrapper");
-        $field->setInnerClass("c4g-item-image");
+        $field->setWrapperClass("c4g-carousel__image-wrapper");
+        $field->setClass("c4g-carousel__image");
+//        $field->setInnerClass("c4g-item-image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
         $tileItems[] = $field;
-        
+
         $field = new HeadlineTileField();
         $field->setName("name");
-        $field->setClass("c4g-item-title-wrapper");
-        $field->setInnerClass("c4g-item-title");
+        $field->setWrapperClass("c4g-carousel__title-wrapper");
+        $field->setClass("c4g-carousel__title");
+//        $field->setInnerClass("c4g-item-title");
         $field->setLevel(intval(str_replace("h", "", $arrHeadline['unit'])) + 1);
         $tileItems[] = $field;
-        
+
         if (C4GUtils::endsWith($this->pageUrl, '.html')) {
             $href = str_replace('.html', '/alias.html', $this->pageUrl);
         } else {
             $href = $this->pageUrl . '/alias';
         }
-        
+
         return $tileItems;
     }
-    
+
     private function getData()
     {
         $redirectPage = Controller::replaceInsertTags("{{link_url::{$this->model->gutesio_data_redirect_page}}}");
@@ -130,17 +133,17 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         } else {
             $href = $redirectPage . '/alias';
         }
-        
+
         $maxData = intval($this->model->gutesio_data_max_data);
         $tmpLimit = 500;
         $typeIds = $this->getTypeConstraintForModule();
         $tagIds = $this->getTagConstraintForModule();
         $data = $this->showcaseService->loadDataChunk(
-                ['sorting' => 'random', 'randKey' => $this->showcaseService->createRandomKey()],
-                0,
-                $tmpLimit,
-                $typeIds,
-                $tagIds
+            ['sorting' => 'random', 'randKey' => $this->showcaseService->createRandomKey()],
+            0,
+            $tmpLimit,
+            $typeIds,
+            $tagIds
         );
         $isSingleEntry = (count($data) > 1) && (!$data[0]);
         if ($isSingleEntry) {
@@ -152,11 +155,11 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         foreach ($data as $key => $datum) {
             $data[$key]['href'] = str_replace("alias", $datum['alias'], $href);
         }
-        
-        
+
+
         return $data;
     }
-    
+
     private function getTypeConstraintForModule()
     {
         $moduleModel = $this->model;
@@ -193,7 +196,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         }
         return $typeIds;
     }
-    
+
     private function getTagConstraintForModule()
     {
         $model = $this->model;
@@ -204,5 +207,5 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
             return [];
         }
     }
-    
+
 }

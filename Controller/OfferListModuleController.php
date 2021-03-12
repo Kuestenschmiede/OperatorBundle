@@ -557,6 +557,20 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setClass("c4g-list-element__taglinks");
         $fields[] = $field;
 
+//        $field = new ModalButtonTileField();
+//        $field->setName('cc');
+//        $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
+//        $field->setClass("c4g-list-element__clickcollect-link");
+//        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+//        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+//        $field->setUrlField('uuid');
+//        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
+//        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+//        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
+//        $field->setCondition('clickCollect', '1');
+//        $field->setCondition('type', 'product');
+//        $fields[] = $field;
+
         $field = new ModalButtonTileField();
         $field->setName('cc');
         $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
@@ -566,7 +580,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setUrlField('uuid');
         $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
         $field->setCondition('type', 'product');
         $fields[] = $field;
@@ -620,19 +634,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setConditionValue("1");
         $fields[] = $field;
         
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
-        $field->setClass("c4g-list-element__clickcollect-link");
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('type', 'product');
-        $fields[] = $field;
+
         
         return $fields;
     }

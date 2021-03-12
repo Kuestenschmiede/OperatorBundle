@@ -64,23 +64,12 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Service';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'starting at';
 
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['modal_button_label'] = 'Click and Collect';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'Confirm';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'Close';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['E-mail address', 'An e-mail address for queries.'];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Frühester Abholzeitpunkt', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Earliest pick up time', ''];
-
-$GLOBALS['TL_LANG'][$strName]['notification']['error'] = 'Error';
-$GLOBALS['TL_LANG'][$strName]['notification']['form_invalid'] = 'Error in the form data';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_missing'] = 'The email address is a required field.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_invalid_format'] = 'The email address is in an invalid format.';
-$GLOBALS['TL_LANG'][$strName]['notification']['earliest_missing'] = 'The earliest pickup time is a required field.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_and_earliest_missing'] = 'The e-mail address and the earliest pickup time are required fields.';
-$GLOBALS['TL_LANG'][$strName]['notification']['generic_error'] = 'An error has occurred.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_error'] = 'The information is not a valid email address.';
-
-$GLOBALS['TL_LANG'][$strName]['notification']['success'] = 'Success';
-$GLOBALS['TL_LANG'][$strName]['notification']['cc_email_sent'] = 'Your order has been sent. Give the vendor some time to check it.';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'order now';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'close';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Your e-mail address for queries', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['name'] = ['Name', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Pickup time', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Notes', ''];
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Open filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Close filter';

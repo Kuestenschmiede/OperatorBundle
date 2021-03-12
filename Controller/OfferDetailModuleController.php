@@ -269,12 +269,13 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setClass('detail-view__appointment-upon-agreement');
         $fields[] = $field;
 
+        global $objPage;
         $field = new DetailModalFormButtonField();
         $field->setSection(4);
         $field->setName('cc');
         $field->setClass('cc detail-view__modal');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
         $field->setUrlField('uuid');
         $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);

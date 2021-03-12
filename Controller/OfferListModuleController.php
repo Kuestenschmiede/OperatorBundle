@@ -201,17 +201,18 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
     /**
      * @Route(
-     *     "/gutesio/operator/showcase_child_cc_form/{alias}",
+     *     "/gutesio/operator/showcase_child_cc_form/{lang}/{alias}",
      *     name="showcase_child_cc_form",
      *     methods={"GET"}
      *     )
      * @param Request $request
+     * @param string $lang
      * @param string $alias
      * @return JsonResponse
      */
-    public function getClickCollectForm(Request $request, string $alias): JsonResponse
+    public function getClickCollectForm(Request $request, string $lang, string $alias): JsonResponse
     {
-        System::loadLanguageFile('tl_gutesio_data_child', 'de');
+        System::loadLanguageFile('tl_gutesio_data_child', $lang);
         $formFields = [];
 
         $comkey = C4GUtils::getKey(
@@ -236,7 +237,12 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setName('key');
         $field->setValue((string) $comkey);
         $formFields[] = $field->getConfiguration();
-        
+
+        $field = new HiddenFormField();
+        $field->setName('lang');
+        $field->setValue($lang);
+        $formFields[] = $field->getConfiguration();
+
         $field = new TextFormField();
         $field->setName('email');
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['email'][0]);
@@ -558,26 +564,13 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setClass("c4g-list-element__taglinks");
         $fields[] = $field;
 
-//        $field = new ModalButtonTileField();
-//        $field->setName('cc');
-//        $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
-//        $field->setClass("c4g-list-element__clickcollect-link");
-//        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
-//        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
-//        $field->setUrlField('uuid');
-//        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-//        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
-//        $field->setSubmitUrl(self::CC_FORM_SUBMIT_URL);
-//        $field->setCondition('clickCollect', '1');
-//        $field->setCondition('type', 'product');
-//        $fields[] = $field;
-
+        global $objPage;
         $field = new ModalButtonTileField();
         $field->setName('cc');
         $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
         $field->setClass("c4g-list-element__clickcollect-link");
         $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
         $field->setUrlField('uuid');
         $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
         $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);

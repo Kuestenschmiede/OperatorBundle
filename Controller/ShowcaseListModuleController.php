@@ -71,6 +71,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        global $objPage;
         $this->model = $model;
         $this->setAlias();
         $redirectPage = $model->gutesio_data_redirect_page;
@@ -95,6 +96,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $fields = $this->getFields();
         $data = $this->getInitialData();
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
+        $conf->setLanguage($objPage->language);
         $arrFilter = $this->buildFilter();
         $conf->addForm(
             $arrFilter['form'],

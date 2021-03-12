@@ -79,6 +79,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        global $objPage;
         $this->model = $model;
         $this->offerService->setModel($model);
         $this->setAlias();
@@ -103,6 +104,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
             $conf = $this->getDetailFrontendConfiguration($data);
+            $conf->setLanguage($objPage->language);
             if (!empty($data)) {
                 if ($this->model->gutesio_data_render_searchHtml) {
                     $sc = new SearchConfiguration();

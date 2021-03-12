@@ -89,6 +89,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        global $objPage;
         $this->model = $model;
         $this->setAlias();
         $redirectPage = $model->gutesio_showcase_list_page;
@@ -123,6 +124,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
                     $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
                     $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                    $conf->setLanguage($objPage->language);
                     $jsonConf = json_encode($conf);
                     if ($jsonConf === false) {
                         // error encoding

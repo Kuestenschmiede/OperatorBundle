@@ -492,7 +492,21 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
         $fields[] = $field;
-    
+
+        $field = new LinkButtonTileField();
+        $field->setName("href");
+        $field->setWrapperClass("c4g-list-element__more-wrapper");
+        $field->setClass("c4g-list-element__more-link");
+        $field->setHrefFields(["href"]);
+        $field->setHref("href");
+        $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->setExternalLinkField('foreignLink');
+        $field->setExternalFieldCondition(true);
+        $field->setConditionField("directLink");
+        $field->setConditionValue("1");
+        $fields[] = $field;
+
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
@@ -613,17 +627,20 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 }
             }
 
-            $childRows[$key]['tagLinks'] = [
-                'icons' => [],
-                'links' => [
-                    [
-                        'href' => $row['foreignLink'] && $row['directLink'] ?: $href,
-                        'iconClass' => 'fas fa-angle-right',
-                        'label' => $GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']
-                    ]
-                ]
-            ];
+//            $childRows[$key]['tagLinks'] = [
+//                'icons' => [],
+//                'links' => [
+//                    [
+//                        'href' => $row['foreignLink'] && $row['directLink'] ?: $href,
+//                        'iconClass' => 'fas fa-angle-right',
+//                        'label' => $GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']
+//                    ]
+//                ]
+//            ];
             $row['tagLinks'] = $childRows[$key]['tagLinks'];
+
+
+            $row['href'] = $row['foreignLink'] && $row['directLink'] ?: $href;
 
             $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
@@ -914,19 +931,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $fields[] = $field;
-
-//        $field = new LinkButtonTileField();
-//        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_data_element']['more']);
-////        $field->setButtonClass("btn btn-primary mt-2");
-//        $field->setWrapperClass("c4g-list-element__more-wrapper");
-//        $field->setClass("c4g-list-element__more-link");
-//        $field->setHref($this->pageUrl . "/alias");
-//        $field->setHrefField("alias");
-//        $field->setExternalLinkField('foreignLink');
-//        $field->setExternalFieldCondition(true);
-//        $field->setConditionField("directLink");
-//        $field->setConditionValue("1");
-//        $fields[] = $field;
 
         $field = new LinkButtonTileField();
         $field->setName("uuid");

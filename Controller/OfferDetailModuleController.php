@@ -411,11 +411,10 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setAddDataAttributes(true);
         $this->tileItems[] = $field;
 
-        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"), '.html')) {
-            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"));
-        } else {
-            $href = Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}") . '/alias';
-        }
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+        $href = $url . '/alias';
+
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass("c4g-list-element__more-wrapper");

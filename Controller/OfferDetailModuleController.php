@@ -169,9 +169,10 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             ["profile" => $settings->detail_profile],
             true
         );
+        MapsResourceLoader::loadResources(["router" => true], $mapData);
+
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
-        MapsResourceLoader::loadResources(["router" => true], $mapData);
         $page->setMapData($mapData);
         $page->setSections($this->getSections());
         $page->setShowAnchorMenu(true);
@@ -339,7 +340,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         $field = new DetailMapLocationField();
         $field->setSection(6);
-        $field->setClass("detail-view__map");
+        $field->setClass("detail-view__map-wrapper");
         $field->setName('mapLocation');
         $field->setGeoxField('geox');
         $field->setGeoyField('geoy');

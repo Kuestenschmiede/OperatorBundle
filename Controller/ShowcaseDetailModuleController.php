@@ -166,7 +166,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             ContentModel::findById($settings->detail_map),
             Database::getInstance(),
             ["profile" => $settings->detail_profile],
-            true
+            false
         );
         MapsResourceLoader::loadResources(["router" => true], $mapData);
 

@@ -167,7 +167,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             ContentModel::findById($settings->detail_map),
             Database::getInstance(),
             ["profile" => $settings->detail_profile],
-            true
+            false
         );
         MapsResourceLoader::loadResources(["router" => true], $mapData);
 

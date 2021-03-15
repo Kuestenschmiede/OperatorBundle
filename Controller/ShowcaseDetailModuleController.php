@@ -499,19 +499,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $fields[] = $field;
 
         $field = new LinkButtonTileField();
-        $field->setName("href");
-        $field->setWrapperClass("c4g-list-element__more-wrapper");
-        $field->setClass("c4g-list-element__more-link");
-        $field->setHrefFields(["href"]);
-        $field->setHref("href");
-        $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
-        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-        $field->setExternalLinkField('foreignLink');
-        $field->setExternalLinkFieldConditionField("directLink");
-        $field->setExternalLinkFieldConditionValue("1");
-        $fields[] = $field;
-
-        $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
@@ -545,7 +532,42 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
 
+        $detailLinks = $this->getOfferDetailLinks();
+        foreach ($detailLinks as $key => $value) {
+            $field = new LinkButtonTileField();
+            $field->setName("href");
+            $field->setWrapperClass("c4g-list-element__more-wrapper");
+            $field->setClass("c4g-list-element__more-link");
+            $field->setHrefFields(["href"]);
+            $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
+            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+            $field->setHref($value . "/href");
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $field->setConditionField('typeId');
+            $field->setConditionValue($key);
+            $fields[] = $field;
+        }
+
         return $fields;
+    }
+
+    private function getOfferDetailLinks(): array
+    {
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $productPageModel = PageModel::findByPk($objSettings->productDetailPage);
+        $eventPageModel = PageModel::findByPk($objSettings->eventDetailPage);
+        $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
+        $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
+        $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        return [
+            'product' => $productPageModel->getFrontendUrl(),
+            'event' => $eventPageModel->getFrontendUrl(),
+            'job' => $jobPageModel->getFrontendUrl(),
+            'arrangement' => $arrangementPageModel->getFrontendUrl(),
+            'service' => $servicePageModel->getFrontendUrl()
+        ];
     }
 
     private function getChildTileData($request)
@@ -847,6 +869,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 default:
                     break;
             }
+
+            $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
         }
 
         return $childRows;

@@ -1,18 +1,13 @@
 <?php
 /**
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package   	con4gis
- * @version        6
- * @author  	    con4gis contributors (see "authors.txt")
- * @license 	    LGPL-3.0-or-later
- * @copyright 	Küstenschmiede GmbH Software & Design
- * @link              https://www.con4gis.org
- *
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
+ 
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
  */
-
-$strName = 'tl_gutesio_data_child';
+$strName = 'offer_list';
 
 $GLOBALS['TL_LANG'][$strName]['price'] = ['Price', 'Price incl. VAT in EUR.'];
 $GLOBALS['TL_LANG'][$strName]['strikePrice'] = ['Strike price', 'Strike price incl. VAT in EUR.'];
@@ -46,7 +41,10 @@ $GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "More information";
 $GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "View more information";
 $GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Offered by the following vendors:";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Select period";
+$GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Here you can select a filter period to narrow down the events.";
 
+$GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Date from";
+$GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Date until";
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
     'free' => 'free',

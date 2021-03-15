@@ -58,7 +58,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing_wishlist.css");
 //        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
-
+        System::loadLanguageFile('offer_list');
         System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $list = $this->getList();
         $fields = $this->getListFields();
@@ -299,7 +299,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
     private function getListFields()
     {
         $settings = C4gSettingsModel::findSettings();
-        System::loadLanguageFile('tl_gutesio_data_child');
         $fields = [];
     
         $field = new ImageTileField();
@@ -339,11 +338,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName('cc');
         $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
         $field->setClass('c4g-list-element__clickcollect');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
         $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
         $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
         $field->setCondition('internal_type', 'product');

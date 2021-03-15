@@ -88,8 +88,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
         System::loadLanguageFile("operator_showcase_list");
-        System::loadLanguageFile("tl_gutesio_data_child");
-        System::loadLanguageFile("tl_gutesio_data_element");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
 
@@ -180,7 +178,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $this->get('contao.framework')->initialize(true);
         System::loadLanguageFile("field_translations", "de");
-        System::loadLanguageFile("tl_gutesio_data_element", "de");
+        System::loadLanguageFile("operator_showcase_list", "de");
         System::loadLanguageFile("form_tag_fields", "de");
         $moduleId = $request->query->get("moduleId");
         $tagFilterIds = $request->query->get('tags');
@@ -454,8 +452,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $form->setMethod("GET");
         $form->setContainerRow(true);
         $form->setToggleableBaseClass('c4g-listfilter');
-        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['filter']['close_filter']);
-        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['filter']['open_filter']);
+        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
+        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
         $arrFilter['form'] = $form;
 

@@ -215,7 +215,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
      */
     public function getClickCollectForm(Request $request, string $lang, string $alias): JsonResponse
     {
-        System::loadLanguageFile('tl_gutesio_data_child', $lang);
+        System::loadLanguageFile('offer_list', $lang);
         $formFields = [];
 
         $comkey = C4GUtils::getKey(
@@ -248,31 +248,31 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
         $field = new TextFormField();
         $field->setName('email');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['email'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['email'][1]);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['email'][0]);
+        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['email'][1]);
         $field->setRequired();
         $field->setPattern(RegularExpression::EMAIL);
         $formFields[] = $field->getConfiguration();
 
         $field = new TextFormField();
         $field->setName('name');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['name'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['name'][1]);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['name'][0]);
+        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['name'][1]);
         $field->setRequired();
         $formFields[] = $field->getConfiguration();
 
         $field = new SelectFormField();
         $field->setName('earliest');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['earliest'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['earliest'][1]);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['earliest'][0]);
+        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['earliest'][1]);
         $field->setRequired();
         $field->setOptions($this->getEarliestOptions());
         $formFields[] = $field->getConfiguration();
 
         $field = new TextAreaFormField();
         $field->setName('notes');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['notes'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['notes'][1]);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['notes'][0]);
+        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['notes'][1]);
         $field->setMaxLength(10000);
         $formFields[] = $field->getConfiguration();
 
@@ -300,11 +300,9 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
     private function setupLanguage()
     {
-        System::loadLanguageFile("tl_gutesio_data_child");
-        System::loadLanguageFile("tl_gutesio_data_element");
+        System::loadLanguageFile("offer_list");
         System::loadLanguageFile("gutesio_frontend");
-        System::loadLanguageFile("operator_showcase_list");
-        $this->languageRefs = $GLOBALS['TL_LANG']['tl_gutesio_data_child'];
+        $this->languageRefs = $GLOBALS['TL_LANG']['offer_list'];
     }
 
     private function getListFrontendConfiguration(string $search, $type)
@@ -338,8 +336,8 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $form->setMethod('POST');
         $form->setContainerRow(true);
         $form->setToggleableBaseClass('c4g-listfilter');
-        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['filter']['close_filter']);
-        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['filter']['open_filter']);
+        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['offer_list']['filter']['close_filter']);
+        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
 
         return $form;
@@ -384,12 +382,12 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             $field = new DateRangeField();
             $field->setFromFieldname("filterFrom");
             $field->setUntilFieldname("filterUntil");
-            $field->setFromPlaceholderText("Datum von");
-            $field->setUntilPlaceholderText("Datum bis");
+            $field->setFromPlaceholderText($this->languageRefs['filterFromPlaceholder']);
+            $field->setUntilPlaceholderText($this->languageRefs['filterUntilPlaceholder']);
             $field->setHeadline($this->languageRefs['chooseDateRange']);
             $field->setHeadlineClass("form-view__period-title");
             $field->setClassName("offer-filter__period form-view__period");
-            $field->setDescription("Hier können Sie einen Filterzeitraum auswählen, um die Veranstaltungen einzugrenzen.");
+            $field->setDescription($this->languageRefs['chooseDateRange_desc']);
             $fields[] = $field;
         }
         if ($useProductFilter) {
@@ -486,7 +484,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $this->tileList->setLayoutType($layoutType);
         $this->tileList->setLoadStep($this->offerService::LIMIT);
         $this->tileList->setMaxData(intval($this->model->gutesio_child_number_recent));
-        $this->tileList->setBottomLine($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['list']['taxInfo']);
+        $this->tileList->setBottomLine($GLOBALS['TL_LANG']['offer_list']['frontend']['list']['taxInfo']);
         $this->tileList->setScrollThreshold(0.05);
         $this->tileList->setUniqueField("uuid");
         $this->tileList->setSetAsyncAfterFilter(true);
@@ -572,11 +570,11 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setName('cc');
         $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
         $field->setClass("c4g-list-element__clickcollect-link");
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
         $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
         $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setCondition('clickCollect', '1');
         $field->setCondition('type', 'product');

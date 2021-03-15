@@ -134,11 +134,10 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     private function setupLanguage()
     {
-        System::loadLanguageFile("tl_gutesio_data_child");
-        System::loadLanguageFile("tl_gutesio_data_element");
-        System::loadLanguageFile("gutesio_frontend");
+        System::loadLanguageFile("offer_list");
         System::loadLanguageFile("operator_showcase_list");
-        $this->languageRefs = $GLOBALS['TL_LANG']['tl_gutesio_data_child'];
+        System::loadLanguageFile("gutesio_frontend");
+        $this->languageRefs = $GLOBALS['TL_LANG']['offer_list'];
     }
 
     private function getDetailFrontendConfiguration(array $data)
@@ -162,7 +161,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     protected function getDetailPage()
     {
         $page = new DetailPage();
-        $page->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['headline']);
+        $page->setHeadline($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['headline']);
         $settings = GutesioOperatorSettingsModel::findSettings();
         $mapData = MapDataConfigurator::prepareMapData(
             ContentModel::findById($settings->detail_map),
@@ -278,11 +277,11 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setSection(4);
         $field->setName('cc');
         $field->setClass('cc detail-view__modal');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
         $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
         $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setConditionField('clickCollect');
         $field->setConditionField('type');
@@ -327,7 +326,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         $contactField = new DetailContactField();
         $contactField->setSection(6);
-        $contactField->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['contact']);
+        $contactField->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['contact']);
         $contactField->setEmailFieldName('email');
         $contactField->setPhoneFieldName('phone');
         $contactField->setWebsiteFieldName('website');
@@ -381,7 +380,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setName("types");
         $field->setWrapperClass("c4g-list-element__types-wrapper");
         $field->setClass("c4g-list-element__types");
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['types'][0]);
+        $field->setLabel($GLOBALS['TL_LANG']['operator_showcase_list']['types'][0]);
         $this->tileItems[] = $field;
 
         $field = new TagTileField();

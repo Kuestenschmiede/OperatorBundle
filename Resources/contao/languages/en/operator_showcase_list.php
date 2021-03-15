@@ -37,6 +37,26 @@ $GLOBALS['TL_LANG'][$strName]['sections']['contact_map'] = "Contact & Directions
 $GLOBALS['TL_LANG'][$strName]['sections']['relatedShowcaseLogos'] = "Partner logos";
 $GLOBALS['TL_LANG'][$strName]['contact'] = "Contact";
 
+
+$GLOBALS['TL_LANG'][$strName]['types'] = ['Category(ies)', 'The showcase category(ies).'];
+
+$GLOBALS['TL_LANG'][$strName]['our_offers'] = "Our offers";
+$GLOBALS['TL_LANG'][$strName]['typeSingular'] = "Category:";
+$GLOBALS['TL_LANG'][$strName]['typePlural'] = "Categories:";
+$GLOBALS['TL_LANG'][$strName]['facebook'] = "Facebook";
+$GLOBALS['TL_LANG'][$strName]['instagram'] = "Instagram";
+$GLOBALS['TL_LANG'][$strName]['twitter'] = "Twitter";
+$GLOBALS['TL_LANG'][$strName]['whatsapp'] = "Whatsapp";
+$GLOBALS['TL_LANG'][$strName]['youtubeChannelLink'] = "YouTube channel";
+$GLOBALS['TL_LANG'][$strName]['vimeoChannelLink'] = "Vimeo channel";
+$GLOBALS['TL_LANG'][$strName]['wikipedia'] = "Wikipedia";
+$GLOBALS['TL_LANG'][$strName]['alsoInteresting'] = "Also interesting";
+$GLOBALS['TL_LANG'][$strName]['more'] = "More";
+
+$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Open filter';
+$GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Close filter';
+
+
 /*
  * Filter
  */

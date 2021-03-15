@@ -29,6 +29,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Controller;
@@ -379,6 +380,11 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $fields[] = $field;
+        
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'alias']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $fields[] = $field;
 
         $field = new LinkButtonTileField();
         $field->setName("uuid");
@@ -428,9 +434,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setLinkText($this->languageRefs['alias_link_text']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
-        $field->setExternalFieldCondition(true);
-        $field->setConditionField("directLink");
-        $field->setConditionValue("1");
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $fields[] = $field;
 
         return $fields;

@@ -601,7 +601,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAsyncCall(true);
         $field->setConditionField("not_on_wishlist");
-        $field->setConditionValue(true);
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
@@ -618,64 +618,48 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setConditionField("on_wishlist");
-        $field->setConditionValue(true);
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
 
-        $field = new LinkButtonTileField();
-        $field->setName("href");
-        $field->setWrapperClass("c4g-list-element__more-wrapper");
-        $field->setClass("c4g-list-element__more-link");
-        $field->setHrefFields(["href"]);
-        $field->setHref("href");
-        $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
-        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-        $field->setHref($this->getRedirectUrl() . "/href");
-        $field->setExternalLinkField('foreignLink');
-        $field->setExternalFieldCondition(true);
-        $field->setConditionField("directLink");
-        $field->setConditionValue("1");
-        $fields[] = $field;
-        
+        $detailLinks = $this->getOfferDetailLinks();
+        foreach ($detailLinks as $key => $value) {
+            $field = new LinkButtonTileField();
+            $field->setName("href");
+            $field->setWrapperClass("c4g-list-element__more-wrapper");
+            $field->setClass("c4g-list-element__more-link");
+            $field->setHrefFields(["href"]);
+            $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
+            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+            $field->setHref($value . "/href");
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $field->setConditionField('type');
+            $field->setConditionValue($key);
+            $fields[] = $field;
+        }
 
-        
         return $fields;
     }
 
-    protected function getRedirectUrl()
+    private function getOfferDetailLinks(): array
     {
-        $url = $this->alias;
-        $model = $this->model;
-        if ($model && $model->gutesio_child_type) {
-            $childType = unserialize($model->gutesio_child_type)[0];
-            switch ($childType) {
-                case 'product':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
-                    break;
-                case 'event':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
-                    break;
-                case 'job':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
-                    break;
-                case 'arrangement':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
-                    break;
-                case 'service':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
-                    break;
-            }
-            return $url;
-        }
-
-        return Controller::replaceInsertTags("{{link_url::" . $url . "}}");
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $productPageModel = PageModel::findByPk($objSettings->productDetailPage);
+        $eventPageModel = PageModel::findByPk($objSettings->eventDetailPage);
+        $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
+        $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
+        $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        return [
+            'product' => $productPageModel->getFrontendUrl(),
+            'event' => $eventPageModel->getFrontendUrl(),
+            'job' => $jobPageModel->getFrontendUrl(),
+            'arrangement' => $arrangementPageModel->getFrontendUrl(),
+            'service' => $servicePageModel->getFrontendUrl()
+        ];
     }
 
     protected function getSearchLinks()

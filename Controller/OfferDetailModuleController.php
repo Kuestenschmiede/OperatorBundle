@@ -68,6 +68,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     private $languageRefs = [];
 
     const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
+    const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * OfferDetailModuleController constructor.
@@ -104,7 +105,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
-            $conf = $this->getDetailFrontendConfiguration($data);
+            $conf = $this->getDetailFrontendConfiguration($data, $request);
             $conf->setLanguage($objPage->language);
             if (!empty($data)) {
                 if ($this->model->gutesio_data_render_searchHtml) {
@@ -141,7 +142,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $this->languageRefs = $GLOBALS['TL_LANG']['tl_gutesio_data_child'];
     }
 
-    private function getDetailFrontendConfiguration(array $data)
+    private function getDetailFrontendConfiguration(array $data, Request $request)
     {
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->addDetailPage(
@@ -152,7 +153,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $conf->addTileList(
             $this->getElementTileList(),
             $this->getElementFields(),
-            $this->offerService->getElementData($data['uuid'])
+            $this->getElementData($data, $request)
         );
 
         return $conf;
@@ -415,7 +416,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAsyncCall(true);
         $field->setConditionField("not_on_wishlist");
-        $field->setConditionValue(true);
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
@@ -432,7 +433,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setConditionField("on_wishlist");
-        $field->setConditionValue(true);
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
@@ -456,5 +457,37 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $this->tileItems[] = $field;
 
         return $this->tileItems;
+    }
+
+    private function getElementData(array $data, Request $request): array
+    {
+        $results = $this->offerService->getElementData($data['uuid']);
+        $clientUuid = $this->checkCookieForClientUuid($request);
+        $db = Database::getInstance();
+        foreach ($results as $key => $row) {
+            $types = [];
+            if ($clientUuid !== null) {
+                $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
+                $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
+                if ($result) {
+                    $row['on_wishlist'] = "1";
+                } else {
+                    $row['not_on_wishlist'] = "1";
+                }
+            }
+            foreach ($row['types'] as $type) {
+                $types[] = $type['label'];
+                $row['types'] = implode(', ', $types);
+            }
+            $results[$key] = $row;
+        }
+
+        return $results;
+    }
+
+    private function checkCookieForClientUuid(Request $request)
+    {
+        $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
+        return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
 }

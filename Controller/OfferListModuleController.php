@@ -35,6 +35,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
@@ -589,7 +590,12 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             'beginTime',
         ]);
         $fields[] = $field;
-
+    
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'href']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $fields[] = $field;
+        
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);

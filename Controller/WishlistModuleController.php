@@ -354,7 +354,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
             'types'
         ]);
         $fields[] = $field;
-
+        
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['alias', 'uuid']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $fields[] = $field;
+        
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');

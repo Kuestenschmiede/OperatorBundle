@@ -29,6 +29,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Controller;
@@ -378,6 +379,11 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setLabel($this->languageRefs['distance'][0]);
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
+        $fields[] = $field;
+        
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'alias']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
 
         $field = new LinkButtonTileField();

@@ -942,14 +942,14 @@ class OfferLoaderService
                             case 'regular':
                                 $productData['taxNote'] = sprintf(
                                     $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['taxInfo'],
-                                    ($settings->taxRegular ?: '16') . '%'
+                                    ($settings->taxRegular ?: '19') . '%'
                                 );
 
                                 break;
                             case 'reduced':
                                 $productData['taxNote'] = sprintf(
                                     $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['taxInfo'],
-                                    ($settings->taxReduced ?: '5') . '%'
+                                    ($settings->taxReduced ?: '7') . '%'
                                 );
 
                                 break;

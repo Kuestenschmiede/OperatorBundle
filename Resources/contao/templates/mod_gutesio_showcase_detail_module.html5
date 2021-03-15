@@ -1,13 +1,11 @@
 {{showcase::meta}}
 
-<?php if (\Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
+<?php if ($imageUuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
 
     <?php
-    $uuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}");
-    $image = \Contao\FilesModel::findByUuid($uuid);
-
-    $imageXS = $this->getImage($image->path, 1024, 768, null);
-    $imageXL = $this->getImage($image->path, 1920, 1200, null);
+    $image = \Contao\FilesModel::findByUuid($imageUuid);
+    $imageXL = $this->getImage($image->path, $_GET['width'], null, 'proportional');
+    $imageXS = $this->getImage($image->path, $_GET['width'], null, 'proportional');
 
     /**
      * For Contao Users:
@@ -25,7 +23,7 @@
 
         @media screen and (min-width: 901px) {
             .detail-hero {
-                background-image: url("<?= $imageXL ?>");
+                background-image: url("<?= $imageXL?>");
             }
         }
     </style>

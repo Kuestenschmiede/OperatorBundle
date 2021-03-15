@@ -26,6 +26,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
+use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\Database;
@@ -353,28 +354,32 @@ class WishlistModuleController extends AbstractFrontendModuleController
             'types'
         ]);
         $fields[] = $field;
+    
+        $urlSuffix = Config::get('urlSuffix');
         
         $field = new WrapperTileField();
         $field->setWrappedFields(['alias', 'uuid']);
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
         
+        $showcaseUrl = str_replace($urlSuffix, "", $showcaseUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$showcaseUrl/alias");
+        $field->setHref("$showcaseUrl/alias" . $urlSuffix);
         $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("showcase");
         $fields[] = $field;
     
+        $productUrl = str_replace($urlSuffix, "", $productUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$productUrl/uuid");
+        $field->setHref("$productUrl/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
@@ -382,11 +387,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setExternalLinkField("external_link");
         $fields[] = $field;
     
+        $eventUrl = str_replace($urlSuffix, "", $eventUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$eventUrl/uuid");
+        $field->setHref("$eventUrl/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
@@ -394,11 +400,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setExternalLinkField("external_link");
         $fields[] = $field;
     
+        $jobUrl = str_replace($urlSuffix, "", $jobUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$jobUrl/uuid");
+        $field->setHref("$jobUrl/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
@@ -406,11 +413,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setExternalLinkField("external_link");
         $fields[] = $field;
     
+        $arrangementUrl = str_replace($urlSuffix, "", $arrangementUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$arrangementUrl/uuid");
+        $field->setHref("$arrangementUrl/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");

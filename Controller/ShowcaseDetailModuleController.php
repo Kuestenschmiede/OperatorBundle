@@ -39,6 +39,7 @@ use con4gis\FrameworkBundle\Classes\Utility\FieldUtil;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use con4gis\MapsBundle\Classes\MapDataConfigurator;
 use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
+use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Exception\RedirectResponseException;
@@ -534,7 +535,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $fields[] = $field;
 
         $detailLinks = $this->getOfferDetailLinks();
+        $urlSuffix = Config::get('urlSuffix');
         foreach ($detailLinks as $key => $value) {
+            $value = str_replace($urlSuffix, "", $value);
             $field = new LinkButtonTileField();
             $field->setName("href");
             $field->setWrapperClass("c4g-list-element__more-wrapper");
@@ -542,7 +545,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             $field->setHrefFields(["href"]);
             $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
             $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-            $field->setHref($value . "/href");
+            $field->setHref($value . "/href" . $urlSuffix);
             $field->setExternalLinkField('foreignLink');
             $field->setExternalLinkFieldConditionField("directLink");
             $field->setExternalLinkFieldConditionValue("1");

@@ -39,6 +39,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
+use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
@@ -629,7 +630,9 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $fields[] = $field;
 
         $detailLinks = $this->getOfferDetailLinks();
+        $urlSuffix = Config::get('urlSuffix');
         foreach ($detailLinks as $key => $value) {
+            $value = str_replace($urlSuffix, "", $value);
             $field = new LinkButtonTileField();
             $field->setName("href");
             $field->setWrapperClass("c4g-list-element__more-wrapper");
@@ -637,7 +640,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             $field->setHrefFields(["href"]);
             $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
             $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-            $field->setHref($value . "/href");
+            $field->setHref($value . "/href" . $urlSuffix);
             $field->setExternalLinkField('foreignLink');
             $field->setExternalLinkFieldConditionField("directLink");
             $field->setExternalLinkFieldConditionValue("1");
@@ -657,6 +660,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
         $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        
         return [
             'product' => $productPageModel->getFrontendUrl(),
             'event' => $eventPageModel->getFrontendUrl(),

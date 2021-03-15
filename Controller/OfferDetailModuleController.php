@@ -39,6 +39,7 @@ use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use con4gis\MapsBundle\Classes\MapDataConfigurator;
 use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
+use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Exception\RedirectResponseException;
@@ -442,6 +443,9 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
         $href = $url . '/alias';
+        $urlSuffix = Config::get('urlSuffix');
+        $href = str_replace($urlSuffix, "", $href);
+        $href .= $urlSuffix;
 
         $field = new LinkButtonTileField();
         $field->setName("alias");

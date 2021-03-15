@@ -492,6 +492,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
         $fields[] = $field;
+    
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'href']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $fields[] = $field;
 
         $field = new LinkButtonTileField();
         $field->setName("href");
@@ -929,6 +934,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setLabel($this->languageRefs['distance'][0]);
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
+        $fields[] = $field;
+    
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'alias']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
 
         $field = new LinkButtonTileField();

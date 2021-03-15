@@ -34,6 +34,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use con4gis\MapsBundle\Classes\MapDataConfigurator;
@@ -397,18 +398,44 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $this->tileItems[] = $field;
-
+    
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'alias']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $this->tileItems[] = $field;
+    
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefField("uuid");
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
         $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
-        $field->setLinkText($this->languageRefs['frontend']['putOnWishlist']);
+        $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['putOnWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setAsyncCall(true);
+        $field->setConditionField("not_on_wishlist");
+        $field->setConditionValue(true);
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToWishlist");
+        $this->tileItems[] = $field;
+    
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/remove/uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['removeFromWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setConditionField("on_wishlist");
+        $field->setConditionValue(true);
         $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("removeFromWishlist");
         $this->tileItems[] = $field;
 
         $objSettings = GutesioOperatorSettingsModel::findSettings();

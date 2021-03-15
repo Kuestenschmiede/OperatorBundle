@@ -902,11 +902,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setClass("c4g-list-element__image");
         $fields[] = $field;
 
-//        $field = new WrapperTileField();
-//        $field->setClass("col-md-7");
-//        $field->setWrappedFields(["name", "types"]);
-//        $fields[] = $field;
-
         $field = new HeadlineTileField();
         $field->setName("name");
         $field->setWrapperClass("c4g-list-element__title-wrapper");

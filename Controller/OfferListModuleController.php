@@ -601,7 +601,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setAsyncCall(true);
         $field->setConditionField("not_on_wishlist");
-        $field->setConditionValue(true);
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
@@ -618,7 +618,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setConditionField("on_wishlist");
-        $field->setConditionValue(true);
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");

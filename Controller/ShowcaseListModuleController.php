@@ -434,9 +434,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setLinkText($this->languageRefs['alias_link_text']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
-        $field->setExternalFieldCondition(true);
-        $field->setConditionField("directLink");
-        $field->setConditionValue("1");
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $fields[] = $field;
 
         return $fields;

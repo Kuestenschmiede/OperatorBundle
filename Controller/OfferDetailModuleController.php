@@ -424,9 +424,8 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['alias_link_text']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
-        $field->setExternalFieldCondition(true);
-        $field->setConditionField("directLink");
-        $field->setConditionValue("1");
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $this->tileItems[] = $field;
 
         return $this->tileItems;

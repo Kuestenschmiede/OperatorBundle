@@ -96,6 +96,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+//        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery-3.5.1.slim.min.js");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("offer_list");

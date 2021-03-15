@@ -99,6 +99,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
 
         }

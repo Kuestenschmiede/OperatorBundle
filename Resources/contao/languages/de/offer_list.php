@@ -1,18 +1,14 @@
 <?php
 /**
- * This file is part of con4gis,
- * the gis-kit for Contao CMS.
- *
- * @package   	con4gis
- * @version        6
- * @author  	    con4gis contributors (see "authors.txt")
- * @license 	    LGPL-3.0-or-later
- * @copyright 	Küstenschmiede GmbH Software & Design
- * @link              https://www.con4gis.org
- *
+ * This file belongs to gutes.io and is published exclusively for use
+ * in gutes.io operator or provider pages.
+ 
+ * @package    gutesio
+ * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
+ * @link       https://gutes.io
  */
 
-$strName = 'tl_gutesio_data_child';
+$strName = 'offer_list';
 
 $GLOBALS['TL_LANG'][$strName]['price'] = ['Preis', 'Preis inkl. MwSt. in EUR.'];
 $GLOBALS['TL_LANG'][$strName]['strikePrice'] = ['Streichpreis', 'Streichpreis inkl. MwSt. in EUR.'];
@@ -46,6 +42,10 @@ $GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "Weitere Informationen";
 $GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "Weitere Informationen ansehen";
 $GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Angeboten von folgenden Anbietern:";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Zeitraum auswählen";
+$GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Hier können Sie einen Filterzeitraum auswählen, um die Veranstaltungen einzugrenzen.";
+
+$GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Datum von";
+$GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Datum bis";
 
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
@@ -65,22 +65,11 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'ab';
 
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['modal_button_label'] = 'Click and Collect';
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'jetzt bestellen';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'Schließen';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Ihre E-Mailadresse für Rückfragen', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'schließen';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Ihre E-Mail-Adresse für Rückfragen', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['name'] = ['Name', ''];
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Abholzeitpunkt', ''];
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Anmerkungen', ''];
-
-$GLOBALS['TL_LANG'][$strName]['notification']['error'] = 'Fehler';
-$GLOBALS['TL_LANG'][$strName]['notification']['form_invalid'] = 'Fehler in den Formulardaten.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_missing'] = 'Die Emailadresse ist ein Pflichtfeld.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_invalid_format'] = 'Die Emailadresse ist in einem ungültigen Format.';
-$GLOBALS['TL_LANG'][$strName]['notification']['earliest_missing'] = 'Der früheste Abholzeitpunkt ist ein Pflichtfeld.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_and_earliest_missing'] = 'Die Emailadresse und der früheste Abholzeitpunkt sind Pflichtfelder.';
-$GLOBALS['TL_LANG'][$strName]['notification']['generic_error'] = 'Ein Fehler ist aufgetreten.';
-$GLOBALS['TL_LANG'][$strName]['notification']['email_error'] = 'Die Angabe ist keine gültige Emailadresse.';
-
-$GLOBALS['TL_LANG'][$strName]['notification']['success'] = 'Erfolg';
-$GLOBALS['TL_LANG'][$strName]['notification']['cc_email_sent'] = 'Ihre Bestellung wurde verschickt. Geben Sie dem Anbieter etwas Zeit, um diese zu prüfen.';
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Filter öffnen';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';

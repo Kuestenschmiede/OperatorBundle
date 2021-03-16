@@ -34,10 +34,12 @@ use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use con4gis\MapsBundle\Classes\MapDataConfigurator;
 use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
+use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Exception\RedirectResponseException;
@@ -67,6 +69,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     private $languageRefs = [];
 
     const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
+    const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * OfferDetailModuleController constructor.
@@ -79,6 +82,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        global $objPage;
         $this->model = $model;
         $this->offerService->setModel($model);
         $this->setAlias();
@@ -96,13 +100,15 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
 
         }
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
-            $conf = $this->getDetailFrontendConfiguration($data);
+            $conf = $this->getDetailFrontendConfiguration($data, $request);
+            $conf->setLanguage($objPage->language);
             if (!empty($data)) {
                 if ($this->model->gutesio_data_render_searchHtml) {
                     $sc = new SearchConfiguration();
@@ -131,14 +137,13 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
     private function setupLanguage()
     {
-        System::loadLanguageFile("tl_gutesio_data_child");
-        System::loadLanguageFile("tl_gutesio_data_element");
-        System::loadLanguageFile("gutesio_frontend");
+        System::loadLanguageFile("offer_list");
         System::loadLanguageFile("operator_showcase_list");
-        $this->languageRefs = $GLOBALS['TL_LANG']['tl_gutesio_data_child'];
+        System::loadLanguageFile("gutesio_frontend");
+        $this->languageRefs = $GLOBALS['TL_LANG']['offer_list'];
     }
 
-    private function getDetailFrontendConfiguration(array $data)
+    private function getDetailFrontendConfiguration(array $data, Request $request)
     {
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->addDetailPage(
@@ -149,7 +154,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $conf->addTileList(
             $this->getElementTileList(),
             $this->getElementFields(),
-            $this->offerService->getElementData($data['uuid'])
+            $this->getElementData($data, $request)
         );
 
         return $conf;
@@ -159,17 +164,18 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     protected function getDetailPage()
     {
         $page = new DetailPage();
-        $page->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['headline']);
+        $page->setHeadline($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['headline']);
         $settings = GutesioOperatorSettingsModel::findSettings();
         $mapData = MapDataConfigurator::prepareMapData(
             ContentModel::findById($settings->detail_map),
             Database::getInstance(),
             ["profile" => $settings->detail_profile],
-            true
+            false
         );
+        MapsResourceLoader::loadResources(["router" => true], $mapData);
+
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
-        MapsResourceLoader::loadResources(["router" => true], $mapData);
         $page->setMapData($mapData);
         $page->setSections($this->getSections());
         $page->setShowAnchorMenu(true);
@@ -269,20 +275,29 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setClass('detail-view__appointment-upon-agreement');
         $fields[] = $field;
 
+        global $objPage;
         $field = new DetailModalFormButtonField();
         $field->setSection(4);
         $field->setName('cc');
         $field->setClass('cc detail-view__modal');
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/uuid');
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
         $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['cc_form']['close_button_text']);
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
         $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
         $field->setConditionField('clickCollect');
         $field->setConditionField('type');
         $field->setConditionValue('1');
         $field->setConditionValue('product');
+        $field->setInnerFields([
+            'name',
+            'imageGallery',
+            'strikePrice',
+            'price',
+            'beginDate',
+            'beginTime',
+        ]);
         $fields[] = $field;
 
         $field = new DetailTextField();
@@ -314,7 +329,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         $contactField = new DetailContactField();
         $contactField->setSection(6);
-        $contactField->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['contact']);
+        $contactField->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['contact']);
         $contactField->setEmailFieldName('email');
         $contactField->setPhoneFieldName('phone');
         $contactField->setWebsiteFieldName('website');
@@ -328,7 +343,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         $field = new DetailMapLocationField();
         $field->setSection(6);
-        $field->setClass("detail-view__map");
+        $field->setClass("detail-view__map-wrapper");
         $field->setName('mapLocation');
         $field->setGeoxField('geox');
         $field->setGeoyField('geoy');
@@ -368,7 +383,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setName("types");
         $field->setWrapperClass("c4g-list-element__types-wrapper");
         $field->setClass("c4g-list-element__types");
-        $field->setLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['types'][0]);
+        $field->setLabel($GLOBALS['TL_LANG']['operator_showcase_list']['types'][0]);
         $this->tileItems[] = $field;
 
         $field = new TagTileField();
@@ -385,25 +400,53 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $this->tileItems[] = $field;
-
+    
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'alias']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $this->tileItems[] = $field;
+    
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefField("uuid");
         $field->setWrapperClass("c4g-list-element__notice-wrapper");
         $field->setClass("c4g-list-element__notice-link put-on-wishlist");
         $field->setHref("/gutesio/operator/wishlist/add/showcase/uuid");
-        $field->setLinkText($this->languageRefs['frontend']['putOnWishlist']);
+        $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['putOnWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setAsyncCall(true);
+        $field->setConditionField("not_on_wishlist");
+        $field->setConditionValue('1');
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToWishlist");
+        $this->tileItems[] = $field;
+    
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/remove/uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['removeFromWishlist']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setAsyncCall(true);
         $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setConditionField("on_wishlist");
+        $field->setConditionValue('1');
         $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("removeFromWishlist");
         $this->tileItems[] = $field;
 
-        if (C4GUtils::endsWith(Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"), '.html')) {
-            $href = str_replace('.html', '/alias.html', Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}"));
-        } else {
-            $href = Controller::replaceInsertTags("{{link_url::" . $this->model->gutesio_child_showcase_link . "}}") . '/alias';
-        }
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+        $href = $url . '/alias';
+        $urlSuffix = Config::get('urlSuffix');
+        $href = str_replace($urlSuffix, "", $href);
+        $href .= $urlSuffix;
+
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass("c4g-list-element__more-wrapper");
@@ -413,11 +456,42 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setLinkText($GLOBALS['TL_LANG']['operator_showcase_list']['alias_link_text']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
-        $field->setExternalFieldCondition(true);
-        $field->setConditionField("directLink");
-        $field->setConditionValue("1");
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $this->tileItems[] = $field;
 
         return $this->tileItems;
+    }
+
+    private function getElementData(array $data, Request $request): array
+    {
+        $results = $this->offerService->getElementData($data['uuid']);
+        $clientUuid = $this->checkCookieForClientUuid($request);
+        $db = Database::getInstance();
+        foreach ($results as $key => $row) {
+            $types = [];
+            if ($clientUuid !== null) {
+                $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
+                $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
+                if ($result) {
+                    $row['on_wishlist'] = "1";
+                } else {
+                    $row['not_on_wishlist'] = "1";
+                }
+            }
+            foreach ($row['types'] as $type) {
+                $types[] = $type['label'];
+                $row['types'] = implode(', ', $types);
+            }
+            $results[$key] = $row;
+        }
+
+        return $results;
+    }
+
+    private function checkCookieForClientUuid(Request $request)
+    {
+        $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
+        return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
 }

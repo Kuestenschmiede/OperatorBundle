@@ -29,6 +29,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
+use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Controller;
@@ -71,6 +72,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        global $objPage;
         $this->model = $model;
         $this->setAlias();
         $redirectPage = $model->gutesio_data_redirect_page;
@@ -86,8 +88,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
         System::loadLanguageFile("operator_showcase_list");
-        System::loadLanguageFile("tl_gutesio_data_child");
-        System::loadLanguageFile("tl_gutesio_data_element");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
 
@@ -95,6 +95,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $fields = $this->getFields();
         $data = $this->getInitialData();
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
+        $conf->setLanguage($objPage->language);
         $arrFilter = $this->buildFilter();
         $conf->addForm(
             $arrFilter['form'],
@@ -177,7 +178,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $this->get('contao.framework')->initialize(true);
         System::loadLanguageFile("field_translations", "de");
-        System::loadLanguageFile("tl_gutesio_data_element", "de");
+        System::loadLanguageFile("operator_showcase_list", "de");
         System::loadLanguageFile("form_tag_fields", "de");
         $moduleId = $request->query->get("moduleId");
         $tagFilterIds = $request->query->get('tags');
@@ -377,6 +378,11 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $fields[] = $field;
+        
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'alias']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $fields[] = $field;
 
         $field = new LinkButtonTileField();
         $field->setName("uuid");
@@ -426,9 +432,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setLinkText($this->languageRefs['alias_link_text']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
-        $field->setExternalFieldCondition(true);
-        $field->setConditionField("directLink");
-        $field->setConditionValue("1");
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $fields[] = $field;
 
         return $fields;
@@ -447,8 +452,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $form->setMethod("GET");
         $form->setContainerRow(true);
         $form->setToggleableBaseClass('c4g-listfilter');
-        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['filter']['close_filter']);
-        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['tl_gutesio_data_element']['filter']['open_filter']);
+        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
+        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
         $arrFilter['form'] = $form;
 

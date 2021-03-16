@@ -87,7 +87,7 @@ class AfterImportListener
                     $this->escargot->crawl();
                 }
             }
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $event->setError($GLOBALS['TL_LANG']['import']['error_updating_index']);
             C4gLogModel::addLogEntry('operator', 'Error while crawling: ' . $e);
         }
@@ -101,7 +101,7 @@ class AfterImportListener
             $this->filesystem->remove($this->rootDir . '/var/logs/gutesio_crawl_log.csv');
         }
 
-        $csvDebugHandler = new CrawlCsvLogHandler($this->rootDir . '/var/logs/gutes_crawl_log.csv', Logger::DEBUG);
+        $csvDebugHandler = new CrawlCsvLogHandler($this->rootDir . '/var/logs/gutesio_crawl_log.csv', Logger::DEBUG);
         $handlers[] = $csvDebugHandler;
 
         $groupHandler = new GroupHandler($handlers);

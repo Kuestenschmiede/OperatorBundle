@@ -54,6 +54,7 @@ class AfterImportListener
             System::loadLanguageFile("import");
             $this->rootDir = $rootDir = System::getContainer()->getParameter('kernel.project_dir');
             $importType = $event->getImportType();
+            $createRobots = false;
             if ($importType == 'gutesio') {
                 $contentUpdate = new ChildFullTextContentUpdater();
                 $contentUpdate->update();
@@ -70,6 +71,10 @@ class AfterImportListener
 
                 //Update Search Index
                 if ($c4gSettings['updateSearchIndex'] == 1) {
+                    if (!$this->filesystem->exists($this->rootDir . '/web/robots.txt')) {
+                        $this->filesystem->touch($this->rootDir . '/web/robots.txt');
+                        $createRobots = true;
+                    }
                     $subscribers = $this->escargotFactory->getSubscriberNames();
                     $queue = new InMemoryQueue();
                     $baseUris = $this->escargotFactory->getCrawlUriCollection();
@@ -85,9 +90,16 @@ class AfterImportListener
                     ;
 
                     $this->escargot->crawl();
+
+                    if ($this->filesystem->exists($this->rootDir . '/web/robots.txt') && $createRobots) {
+                        $this->filesystem->remove($this->rootDir . '/web/robots.txt');
+                    }
                 }
             }
         } catch (\Throwable $e) {
+            if ($this->filesystem->exists($this->rootDir . '/web/robots.txt') && $createRobots) {
+                $this->filesystem->remove($this->rootDir . '/web/robots.txt');
+            }
             $event->setError($GLOBALS['TL_LANG']['import']['error_updating_index']);
             C4gLogModel::addLogEntry('operator', 'Error while crawling: ' . $e);
         }

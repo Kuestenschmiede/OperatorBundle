@@ -158,7 +158,7 @@ class OfferLoaderService
                     $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = $limit;
-                $parameters[] = (int) $offset;
+                $parameters[] = (int)$offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -191,7 +191,7 @@ class OfferLoaderService
                     $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = $limit;
-                $parameters[] = (int) $offset;
+                $parameters[] = (int)$offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -225,7 +225,7 @@ class OfferLoaderService
                 $parameters[] = '%' . $rawTermString . '%';
             }
             $parameters[] = $limit;
-            $parameters[] = (int) $offset;
+            $parameters[] = (int)$offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -257,7 +257,7 @@ class OfferLoaderService
                 $parameters[] = '%' . $rawTermString . '%';
             }
             $parameters[] = $limit;
-            $parameters[] = (int) $offset;
+            $parameters[] = (int)$offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -334,7 +334,7 @@ class OfferLoaderService
             if (!empty($tags)) {
                 $parameters = $tags;
                 $parameters[] = $limit;
-                $parameters[] = (int) $offset;
+                $parameters[] = (int)$offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink,  
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -362,7 +362,7 @@ class OfferLoaderService
             } else {
                 $parameters = [];
                 $parameters[] = $limit;
-                $parameters[] = (int) $offset;
+                $parameters[] = (int)$offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink,  
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -391,7 +391,7 @@ class OfferLoaderService
         } elseif (empty($categories)) {
             $parameters = $types;
             $parameters[] = $limit;
-            $parameters[] = (int) $offset;
+            $parameters[] = (int)$offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -417,7 +417,7 @@ class OfferLoaderService
         } else {
             $parameters = $categories;
             $parameters[] = $limit;
-            $parameters[] = (int) $offset;
+            $parameters[] = (int)$offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -485,46 +485,9 @@ class OfferLoaderService
     private function getSingleDataset($alias, $published, $isPreview = false)
     {
         $database = Database::getInstance();
-
-        $childDataMode = $this->model->gutesio_child_data_mode;
         $alias = $this->cleanAlias($alias);
-        $types = [];
-        $categories = [];
-        if ($childDataMode == '1') {
-            $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-        } elseif ($childDataMode == '2') {
-            $categories = StringUtil::deserialize($this->model->gutesio_child_category, true);
-        } elseif ($childDataMode == '3') {
-            $tags = StringUtil::deserialize($this->model->gutesio_child_tag);
-        }
 
-        if (empty($types) && empty($categories)) {
-            if (!empty($tags)) {
-                $parameters = $tags;
-                array_unshift($parameters, '{' . $alias . '}');
-                $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-                a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, ' . '
-                (CASE ' . '
-                    WHEN a.description IS NOT NULL THEN a.description ' . '
-                    WHEN b.description IS NOT NULL THEN b.description ' . '
-                    WHEN c.description IS NOT NULL THEN c.description ' . '
-                    WHEN d.description IS NOT NULL THEN d.description ' . '
-                ELSE NULL END) AS description, ' . '
-                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
-                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
-                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
-                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
-                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
-                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
-                LEFT JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
-                WHERE a.uuid = ? AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags);
-                if ($published) {
-                    $sql .= ' AND a.published = 1';
-                }
-                $rows = $database->prepare($sql)->execute($parameters)->fetchAllAssoc();
-            } else {
-                $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+        $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
             a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
@@ -540,58 +503,10 @@ class OfferLoaderService
             LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE a.uuid = ?';
-                if ($published) {
-                    $sql .= ' AND a.published = 1';
-                }
-                $rows = $database->prepare($sql)->execute('{' . $alias . '}')->fetchAllAssoc();
-            }
-        } elseif (empty($categories)) {
-            $parameters = $types;
-            array_unshift($parameters, '{' . $alias . '}');
-            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, ' . '
-            (CASE ' . '
-                WHEN a.description IS NOT NULL THEN a.description ' . '
-                WHEN b.description IS NOT NULL THEN b.description ' . '
-                WHEN c.description IS NOT NULL THEN c.description ' . '
-                WHEN d.description IS NOT NULL THEN d.description ' . '
-            ELSE NULL END) AS description, ' . '
-            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
-            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
-            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
-            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-            WHERE a.uuid = ? AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types);
-            if ($published) {
-                $sql .= ' AND a.published = 1';
-            }
-            $rows = $database->prepare($sql)->execute($parameters)->fetchAllAssoc();
-        } else {
-            $parameters = $categories;
-            array_unshift($parameters, '{' . $alias . '}');
-            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, ' . '
-            (CASE ' . '
-                WHEN a.description IS NOT NULL THEN a.description ' . '
-                WHEN b.description IS NOT NULL THEN b.description ' . '
-                WHEN c.description IS NOT NULL THEN c.description ' . '
-                WHEN d.description IS NOT NULL THEN d.description ' . '
-            ELSE NULL END) AS description, ' . '
-            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
-            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
-            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
-            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-            WHERE a.uuid = ? AND tl_gutesio_data_child_type.uuid ' . C4GUtils::buildInString($categories);
-            if ($published) {
-                $sql .= ' AND a.published = 1';
-            }
-            $rows = $database->prepare($sql)->execute($parameters)->fetchAllAssoc();
+        if ($published) {
+            $sql .= ' AND a.published = 1';
         }
+        $rows = $database->prepare($sql)->execute('{' . $alias . '}')->fetchAllAssoc();
 
         if (empty($rows)) {
             return [];

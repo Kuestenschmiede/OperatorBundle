@@ -6821,6 +6821,11 @@ html {
   justify-content: center;
   grid-gap: 10px
 }
+@media (max-width:991.98px) {
+  .detail-view .anchor-menu__list {
+    visibility: hidden
+  }
+}
 .detail-view .anchor-menu__list > li > a {
   color: #212529
 }
@@ -6832,6 +6837,14 @@ html {
   right: 1rem;
   top: 0;
   height: 100%
+}
+@media (max-width:991.98px) {
+  .detail-view .anchor-menu__share {
+    background: rgba(255,255,255,.8);
+    border-radius: 4px;
+    border: 7px solid rgba(255,255,255,.8);
+    height: 45px
+  }
 }
 .detail-view .anchor-menu__share .c4g-btn-sharedetail {
   margin-left: .5rem

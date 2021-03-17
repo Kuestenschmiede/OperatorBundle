@@ -3577,6 +3577,12 @@ a.badge-dark:focus {
 .tag-filter__filter-item > label > input {
   display: none
 }
+#anchor-menu.anchor-menu-onepager {
+  top: 103px
+}
+#anchor-menu.anchor-menu-onepager .anchor-menu-list {
+  background-color: #fff
+}
 html {
   box-sizing: border-box
 }

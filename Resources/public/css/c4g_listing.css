@@ -3907,7 +3907,6 @@ html {
 .c4g-modal-inner {
   position: fixed;
   display: block;
-  min-width: 32em;
   min-height: 100px;
   max-width: 100%;
   padding: 1.25em;

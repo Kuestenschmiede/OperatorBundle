@@ -9,7 +9,9 @@
  */
 namespace gutesio\OperatorBundle\Classes\Callback;
 
+use Contao\DC_Table;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTagModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 use Contao\Backend;
 
@@ -43,5 +45,31 @@ class MapsCallback extends Backend
         }
 
         return $arrTypes;
+    }
+    public function getFilterOptions($dc)
+    {
+        if ($dc instanceof DC_Table) {
+            $dc = $dc->activeRecord;
+        }
+        if ($dc->filterType == 1) {
+            $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND availableInMap = 1';
+            $objReturns = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
+            foreach ($objReturns  as $objReturn) {
+                $return[$objReturn['uuid']] = $objReturn['name'];
+            }
+
+        }
+        else if($dc->filterType == 2) {
+            $t = 'tl_gutesio_data_directory';
+            $arrOptions = [
+                'order' => "$t.name ASC",
+            ];
+
+            $objReturns  = GutesioDataDirectoryModel::findAll($arrOptions);
+            foreach ($objReturns  as $objReturn) {
+                $return[$objReturn->uuid] = $objReturn->name;
+            }
+        }
+        return $return;
     }
 }

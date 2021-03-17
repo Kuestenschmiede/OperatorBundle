@@ -35,6 +35,7 @@ class LoadFeatureFilterListener
         $mapId = $event->getProfileId();
         $modelMaps = C4gMapsModel::findById($mapId); //ToDo
         $modelProfile = C4gMapProfilesModel::findById($modelMaps->profile);
+        $filterElements = $modelProfile->filterElements;
         $filterHandling = $modelProfile->filterType;
         $currentFilters = $event->getFilters();
 
@@ -43,6 +44,9 @@ class LoadFeatureFilterListener
             $tags = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
 
             foreach ($tags as $tag) {
+                if ($filterElements && !str_contains($filterElements, $tag['uuid'])) {
+                    continue;
+                }
                 $filterObject = new FeatureFilter();
                 $filterObject->setFieldName($tag['name']);
 
@@ -67,7 +71,6 @@ class LoadFeatureFilterListener
             }
         } elseif ($filterHandling == 2) { // filter with diretories and categories
             $modelMaps = C4gMapsModel::findOneBy('pid', $modelMaps->id); //ToDo
-
             $t = 'tl_gutesio_data_directory';
             $arrOptions = [
                 'order' => "$t.name ASC",
@@ -82,6 +85,9 @@ class LoadFeatureFilterListener
                 $objDirectories = GutesioDataDirectoryModel::findAll($arrOptions);
             }
             foreach ($objDirectories as $directory) {
+                if ($filterElements && !str_contains($filterElements, $directory->uuid)) {
+                    continue;
+                }
                 $filterObject = new FeatureFilter();
                 $filterObject->setFieldName($directory->name);
                 $strQueryTypes = 'SELECT type.* FROM tl_gutesio_data_type AS type

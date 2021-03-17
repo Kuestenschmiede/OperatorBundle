@@ -100,6 +100,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 //        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery-3.5.1.slim.min.js");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/jquery.fancybox.min.css");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery.fancybox.min.js");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("offer_list");
         System::loadLanguageFile("gutesio_frontend");

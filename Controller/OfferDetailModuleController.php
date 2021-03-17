@@ -102,7 +102,8 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
-
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/jquery.fancybox.min.css");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery.fancybox.min.js");
         }
 
         if ($this->alias !== "") {

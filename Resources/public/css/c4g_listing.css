@@ -3522,6 +3522,7 @@ a.badge-dark:focus {
   top: 0;
   bottom: 0;
   width: 400px;
+  max-width: 100%;
   box-shadow: var(--gutes-box-shadow);
   -webkit-animation: fadeIn .5s;
   animation: fadeIn .5s

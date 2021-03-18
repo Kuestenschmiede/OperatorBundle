@@ -869,6 +869,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     }
                     break;
                 default:
+                    $childRows[$key] = $row;
                     break;
             }
 

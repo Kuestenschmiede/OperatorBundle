@@ -491,6 +491,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName('tagLinks');
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
+        $field->setInnerClass("c4g-list-element__taglinks-image");
         $fields[] = $field;
     
         $field = new WrapperTileField();
@@ -655,16 +656,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 }
             }
 
-//            $childRows[$key]['tagLinks'] = [
-//                'icons' => [],
-//                'links' => [
-//                    [
-//                        'href' => $row['foreignLink'] && $row['directLink'] ?: $href,
-//                        'iconClass' => 'fas fa-angle-right',
-//                        'label' => $GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']
-//                    ]
-//                ]
-//            ];
             $row['tagLinks'] = $childRows[$key]['tagLinks'];
 
 
@@ -678,8 +669,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $model = FilesModel::findByUuid($r['image']);
                 if ($model !== null) {
                     $icon = [
-                        'imageSource' => $model->path,
-                        'imageAlt' => $r['name']
+                        'name' => $r['name'],
+                        'image' => [
+                            'src' => $model->path,
+                            'alt' => $r['name']
+                        ]
                     ];
                     switch ($r['technicalKey']) {
                         case 'tag_delivery':
@@ -726,6 +720,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     }
 
                     $icon['linkHref'] = C4GUtils::addProtocolToLink($icon['linkHref']);
+                    if (!$row['tagLinks']) {
+                        $row['tagLinks'] = [];
+                    }
+                    $row['tagLinks'][] = $icon;
                 }
             }
 

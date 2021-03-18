@@ -564,6 +564,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setName('tagLinks');
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
+        $field->setInnerClass("c4g-list-element__taglinks-image");
         $fields[] = $field;
 
         global $objPage;

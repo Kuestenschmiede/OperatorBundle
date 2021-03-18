@@ -300,11 +300,7 @@ class OfferLoaderService
             } else {
                 $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
             }
-
-            $childRows[$key]['tagLinks'] = [
-                'icons' => [],
-                'links' => [],
-            ];
+            
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
@@ -457,11 +453,7 @@ class OfferLoaderService
             } else {
                 $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
             }
-
-            $childRows[$key]['tagLinks'] = [
-                'icons' => [],
-                'links' => [],
-            ];
+            
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
@@ -668,8 +660,11 @@ class OfferLoaderService
             $model = FilesModel::findByUuid($r['image']);
             if ($model !== null) {
                 $icon = [
-                    'imageSource' => $model->path,
-                    'imageAlt' => $r['name'],
+                    'name' => $r['name'],
+                    'image' => [
+                        'src' => $model->path,
+                        'alt' => $r['name']
+                    ]
                 ];
                 switch ($r['technicalKey']) {
                     case 'tag_delivery':
@@ -717,7 +712,7 @@ class OfferLoaderService
                 }
                 $icon['linkHref'] = C4GUtils::addProtocolToLink($icon['linkHref']);
                 $icon['class'] .= $r['technicalKey'];
-                $childRows[$key]['tagLinks']['icons'][] = $icon;
+                $childRows[$key]['tagLinks'][] = $icon;
             }
         }
 

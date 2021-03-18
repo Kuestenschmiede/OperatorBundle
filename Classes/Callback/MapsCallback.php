@@ -52,7 +52,7 @@ class MapsCallback extends Backend
             $dc = $dc->activeRecord;
         }
         if ($dc->filterType == 1) {
-            $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND availableInMap = 1';
+            $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1';
             $objReturns = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
             foreach ($objReturns  as $objReturn) {
                 $return[$objReturn['uuid']] = $objReturn['name'];

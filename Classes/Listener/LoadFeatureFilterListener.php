@@ -40,7 +40,7 @@ class LoadFeatureFilterListener
         $currentFilters = $event->getFilters();
 
         if ($filterHandling == 1) { //Filters with tags
-            $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND availableInMap = 1';
+            $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1';
             $tags = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
 
             foreach ($tags as $tag) {

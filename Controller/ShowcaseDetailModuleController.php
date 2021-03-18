@@ -53,6 +53,7 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,16 +77,26 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
      */
     private $generator;
 
+    /**
+     * @var OfferLoaderService
+     */
+    private $offerLoaderService;
+
 
     /**
      * ShowcaseDetailModuleController constructor.
      * @param ShowcaseService $showcaseService
      * @param UrlGeneratorInterface $generator
+     * @param OfferLoaderService $offerLoaderService
      */
-    public function __construct(ShowcaseService $showcaseService, UrlGeneratorInterface $generator)
-    {
+    public function __construct(
+        ShowcaseService $showcaseService,
+        UrlGeneratorInterface $generator,
+        OfferLoaderService $offerLoaderService
+    ) {
         $this->showcaseService = $showcaseService;
         $this->generator = $generator;
+        $this->offerLoaderService = $offerLoaderService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -548,7 +559,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             $field->setExternalLinkField('foreignLink');
             $field->setExternalLinkFieldConditionField("directLink");
             $field->setExternalLinkFieldConditionValue("1");
-            $field->setConditionField('typeId');
+            $field->setConditionField('type');
             $field->setConditionValue($key);
             $fields[] = $field;
         }
@@ -584,7 +595,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as typeId, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
             LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
@@ -610,40 +621,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             unset($childRows[$key]['imageOffer']);
             unset($row['imageOffer']);
 
-            switch ($row['typeId']) {
-                case 'product':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
-
-                    break;
-                case 'event':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
-                    break;
-                case 'job':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
-                    break;
-                case 'arrangement':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
-                    break;
-                case 'service':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
-                    break;
-                default:
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
-                    break;
-            }
-
-            if (C4GUtils::endsWith($url, '.html')) {
-                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $row['uuid'])) . '.html', $url);
-            } else {
-                $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
-            }
-
             $clientUuid = $this->checkCookieForClientUuid($request);
             if ($clientUuid !== null) {
                 $db = Database::getInstance();
@@ -657,9 +634,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             }
 
             $row['tagLinks'] = $childRows[$key]['tagLinks'];
-
-
-            $row['href'] = $row['foreignLink'] && $row['directLink'] ?: $href;
 
             $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
@@ -727,152 +701,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 }
             }
 
-            switch ($row['typeId']) {
-                case 'product':
-                    $productData = $database->prepare('SELECT ' . '
-                        (CASE ' . '
-                            WHEN a.price IS NOT NULL THEN a.price ' . '
-                            WHEN b.price IS NOT NULL THEN b.price ' . '
-                            WHEN c.price IS NOT NULL THEN c.price ' . '
-                            WHEN d.price IS NOT NULL THEN d.price ' . '
-                        ELSE NULL END) AS price, ' . '
-                        (CASE ' . '
-                            WHEN a.strikePrice IS NOT NULL THEN a.strikePrice ' . '
-                            WHEN b.strikePrice IS NOT NULL THEN b.strikePrice ' . '
-                            WHEN c.strikePrice IS NOT NULL THEN c.strikePrice ' . '
-                            WHEN d.strikePrice IS NOT NULL THEN d.strikePrice ' . '
-                        ELSE NULL END) AS strikePrice, ' . '
-                        (CASE ' . '
-                            WHEN a.discount IS NOT NULL THEN a.discount ' . '
-                            WHEN b.discount IS NOT NULL THEN b.discount ' . '
-                            WHEN c.discount IS NOT NULL THEN c.discount ' . '
-                            WHEN d.discount IS NOT NULL THEN d.discount ' . '
-                        ELSE NULL END) AS discount, ' . '
-                        (CASE ' . '
-                            WHEN a.color IS NOT NULL THEN a.color ' . '
-                            WHEN b.color IS NOT NULL THEN b.color ' . '
-                            WHEN c.color IS NOT NULL THEN c.color ' . '
-                            WHEN d.color IS NOT NULL THEN d.color ' . '
-                        ELSE NULL END) AS color, ' . '
-                        (CASE ' . '
-                            WHEN a.size IS NOT NULL THEN a.size ' . '
-                            WHEN b.size IS NOT NULL THEN b.size ' . '
-                            WHEN c.size IS NOT NULL THEN c.size ' . '
-                            WHEN d.size IS NOT NULL THEN d.size ' . '
-                        ELSE NULL END) AS size  ' . '
-                        FROM tl_gutesio_data_child_product a ' . '
-                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_product b ON b.childId = cb.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_product c ON c.childId = cc.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_product d ON d.childId = cd.uuid ' . '
-                        WHERE a.childId = ?')
-                        ->execute($row['uuid'])->fetchAssoc();
-                    if (!empty($productData)) {
-                        $productData['rawPrice'] = $productData['price'];
-                        if ($productData['strikePrice'] > 0 && $productData['strikePrice'] > $productData['price']) {
-                            $productData['strikePrice'] =
-                                number_format(
-                                    $productData['strikePrice'] ?: 0,
-                                    2,
-                                    ',',
-                                    ''
-                                ) . ' €*';
-                            if ($productData['priceStartingAt']) {
-                                $productData['strikePrice'] =
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
-                                    ' ' . $productData['strikePrice'];
-                            }
-                        } else {
-                            unset($productData['strikePrice']);
-                        }
-                        if (!empty($productData['priceReplacer'])) {
-                            $productData['price'] =
-                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options'][$productData['priceReplacer']];
-                        } elseif ((!$productData['price'])/* && !$productData['priceStartingAt']*/) {
-                            $productData['price'] =
-                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options']['free'];
-                        } else {
-                            $productData['price'] =
-                                number_format(
-                                    $productData['price'] ?: 0,
-                                    2,
-                                    ',',
-                                    ''
-                                ) . ' €';
-                            if ($productData['price'] > 0) {
-                                $productData['price'] .= '*';
-                            }
-                            if ($productData['priceStartingAt']) {
-                                $productData['price'] =
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
-                                    ' ' . $productData['price'];
-                            }
-                        }
-                        $childRows[$key] = array_merge($row, $productData);
-                    }
-                    break;
-                case 'event':
-                    $eventData = $database->prepare('SELECT ' . '
-                        (CASE ' . '
-                            WHEN a.beginDate IS NOT NULL THEN a.beginDate ' . '
-                            WHEN b.beginDate IS NOT NULL THEN b.beginDate ' . '
-                            WHEN c.beginDate IS NOT NULL THEN c.beginDate ' . '
-                            WHEN d.beginDate IS NOT NULL THEN d.beginDate ' . '
-                        ELSE NULL END) AS beginDate, ' . '
-                        (CASE ' . '
-                            WHEN a.beginTime IS NOT NULL THEN a.beginTime ' . '
-                            WHEN b.beginTime IS NOT NULL THEN b.beginTime ' . '
-                            WHEN c.beginTime IS NOT NULL THEN c.beginTime ' . '
-                            WHEN d.beginTime IS NOT NULL THEN d.beginTime ' . '
-                        ELSE NULL END) AS beginTime, ' . '
-                        (CASE ' . '
-                            WHEN a.endDate IS NOT NULL THEN a.endDate ' . '
-                            WHEN b.endDate IS NOT NULL THEN b.endDate ' . '
-                            WHEN c.endDate IS NOT NULL THEN c.endDate ' . '
-                            WHEN d.endDate IS NOT NULL THEN d.endDate ' . '
-                        ELSE NULL END) AS discount, ' . '
-                        (CASE ' . '
-                            WHEN a.endTime IS NOT NULL THEN a.endTime ' . '
-                            WHEN b.endTime IS NOT NULL THEN b.endTime ' . '
-                            WHEN c.endTime IS NOT NULL THEN c.endTime ' . '
-                            WHEN d.endTime IS NOT NULL THEN d.endTime ' . '
-                        ELSE NULL END) AS endTime, ' . '
-                        (CASE ' . '
-                            WHEN a.locationElementId IS NOT NULL THEN a.locationElementId ' . '
-                            WHEN b.locationElementId IS NOT NULL THEN b.locationElementId ' . '
-                            WHEN c.locationElementId IS NOT NULL THEN c.locationElementId ' . '
-                            WHEN d.locationElementId IS NOT NULL THEN d.locationElementId ' . '
-                        ELSE NULL END) AS locationElementId ' . '
-                        FROM tl_gutesio_data_child_event a ' . '
-                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_event b ON b.childId = cb.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid ' . '
-                        WHERE a.childId = ?')
-                        ->execute($row['uuid'])->fetchAssoc();
-                    $eventData['beginTime'] = date('H:i', $eventData['beginTime']);
-                    $eventData['endTime'] = date('H:i', $eventData['endTime']);
-                    $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
-                    if ($elementModel !== null) {
-                        $eventData['locationElementId'] = $elementModel->name;
-                    }
-                    if (!empty($eventData)) {
-                        $childRows[$key] = array_merge($row, $eventData);
-                    }
-                    break;
-                default:
-                    $childRows[$key] = $row;
-                    break;
-            }
-
-            $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            $childRows[$key] = $row;
         }
+
+        $childRows = $this->offerLoaderService->getAdditionalData($childRows);
 
         return $childRows;
     }

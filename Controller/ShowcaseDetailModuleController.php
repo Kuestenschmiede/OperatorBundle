@@ -108,46 +108,42 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
 
         if ($this->alias !== '') {
-            if ($model->gutesio_data_show_details) {
-                $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
-                $detailData = $this->getDetailData($request);
-                if (!empty($detailData)) {
-                    $detailData['internal_type'] = "showcase";
-                    $detailPage = $this->getDetailPage();
-                    $childData = $this->getChildTileData($request);
-                    if (count($childData) > 0) {
-                        $link = new DetailAnchorMenuLink(
-                            $GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers'],
-                            "#" . $this->getChildTileList()->getName()
-                        );
-                        $detailPage->addAdditionalLink($link);
-                    }
-                    $conf->addDetailPage($detailPage, $this->getDetailFields($detailData), $detailData);
-                    $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
-                    $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
-                    $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
-                    $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
-                    $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
-                    $conf->setLanguage($objPage->language);
-                    $jsonConf = json_encode($conf);
-                    if ($jsonConf === false) {
-                        // error encoding
-                        C4gLogModel::addLogEntry("operator", json_last_error_msg());
-                        $template->configuration = [];
-                    } else {
-                        $template->configuration = $jsonConf;
-                    }
-                    $sc = new SearchConfiguration();
-                    $sc->addData($detailData, ['name', 'description']);
+            $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
+            $detailData = $this->getDetailData($request);
+            if (!empty($detailData)) {
+                $detailData['internal_type'] = "showcase";
+                $detailPage = $this->getDetailPage();
+                $childData = $this->getChildTileData($request);
+                if (count($childData) > 0) {
+                    $link = new DetailAnchorMenuLink(
+                        $GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers'],
+                        "#" . $this->getChildTileList()->getName()
+                    );
+                    $detailPage->addAdditionalLink($link);
+                }
+                $conf->addDetailPage($detailPage, $this->getDetailFields($detailData), $detailData);
+                $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
+                $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
+                $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
+                $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
+                $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                $conf->setLanguage($objPage->language);
+                $jsonConf = json_encode($conf);
+                if ($jsonConf === false) {
+                    // error encoding
+                    C4gLogModel::addLogEntry("operator", json_last_error_msg());
+                    $template->configuration = [];
                 } else {
-                    throw new RedirectResponseException($redirectUrl);
+                    $template->configuration = $jsonConf;
                 }
-                if ($this->model->gutesio_data_render_searchHtml) {
-                    $sc = new SearchConfiguration();
-                    $sc->addData($detailData, ['name', 'description']);
-                }
+                $sc = new SearchConfiguration();
+                $sc->addData($detailData, ['name', 'description']);
             } else {
                 throw new RedirectResponseException($redirectUrl);
+            }
+            if ($this->model->gutesio_data_render_searchHtml) {
+                $sc = new SearchConfiguration();
+                $sc->addData($detailData, ['name', 'description']);
             }
         } else {
             throw new RedirectResponseException($redirectUrl);

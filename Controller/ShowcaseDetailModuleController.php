@@ -16,6 +16,7 @@ use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailContactField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHTMLField;
+use con4gis\FrameworkBundle\Classes\DetailFields\DetailImageLinkField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailLinkField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailMapLocationField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailTagField;
@@ -255,9 +256,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setSection(5);
         $fields[] = $field;
 
-        $field = new DetailFancyboxImageGallery();
+        $field = new DetailImageLinkField();
         $field->setName("relatedShowcaseLogos");
         $field->setClass("relatedShowcaseLogos detail-view__logos");
+        $field->setWrapperClass("detail-view__logos-wrapper");
+        $field->setInnerClass("detail-view__logos-image");
         $field->setSection(6);
         $fields[] = $field;
 
@@ -418,7 +421,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             }
         }
         $detailData['displayType'] = $strTypes;
-
+        if ($detailData['relatedShowcaseLogos'] && is_array($detailData['relatedShowcaseLogos'])) {
+            foreach ($detailData['relatedShowcaseLogos'] as $key => $relatedShowcaseLogo) {
+                $url = $this->pageUrl;
+                $detailData['relatedShowcaseLogos'][$key]['href'] = $url . "/" . $relatedShowcaseLogo['href'];
+            }
+        }
+        
         //ToDo
         foreach ($detailData as $key => $detailDatum) {
             //hotfix
@@ -658,9 +667,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                                 $row['uuid'],
                                 'deliveryServiceLink'
                             )->fetchAssoc()['tagFieldValue'];
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                             $icon['linkLabel'] = 'Lieferservice';
                             break;
                         case 'tag_online_reservation':
@@ -671,9 +677,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                                 $row['uuid'],
                                 'onlineReservationLink'
                             )->fetchAssoc()['tagFieldValue'];
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                             $icon['linkLabel'] = 'Onlinereservierung';
                             break;
                         case 'tag_onlineshop':
@@ -684,9 +687,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                                 $row['uuid'],
                                 'onlineShopLink'
                             )->fetchAssoc()['tagFieldValue'];
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                             $icon['linkLabel'] = 'Onlineshop';
                             break;
                         default:

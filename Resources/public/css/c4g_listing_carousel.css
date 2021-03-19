@@ -357,9 +357,16 @@ html {
   -o-object-fit: cover;
   object-fit: cover
 }
+.c4g-carousel__title-wrapper {
+  min-height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
 .c4g-carousel__title {
   font-size: 1rem;
-  text-align: center
+  text-align: center;
+  margin-bottom: 0
 }
 .c4g-carousel .owl-wrapper .owl-item {
   background-color: var(--gutes-element-bgcolor);

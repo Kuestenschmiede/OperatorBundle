@@ -120,7 +120,7 @@ class ShowcaseService
                         $returnData[] = $relatedShowcase;
                     }
                 }
-                $returnData = $this->converter->convertDbResult($returnData);
+                $returnData = $this->converter->convertDbResult($returnData, ['loadTagsComplete' => true]);
                 if (count($returnData) > 1 && !($returnData[0])) {
                     $returnData = [$returnData];
                 }

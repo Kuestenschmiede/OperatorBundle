@@ -450,6 +450,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
         $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
+        $form->setHidden($this->model->gutesio_enable_filter !== '1');
         $arrFilter['form'] = $form;
 
         $fields = [];

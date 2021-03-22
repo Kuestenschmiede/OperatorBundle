@@ -19,8 +19,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{title_legend},name,headline,type;'.
     '{gutesio_data_mode_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
-    'gutesio_data_max_data,gutesio_data_mode,gutesio_data_change_layout_filter;' .
-    '{showcase_filter_legend},gutesio_enable_tag_filter;';
+    'gutesio_data_max_data,gutesio_data_mode;' .
+    '{showcase_filter_legend},gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_0'] = '';
@@ -40,7 +40,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
     '{load_legend},gutesio_child_data_mode,gutesio_child_load_step,gutesio_child_load_max;'.
-    '{showcase_filter_legend},gutesio_child_search_label,gutesio_child_search_placeholder,'.
+    '{showcase_filter_legend},gutesio_enable_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
     'gutesio_child_filter,gutesio_data_change_layout_filter;'.
     '{showcase_tag_filter_legend},gutesio_enable_tag_filter;';
@@ -141,6 +141,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_offer_list_page'] = [
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_details'] = [
     'exclude'                 => true,
     'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '1'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_enable_filter'] = [
+    'exclude'                 => true,
+    'default'                 => '1',
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr'],
     'sql'                     => "char(1) NOT NULL default '1'"

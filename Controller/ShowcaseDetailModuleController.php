@@ -107,7 +107,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
-//        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery-3.5.1.slim.min.js");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/jquery.fancybox.min.css");
@@ -140,7 +139,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $conf->setLanguage($objPage->language);
                 $jsonConf = json_encode($conf);
                 if ($jsonConf === false) {
-                    // error encoding
                     C4gLogModel::addLogEntry("operator", json_last_error_msg());
                     $template->configuration = [];
                 } else {
@@ -180,8 +178,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         );
         MapsResourceLoader::loadResources(["router" => true], $mapData);
 
-        //$mapData['width'] = "100%";
-        //$mapData['height'] = "100%";
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
         $page->setMapData($mapData);
@@ -284,7 +280,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field = new DetailTagField();
         $field->setSection(6);
         $field->setName("tags");
-        //$field->setLabel("Besonderheiten");
         $fields[] = $field;
 
         $contactField = new DetailContactField();
@@ -375,7 +370,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             $stm = Database::getInstance()
                 ->prepare("SELECT * FROM tl_gutesio_data_type WHERE `id` IN $inString");
             $arrTypes = $stm->execute()->fetchAllAssoc();
-            $technicalKeys = [];
 
             foreach ($arrTypes as $type) {
                 if ($type['technicalKey']) {
@@ -425,10 +419,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $detailData['relatedShowcaseLogos'][$key]['href'] = $url . "/" . $relatedShowcaseLogo['href'];
             }
         }
-        
-        //ToDo
+
         foreach ($detailData as $key => $detailDatum) {
-            //hotfix
             if (strpos(strtoupper($key), 'LINK')) {
                 $detailData[$key] = C4GUtils::addProtocolToLink($detailDatum);
             }

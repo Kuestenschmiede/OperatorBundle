@@ -103,7 +103,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $arrFilter['buttons'],
             [
                 'randKey' => $data['randKey'],
-                // needed for filter
                 'moduleId' => $this->model->id,
                 'tags' => []
             ]
@@ -112,7 +111,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $conf->addTileList($tileList, $fields, $data);
         $jsonConf = json_encode($conf);
         if ($jsonConf === false) {
-            // error encoding
             C4gLogModel::addLogEntry("operator", json_last_error_msg());
             $template->configuration = [];
         } else {

@@ -98,6 +98,12 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         $this->offerService->setPageUrl($pageUrl);
         $this->offerService->setRequest($request);
+        $limit = (int) $model->gutesio_child_load_step ?: 1;
+        $max = (int) $model->gutesio_child_load_max;
+        if ($max > 0 && $max < $limit) {
+            $limit = $max;
+        }
+        $this->offerService->setLimit($limit);
         $this->request = $request;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
@@ -155,12 +161,26 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         ];
         $module = ModuleModel::findByPk($moduleId);
         if ($module) {
+            $max = (int) $module->gutesio_child_load_max;
+            if ($max !== 0 && $offset >= $max) {
+                return new JsonResponse([]);
+            }
+
             $this->model = $module;
             $this->offerService->setModel($module);
             $this->offerService->setPageUrl($this->pageUrl);
             $this->offerService->setRequest($request);
+
+            $limit = (int) $module->gutesio_child_load_step ?: 1;
+            if ($max === 0) {
+                $this->offerService->setLimit($limit);
+            } else if ($limit + $offset <= $max) {
+                $this->offerService->setLimit($limit);
+            } else {
+                $this->offerService->setLimit($max - $offset);
+            }
         } else {
-            return new Response("Bad Request", Response::HTTP_BAD_REQUEST);
+            return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
         $type = $request->getSession()->get('gutesio_child_type', '');
         $this->get('contao.framework')->initialize(true);
@@ -483,8 +503,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $class .= " c4g-" . $layoutType . "-outer";
         $this->tileList->setClassName($class);
         $this->tileList->setLayoutType($layoutType);
-        $this->tileList->setLoadStep($this->offerService::LIMIT);
-        $this->tileList->setMaxData(intval($this->model->gutesio_child_number_recent));
+        $this->tileList->setLoadStep($this->offerService->getLimit());
         $this->tileList->setBottomLine($GLOBALS['TL_LANG']['offer_list']['frontend']['list']['taxInfo']);
         $this->tileList->setScrollThreshold(0.05);
         $this->tileList->setUniqueField("uuid");

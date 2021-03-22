@@ -11,6 +11,9 @@
  */
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode'] = ['Load mode', 'Determines which showcases are loaded in this module.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode'] = ['Load mode', 'Determines which offers are loaded in this module.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_load_step'] = ['Load steps', 'The number of records per request, if any.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_load_max'] = ['Maximum number of records', 'The maximum number of records, if any. 0 = Unlimited..'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType'] = ['Layout', 'Determines which layout is used for the listing.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_redirect_page'] = ['Redirect page', "If you don't want this module to display details, you can select an alternative detail page here. The alias of the records will be appended to the URL of this detail page."];
@@ -38,14 +41,15 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_text_search'] = ['Text before se
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_text_no_results'] = ['Text no results', 'The text output instead of the results list if no results were found.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_headline_search_results'] = ['Heading of the result list', 'Headline above the result list, if available.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_headline_recent'] = ['Headline above the list of latest offers', 'Headline above the list of latest offers.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_number_recent'] = ['Number of latest offers', 'Displays this number of latest offers, if any.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_showcase_link'] = ['Link to the showcases', 'The page where the showcases are included.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Types to be displayed', 'Only the selected type is displayed.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Categories to display', 'Only the selected categories are displayed.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Tags to be displayed', 'Only offers that have been assigned at least one of these tags will be displayed.'];
 
-$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_legend'] = 'Load mode';
-$GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Tag filter settings';
+$GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Generic settings';
+$GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Load settings';
+$GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter settings';
+$GLOBALS['TL_LANG']['tl_module']['showcase_tag_filter_legend'] = 'Tag filter settings';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['0'] = 'Load all showcases';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['1'] = 'Load by categories';

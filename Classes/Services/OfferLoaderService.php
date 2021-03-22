@@ -39,7 +39,7 @@ class OfferLoaderService
 
     private $randomSeed;
 
-    const LIMIT = 10;
+    private $limit = 10;
 
     private function setup()
     {
@@ -49,7 +49,7 @@ class OfferLoaderService
     public function getListData($search, $offset, $type, $filterData)
     {
         $this->setup();
-        $limit = self::LIMIT;
+        $limit = $this->limit;
         $tagIds = $filterData['tagIds'];
         $tagFilter = $tagIds && count($tagIds) > 0;
         $dateFilter = $filterData['filterFrom'] && $filterData['filterUntil'];
@@ -70,7 +70,7 @@ class OfferLoaderService
         }
         if ($tagFilter) {
             // filter using actual limit & offset
-            $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, self::LIMIT);
+            $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, $this->limit);
         }
 
         if ($dateFilter) {
@@ -110,7 +110,7 @@ class OfferLoaderService
             });
         }
         if ($hasFilter) {
-            $results = array_slice($results, $tmpOffset, self::LIMIT);
+            $results = array_slice($results, $tmpOffset, $this->limit);
         }
 
         // data cleaning
@@ -1263,5 +1263,21 @@ class OfferLoaderService
     public function setRequest(Request $request): void
     {
         $this->request = $request;
+    }
+
+    /**
+     * @return int
+     */
+    public function getLimit(): int
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @param int $limit
+     */
+    public function setLimit(int $limit): void
+    {
+        $this->limit = $limit;
     }
 }

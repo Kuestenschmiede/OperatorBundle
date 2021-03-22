@@ -38,11 +38,12 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
-    '{gutesio_data_mode_legend},gutesio_data_layoutType,gutesio_child_search_label,gutesio_child_search_placeholder,gutesio_child_search_description,'.
-    'gutesio_child_text_search,gutesio_child_text_no_results,'.
-    'gutesio_child_number_recent,gutesio_child_showcase_link,gutesio_child_data_mode,'.
-    'gutesio_data_render_searchHtml,gutesio_child_filter,gutesio_data_change_layout_filter;' .
-    '{showcase_filter_legend},gutesio_enable_tag_filter;';
+    '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
+    '{load_legend},gutesio_child_data_mode,gutesio_child_load_step,gutesio_child_load_max;'.
+    '{showcase_filter_legend},gutesio_child_search_label,gutesio_child_search_placeholder,'.
+    'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
+    'gutesio_child_filter,gutesio_data_change_layout_filter;'.
+    '{showcase_tag_filter_legend},gutesio_enable_tag_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
@@ -217,6 +218,22 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_data_mode'] = [
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
 ];
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_load_step'] = [
+    'exclude'                 => true,
+    'default'                 => "10",
+    'inputType'               => 'text',
+    'sql'                     => "int unsigned NOT NULL default '10'",
+    'eval'                    => ['tl_class' => "clr w50", 'rgxp' => 'natural', 'minval' => '1']
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_load_max'] = [
+    'exclude'                 => true,
+    'default'                 => "0",
+    'inputType'               => 'text',
+    'sql'                     => "int unsigned NOT NULL default '0'",
+    'eval'                    => ['tl_class' => "w50", 'rgxp' => 'natural']
+];
+
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_filter'] = [
     'exclude'                 => true,
     'default'                 => serialize([]),
@@ -260,13 +277,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_text_no_results'] = [
     'inputType'               => 'text',
     'eval'                    => ['tl_class' => 'w50'],
     'sql'                     => "varchar(100) NOT NULL default ''"
-];
-
-$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_number_recent'] = [
-    'exclude'                 => true,
-    'inputType'               => 'text',
-    'eval'                    => ['tl_class' => 'w50', 'rgxp' => 'natural'],
-    'sql'                     => "varchar(20) NOT NULL default ''"
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_showcase_link'] = [

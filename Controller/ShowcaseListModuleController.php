@@ -334,8 +334,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $fields = [];
 
-        $fields = [];
-
         $field = new ImageTileField();
         $field->setName("imageList");
         $field->setWrapperClass("c4g-list-element__image-wrapper");

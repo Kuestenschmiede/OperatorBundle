@@ -148,7 +148,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $class .= " c4g-" . $layoutType . "-outer";
         $tileList->setClassName($class);
         $tileList->setLayoutType($layoutType);
-        $tileList->setMaxData($this->model->gutesio_data_max_data);
         $tileList->setLoadStep($this->model->gutesio_data_limit);
         $tileList->setLoadingText(" ");
         $tileList->setTextAfterUpdate($this->languageRefs['no_results']); //ToDo

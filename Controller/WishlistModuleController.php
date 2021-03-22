@@ -290,7 +290,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $tileList->setClassName("wishlist");
         $tileList->setTileClassName("item");
         $tileList->setLayoutType("list");
-        $tileList->setHeadline($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['headline']);
+        $headline = StringUtil::deserialize($this->model->headline);
+        $tileList->setHeadline($headline['value'] ?: $GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['headline']);
+        $tileList->setHeadlineLevel((int) str_replace("h", "", $headline['unit']) ?: 1);
         $tileList->setTextAfterUpdate($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['textBeforeUpdate']);
         $tileList->setTextBeforeUpdate($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['textAfterUpdate']);
     

@@ -324,7 +324,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setName("infoFile");
         $field->setLabel($this->languageRefs['infoFile_label']);
         $field->setTitle($this->languageRefs['infoFile_title']);
-        $field->setClass("infoFile");
+        $field->setClass("infoFile detail-view__infofile");
         $field->setSection(5);
         $fields[] = $field;
 

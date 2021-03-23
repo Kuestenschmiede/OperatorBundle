@@ -85,7 +85,6 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $tileList->setClassName("showcase-tiles c4g-carousel");
         $tileList->setTileClassName("showcase-tile item c4g-item-link");
         $tileList->setLayoutType("carousel");
-        $tileList->setMaxData($this->model->gutesio_data_max_data);
         $arrHeadline = StringUtil::deserialize($this->model->headline);
         if ($arrHeadline['value']) {
             $tileList->setHeadline($arrHeadline['value']);

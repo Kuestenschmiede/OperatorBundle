@@ -233,7 +233,6 @@ class ShowcaseService
             }
             if ($execQuery) {
                 $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
-                $additionalOrderBy = '';
                 if ($elementIdString !== '()' && $searchString) {
                     $sql = 'SELECT *, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
                     $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::FILTER_SQL_STRING . ')';

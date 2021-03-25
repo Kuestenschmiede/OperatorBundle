@@ -208,11 +208,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         if (count($tagFilterIds) > 0) {
             // temporarily ignore offset & limit when tag filter is active
-            $limit = intval($moduleModel->gutesio_data_max_data);
+            $limit = 5000;
             $tmpOffset = 0;
-            if ($limit === 0) {
-                $limit = 5000;
-            }
         } else {
             $tmpOffset = $offset;
         }

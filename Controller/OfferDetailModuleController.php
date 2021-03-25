@@ -108,6 +108,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
+            $objPage->pageTitle = $data['name'];
             $conf = $this->getDetailFrontendConfiguration($data, $request);
             $conf->setLanguage($objPage->language);
             if (!empty($data)) {

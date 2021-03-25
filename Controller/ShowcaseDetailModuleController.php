@@ -119,6 +119,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         if ($this->alias !== '') {
             $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
             $detailData = $this->getDetailData($request);
+            $objPage->pageTitle = $detailData['name'];
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
                 $detailPage = $this->getDetailPage();

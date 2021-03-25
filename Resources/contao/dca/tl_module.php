@@ -39,7 +39,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
-    '{load_legend},gutesio_child_data_mode,gutesio_child_load_step,gutesio_child_load_max;'.
+    '{load_legend},gutesio_child_data_mode,gutesio_data_limit,gutesio_data_max_data;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
     'gutesio_child_filter,gutesio_data_change_layout_filter;'.
@@ -225,22 +225,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_data_mode'] = [
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option'],
     'sql'                     => "char(1) NOT NULL default '1'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
-];
-
-$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_load_step'] = [
-    'exclude'                 => true,
-    'default'                 => "10",
-    'inputType'               => 'text',
-    'sql'                     => "int unsigned NOT NULL default '10'",
-    'eval'                    => ['tl_class' => "clr w50", 'rgxp' => 'natural', 'minval' => '1']
-];
-
-$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_load_max'] = [
-    'exclude'                 => true,
-    'default'                 => "0",
-    'inputType'               => 'text',
-    'sql'                     => "int unsigned NOT NULL default '0'",
-    'eval'                    => ['tl_class' => "w50", 'rgxp' => 'natural']
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_filter'] = [

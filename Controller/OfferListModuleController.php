@@ -98,8 +98,8 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         $this->offerService->setPageUrl($pageUrl);
         $this->offerService->setRequest($request);
-        $limit = (int) $model->gutesio_child_load_step ?: 1;
-        $max = (int) $model->gutesio_child_load_max;
+        $limit = (int) $model->gutesio_data_limit ?: 1;
+        $max = (int) $model->gutesio_data_max_data;
         if ($max > 0 && $max < $limit) {
             $limit = $max;
         }
@@ -161,7 +161,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         ];
         $module = ModuleModel::findByPk($moduleId);
         if ($module) {
-            $max = (int) $module->gutesio_child_load_max;
+            $max = (int) $module->gutesio_data_max_data;
             if ($max !== 0 && $offset >= $max) {
                 return new JsonResponse([]);
             }
@@ -171,7 +171,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             $this->offerService->setPageUrl($this->pageUrl);
             $this->offerService->setRequest($request);
 
-            $limit = (int) $module->gutesio_child_load_step ?: 1;
+            $limit = (int) $module->gutesio_data_limit ?: 1;
             if ($max === 0) {
                 $this->offerService->setLimit($limit);
             } else if ($limit + $offset <= $max) {

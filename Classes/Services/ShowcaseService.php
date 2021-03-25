@@ -76,23 +76,6 @@ class ShowcaseService
         return sha1(uniqid());
     }
 
-    public function getInitialData() : array
-    {
-        // initial filter is "RAND()"
-        $arrResult = Database::getInstance()
-            ->prepare(
-                'SELECT * FROM tl_gutesio_data_element ' .
-                "WHERE releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '' " .
-                'ORDER BY RAND() LIMIT 30'
-            )->execute()->fetchAllAssoc();
-        $data = $this->convertDbResult($arrResult);
-        $data['randKey'] = $this->createRandomKey();
-        $arrIds = $this->generateRandomSortingMap('');
-        $this->writeIntoCache($this->getCacheKey($data['randKey'], '', 'random', []), $arrIds, true);
-
-        return $data;
-    }
-
     public function loadRelatedShowcases($arrShowcase) : array
     {
         $showcaseIds = array_column($arrShowcase['showcaseIds'], 'value');

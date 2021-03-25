@@ -111,7 +111,6 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
-//        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
         }
         $search = "";

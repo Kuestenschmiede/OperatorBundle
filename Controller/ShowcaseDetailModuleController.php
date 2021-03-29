@@ -13,6 +13,7 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailContactField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHTMLField;
@@ -31,6 +32,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -64,6 +66,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 
     const TYPE = 'showcase_detail_module';
     const COOKIE_WISHLIST = "clientUuid";
+    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
 
     protected $model = null;
 
@@ -510,6 +513,28 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
 
+        global $objPage;
+        $settings = C4gSettingsModel::findSettings();
+        $field = new ModalButtonTileField();
+        $field->setName('cc');
+        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
+        $field->setClass('c4g-list-element__clickcollect');
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
+        $field->setUrlField('uuid');
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
+        $field->setCondition('clickCollect', '1');
+        $field->setCondition('type', 'product');
+        $field->setCondition('type', 'showcase', true);
+        $field->setInnerFields([
+            'imageList',
+            'name',
+            'types'
+        ]);
+        $fields[] = $field;
+
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
@@ -595,14 +620,15 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.clickCollect '.
+            'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
             LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
             JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
-            JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+            JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-            WHERE tl_gutesio_data_element.alias = ?'
+            WHERE e.alias = ?'
             . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'
         )->execute($this->alias)->fetchAllAssoc();
 

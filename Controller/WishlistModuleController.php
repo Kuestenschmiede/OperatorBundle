@@ -92,9 +92,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
             C4gLogModel::addLogEntry("operator", json_last_error_msg());
             $template->configuration = [];
         } else {
-            /**
-             * ajo: Daten ins Template schreiben.
-             */
             $template->setData($data);
             $template->configuration = $jsonConf;
         }

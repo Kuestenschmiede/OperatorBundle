@@ -76,7 +76,7 @@ class OfferLoaderService
         if ($dateFilter) {
             $results = $this->applyRangeFilter($results, $filterData['filterFrom'], $filterData['filterUntil']);
         }
-        if ($sortFilter) {
+        if ($sortFilter && $sortFilter !== "random") {
             if ($filterData['sorting'] === 'price_asc') {
                 $sort = 'asc';
             } else {
@@ -1190,9 +1190,7 @@ class OfferLoaderService
 
     private function createRandomSeed(Request $request)
     {
-        $sessionFragment = $request->getSession()->getId();
-        $floatVal = hexdec(substr(sha1($sessionFragment), 0, 12));
-        $this->randomSeed = (int) $floatVal;
+        $this->randomSeed = (int) rand(0, 99999);
     }
 
     private function checkCookieForClientUuid(Request $request)

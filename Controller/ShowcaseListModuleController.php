@@ -186,7 +186,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         $moduleModel = ModuleModel::findByPk($moduleId);
-        $limit = intval($moduleModel->gutesio_data_limit);
+        $max = (int) $moduleModel->gutesio_data_max_data;
+        if ($max !== 0 && $offset >= $max) {
+            return new JsonResponse([]);
+        }
+        $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
+        if ($max !== 0 && $limit + $offset > $max) {
+            $limit = $max - $offset;
+        }
         $params = $request->query->all();
         $mode = intval($moduleModel->gutesio_data_mode);
         if ($mode === 1 || $mode === 2) {
@@ -201,11 +208,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         if (count($tagFilterIds) > 0) {
             // temporarily ignore offset & limit when tag filter is active
-            $limit = intval($moduleModel->gutesio_data_max_data);
+            $limit = 5000;
             $tmpOffset = 0;
-            if ($limit === 0) {
-                $limit = 5000;
-            }
         } else {
             $tmpOffset = $offset;
         }

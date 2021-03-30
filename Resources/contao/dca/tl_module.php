@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_limit,gutesio_data_mode;';
+    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;';
 

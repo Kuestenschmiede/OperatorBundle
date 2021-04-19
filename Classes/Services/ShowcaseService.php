@@ -73,7 +73,7 @@ class ShowcaseService
      */
     public function createRandomKey()
     {
-        return sha1(uniqid());
+        return sha1(random_int(0,999999));
     }
 
     public function loadRelatedShowcases($arrShowcase) : array

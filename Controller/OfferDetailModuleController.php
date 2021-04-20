@@ -277,6 +277,22 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setClass('detail-view__appointment-upon-agreement');
         $fields[] = $field;
 
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("minCredit");
+        $field->setClass('detail-view__min-credit');
+        $field->setLabel($this->languageRefs['minCredit']);
+        $field->setFormat('%s €');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("maxCredit");
+        $field->setClass('detail-view__max-credit');
+        $field->setLabel($this->languageRefs['maxCredit']);
+        $field->setFormat('%s €');
+        $fields[] = $field;
+
         global $objPage;
         $field = new DetailModalFormButtonField();
         $field->setSection(4);

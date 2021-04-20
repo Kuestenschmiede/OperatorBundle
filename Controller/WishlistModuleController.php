@@ -493,7 +493,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $offer['vendor'] = $vendor['name'];
             $offer['name'] = $element['name'];
             $offer['internal_type'] = $element['internal_type'];
-            // offer detail page with uuid as alias and without {}?
             $offer['uuid'] = str_replace(["{", "}"], ["", ""], $element['uuid']);
             $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
             $offer['types'] = $type['name'];

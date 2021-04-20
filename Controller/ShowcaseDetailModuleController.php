@@ -501,6 +501,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setClass("c4g-list-element__begintime");
         $fields[] = $field;
 
+        $field = new TextTileField();
+        $field->setName('maxCredit');
+        $field->setFormat($GLOBALS['TL_LANG']['offer_list']['maxCredit_format']);
+        $field->setWrapperClass("c4g-list-element__maxcredit-wrapper");
+        $field->setClass("c4g-list-element__maxCredit");
+        $fields[] = $field;
+
         $field = new TagTileField();
         $field->setName('tagLinks');
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
@@ -600,12 +607,14 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
         $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
             'product' => $productPageModel->getFrontendUrl(),
             'event' => $eventPageModel->getFrontendUrl(),
             'job' => $jobPageModel->getFrontendUrl(),
             'arrangement' => $arrangementPageModel->getFrontendUrl(),
-            'service' => $servicePageModel->getFrontendUrl()
+            'service' => $servicePageModel->getFrontendUrl(),
+            'voucher' => $voucherPageModel->getFrontendUrl(),
         ];
     }
 

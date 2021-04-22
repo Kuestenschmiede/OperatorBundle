@@ -130,7 +130,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 if (count($childData) > 0) {
                     $link = new DetailAnchorMenuLink(
                         $GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers'],
-                        "#" . $this->getChildTileList()->getName()
+                        "#" . $this->getChildTileList()->getWrapperId()
                     );
                     $detailPage->addAdditionalLink($link);
                 }

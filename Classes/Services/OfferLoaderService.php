@@ -669,7 +669,9 @@ class OfferLoaderService
                     'name' => $r['name'],
                     'image' => [
                         'src' => $model->path,
-                        'alt' => $r['name']
+                        'alt' => $r['name'],
+                        'width' => 100,
+                        'height' => 100
                     ]
                 ];
                 switch ($r['technicalKey']) {

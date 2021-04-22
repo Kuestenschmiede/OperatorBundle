@@ -288,9 +288,12 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($imageModel !== null) {
+                list($width, $height) = getimagesize($imageModel->path);
                 $childRows[$key]['image'] = [
                     'src' => $imageModel->path,
                     'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'width' => $width,
+                    'height' => $height
                 ];
             }
             unset($childRows[$key]['imageOffer']);
@@ -441,9 +444,12 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($imageModel !== null) {
+                list($width, $height) = getimagesize($imageModel->path);
                 $childRows[$key]['image'] = [
                     'src' => $imageModel->path,
                     'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'height' => $height,
+                    'width' => $width
                 ];
             }
             unset($childRows[$key]['imageOffer']);

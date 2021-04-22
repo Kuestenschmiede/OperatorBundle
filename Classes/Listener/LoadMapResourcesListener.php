@@ -14,8 +14,6 @@ class LoadMapResourcesListener
         $eventName,
         EventDispatcherInterface $eventDispatcher
     ) {
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js");
-        $jsCode = "jQuery(document).ready(function(){if (reactRenderReady){reactRenderReady();}});";
-        ResourceLoader::loadJavaScriptResourceTag($jsCode, ResourceLoader::BODY);
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/badge_map.js");
     }
 }

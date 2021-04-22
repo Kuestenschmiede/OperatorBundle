@@ -445,6 +445,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $tileList->setHeadline($GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers']);
         $tileList->setLayoutType('list');
         $tileList->setClassName("offer-tiles c4g-list-outer");
+        $tileList->setListWrapper(true);
+        $tileList->setWrapperId("offer-tiles");
+        $tileList->setHeadlineLevel(2);
+        
         return $tileList;
     }
 
@@ -773,6 +777,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $list->setClassName("related-showcase-list c4g-list-outer");
         $list->setTileClassName("container");
         $list->setHeadline($GLOBALS['TL_LANG']['operator_showcase_list']['alsoInteresting']);
+        $list->setListWrapper(true);
+        $list->setWrapperId("related-showcase-tiles");
+        $list->setHeadlineLevel(2);
+        
         return $list;
     }
 

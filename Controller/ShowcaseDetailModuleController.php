@@ -613,12 +613,12 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
-            'product' => $productPageModel->getFrontendUrl(),
-            'event' => $eventPageModel->getFrontendUrl(),
-            'job' => $jobPageModel->getFrontendUrl(),
-            'arrangement' => $arrangementPageModel->getFrontendUrl(),
-            'service' => $servicePageModel->getFrontendUrl(),
-            'voucher' => $voucherPageModel->getFrontendUrl(),
+            'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
+            'event' => $eventPageModel ? $eventPageModel->getFrontendUrl() : '',
+            'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
+            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
+            'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
+            'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
         ];
     }
 

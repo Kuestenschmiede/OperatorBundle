@@ -2,11 +2,11 @@
 /**
  * This file belongs to gutes.io and is published exclusively for use
  * in gutes.io operator or provider pages.
-
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
+
 namespace gutesio\OperatorBundle\Classes\Listener;
 
 use con4gis\MapsBundle\Classes\Events\LoadInfoWindowEvent;
@@ -35,7 +35,8 @@ class LoadPopupListener
         LoadInfoWindowEvent $event,
         $eventName,
         EventDispatcherInterface $eventDispatcher
-    ) {
+    )
+    {
         $popup = $event->getPopup();
         $requestString = $event->getPopupString();
         $reqParams = explode('::', $requestString);
@@ -51,6 +52,7 @@ class LoadPopupListener
         }
         $event->setPopup($popup);
     }
+
     private function getPopup($element, $url, $arrTags)
     {
         $name = $element['name'];
@@ -87,10 +89,12 @@ class LoadPopupListener
             $wishListEntry = $this->Database->prepare($selectWishlistEntry)->execute($clientUuid, $element['uuid'])->fetchAssoc();
             $urlAdd = 'gutesio/operator/wishlist/add/showcase/' . $element['uuid'];
             $urlRemove = 'gutesio/operator/wishlist/remove/' . $element['uuid'];
-//            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).removeClass(\"btn-primary put-on-wishlist\").addClass(\"btn-warning remove-from-wishlist\");";
-            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
-//            $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).removeClass(\"btn-warning on-wishlist remove-from-wishlist\").addClass(\"btn-primary put-on-wishlist\");";
+
             $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).attr(\"class\", \"btn btn-primary put-on-wishlist\");";
+            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
+
+//            TODO: After jQuery.post we have to trigger the Popup - #ajo
+
             if (!$wishListEntry) {
                 $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' onclick='$onclickAdd'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
             } else {

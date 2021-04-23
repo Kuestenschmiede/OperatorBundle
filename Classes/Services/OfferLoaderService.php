@@ -1098,20 +1098,6 @@ class OfferLoaderService
                         'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_voucher.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
-
-                    $voucherData['minCredit'] = number_format(
-                        (float) $voucherData['minCredit'],
-                        2,
-                        ',',
-                        '.'
-                    );
-
-                    $voucherData['maxCredit'] = number_format(
-                        (float) $voucherData['maxCredit'],
-                        2,
-                        ',',
-                        '.'
-                    );
                     
                     if (!empty($voucherData)) {
                         $childRows[$key] = array_merge($row, $voucherData);

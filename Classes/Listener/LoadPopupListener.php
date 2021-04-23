@@ -87,8 +87,10 @@ class LoadPopupListener
             $wishListEntry = $this->Database->prepare($selectWishlistEntry)->execute($clientUuid, $element['uuid'])->fetchAssoc();
             $urlAdd = 'gutesio/operator/wishlist/add/showcase/' . $element['uuid'];
             $urlRemove = 'gutesio/operator/wishlist/remove/' . $element['uuid'];
-            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).removeClass(\"btn-primary\").addClass(\"btn-warning\");";
-            $onclickRm = "jQuery.post(\"$urlRm\");this.innerText = \"Merken\";jQuery(this).removeClass(\"btn-warning\").addClass(\"btn-primary\");";
+//            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).removeClass(\"btn-primary put-on-wishlist\").addClass(\"btn-warning remove-from-wishlist\");";
+            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
+//            $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).removeClass(\"btn-warning on-wishlist remove-from-wishlist\").addClass(\"btn-primary put-on-wishlist\");";
+            $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).attr(\"class\", \"btn btn-primary put-on-wishlist\");";
             if (!$wishListEntry) {
                 $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' onclick='$onclickAdd'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
             } else {

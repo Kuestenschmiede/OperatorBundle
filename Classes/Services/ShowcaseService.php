@@ -73,7 +73,7 @@ class ShowcaseService
      */
     public function createRandomKey()
     {
-        return sha1(uniqid());
+        return sha1(random_int(0,999999));
     }
 
     public function loadRelatedShowcases($arrShowcase) : array
@@ -413,6 +413,14 @@ class ShowcaseService
                     $searchString, $searchString, $searchString, $searchString, $searchString,
                     $searchString, $searchString, $searchString, $searchString, $searchString,
                     $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+            // search for type name matches
+            $typeResult = Database::getInstance()->prepare("SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ".
+                "JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ".
+                "JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ".
+                "WHERE `tl_gutesio_data_type`.`name` LIKE ?"
+            )->execute($searchString)->fetchAllAssoc();
+
+            $arrResult = array_merge($arrResult, $typeResult);
         } else {
             $arrResult = Database::getInstance()->execute($sql)->fetchAllAssoc();
         }
@@ -441,11 +449,16 @@ class ShowcaseService
         $sql = 'SELECT DISTINCT `elementId` FROM tl_gutesio_data_element_type';
         if ($idString !== '()') {
             $sql .= ' WHERE `typeId` IN ' . $idString;
+            if ($searchString !== "") {
+                $sql .= " AND WHERE `name` LIKE ?";
+                
+            }
         }
         // get element ids connected to valid types (type name is already checked here)
         if ($idString === '()' && $searchString !== '') {
             // no id constraint, but search constraint -> do not load everything
-            $arrElements = [];
+//            $arrElements = [];
+            $arrElements = $db->prepare($sql)->execute("%".$searchString."%")->fetchAllAssoc();
         } else {
             $arrElements = $db->prepare($sql)->execute()->fetchAllAssoc();
         }

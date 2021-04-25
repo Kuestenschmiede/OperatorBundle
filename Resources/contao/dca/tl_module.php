@@ -283,7 +283,17 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_type'] = [
     'exclude'                 => true,
     'default'                 => serialize([]),
     'inputType'               => 'checkbox',
-    'options'                 => ['product', 'event', 'news', 'exhibition', 'advertisement', 'job', 'arrangement', 'service'],
+    'options'                 => [
+        'product',
+        'event',
+        'news',
+        'exhibition',
+        'advertisement',
+        'job',
+        'arrangement',
+        'service',
+        'voucher'
+    ],
     'eval'                    => ['tl_class' => 'clr', 'multiple' => true],
     'sql'                     => "VARCHAR(250) NOT NULL default '".serialize([])."'"
 ];

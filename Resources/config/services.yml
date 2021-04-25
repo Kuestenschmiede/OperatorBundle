@@ -128,3 +128,8 @@ services:
       class: gutesio\OperatorBundle\Classes\Listener\LoadImportButtonsListener
       tags:
         - { name: kernel.event_listener, event: con4gis.import.button.load, method: beforeLoadImportButtons, priority: 1000 }
+
+    gutesio.onLoadMapResourcesLoadOperatorFiles:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadMapResourcesListener
+      tags:
+        - { name: kernel.event_listener, event: maps.resources.load, method: onLoadMapResourcesLoadOperatorFiles, priority: 6900 }

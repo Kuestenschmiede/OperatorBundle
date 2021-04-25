@@ -130,7 +130,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 if (count($childData) > 0) {
                     $link = new DetailAnchorMenuLink(
                         $GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers'],
-                        "#" . $this->getChildTileList()->getName()
+                        "#" . $this->getChildTileList()->getWrapperId()
                     );
                     $detailPage->addAdditionalLink($link);
                 }
@@ -445,6 +445,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $tileList->setHeadline($GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers']);
         $tileList->setLayoutType('list');
         $tileList->setClassName("offer-tiles c4g-list-outer");
+        $tileList->setListWrapper(true);
+        $tileList->setWrapperId("offer-tiles");
+        $tileList->setHeadlineLevel(2);
+        
         return $tileList;
     }
 
@@ -499,6 +503,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName('beginTime');
         $field->setWrapperClass("c4g-list-element__begintime-wrapper");
         $field->setClass("c4g-list-element__begintime");
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName('maxCredit');
+        $field->setFormat($GLOBALS['TL_LANG']['offer_list']['maxCredit_format']);
+        $field->setWrapperClass("c4g-list-element__maxcredit-wrapper");
+        $field->setClass("c4g-list-element__maxCredit");
         $fields[] = $field;
 
         $field = new TagTileField();
@@ -600,12 +611,14 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
         $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
-            'product' => $productPageModel->getFrontendUrl(),
-            'event' => $eventPageModel->getFrontendUrl(),
-            'job' => $jobPageModel->getFrontendUrl(),
-            'arrangement' => $arrangementPageModel->getFrontendUrl(),
-            'service' => $servicePageModel->getFrontendUrl()
+            'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
+            'event' => $eventPageModel ? $eventPageModel->getFrontendUrl() : '',
+            'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
+            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
+            'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
+            'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
         ];
     }
 
@@ -764,6 +777,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $list->setClassName("related-showcase-list c4g-list-outer");
         $list->setTileClassName("container");
         $list->setHeadline($GLOBALS['TL_LANG']['operator_showcase_list']['alsoInteresting']);
+        $list->setListWrapper(true);
+        $list->setWrapperId("related-showcase-tiles");
+        $list->setHeadlineLevel(2);
+        
         return $list;
     }
 

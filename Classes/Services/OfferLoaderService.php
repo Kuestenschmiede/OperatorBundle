@@ -288,9 +288,12 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($imageModel !== null) {
+                list($width, $height) = getimagesize($imageModel->path);
                 $childRows[$key]['image'] = [
                     'src' => $imageModel->path,
                     'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'width' => $width,
+                    'height' => $height
                 ];
             }
             unset($childRows[$key]['imageOffer']);
@@ -441,9 +444,12 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($imageModel !== null) {
+                list($width, $height) = getimagesize($imageModel->path);
                 $childRows[$key]['image'] = [
                     'src' => $imageModel->path,
                     'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'height' => $height,
+                    'width' => $width
                 ];
             }
             unset($childRows[$key]['imageOffer']);
@@ -663,7 +669,9 @@ class OfferLoaderService
                     'name' => $r['name'],
                     'image' => [
                         'src' => $model->path,
-                        'alt' => $r['name']
+                        'alt' => $r['name'],
+                        'width' => 100,
+                        'height' => 100
                     ]
                 ];
                 switch ($r['technicalKey']) {
@@ -1081,6 +1089,18 @@ class OfferLoaderService
                     }
                     if (!empty($jobData)) {
                         $childRows[$key] = array_merge($row, $jobData);
+                    }
+
+                    break;
+                case 'voucher':
+                    $voucherData = $database->prepare('SELECT minCredit, maxCredit '.
+                        'FROM tl_gutesio_data_child_voucher ' .
+                        'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_voucher.childId = tl_gutesio_data_child.uuid ' .
+                        'WHERE childId = ?')
+                        ->execute($row['uuid'])->fetchAssoc();
+                    
+                    if (!empty($voucherData)) {
+                        $childRows[$key] = array_merge($row, $voucherData);
                     }
 
                     break;

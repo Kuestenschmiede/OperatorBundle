@@ -112,7 +112,7 @@ function addToBadge(event) {
     jQuery(element).on("click", removeFromWishlistCallback)
     jQuery(element).off("click", putOnWishlistCallback)
     let i = document.createElement("i");
-    jQuery(i).addClass("fas fa-heart");
+    jQuery(i).addClass("fas fa-heart ml-2");
     element.appendChild(i);
 
     let badgeVal = getBadgeValue();
@@ -136,7 +136,7 @@ function removeFromBadge(event) {
     jQuery(element).on("click", putOnWishlistCallback);
     jQuery(element).off("click", removeFromWishlistCallback);
     let i = document.createElement("i");
-    jQuery(i).addClass("far fa-heart");
+    jQuery(i).addClass("far fa-heart ml-2");
     element.appendChild(i);
 
     let badgeVal = getBadgeValue();

@@ -89,16 +89,16 @@ class LoadPopupListener
             $wishListEntry = $this->Database->prepare($selectWishlistEntry)->execute($clientUuid, $element['uuid'])->fetchAssoc();
             $urlAdd = 'gutesio/operator/wishlist/add/showcase/' . $element['uuid'];
             $urlRemove = 'gutesio/operator/wishlist/remove/' . $element['uuid'];
-
+            $elementUuid = $element['uuid'];
             $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).attr(\"class\", \"btn btn-primary put-on-wishlist\");";
             $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
 
 //            TODO: After jQuery.post we have to trigger the Popup - #ajo
 
             if (!$wishListEntry) {
-                $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' onclick='$onclickAdd'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
+                $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' data-uuid='$elementUuid'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
             } else {
-                $buttonWishlist = "<a class='btn btn-warning remove-from-wishlist on-wishlist' title='Von Merkzettel entfernen' onclick='$onclickRm'>Gemerkt <i class=\"fas fa-heart\"></i></a>"; //ToDo  <i class=\u0022far fa-heart\u0022></i>
+                $buttonWishlist = "<a class='btn btn-warning remove-from-wishlist on-wishlist' title='Von Merkzettel entfernen' data-uuid='$elementUuid'>Gemerkt <i class=\"fas fa-heart\"></i></a>"; //ToDo  <i class=\u0022far fa-heart\u0022></i>
             }
         }
 

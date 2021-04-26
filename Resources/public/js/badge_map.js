@@ -103,7 +103,18 @@ function updateWishlistBadgeAtRefresh() {
     });
 }
 
-function addToBadge() {
+function addToBadge(event) {
+    let element = event.target.tagName == "I" ? event.target.parentNode : event.target;
+
+    jQuery.post("gutesio/operator/wishlist/add/showcase/" + element.dataset.uuid);
+    element.innerText = "Gemerkt";
+    jQuery(element).attr("class", "btn btn-warning remove-from-wishlist on-wishlist");
+    jQuery(element).on("click", removeFromWishlistCallback)
+    jQuery(element).off("click", putOnWishlistCallback)
+    let i = document.createElement("i");
+    jQuery(i).addClass("fas fa-heart");
+    element.appendChild(i);
+
     let badgeVal = getBadgeValue();
 
     badgeVal = badgeVal + 1;
@@ -116,7 +127,18 @@ function addToBadge() {
     $(wishlistBadge).appendTo('a.link-memo');
 }
 
-function removeFromBadge() {
+function removeFromBadge(event) {
+    let element = event.target.tagName == "I" ? event.target.parentNode : event.target;
+
+    jQuery.post("gutesio/operator/wishlist/remove/" + element.dataset.uuid);
+    element.innerText = "Merken";
+    jQuery(element).attr("class", "btn btn-primary put-on-wishlist");
+    jQuery(element).on("click", putOnWishlistCallback);
+    jQuery(element).off("click", removeFromWishlistCallback);
+    let i = document.createElement("i");
+    jQuery(i).addClass("far fa-heart");
+    element.appendChild(i);
+
     let badgeVal = getBadgeValue();
 
     if ($('.memo-badge').length) {
@@ -132,12 +154,11 @@ function removeFromBadge() {
 }
 
 function removeFromWishlistCallback(event) {
-    removeFromBadge();
+    removeFromBadge(event);
 };
 
 function putOnWishlistCallback(event) {
-    addToBadge();
-    $(".btn.remove-from-wishlist").on("click", removeFromWishlistCallback);
+    addToBadge(event);
 }
 
 function deleteItemOnGlobalList(event) {

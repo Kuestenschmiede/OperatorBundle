@@ -426,7 +426,9 @@ class ShowcaseService
         }
         $returnIds = [];
         foreach ($arrResult as $result) {
-            $returnIds[] = $result['id'];
+            if (!in_array($result['id'], $returnIds)) {
+                $returnIds[] = $result['id'];
+            }
         }
 
         return $returnIds;

@@ -148,6 +148,8 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     public function getFilteredListDataAjax(Request $request, $offset)
     {
         $this->setAlias();
+        $this->initializeContaoFramework();
+        System::loadLanguageFile("offer_list", "de"); 
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');

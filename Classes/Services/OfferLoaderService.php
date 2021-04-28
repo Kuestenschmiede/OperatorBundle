@@ -822,7 +822,7 @@ class OfferLoaderService
                                 ) . ' €*';
                             if ($productData['priceStartingAt']) {
                                 $productData['strikePrice'] =
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['startingAt'] .
+                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
                                     ' ' . $productData['strikePrice'];
                             }
                         } else {
@@ -830,10 +830,10 @@ class OfferLoaderService
                         }
                         if (!empty($productData['priceReplacer'])) {
                             $productData['price'] =
-                                $GLOBALS['TL_LANG']['tl_gutesio_data_child']['price_replacer_options'][$productData['priceReplacer']];
+                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options'][$productData['priceReplacer']];
                         } elseif ((!$productData['price'])/* && !$productData['priceStartingAt']*/) {
                             $productData['price'] =
-                                $GLOBALS['TL_LANG']['tl_gutesio_data_child']['price_replacer_options']['free'];
+                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options']['free'];
                         } else {
                             $productData['price'] =
                                 number_format(
@@ -847,7 +847,7 @@ class OfferLoaderService
                             }
                             if ($productData['priceStartingAt']) {
                                 $productData['price'] =
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['startingAt'] .
+                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
                                     ' ' . $productData['price'];
                             }
                         }
@@ -859,26 +859,26 @@ class OfferLoaderService
                         switch ($productData['taxNote']) {
                             case 'regular':
                                 $productData['taxNote'] = sprintf(
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['taxInfo'],
+                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['taxInfo'],
                                     ($settings->taxRegular ?: '19') . '%'
                                 );
 
                                 break;
                             case 'reduced':
                                 $productData['taxNote'] = sprintf(
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['taxInfo'],
+                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['taxInfo'],
                                     ($settings->taxReduced ?: '7') . '%'
                                 );
 
                                 break;
                             case 'none':
                                 $productData['taxNote'] =
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['details']['noTaxInfo'];
+                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['noTaxInfo'];
 
                                 break;
                             default:
                                 $productData['taxNote'] =
-                                    $GLOBALS['TL_LANG']['tl_gutesio_data_child']['frontend']['list']['taxInfo'];
+                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['list']['taxInfo'];
 
                                 break;
                         }

@@ -149,13 +149,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     $template->configuration = $jsonConf;
                 }
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description']);
+                $sc->addData($detailData, ['name', 'description', 'types']);
             } else {
                 throw new RedirectResponseException($redirectUrl);
             }
             if ($this->model->gutesio_data_render_searchHtml) {
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description']);
+                $sc->addData($detailData, ['name', 'description', 'types']);
             }
         } else {
             throw new RedirectResponseException($redirectUrl);

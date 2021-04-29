@@ -149,13 +149,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     $template->configuration = $jsonConf;
                 }
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description']);
+                $sc->addData($detailData, ['name', 'description', 'types']);
             } else {
                 throw new RedirectResponseException($redirectUrl);
             }
             if ($this->model->gutesio_data_render_searchHtml) {
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description']);
+                $sc->addData($detailData, ['name', 'description', 'types']);
             }
         } else {
             throw new RedirectResponseException($redirectUrl);
@@ -642,7 +642,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.alias = ?'
-            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'
+            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY RAND()'
         )->execute($this->alias)->fetchAllAssoc();
 
         foreach ($childRows as $key => $row) {

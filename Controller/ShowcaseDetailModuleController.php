@@ -709,6 +709,26 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                             )->fetchAssoc()['tagFieldValue'];
                             $icon['linkLabel'] = 'Onlinereservierung';
                             break;
+                        case 'tag_clicknmeet':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'clicknmeetLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Click & Meet';
+                            break;
+                        case 'tag_table_reservation':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'tableReservationLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Tischreservierung';
+                            break;
                         case 'tag_onlineshop':
                             $stmt = $database->prepare(
                                 'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .

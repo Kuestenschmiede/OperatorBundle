@@ -701,6 +701,30 @@ class OfferLoaderService
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
                         //$icon['linkLabel'] = 'Onlinereservierung';
                         break;
+                    case 'tag_clicknmeet':
+                        $stmt = $database->prepare(
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = $stmt->execute(
+                            $uuid,
+                            'clicknmeetLink'
+                        )->fetchAssoc()['tagFieldValue'];
+                        $stmt = $database->prepare(
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        break;
+                    case 'tag_table_reservation':
+                        $stmt = $database->prepare(
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = $stmt->execute(
+                            $uuid,
+                            'tableReservationLink'
+                        )->fetchAssoc()['tagFieldValue'];
+                        $stmt = $database->prepare(
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .

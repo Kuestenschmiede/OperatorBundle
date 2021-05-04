@@ -6,29 +6,43 @@ jQuery(document).ready(function () {
     const $removeFromWishlist = $('.remove-from-wishlist');
     const $putOnWishlist = $('.put-on-wishlist');
 
-    $putOnWishlist.click(function (e) {
-        $('a span.memo-badge').text(lsAddOneToBadge());
-    });
+    $putOnWishlist.on("click", lsAddOneToBadgeAndStore);
+    $removeFromWishlist.on("click", lsSubOneFromBadgeAndStore);
 
-    $removeFromWishlist.click(function (e) {
-        $('a span.memo-badge').text(lsSubOneFromBadge());
-    });
+    /**
+     * Adds one to the latest value of Merkzettel-Badge and returns the result.
+     * @returns {number}
+     */
+    function lsAddOneToBadgeAndStore() {
+        let badgeVal = lsGetBadgeCount();
+        let sum = badgeVal + 1;
+        showBadgeAndText(sum);
+    }
+
+    /**
+     * Subtracts one from value of Merkzettel-Badge
+     * @returns {number}
+     */
+    function lsSubOneFromBadgeAndStore() {
+        let badgeVal = lsGetBadgeCount();
+        let sub = badgeVal - 1;
+        showBadgeAndText(sub);
+    }
 
 });
 
 /**
- * Stores data in LocalStorage by key and value.
- * @param key
- * @param value
+ * Adds Badge with BadgeValue
+ * @param val
  */
-function lsStoreData(key, value) {
+function showBadgeAndText(val) {
+    localStorage.setItem("badgeValue", val);
+    var wishlistBadge = '<span class="badge badge-light memo-badge">' + val + '</span>';
 
-    if (lsCheckIfKeyExists(key)) {
-        const actualValue = lsGetValueOf(key);
-        let newValue = parseInt(actualValue) + parseInt(value);
-        localStorage.setItem(key, newValue);
+    if ($('.memo-badge').length) {
+        $('a span.memo-badge').text(val);
     } else {
-        localStorage.setItem(key, value);
+        $(wishlistBadge).appendTo('a.link-memo');
     }
 }
 
@@ -37,7 +51,7 @@ function lsStoreData(key, value) {
  * @returns {number}
  */
 function lsGetBadgeCount() {
-    const badgeValue = localStorage.getItem('badgeCount');
+    const badgeValue = localStorage.getItem('badgeValue');
     return parseInt(badgeValue);
 }
 
@@ -70,6 +84,7 @@ function lsCheckIfKeyExists(keyname) {
  */
 function lsAddOneToBadge() {
     let sum = lsGetBadgeCount() + 1;
+    localStorage.setItem("badgeValue", sum);
     return sum;
 }
 
@@ -78,7 +93,8 @@ function lsAddOneToBadge() {
  * @returns {number}
  */
 function lsSubOneFromBadge() {
-    let sub = lsGetBadgeCount() + 1;
+    let sub = lsGetBadgeCount() - 1;
+    localStorage.setItem("badgeValue", sub);
     return sub;
 }
 
@@ -86,19 +102,29 @@ function lsSubOneFromBadge() {
  * Get value of items on Merkliste, set Badge and store value in LocalStorage
  */
 function updateWishlistBadgeAtRefresh() {
+
     var getItemsRoute = '/gutesio/operator/wishlist/getItemCount';
 
     $.get(getItemsRoute).done((data) => {
         var countItemsServer = 0;
         if (data.count > 0) {
             countItemsServer = data.count;
+            localStorage.setItem("badgeValue", countItemsServer);
+
+            var badgeVal = localStorage.getItem("badgeValue");
+
+            console.log("countItemsServer = " + countItemsServer);
+            console.log("badgeVal = " + badgeVal);
+
+            var wishlistBadge = '<span class="badge badge-light memo-badge">' + countItemsServer + '</span>';
 
             if ($('.memo-badge').length) {
-                $('.memo-badge').remove();
+                $('a span.memo-badge').text(countItemsServer);
+            } else {
+                $(wishlistBadge).appendTo('a.link-memo');
             }
-            var wishlistBadge = '<span class="badge badge-light memo-badge">' + countItemsServer + '</span>';
-            $(wishlistBadge).appendTo('a.link-memo');
-            localStorage.setItem('badgeValue', countItemsServer);
+        } else {
+            localStorage.setItem("badgeValue", "0");
         }
     });
 }

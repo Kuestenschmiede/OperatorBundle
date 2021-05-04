@@ -3,11 +3,16 @@ jQuery(document).ready(function () {
 // show badge at first pageload
     updateWishlistBadgeAtRefresh();
 
+    // START badgefix
     const $removeFromWishlist = $('.remove-from-wishlist');
     const $putOnWishlist = $('.put-on-wishlist');
+    const $removeFromDetailWishlist = $('.js-removeDetailFromWishlist');
+    const $putOnDetailWishlist = $('.js-putDetailOnWishlist');
 
-    $putOnWishlist.on("click", lsAddOneToBadgeAndStore);
     $removeFromWishlist.on("click", lsSubOneFromBadgeAndStore);
+    $putOnWishlist.on("click", lsAddOneToBadgeAndStore);
+    $removeFromDetailWishlist.on("click", lsSubOneFromBadgeAndStore);
+    $putOnDetailWishlist.on("click", lsAddOneToBadgeAndStore);
 
     /**
      * Adds one to the latest value of Merkzettel-Badge and returns the result.
@@ -110,11 +115,6 @@ function updateWishlistBadgeAtRefresh() {
         if (data.count > 0) {
             countItemsServer = data.count;
             localStorage.setItem("badgeValue", countItemsServer);
-
-            var badgeVal = localStorage.getItem("badgeValue");
-
-            console.log("countItemsServer = " + countItemsServer);
-            console.log("badgeVal = " + badgeVal);
 
             var wishlistBadge = '<span class="badge badge-light memo-badge">' + countItemsServer + '</span>';
 

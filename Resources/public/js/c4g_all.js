@@ -15,7 +15,66 @@ $(function () {
     owl();
     // }
     // ============== end - owl carousel ==============
+
 });
+
+window.c4gHooks = window.c4gHooks || {};
+window.c4gHooks.addToWishlist = window.c4gHooks.addToWishlist || [];
+
+window.c4gHooks.addToWishlist.push(function (field, data) {
+    lsAddOneToBadgeAndStore();
+});
+
+window.c4gHooks = window.c4gHooks || {};
+window.c4gHooks.removeFromWishlist = window.c4gHooks.removeFromWishlist || [];
+
+window.c4gHooks.removeFromWishlist.push(function (field, data) {
+    lsSubOneFromBadgeAndStore();
+});
+
+/**
+ * Adds one to the latest value of Merkzettel-Badge and returns the result.
+ * @returns {number}
+ */
+function lsAddOneToBadgeAndStore() {
+    let badgeVal = lsGetBadgeCount();
+    let sum = badgeVal + 1;
+    showBadgeAndText(sum);
+}
+
+/**
+ * Subtracts one from value of Merkzettel-Badge
+ * @returns {number}
+ */
+function lsSubOneFromBadgeAndStore() {
+    let badgeVal = lsGetBadgeCount();
+    let sub = badgeVal - 1;
+    showBadgeAndText(sub);
+}
+
+/**
+ * Adds Badge with BadgeValue
+ * @param val
+ */
+function showBadgeAndText(val) {
+    localStorage.setItem("badgeValue", val);
+    var wishlistBadge = '<span class="badge badge-light memo-badge">' + val + '</span>';
+
+    if ($('.memo-badge').length) {
+        $('a span.memo-badge').text(val);
+    } else {
+        $(wishlistBadge).appendTo('a.link-memo');
+    }
+}
+
+/**
+ * Returns the value of Merkzettel-Badge stored in localstorage.
+ * @returns {number}
+ */
+function lsGetBadgeCount() {
+    const badgeValue = localStorage.getItem('badgeValue');
+    return parseInt(badgeValue);
+}
 
 // REACT ready
 function reactRenderReady() {
@@ -24,62 +83,6 @@ function reactRenderReady() {
 
         updateWishlistBadgeAtRefresh();
 
-        // Update the Badge on click
-        // $(".put-on-wishlist").on("click", updateWishlistBadgeAtRefresh);
-        // $(".remove-from-wishlist").on("click", updateWishlistBadgeAtRefresh);
-
-        // START badgefix
-        const $removeFromWishlist = $('.remove-from-wishlist');
-        const $putOnWishlist = $('.put-on-wishlist');
-
-        $putOnWishlist.on("click", lsAddOneToBadgeAndStore);
-        $removeFromWishlist.on("click", lsSubOneFromBadgeAndStore);
-
-        /**
-         * Adds one to the latest value of Merkzettel-Badge and returns the result.
-         * @returns {number}
-         */
-        function lsAddOneToBadgeAndStore() {
-            let badgeVal = lsGetBadgeCount();
-            let sum = badgeVal + 1;
-            showBadgeAndText(sum);
-        }
-
-        /**
-         * Subtracts one from value of Merkzettel-Badge
-         * @returns {number}
-         */
-        function lsSubOneFromBadgeAndStore() {
-            let badgeVal = lsGetBadgeCount();
-            let sub = badgeVal - 1;
-            showBadgeAndText(sub);
-        }
-
-        /**
-         * Adds Badge with BadgeValue
-         * @param val
-         */
-        function showBadgeAndText(val) {
-            localStorage.setItem("badgeValue", val);
-            var wishlistBadge = '<span class="badge badge-light memo-badge">' + val + '</span>';
-
-            if ($('.memo-badge').length) {
-                $('a span.memo-badge').text(val);
-            } else {
-                $(wishlistBadge).appendTo('a.link-memo');
-            }
-        }
-
-        /**
-         * Returns the value of Merkzettel-Badge stored in localstorage.
-         * @returns {number}
-         */
-        function lsGetBadgeCount() {
-            const badgeValue = localStorage.getItem('badgeValue');
-            return parseInt(badgeValue);
-        }
-
-        // STOP badgefix
 
         // if (window.owlCarousel) {
         owl();
@@ -180,7 +183,8 @@ function reactRenderReady() {
                 const detailUuid = window.frameworkData[0].components.detail.data['uuid'];
                 const postUrl = '/gutesio/operator/wishlist/add/' + detailType + '/' + detailUuid;
                 $.post(postUrl).done(() => {
-                    addToBadge();
+                    // addToBadge();
+                    lsAddOneToBadgeAndStore();
                 });
             };
 
@@ -191,7 +195,8 @@ function reactRenderReady() {
                 const postUrl = '/gutesio/operator/wishlist/remove/' + detailUuid;
 
                 $.post(postUrl).done(() => {
-                    removeFromBadge();
+                    // removeFromBadge();
+                    lsSubOneFromBadgeAndStore();
                 });
             };
 
@@ -212,8 +217,6 @@ function updateWishlistBadgeAtRefresh() {
         if (data.count > 0) {
             countItemsServer = data.count;
             localStorage.setItem("badgeValue", countItemsServer);
-
-            var badgeVal = localStorage.getItem("badgeValue");
 
             var wishlistBadge = '<span class="badge badge-light memo-badge">' + countItemsServer + '</span>';
 

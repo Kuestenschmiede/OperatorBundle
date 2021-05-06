@@ -1,0 +1,26 @@
+// mandatory
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/forms";
+
+@import "gutes_vars";
+@import "gutes_mixins";
+
+// used
+@import "node_modules/bootstrap/scss/grid";
+@import "node_modules/bootstrap/scss/buttons";
+@import "node_modules/bootstrap/scss/images";
+@import "node_modules/bootstrap/scss/badge";
+
+
+@import "gutes-buttons";
+@import "gutes-badges";
+@import "gutes-general";
+@import "c4g_list_filter";
+@import "c4g_operator_anchormenu_listing";
+@import "c4g_list_grid";
+@import "c4g_list_list";
+@import "c4g_detail_modal";

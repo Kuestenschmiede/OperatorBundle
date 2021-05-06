@@ -1,0 +1,174 @@
+.c4g-modal-outer {
+  position: fixed;
+  z-index: 100;
+  padding-top: 100px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.c4g-modal-inner {
+  position: fixed;
+  //top: 50%;
+  //left: 50%;
+  //transform: translate(-50%, -50%);
+  display: block;
+  //justify-content: center;
+  //min-width: 32em;
+  min-height: 100px;
+  max-width: 100%;
+  padding: 1.25em;
+  border: none;
+  border-radius: 5px;
+  background: #fff;
+  font-family: inherit;
+  max-height: 80%;
+  overflow: auto;
+}
+
+.c4g-modal-hide {
+  display: none;
+}
+
+.c4g-modal-content {
+  color: #2d2d2d;
+  font-weight: 400;
+  line-height: normal;
+  text-align: center;
+  word-wrap: break-word;
+  background-color: rgba(0, 0, 0, 0);
+
+  h1, h2, h3, h4 {
+    font-size: 2rem;
+  }
+
+  > div {
+    margin-top: 5px;
+    margin-bottom: 10px;
+  }
+
+  .title {
+    padding: 0 1rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+
+  .c4g-list-element {
+    background-color: transparent;
+    border: none;
+
+    &:hover {
+      box-shadow: none;
+      transform: none;
+
+      img {
+        transform: none;
+      }
+
+    }
+
+    &__image {
+      max-width: 250px;
+    }
+
+  }
+
+  .detail-view {
+    &__display-type,
+    &__map,
+    &__contact-wrapper {
+      display: none;
+    }
+
+    &__price {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    &__taxnote {
+      font-size: .8rem;
+      margin-bottom: 1rem;
+      color: #6c757d;
+    }
+
+    &__description,
+    &__image-gallery {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+
+  .imageGallery-item {
+    border: none;
+
+    img {
+      max-width: 250px;
+    }
+
+    &:hover {
+      img {
+        transform: none;
+      }
+    }
+  }
+
+  .field-description {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+  }
+
+  .detail-field-wrapper {
+    display: none;
+  }
+
+  .c4g-form-field {
+    margin-bottom: .5rem;
+  }
+
+  input {
+    @extend .form-control;
+  }
+
+  button {
+    @extend .c4g-btn;
+    @extend .c4g-btn-sm;
+  }
+
+  .c4g-btn-submit {
+    @extend .btn-primary;
+    margin-right: 1rem;
+  }
+
+  .c4g-btn-close,
+  .c4g-btn-top-close {
+    @extend .btn;
+    @extend .c4g-btn-sm;
+    @extend .btn-light;
+  }
+
+  .c4g-btn-top-close {
+    float: right;
+  }
+
+  .c4g-panel-buttons {
+    margin-bottom: 1rem;
+  }
+
+  .c4g-modal {
+
+    &__title-wrapper {
+      clear: right;
+    }
+
+  }
+
+
+}
+
+

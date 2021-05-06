@@ -179,7 +179,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         System::loadLanguageFile("form_tag_fields", "de");
         $moduleId = $request->query->get("moduleId");
         $tagFilterIds = $request->query->get('tags');
-        if ($tagFilterIds === "") {
+        if ($tagFilterIds === "" || $tagFilterIds === null) {
             $tagFilterIds = [];
         } else {
             $tagFilterIds = explode(",", $tagFilterIds);

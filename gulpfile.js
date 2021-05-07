@@ -60,7 +60,7 @@ const scripts = function () {
 exports.scripts = scripts;
 
 const watch = function (done) {
-    gulp.watch(paths.watch.styles, gulp.series([styles]));
+    gulp.watch(paths.watch.styles, gulp.series([styles, minifyCss]));
     gulp.watch(paths.watch.scripts, gulp.series([scripts]));
     done();
 };

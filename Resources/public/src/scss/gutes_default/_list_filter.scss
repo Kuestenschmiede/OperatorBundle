@@ -1,4 +1,11 @@
 // searchbar v2 for listing page
+
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) {
+  .c4g-listfilter-button-wrapper {
+    display: none;
+  }
+}
+
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) {
   margin-top: 1rem;
   margin-bottom: 1rem;

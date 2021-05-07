@@ -1,13 +1,41 @@
 // searchbar v2 for listing page
-.c4g-listfilter-form-wrapper {
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 
   .c4g-listfilter-form {
-    > div {
-      display: none!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-gap: .5rem;
+
+    .form-view__searchinput,
+    .c4g-panel-buttons {
+      border-bottom: none;
+    }
+
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-view__tag-filter,
+  .form-view__sorting {
+    display: none;
+  }
+
+
+  .form-view__searchinput {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .c4g-btn-filter-wrapper {
+    button {
+      @extend .btn;
+      @extend .btn-primary;
     }
   }
-
-  &.react-c4g-listfilter-opened {
-
-  }
 }
+

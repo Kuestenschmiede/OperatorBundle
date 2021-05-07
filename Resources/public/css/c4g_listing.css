@@ -3484,7 +3484,7 @@ a.badge-dark:focus {
   border-color: var(--gutes-tag-filter-border-color-checked)
 }
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper {
-  display: none;
+  display: block;
   margin-top: 2rem;
   margin-bottom: 2rem
 }

@@ -204,13 +204,6 @@ function reactRenderReady() {
             $(".js-removeDetailFromWishlist").on('click', handleRemoveFromWishlist);
         }
 
-
-        // TODO: try to takeout search-input and search-submit-button
-        const $filterButtonWrapper = $(".c4g-listfilter-button-wrapper");
-        const wrapperForSearch = '<div class="js-done c4g-listfilter__search-and-submit">test</div>';
-
-        $filterButtonWrapper.append(wrapperForSearch);
-
         window.reactRenderReadyDone = true;
     }
 }

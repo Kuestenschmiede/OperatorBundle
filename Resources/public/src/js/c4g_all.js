@@ -1,15 +1,15 @@
 let reactRenderReadyDone = false;
 
 // DOM ready
-$(function () {
+jQuery(function () {
     // ============== start - owl carousel ==============
     // if (window.owlCarousel) {
-    $(window).on('resize', function () {
+    jQuery(window).on('resize', function () {
         owl();
     });
 
     window.setTimeout(function () {
-        $(window).trigger('resize');
+        jQuery(window).trigger('resize');
     }, 500);
 
     owl();
@@ -60,10 +60,10 @@ function showBadgeAndText(val) {
     localStorage.setItem("badgeValue", val);
     var wishlistBadge = '<span class="badge badge-light memo-badge">' + val + '</span>';
 
-    if ($('.memo-badge').length) {
-        $('a span.memo-badge').text(val);
+    if (jQuery('.memo-badge').length) {
+        jQuery('a span.memo-badge').text(val);
     } else {
-        $(wishlistBadge).appendTo('a.link-memo');
+        jQuery(wishlistBadge).appendTo('a.link-memo');
     }
 }
 
@@ -88,28 +88,28 @@ function reactRenderReady() {
         owl();
         // }
         // delete all items on global wishlist
-        $('.js-delete-list').on("click", deleteAllOnGlobalList);
+        jQuery('.js-delete-list').on("click", deleteAllOnGlobalList);
 
         /* filter actions on listing page */
-        $('.tag-filter__filter-item > label > input').on('click', function () {
+        jQuery('.tag-filter__filter-item > label > input').on('click', function () {
 
             // check if tag-filter is checked or not
-            if ($(this).is(':checked')) {
-                $(this).parent(".c4g-form-label").addClass('checked-tag-filter');
-                $(this).addClass('checked-tag-filter');
+            if (jQuery(this).is(':checked')) {
+                jQuery(this).parent(".c4g-form-label").addClass('checked-tag-filter');
+                jQuery(this).addClass('checked-tag-filter');
                 findAllFilterState();
             } else {
-                $(this).parent(".c4g-form-label").removeClass('checked-tag-filter');
-                $(this).removeClass('checked-tag-filter');
+                jQuery(this).parent(".c4g-form-label").removeClass('checked-tag-filter');
+                jQuery(this).removeClass('checked-tag-filter');
                 findAllFilterState();
             }
         });
 
         // all the actions in filter
-        const $inputSearch = $('.form-view__searchinput > input');
-        const $datepickerInput = $(".react-datepicker__input-container");
-        const $datepickerPopper = $(".react-datepicker-popper");
-        const $inputPriceRadio = $(".form-check-input[type=radio]");
+        const $inputSearch = jQuery('.form-view__searchinput > input');
+        const $datepickerInput = jQuery(".react-datepicker__input-container");
+        const $datepickerPopper = jQuery(".react-datepicker-popper");
+        const $inputPriceRadio = jQuery(".form-check-input[type=radio]");
 
         $inputSearch.on('keydown focusout click', findAllFilterState);
         // $inputSearch.on('focusout', findAllFilterState);
@@ -117,30 +117,30 @@ function reactRenderReady() {
         $inputPriceRadio.on('click', setFilterButtonActive);
 
         // set label text as placeholder for input
-        const $offerLabel = $(".offer-filter__searchinput label");
-        const $offerLabelText = $(".offer-filter__searchinput label").text();
+        const $offerLabel = jQuery(".offer-filter__searchinput label");
+        const $offerLabelText = jQuery(".offer-filter__searchinput label").text();
         $offerLabel.hide();
-        const $offerInputField = $(".offer-filter__searchinput input");
+        const $offerInputField = jQuery(".offer-filter__searchinput input");
 
         $offerInputField.attr("placeholder", $offerLabelText);
 
-        $("#sharebutton").prependTo(".anchor-menu__share");
+        jQuery("#sharebutton").prependTo(".anchor-menu__share");
 
-        // $('[data-toggle="popover"]').popover({
+        // jQuery('[data-toggle="popover"]').popover({
         //     placement: 'top'
         // });
 
         // show anchor-menu on urlaub page
-        $('.js-on-react-ready').show();
+        jQuery('.js-on-react-ready').show();
 
         var removeFromWishlistCallback = function (event) {
             removeFromBadge();
         };
-        // $('.on-wishlist').on('click', removeFromWishlistCallback);
+        // jQuery('.on-wishlist').on('click', removeFromWishlistCallback);
 
         var putOnWishlistCallback = function (event) {
             addToBadge();
-            $(".btn.remove-from-wishlist").on("click", removeFromWishlistCallback);
+            jQuery(".btn.remove-from-wishlist").on("click", removeFromWishlistCallback);
         };
 
         var deleteItemOnGlobalList = function (event) {
@@ -149,10 +149,10 @@ function reactRenderReady() {
 
 
         // deletes item on global list visually (just to show deleted item is gone)
-        $('.js-deleteFromGlobalList').on("click", deleteItemOnGlobalList);
+        jQuery('.js-deleteFromGlobalList').on("click", deleteItemOnGlobalList);
 
         // delete all items on global wishlist
-        $('.js-delete-list').on("click", deleteAllOnGlobalList);
+        jQuery('.js-delete-list').on("click", deleteAllOnGlobalList);
 
         // insert Merken-Btn on Detail Page
         const buildPutOnWishlistBtn = '<button class="c4g-btn c4g-btn-primary c4g-btn-putonwishlist js-putDetailOnWishlist" title="Auf den Merkzettel setzen."><i class="fas fa-heart"></i></button>';
@@ -164,21 +164,21 @@ function reactRenderReady() {
         if (window.frameworkData[0].components.detail
             && window.frameworkData[0].components.detail.data) {
             const onList = window.frameworkData[0].components.detail.data['on_wishlist'];
-            // $('#anchor-menu .share').prepend(buildPutOnWishlistBtn);
-            // $('#anchor-menu .share').prepend(buildRemoveFromWishlistBtn);
-            $('.anchor-menu__share').prepend(buildShareBtn);
-            $('.anchor-menu__share').prepend(buildPutOnWishlistBtn);
-            $('.anchor-menu__share').prepend(buildRemoveFromWishlistBtn);
+            // jQuery('#anchor-menu .share').prepend(buildPutOnWishlistBtn);
+            // jQuery('#anchor-menu .share').prepend(buildRemoveFromWishlistBtn);
+            jQuery('.anchor-menu__share').prepend(buildShareBtn);
+            jQuery('.anchor-menu__share').prepend(buildPutOnWishlistBtn);
+            jQuery('.anchor-menu__share').prepend(buildRemoveFromWishlistBtn);
 
             if (onList) {
-                $(".js-putDetailOnWishlist").css("display", "none");
+                jQuery(".js-putDetailOnWishlist").css("display", "none");
             } else {
-                $(".js-removeDetailFromWishlist").css("display", "none");
+                jQuery(".js-removeDetailFromWishlist").css("display", "none");
             }
 
             var handlePutOnWishlist = function (event) {
-                $(".js-putDetailOnWishlist").css("display", "none");
-                $(".js-removeDetailFromWishlist").css("display", "block");
+                jQuery(".js-putDetailOnWishlist").css("display", "none");
+                jQuery(".js-removeDetailFromWishlist").css("display", "block");
                 const detailType = window.frameworkData[0].components.detail.data['internal_type'];
                 const detailUuid = window.frameworkData[0].components.detail.data['uuid'];
                 const postUrl = '/gutesio/operator/wishlist/add/' + detailType + '/' + detailUuid;
@@ -189,8 +189,8 @@ function reactRenderReady() {
             };
 
             var handleRemoveFromWishlist = function (event) {
-                $(".js-putDetailOnWishlist").css("display", "block");
-                $(".js-removeDetailFromWishlist").css("display", "none");
+                jQuery(".js-putDetailOnWishlist").css("display", "block");
+                jQuery(".js-removeDetailFromWishlist").css("display", "none");
                 const detailUuid = window.frameworkData[0].components.detail.data['uuid'];
                 const postUrl = '/gutesio/operator/wishlist/remove/' + detailUuid;
 
@@ -200,9 +200,14 @@ function reactRenderReady() {
                 });
             };
 
-            $(".js-putDetailOnWishlist").on('click', handlePutOnWishlist);
-            $(".js-removeDetailFromWishlist").on('click', handleRemoveFromWishlist);
+            jQuery(".js-putDetailOnWishlist").on('click', handlePutOnWishlist);
+            jQuery(".js-removeDetailFromWishlist").on('click', handleRemoveFromWishlist);
         }
+
+        // TODO: trigger search button after click on tag-filter item
+        const $tagFilterItem = jQuery(".form-view__tag-filter .c4g-form-label");
+        // const filterSubmit = jQuery(".c4g-btn-filter-wrapper .c4g-btn-filter");
+        // $tagFilterItem.click().trigger(".c4g-btn-filter-wrapper .c4g-btn-filter");
 
         window.reactRenderReadyDone = true;
     }
@@ -220,10 +225,10 @@ function updateWishlistBadgeAtRefresh() {
 
             var wishlistBadge = '<span class="badge badge-light memo-badge">' + countItemsServer + '</span>';
 
-            if ($('.memo-badge').length) {
-                $('a span.memo-badge').text(countItemsServer);
+            if (jQuery('.memo-badge').length) {
+                jQuery('a span.memo-badge').text(countItemsServer);
             } else {
-                $(wishlistBadge).appendTo('a.link-memo');
+                jQuery(wishlistBadge).appendTo('a.link-memo');
             }
         } else {
             localStorage.setItem("badgeValue", "0");
@@ -241,25 +246,25 @@ function findAllFilterState() {
     const tagFilterClass = "checked-tag-filter";
 
     // check search input
-    const $inputSearch = $('.form-view__searchinput > input');
+    const $inputSearch = jQuery('.form-view__searchinput > input');
     if ($inputSearch.val()) {
         searchInput = true;
     }
 
     // check filter tags
-    const $tagFilterItemLabel = $(".tag-filter__filter-item > label");
+    const $tagFilterItemLabel = jQuery(".tag-filter__filter-item > label");
     if ($tagFilterItemLabel.hasClass("checked-tag-filter")) {
         filterTag = true;
     }
 
     // check datepicker input value
-    const $datepickerInput = $(".react-datepicker__input-container input");
+    const $datepickerInput = jQuery(".react-datepicker__input-container input");
     if ($datepickerInput.val()) {
         datepickerInput = true;
     }
 
     // todo: check price filter - need a label class like 'checked-price-filter'
-    // const $inputPriceRadio = $(".form-check-input[type=radio]");
+    // const $inputPriceRadio = jQuery(".form-check-input[type=radio]");
     // if ($inputPriceRadio.is(":checked")) {
     //     priceFilterRadio = true;
     // }
@@ -283,7 +288,7 @@ function deleteAllOnGlobalList() {
 
 function checkInput() {
     let state = false;
-    var text_value = $(this).val();
+    var text_value = jQuery(this).val();
     if (text_value != '') {
         state = true;
     } else {
@@ -293,17 +298,17 @@ function checkInput() {
 }
 
 function setFilterButtonActive() {
-    $('.c4g-btn-filter').addClass('executeSubmit').text('Suche starten');
+    jQuery('.c4g-btn-filter').addClass('executeSubmit').text('Suche starten');
 
 }
 
 function executeFormSubmit() {
-    $(".executeSubmit").one("click");
-    $(".executeSubmit").click();
+    jQuery(".executeSubmit").one("click");
+    jQuery(".executeSubmit").click();
 }
 
 function setFilterButtonDefault() {
-    $('.c4g-btn-filter').removeClass('executeSubmit').text('Suchen');
+    jQuery('.c4g-btn-filter').removeClass('executeSubmit').text('Suchen');
 }
 
 function addToBadge() {
@@ -311,33 +316,33 @@ function addToBadge() {
 
     badgeVal = badgeVal + 1;
 
-    if ($('.memo-badge').length) {
-        $('.memo-badge').remove();
+    if (jQuery('.memo-badge').length) {
+        jQuery('.memo-badge').remove();
     }
 
     var wishlistBadge = '<span class="badge badge-light memo-badge">' + badgeVal + '</span>';
-    $(wishlistBadge).appendTo('a.link-memo');
+    jQuery(wishlistBadge).appendTo('a.link-memo');
 }
 
 function removeFromBadge() {
     let badgeVal = getBadgeValue();
 
-    if ($('.memo-badge').length) {
-        $('.memo-badge').remove();
+    if (jQuery('.memo-badge').length) {
+        jQuery('.memo-badge').remove();
     }
 
     if (badgeVal > 0) {
         badgeVal = badgeVal - 1;
         var wishlistBadge = '<span class="badge badge-light memo-badge">' + badgeVal + '</span>';
-        $(wishlistBadge).appendTo('a.link-memo');
+        jQuery(wishlistBadge).appendTo('a.link-memo');
 
     }
 }
 
 function getBadgeValue() {
     let valBadge = 0;
-    if ($('.memo-badge').length) {
-        valBadge = parseInt($('.memo-badge').text());
+    if (jQuery('.memo-badge').length) {
+        valBadge = parseInt(jQuery('.memo-badge').text());
     }
     return valBadge;
 }
@@ -345,9 +350,9 @@ function getBadgeValue() {
 // owl carousel
 function owl() {
 
-    if ($('.owl-carousel').owlCarousel && typeof $('.owl-carousel').owlCarousel === "function") {
+    if (jQuery('.owl-carousel').owlCarousel && typeof jQuery('.owl-carousel').owlCarousel === "function") {
 
-        $('.owl-carousel').owlCarousel({
+        jQuery('.owl-carousel').owlCarousel({
             // center: true,
             loop: true,
             autoplay: false,

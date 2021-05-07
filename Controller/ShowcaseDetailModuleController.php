@@ -109,11 +109,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $redirectPage = $model->gutesio_showcase_list_page;
         $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js|async|static");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js|async|static");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/jquery.fancybox.min.css");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery.fancybox.min.js|async|static");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/bootstrap.bundle.min.js|async|static");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async|static");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("offer_list");
         System::loadLanguageFile("gutesio_frontend");

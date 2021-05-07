@@ -99,11 +99,11 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
-            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_detail.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/bootstrap.bundle.min.js|async|static");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js|async|static");
-            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/jquery.fancybox.min.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/jquery.fancybox.min.js|async|static");
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/bootstrap.bundle.min.js|async|static");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static");
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async|static");
         }
 
         if ($this->alias !== "") {

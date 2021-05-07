@@ -56,9 +56,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
     {
         $this->model = $model;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing_wishlist.css");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_wishlist.min.css");
 //        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/modal.css");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js|async|static");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static");
         System::loadLanguageFile('offer_list');
         System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $list = $this->getList();

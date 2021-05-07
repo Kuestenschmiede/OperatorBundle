@@ -70,11 +70,11 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         }
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing_carousel.css");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/owl.carousel.min.css");
-        ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/owl.theme.default.min.css");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/owl.carousel.min.js|async|static");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js|async|static");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_carousel.min.css");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/owl/owl.carousel.min.css");
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/owl/owl.theme.default.min.css");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/owl/owl.carousel.min.js|async|static");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static");
 
         return $template->getResponse();
     }

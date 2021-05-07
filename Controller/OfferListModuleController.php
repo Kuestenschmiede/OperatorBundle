@@ -106,12 +106,12 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $this->offerService->setLimit($limit);
         $this->request = $request;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/c4g_all.js|async|static");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
-            ResourceLoader::loadCssResource("/bundles/gutesiooperator/css/c4g_listing.css");
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");
         }
         $search = "";
         $conf = $this->getListFrontendConfiguration($search, $this->model->gutesio_child_type);

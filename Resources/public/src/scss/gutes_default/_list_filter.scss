@@ -1,0 +1,13 @@
+// searchbar v2 for listing page
+.c4g-listfilter-form-wrapper {
+
+  .c4g-listfilter-form {
+    > div {
+      display: none!important;
+    }
+  }
+
+  &.react-c4g-listfilter-opened {
+
+  }
+}

@@ -205,9 +205,11 @@ function reactRenderReady() {
         }
 
         // TODO: trigger search button after click on tag-filter item
-        const $tagFilterItem = jQuery(".form-view__tag-filter .c4g-form-label");
+        // const $tagFilterItem = jQuery(".form-view__tag-filter .c4g-form-label");
         // const filterSubmit = jQuery(".c4g-btn-filter-wrapper .c4g-btn-filter");
         // $tagFilterItem.click().trigger(".c4g-btn-filter-wrapper .c4g-btn-filter");
+
+        // TODO: don't open the filter sidebar after starting search above listing
 
         window.reactRenderReadyDone = true;
     }

@@ -18,6 +18,7 @@ const paths = {
     },
     dist: {
         styles: publicPath + 'dist/css',
+        stylesOldCss: publicPath + 'css',
         scripts: publicPath + 'dist/js'
     },
     watch: {
@@ -34,7 +35,8 @@ const styles = function () {
             cascade: false
         }))
         .pipe(cleanCSS({format: "beautify"}))
-        .pipe(gulp.dest(paths.dist.styles));
+        .pipe(gulp.dest(paths.dist.styles))
+        .pipe(gulp.dest(paths.dist.stylesOldCss));
 };
 exports.styles = styles;
 
@@ -54,7 +56,7 @@ exports.minify_css = minifyCss;
 const scripts = function () {
     return gulp.src(paths.src.scripts)
         .pipe(include())
-        // .pipe(uglify())
+        .pipe(uglify())
         .pipe(gulp.dest(paths.dist.scripts));
 };
 exports.scripts = scripts;
@@ -66,4 +68,4 @@ const watch = function (done) {
 };
 
 exports.default = gulp.parallel([watch]);
-exports.deploy = gulp.series([styles,scripts, minifyCss]);
+exports.deploy = gulp.series([styles, scripts, minifyCss]);

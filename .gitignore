@@ -14,3 +14,7 @@
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotpresent
+
+# Miscellaneous
+node_modules
+_backup*

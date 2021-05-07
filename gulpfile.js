@@ -18,7 +18,6 @@ const paths = {
     },
     dist: {
         styles: publicPath + 'dist/css',
-        stylesOldCss: publicPath + 'css',
         scripts: publicPath + 'dist/js'
     },
     watch: {
@@ -35,8 +34,7 @@ const styles = function () {
             cascade: false
         }))
         .pipe(cleanCSS({format: "beautify"}))
-        .pipe(gulp.dest(paths.dist.styles))
-        .pipe(gulp.dest(paths.dist.stylesOldCss));
+        .pipe(gulp.dest(paths.dist.styles));
 };
 exports.styles = styles;
 

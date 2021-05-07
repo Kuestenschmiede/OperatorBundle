@@ -46,3 +46,26 @@
   }
 }
 
+.c4g-listfilter-button {
+  text-indent: -999999px;
+  overflow: hidden;
+  background-color: transparent;
+  width: 25px;
+  height: 25px;
+  border: none;
+  padding: 0 0;
+
+  &.react-c4g-listfilter-opened {
+
+    &:before {
+      content: "";
+      background-image: url("../img/times.svg");
+      display: block;
+      width: 25px;
+      height: 25px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+  }
+}
+

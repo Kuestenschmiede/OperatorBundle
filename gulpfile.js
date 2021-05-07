@@ -7,6 +7,7 @@ const autoprefixer = require('gulp-autoprefixer');
 const notify = require('gulp-notify');
 const cleanCSS = require('gulp-clean-css');
 const rename = require('gulp-rename');
+const imagemin = require('gulp-imagemin');
 
 // only for OperatorBundle
 const publicPath = 'Resources/public/'
@@ -15,14 +16,17 @@ const paths = {
     src: {
         styles: publicPath + 'src/scss/*.scss',
         scripts: publicPath + 'src/js/**/*.js',
+        images: publicPath + 'src/img/**/*'
     },
     dist: {
         styles: publicPath + 'dist/css',
-        scripts: publicPath + 'dist/js'
+        scripts: publicPath + 'dist/js',
+        images: publicPath + 'dist/img'
     },
     watch: {
         styles: publicPath + 'src/scss/**/*.scss',
-        scripts: publicPath + 'src/js/**/*.js'
+        scripts: publicPath + 'src/js/**/*.js',
+        images: publicPath + 'src/img/**/*'
     },
 };
 
@@ -59,6 +63,16 @@ const scripts = function () {
 };
 exports.scripts = scripts;
 
+// read and optimize images
+const images = function () {
+    return gulp.src(paths.src.images)
+        .pipe(imagemin({
+            progressive: true,
+        }))
+        .pipe(gulp.dest(paths.dist.images));
+};
+exports.images = images;
+
 const watch = function (done) {
     gulp.watch(paths.watch.styles, gulp.series([styles, minifyCss]));
     gulp.watch(paths.watch.scripts, gulp.series([scripts]));
@@ -66,4 +80,4 @@ const watch = function (done) {
 };
 
 exports.default = gulp.parallel([watch]);
-exports.deploy = gulp.series([styles, scripts, minifyCss]);
+exports.deploy = gulp.series([minifyCss, scripts, images]);

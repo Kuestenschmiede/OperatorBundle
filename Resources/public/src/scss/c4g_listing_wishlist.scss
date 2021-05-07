@@ -1,0 +1,28 @@
+// mandatory
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/forms";
+
+//@import "../mixins";
+//@import "../reboot";
+//@import "../forms";
+
+@import "gutes_vars";
+@import "gutes_mixins";
+
+@import "node_modules/bootstrap/scss/images";
+@import "node_modules/bootstrap/scss/buttons";
+@import "node_modules/bootstrap/scss/badge";
+@import "node_modules/bootstrap/scss/grid";
+//@use "../../../../schmiederohling/scss/bootstrap460/images";
+//@import "../../../../schmiederohling/scss/bootstrap460/buttons";
+//@import "../../../../schmiederohling/scss/bootstrap460/badge";
+//@import "../../../../schmiederohling/scss/bootstrap460/grid";
+
+@import "gutes-buttons";
+@import "gutes-general";
+@import "c4g_list_wishlist";
+@import "c4g_detail_modal";

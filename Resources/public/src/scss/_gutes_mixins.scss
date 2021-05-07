@@ -1,0 +1,18 @@
+// mixins to reset some bootstrap styles
+@mixin row-reset() {
+  display: inherit;
+  flex-wrap: inherit;
+  margin-right: inherit;
+  margin-left: inherit;
+}
+
+@mixin col-reset() {
+  flex: inherit;
+  max-width: inherit;
+  padding-left: inherit;
+  padding-right: inherit;
+}
+
+@mixin transition($ms: 300ms) {
+  transition: $ms ease-in-out;
+}

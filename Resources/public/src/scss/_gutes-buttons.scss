@@ -1,0 +1,40 @@
+.c4g-btn {
+  @extend .btn;
+}
+
+.c4g-btn-sm {
+  @extend .c4g-btn;
+  @extend .btn-sm;
+}
+
+.c4g-btn-default {
+  @include button-variant($gutes-color-default, $gutes-color-default);
+}
+
+.c4g-btn-primary {
+  @include button-variant($gutes-color-primary, $gutes-color-primary);
+  //@extend .btn-primary;
+}
+
+.c4g-btn-secondary {
+  @include button-variant($gutes-color-secondary, $gutes-color-secondary);
+}
+
+.c4g-btn-warning {
+  @include button-variant($warning, $warning);
+}
+
+// item-on-wishlist button
+.c4g-btn-on-wishlist {
+  @include button-variant($gutes-color-secondary, $gutes-color-secondary);
+}
+
+.c4g-btn-tagfilter {
+  @include button-variant($gutes-tag-filter-bgcolor, $gutes-tag-filter-bgcolor);
+}
+
+// click and collect button
+.c4g-btn-cc {
+  @include button-variant($gutes-clickcollect-bgcolor, $gutes-clickcollect-bgcolor);
+}
+

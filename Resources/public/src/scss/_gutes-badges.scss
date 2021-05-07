@@ -1,0 +1,11 @@
+.c4g-btn-tagfilter {
+  @extend .c4g-btn;
+  background-color: var(--gutes-tag-filter-bgcolor);
+  border-color: var(--gutes-tag-filter-border-color);
+}
+
+.c4g-badge-tagfilter {
+  @extend .badge;
+  background-color: var(--gutes-tag-filter-bgcolor);
+  border: 1.5px solid var(--gutes-tag-filter-border-color);
+}

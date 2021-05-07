@@ -1,0 +1,56 @@
+.c4g-carousel {
+
+  &__image-wrapper {
+    overflow: hidden;
+    height: var(--gutes-carousel-list-img-height);
+  }
+
+  &__image {
+    height: var(--gutes-carousel-list-img-height);
+    width: 100%;
+    object-fit: cover;
+  }
+
+  &__title-wrapper {
+    min-height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__title {
+    font-size: 1rem;
+    text-align: center;
+    margin-bottom: 0;
+  }
+
+  .owl-wrapper {
+
+    .owl-item {
+      background-color: var(--gutes-element-bgcolor);
+      border-radius: var(--gutes-base-border-radius);
+      overflow: hidden;
+      @include transition(600ms);
+
+      a {
+        text-decoration: none;
+      }
+
+
+      .imageList {
+        overflow: hidden;
+      }
+
+      img {
+        @include transition(600ms);
+      }
+
+      &:hover {
+
+        img {
+          transform: scale(1.1);
+        }
+      }
+    }
+  }
+}

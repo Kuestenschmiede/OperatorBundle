@@ -1,0 +1,210 @@
+/* Box-sizing reset: //w3bits.com/?p=3225 */
+html {
+  box-sizing: border-box;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+.c4g-grid-outer, .c4g-plain-outer {
+
+  /* The Masonry Container */
+  //.masonry {
+  //  max-width: 100%;
+  //  margin: var(--gutes-grid-gap) auto;
+  //  column-gap: var(--gutes-grid-gap);
+  //  column-count: auto;
+  //  column-width: 260px;
+  //}
+
+  .nomasonry-grid {
+    display: grid;
+    grid-gap: 1rem;
+    grid-template-columns: repeat( auto-fill, minmax(280px, 1fr) );
+    grid-auto-rows: auto;
+  }
+
+  /* The Masonry Brick */
+  //.masonry-item {
+  //  display: inline-block;
+  //  margin: 0 0 var(--gutes-grid-gap);
+  //  width: 100%;
+  //}
+
+  .nomasonry-item {
+    display: inline-block;
+    //margin: 0 0 var(--gutes-grid-gap);
+    width: 100%;
+  }
+
+  width: 100%;
+  font-family: var(--gutes-base-font-family);
+
+  img {
+    @include img-fluid;
+  }
+}
+
+// this only describes all styles for grid list
+.c4g-grid-outer, .c4g-plain-outer {
+  line-height: var(--gutes-base-line-height);
+
+  .c4g-list-elements {
+    @include make-container();
+    @extend .container-fluid;
+    @extend .nomasonry-grid;
+    //@extend .masonry;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .c4g-list-element {
+    position: relative;
+    padding-bottom: calc(var(--gutes-base-spacing-unit) * 3);
+    background-color: var(--gutes-element-bgcolor);
+    @extend .nomasonry-item;
+    //@extend .masonry-item;
+    border-radius: var(--gutes-base-border-radius);
+    border: var(--gutes-base-border-width) solid darken($gutes-element-bgcolor, 10%);
+    overflow: hidden;
+    @include transition();
+
+    &__image-wrapper {
+      overflow: hidden;
+      height: var(--gutes-grid-list-element-img-height);
+    }
+
+    &__image {
+      @include transition(600ms);
+      height: var(--gutes-grid-list-element-img-height);
+      width: 100%;
+      object-fit: cover;
+    }
+
+    &:hover {
+      box-shadow: var(--gutes-box-shadow);
+
+      .c4g-list-element {
+        &__image-wrapper {
+          img {
+            transform: scale(1.1);
+
+          }
+        }
+      }
+    }
+
+    &__inner {
+      //position: relative;
+      //padding-bottom: 70px;
+
+      > div {
+        margin-bottom: var(--gutes-base-spacing-unit);
+
+        &.c4g-list-element__buttons-wrapper {
+          margin-bottom: 0;
+        }
+
+        //&:not(.c4g-list-element__image-wrapper) {
+        padding: 0 var(--gutes-base-spacing-unit);
+        //}
+
+        &.c4g-list-element__clickcollect-wrapper,
+        &.c4g-list-element__image-wrapper {
+          padding: 0 0;
+        }
+      }
+    }
+
+    &__clickcollect-wrapper {
+      display: inline-block;
+      position: absolute;
+      top: -1px;
+      left: 0;
+      margin: 0;
+      margin-bottom: 0;
+      line-height: 1;
+    }
+
+    &__clickcollect-link {
+      @extend .c4g-btn;
+      @extend .c4g-btn-sm;
+      clip-path: polygon(0 0, 100% 0%, 95% 100%, 0% 100%);
+      border-radius: 0;
+      padding: 0 .8rem 0 .3rem;
+      background-color: var(--gutes-clickcollect-bgcolor);
+      color: var(--gutes-clickcollect-color);
+      font-size: var(--gutes-base-font-size--xs);
+    }
+
+    &__title,
+    &__name {
+      font-size: var(--gutes-font-size-title);
+      font-weight: var(--gutes-font-weight-title);
+    }
+
+    &__types-wrapper,
+    &__typename-wrapper,
+    &__elementname-wrapper,
+    &__shortdescription-wrapper {
+      font-size: var(--gutes-font-size-types);
+    }
+
+    &__tags-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      margin: -5px;
+
+      .c4g-list-element__tag {
+        @extend .c4g-badge-tagfilter;
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+    }
+
+    &__more,
+    &__notice {
+      position: absolute;
+      bottom: 0;
+    }
+
+    &__buttons-wrapper {
+      display: flex;
+      justify-content: space-between;
+      grid-gap: .5rem;
+      position: absolute;
+      bottom: var(--gutes-base-spacing-unit);
+      left: 0;
+      width: 100%;
+    }
+
+    &__notice-link,
+    &__more-link {
+      @extend .c4g-btn;
+      @extend .c4g-btn-sm;
+      @extend .c4g-btn-primary;
+    }
+
+    &__notice-link {
+      &.remove-from-wishlist {
+        @extend .c4g-btn-on-wishlist;
+      }
+    }
+
+    &__notice {
+      left: 0
+    }
+
+    &__more {
+      right: 0;
+    }
+
+  }
+}

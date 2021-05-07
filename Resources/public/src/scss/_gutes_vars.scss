@@ -1,0 +1,179 @@
+// colors
+$gutes-color-one: #103a5d !default;
+$gutes-color-two: #d35400 !default;
+$gutes-color-three: #333333 !default;
+
+$gutes-color-brand: $gutes-color-one !default;
+$gutes-color-default: #333 !default;
+$gutes-color-primary: $gutes-color-brand !default;
+$gutes-color-secondary: $gutes-color-two !default;
+
+// font and font-colors
+$gutes-base-font-color: #111111 !default;
+$gutes-base-font-size--xs: 0.875rem !default;
+$gutes-base-font-size--xl: 1.125rem !default;
+$gutes-base-font-size: 1rem !default;
+$gutes-base-line-height: 1.3 !default;
+$gutes-base-font-weight: 400 !default;
+$gutes-base-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif !default;
+
+// Base Border Settings
+$gutes-base-border-radius: 4px !default;
+$gutes-base-border-width: 1px !default;
+$gutes-base-border-color: #ccc !default;
+
+// misc
+$gutes-size-tag-gutter: 5px !default;
+$gutes-grid-gap: 2rem !default;
+$gutes-element-bgcolor: #eaefee !default;
+
+//tag-filter
+$gutes-tag-filter-border-color: #333333 !default;
+$gutes-tag-filter-border-color-checked: #d35400 !default;
+$gutes-tag-filter-bgcolor: #ffffff !default;
+
+// Base Spacing Units
+$gutes-base-spacing-unit: 1rem !default;
+
+// detail page - hero
+$gutes-detail-hero-overlay-color: rgba(#333, .3) !default;
+$gutes-detail-hero-title-color: #fff !default;
+$gutes-detail-hero-text-shadow: 0 0 10px #000 !default;
+
+// detail page - tag-fields tags
+$gutes-tag-fields-tag-menu: #F6921E !default;
+$gutes-tag-fields-tag-reservation: #B073D9 !default;
+$gutes-tag-fields-tag-onlineshop: #ADBD11 !default;
+$gutes-tag-fields-tag-delivery: #ff7bab !default;
+
+// detail page - video
+// Video
+$gutes-video-bgcolor: #ebebeb !default;
+
+//  List Styles
+//$gutes: var(--gutes-box-shadow);
+$gutes-box-shadow: 0 0 10px rgba(#000, .5) !default;
+
+// title
+$gutes-font-size-title: 1.5rem !default;
+$gutes-font-weight-title: normal !default;
+
+// click and collect
+$gutes-clickcollect-bgcolor: #e67e22 !default;
+$gutes-clickcollect-color: #fff !default;
+
+// anchor menu
+$anchor-menu-bgcolor: $gutes-element-bgcolor !default;
+$gutes-anchormenu-bgcolor: #eaefee!default;
+// detail page - anchor menu
+$gutes-anchormenu-bgcolor: lighten($gutes-anchormenu-bgcolor, 50%);
+
+html {
+
+  // colors
+  --gutes-color-one: #{$gutes-color-one};
+  --gutes-color-two: #{$gutes-color-two};
+  --gutes-color-three: #{$gutes-color-three};
+
+  // theme colors
+  --gutes-color-brand: #{$gutes-color-brand};
+  --gutes-color-default: #{$gutes-color-default};
+  --gutes-color-primary: #{$gutes-color-primary};
+  --gutes-color-secondary: #{$gutes-color-secondary};
+
+  // Base Font Settings
+  --gutes-base-font-size--xs: #{$gutes-base-font-size--xs};
+  --gutes-base-font-size: #{$gutes-base-font-size};
+  --gutes-base-font-size--xl: #{$gutes-base-font-size--xl};
+  --gutes-base-line-height: #{$gutes-base-line-height};
+  --gutes-base-font-weight: #{$gutes-base-font-weight};
+  --gutes-base-font-family: #{$gutes-base-font-family};
+  --gutes-base-font-color: #{$gutes-base-font-color};
+
+  // Base Spacing Units
+  --gutes-base-spacing-unit: #{$gutes-base-spacing-unit};
+
+  // Base Border Settings
+  --gutes-base-border-radius: #{$gutes-base-border-radius};
+  --gutes-base-border-width: #{$gutes-base-border-width};
+  --gutes-base-border-color: #{$gutes-base-border-color};
+
+  --gutes-base-border: #{$gutes-base-border-width} solid #{$gutes-base-border-color};
+
+  //  List Styles
+  --gutes-box-shadow: #{$gutes-box-shadow};
+  // title
+  --gutes-font-size-title: #{$gutes-font-size-title};
+  --gutes-font-weight-title: #{$gutes-font-weight-title};
+  --gutes-grid-list-element-img-height: 240px;
+  --gutes-carousel-list-img-height: 200px;
+
+  // Types
+  --gutes-font-size-types: 1rem;
+
+  // Tags and Tag-Filter
+  --gutes-size-tag: 40px;
+  --gutes-tag-filter-border-color: #{$gutes-tag-filter-border-color};
+  --gutes-tag-filter-border-color-checked: #{$gutes-tag-filter-border-color-checked};
+  --gutes-tag-filter-bgcolor: #{$gutes-tag-filter-bgcolor};
+
+  // misc
+  --gutes-size-tag-gutter: #{$gutes-size-tag-gutter};
+  --gutes-grid-gap: #{$gutes-grid-gap};
+
+  // colors
+  --gutes-element-bgcolor: #{$gutes-element-bgcolor};
+
+  // Detail Page
+  // hero
+  --gutes-detail-hero-overlay-color: #{$gutes-detail-hero-overlay-color};
+  --gutes-detail-hero-font-color: #{$gutes-detail-hero-title-color};
+  --gutes-detail-hero-text-shadow: #{$gutes-detail-hero-text-shadow};
+
+  // tag-fields tags
+  --gutes-tag-fields-tag-menu: #{$gutes-tag-fields-tag-menu};
+  --gutes-tag-fields-tag-reservation: #{$gutes-tag-fields-tag-reservation};
+  --gutes-tag-fields-tag-onlineshop: #{$gutes-tag-fields-tag-onlineshop};
+  --gutes-tag-fields-tag-delivery: #{$gutes-tag-fields-tag-delivery};
+  --gutes-tag-field-tag-width: 2.5rem;
+  --gutes-tag-field-tag-height: 2.5rem;
+
+  // Video
+  --gutes-video-bgcolor: #{$gutes-video-bgcolor};
+
+  // click and collect
+  --gutes-clickcollect-bgcolor: #{$gutes-clickcollect-bgcolor};
+  --gutes-clickcollect-color: #{$gutes-clickcollect-color};
+
+  // anchor menu
+  --anchor-menu-bgcolor: #{$anchor-menu-bgcolor};
+  --gutes-anchormenu-bgcolor: #{$gutes-anchormenu-bgcolor};
+  //--gutes-anchormenu-bgcolor:#{$gutes-anchormenu-bgcolor};
+
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+
+
+  font-family: #{$gutes-base-font-family};
+  font-size: #{$gutes-base-font-size};
+  line-height: #{$gutes-base-line-height};
+  font-weight: #{$gutes-base-font-weight};
+  //background-color: var(--color-page-background);
+  color: #{$gutes-base-font-color};
+  overflow-y: scroll;
+  min-height: 100%;
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+
+  @include media-breakpoint-down(md) {
+    font-size: #{$gutes-base-font-size--xs};
+  }
+
+  @include media-breakpoint-up(xl) {
+    font-size: #{$gutes-base-font-size--xl};
+  }
+}

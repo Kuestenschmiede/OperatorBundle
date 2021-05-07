@@ -1,0 +1,182 @@
+// filter
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.c4g-listfilter-outer {
+  @extend .container-fluid;
+
+  // general
+  .c4g {
+    &-form-control {
+      @extend .form-control;
+    }
+
+    &-form-check {
+      @extend .form-check;
+    }
+
+    &-form-check-inline {
+      @extend .form-check-inline;
+    }
+
+    &-img-fluid {
+      @extend .img-fluid;
+    }
+
+    &-btn {
+      @extend .c4g-btn;
+    }
+
+    &-btn-filter {
+      @extend .c4g-btn;
+      @extend .c4g-btn-sm;
+      @extend .c4g-btn-primary;
+
+      &.executeSubmit {
+        background-color: var(--gutes-tag-filter-border-color-checked);
+        border-color: var(--gutes-tag-filter-border-color-checked);
+      }
+    }
+  }
+
+  .react-datepicker__input-container {
+    input {
+      @extend .form-control;
+    }
+  }
+
+  .c4g-listfilter-form-wrapper {
+    display: block;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    .c4g-listfilter-form {
+      > div,
+      > input {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid darken($gutes-element-bgcolor, 10%);
+      }
+
+      input,
+      .form-control,
+      label {
+        font-size: 1rem;
+      }
+    }
+
+    .form-view__period {
+      > label {
+        display: block;
+      }
+
+      small {
+        font-size: .8rem;
+      }
+    }
+
+    .form-view__ascend-descend {
+      display: flex;
+    }
+
+  }
+
+  &.react-c4g-listfilter-opened {
+    position: fixed;
+    z-index: 9000;
+    overflow-y: scroll;
+    background: rgba(#fff, .95);
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 400px;
+    max-width: 100%;
+    box-shadow: var(--gutes-box-shadow);
+    animation: fadeIn 500ms;
+
+    .c4g-listfilter-form-wrapper {
+      display: block;
+    }
+  }
+}
+
+.c4g-listfilter-inner {
+  text-align: center;
+}
+
+.c4g-listfilter-button-wrapper {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+
+  &.react-c4g-listfilter-opened {
+    text-align: right;
+
+    .c4g-listfilter-button {
+      @extend .c4g-btn;
+      @extend .c4g-btn-sm;
+      @extend .c4g-btn-primary;
+    }
+  }
+}
+
+.c4g-listfilter-button {
+  @extend .c4g-btn;
+  @extend .c4g-btn-sm;
+  @extend .c4g-btn-primary;
+}
+
+.form-view__tag-filter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: -.25rem;
+
+}
+
+.tag-filter {
+  &__filter-item {
+    margin: .25rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > label {
+      margin-bottom: 0;
+      @extend .c4g-btn;
+      @extend .c4g-btn-tagfilter;
+      border-width: 1.5px;
+      padding: 3px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      @include transition();
+
+      > img {
+        width: 40px;
+      }
+
+
+      &:hover,
+      &.checked-tag-filter {
+        border-color: var(--gutes-tag-filter-border-color-checked);
+        background-color: #ecf0f1;
+        cursor: pointer;
+      }
+
+      > input {
+        display: none;
+      }
+    }
+
+  }
+}

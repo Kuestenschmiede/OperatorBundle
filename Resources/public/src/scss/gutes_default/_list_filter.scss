@@ -1,8 +1,30 @@
 // searchbar v2 for listing page
 
 .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) {
-  .c4g-listfilter-button-wrapper {
-    display: none;
+
+  .c4g-listfilter-inner {
+    @include make-container();
+    @extend .container;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    grid-gap: .5rem;
+
+    .c4g-listfilter-form-wrapper {
+      flex: 1;
+    }
+  }
+
+}
+
+
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) {
+
+  .c4g-listfilter-button {
+    @extend .btn;
+    @extend .btn-outline-primary;
   }
 }
 
@@ -10,10 +32,11 @@
   margin-top: 1rem;
   margin-bottom: 1rem;
 
+
   .c4g-listfilter-form {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     grid-gap: .5rem;
 
     .form-view__searchinput,
@@ -46,25 +69,28 @@
   }
 }
 
-.c4g-listfilter-button {
-  text-indent: -999999px;
-  overflow: hidden;
-  background-color: transparent;
-  width: 25px;
-  height: 25px;
-  border: none;
-  padding: 0 0;
+.react-c4g-listfilter-opened {
 
-  &.react-c4g-listfilter-opened {
+  .c4g-listfilter-button {
+    text-indent: -999999px;
+    overflow: hidden;
+    background-color: transparent;
+    width: 25px;
+    height: 25px;
+    border: none;
+    padding: 0 0;
 
-    &:before {
-      content: "";
-      background-image: url("../img/times.svg");
-      display: block;
-      width: 25px;
-      height: 25px;
-      background-position: center;
-      background-repeat: no-repeat;
+    &.react-c4g-listfilter-opened {
+
+      &:before {
+        content: "";
+        background-image: url("../img/times.svg");
+        display: block;
+        width: 25px;
+        height: 25px;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
     }
   }
 }

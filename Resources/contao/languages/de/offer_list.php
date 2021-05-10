@@ -74,7 +74,7 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['name'] = ['Name', ''];
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Abholzeitpunkt', ''];
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Anmerkungen', ''];
 
-$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Filter öffnen';
+$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterte Suche';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Standard";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_asc'] = "Preis aufsteigend";

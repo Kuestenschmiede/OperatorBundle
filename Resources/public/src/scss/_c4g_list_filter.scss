@@ -52,7 +52,7 @@
   }
 
   .c4g-listfilter-form-wrapper {
-    display: block;
+    //display: none;
     margin-top: 2rem;
     margin-bottom: 2rem;
 
@@ -118,17 +118,17 @@
     text-align: right;
 
     .c4g-listfilter-button {
-      @extend .c4g-btn;
-      @extend .c4g-btn-sm;
-      @extend .c4g-btn-primary;
+      //@extend .c4g-btn;
+      //@extend .c4g-btn-sm;
+      //@extend .c4g-btn-primary;
     }
   }
 }
 
 .c4g-listfilter-button {
-  @extend .c4g-btn;
-  @extend .c4g-btn-sm;
-  @extend .c4g-btn-primary;
+  //@extend .c4g-btn;
+  //@extend .c4g-btn-sm;
+  //@extend .c4g-btn-primary;
 }
 
 .form-view__tag-filter {

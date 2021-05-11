@@ -35,6 +35,7 @@ $gutes-tag-filter-bgcolor: #ffffff !default;
 // Base Spacing Units
 $gutes-base-spacing-unit: 1rem !default;
 
+
 // detail page - hero
 $gutes-detail-hero-overlay-color: rgba(#333, .3) !default;
 $gutes-detail-hero-title-color: #fff !default;
@@ -64,7 +65,7 @@ $gutes-clickcollect-color: #fff !default;
 
 // anchor menu
 $anchor-menu-bgcolor: $gutes-element-bgcolor !default;
-$gutes-anchormenu-bgcolor: #eaefee!default;
+$gutes-anchormenu-bgcolor: #eaefee !default;
 // detail page - anchor menu
 $gutes-anchormenu-bgcolor: lighten($gutes-anchormenu-bgcolor, 50%);
 

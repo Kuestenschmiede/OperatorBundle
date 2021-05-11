@@ -1,0 +1,120 @@
+// searchbar v2 for listing page
+
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) {
+
+  .c4g-listfilter-inner {
+    @include make-container();
+    @extend .container;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    grid-gap: .5rem;
+
+    @include media-breakpoint-down(md) {
+      flex-direction: column;
+      grid-gap: inherit;
+    }
+
+    .c4g-listfilter-form-wrapper {
+      flex: 1;
+    }
+
+    > div {
+      @include media-breakpoint-down(md) {
+        width: 100%;
+      }
+
+    }
+  }
+
+}
+
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) {
+
+  .c4g-listfilter-button {
+    @extend .btn;
+    @extend .btn-outline-primary;
+  }
+}
+
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+
+  .c4g-listfilter-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    grid-gap: .5rem;
+
+    @include media-breakpoint-down(md) {
+      justify-content: center;
+      flex-direction: column;
+      grid-gap: inherit;
+    }
+
+    .form-view__searchinput,
+    .c4g-panel-buttons {
+      border-bottom: none;
+    }
+
+    .c4g-panel-buttons {
+      @include media-breakpoint-down(md) {
+        padding-top: 0;
+      }
+    }
+
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-view__tag-filter,
+  .form-view__sorting {
+    display: none;
+  }
+
+
+  .form-view__searchinput {
+    max-width: 400px;
+    width: 100%;
+  }
+
+  .c4g-btn-filter-wrapper {
+    button {
+      @extend .btn;
+      @extend .btn-primary;
+    }
+  }
+}
+
+.react-c4g-listfilter-opened {
+
+  .c4g-listfilter-button {
+    text-indent: -999999px;
+    overflow: hidden;
+    background-color: transparent;
+    width: 25px;
+    height: 25px;
+    border: none;
+    padding: 0 0;
+
+    &.react-c4g-listfilter-opened {
+
+      &:before {
+        content: "";
+        background-image: url("../img/times.svg");
+        display: block;
+        width: 25px;
+        height: 25px;
+        background-position: center;
+        background-repeat: no-repeat;
+      }
+    }
+  }
+}
+

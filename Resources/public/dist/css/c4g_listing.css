@@ -110,12 +110,12 @@ sup {
   top: -.5em
 }
 a {
-  color: #007bff;
+  color: #103a5d;
   text-decoration: none;
   background-color: transparent
 }
 a:hover {
-  color: #0056b3;
+  color: #05111c;
   text-decoration: underline
 }
 a:not([href]):not([class]) {
@@ -320,9 +320,9 @@ template {
 .form-control:focus {
   color: #495057;
   background-color: #fff;
-  border-color: #80bdff;
+  border-color: #237eca;
   outline: 0;
-  box-shadow: 0 0 0 .2rem rgba(0,123,255,.25)
+  box-shadow: 0 0 0 .2rem rgba(16,58,93,.25)
 }
 .c4g-listfilter-outer .c4g-form-control::-moz-placeholder,
 .c4g-listfilter-outer .react-datepicker__input-container input::-moz-placeholder,
@@ -884,6 +884,7 @@ html {
 .c4g-grid-outer .c4g-list-elements,
 .c4g-list-outer .c4g-list-elements,
 .c4g-listfilter-outer,
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
 .c4g-plain-outer .c4g-list-elements,
 .container,
 .container-fluid,
@@ -899,6 +900,7 @@ html {
 }
 @media (min-width:576px) {
   .c4g-list-outer .c4g-list-elements,
+  .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
   .container,
   .container-sm {
     max-width: 540px
@@ -906,6 +908,7 @@ html {
 }
 @media (min-width:768px) {
   .c4g-list-outer .c4g-list-elements,
+  .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
   .container,
   .container-md,
   .container-sm {
@@ -914,6 +917,7 @@ html {
 }
 @media (min-width:992px) {
   .c4g-list-outer .c4g-list-elements,
+  .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
   .container,
   .container-lg,
   .container-md,
@@ -923,6 +927,7 @@ html {
 }
 @media (min-width:1200px) {
   .c4g-list-outer .c4g-list-elements,
+  .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
   .container,
   .container-lg,
   .container-md,
@@ -1852,8 +1857,8 @@ html {
 .c4g-list-outer .c4g-list-element__clickcollect-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
-.c4g-listfilter-button,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button,
 .c4g-listfilter-outer .c4g-btn,
 .c4g-listfilter-outer .c4g-btn-filter,
 .c4g-modal-content .c4g-btn-close,
@@ -1891,8 +1896,8 @@ html {
 .c4g-list-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-list-outer .c4g-list-element__more-link:hover,
 .c4g-list-outer .c4g-list-element__notice-link:hover,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button:hover,
-.c4g-listfilter-button:hover,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:hover,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:hover,
 .c4g-listfilter-outer .c4g-btn-filter:hover,
 .c4g-modal-content .c4g-btn-close:hover,
 .c4g-modal-content .c4g-btn-top-close:hover,
@@ -1922,9 +1927,10 @@ html {
 .c4g-list-outer .focus.c4g-list-element__clickcollect-link,
 .c4g-list-outer .focus.c4g-list-element__more-link,
 .c4g-list-outer .focus.c4g-list-element__notice-link,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button:focus,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .focus.c4g-listfilter-button,
-.c4g-listfilter-button:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .focus.c4g-listfilter-button,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button.focus,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:focus,
 .c4g-listfilter-outer .c4g-btn-filter:focus,
 .c4g-listfilter-outer .focus.c4g-btn-filter,
 .c4g-modal-content .c4g-btn-close:focus,
@@ -1943,11 +1949,10 @@ html {
 .focus.c4g-btn-sm,
 .focus.c4g-btn-tagfilter,
 .focus.c4g-list-element__clickcollect,
-.focus.c4g-listfilter-button,
 .tag-filter__filter-item > label.focus,
 .tag-filter__filter-item > label:focus {
   outline: 0;
-  box-shadow: 0 0 0 .2rem rgba(0,123,255,.25)
+  box-shadow: 0 0 0 .2rem rgba(16,58,93,.25)
 }
 .btn.disabled,
 .btn:disabled,
@@ -1967,9 +1972,10 @@ html {
 .c4g-list-outer .disabled.c4g-list-element__clickcollect-link,
 .c4g-list-outer .disabled.c4g-list-element__more-link,
 .c4g-list-outer .disabled.c4g-list-element__notice-link,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button:disabled,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .disabled.c4g-listfilter-button,
-.c4g-listfilter-button:disabled,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:disabled,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .disabled.c4g-listfilter-button,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button.disabled,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:disabled,
 .c4g-listfilter-outer .c4g-btn-filter:disabled,
 .c4g-listfilter-outer .disabled.c4g-btn-filter,
 .c4g-modal-content .c4g-btn-close:disabled,
@@ -1988,7 +1994,6 @@ html {
 .disabled.c4g-btn-sm,
 .disabled.c4g-btn-tagfilter,
 .disabled.c4g-list-element__clickcollect,
-.disabled.c4g-listfilter-button,
 .tag-filter__filter-item > label.disabled,
 .tag-filter__filter-item > label:disabled {
   opacity: .65
@@ -2004,7 +2009,8 @@ html {
 .c4g-list-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled),
 .c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled),
 .c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled),
-.c4g-listfilter-button:not(:disabled):not(.disabled),
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:not(:disabled):not(.disabled),
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:not(:disabled):not(.disabled),
 .c4g-listfilter-outer .c4g-btn-filter:not(:disabled):not(.disabled),
 .c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled),
 .c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled),
@@ -2027,8 +2033,8 @@ html {
 .c4g-list-outer fieldset:disabled a.c4g-list-element__clickcollect-link,
 .c4g-list-outer fieldset:disabled a.c4g-list-element__more-link,
 .c4g-list-outer fieldset:disabled a.c4g-list-element__notice-link,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened a.disabled.c4g-listfilter-button,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened fieldset:disabled a.c4g-listfilter-button,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) a.disabled.c4g-listfilter-button,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) fieldset:disabled a.c4g-listfilter-button,
 .c4g-listfilter-outer a.disabled.c4g-btn-filter,
 .c4g-listfilter-outer fieldset:disabled a.c4g-btn-filter,
 .c4g-modal-content a.disabled.c4g-btn-close,
@@ -2046,14 +2052,13 @@ a.disabled.c4g-btn,
 a.disabled.c4g-btn-sm,
 a.disabled.c4g-btn-tagfilter,
 a.disabled.c4g-list-element__clickcollect,
-a.disabled.c4g-listfilter-button,
 fieldset:disabled .c4g-grid-outer a.c4g-list-element__clickcollect-link,
 fieldset:disabled .c4g-grid-outer a.c4g-list-element__more-link,
 fieldset:disabled .c4g-grid-outer a.c4g-list-element__notice-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__clickcollect-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__more-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__notice-link,
-fieldset:disabled .c4g-listfilter-button-wrapper.react-c4g-listfilter-opened a.c4g-listfilter-button,
+fieldset:disabled .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) a.c4g-listfilter-button,
 fieldset:disabled .c4g-listfilter-outer a.c4g-btn-filter,
 fieldset:disabled .c4g-modal-content a.c4g-btn-close,
 fieldset:disabled .c4g-modal-content a.c4g-btn-top-close,
@@ -2064,56 +2069,67 @@ fieldset:disabled a.btn,
 fieldset:disabled a.c4g-btn,
 fieldset:disabled a.c4g-btn-sm,
 fieldset:disabled a.c4g-btn-tagfilter,
-fieldset:disabled a.c4g-list-element__clickcollect,
-fieldset:disabled a.c4g-listfilter-button {
+fieldset:disabled a.c4g-list-element__clickcollect {
   pointer-events: none
 }
 .btn-primary,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button,
 .c4g-modal-content .c4g-btn-submit {
   color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+  background-color: #103a5d;
+  border-color: #103a5d
 }
 .btn-primary:hover,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:hover,
 .c4g-modal-content .c4g-btn-submit:hover {
   color: #fff;
-  background-color: #0069d9;
-  border-color: #0062cc
+  background-color: #0a263c;
+  border-color: #091f31
 }
 .btn-primary.focus,
 .btn-primary:focus,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button.focus,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:focus,
 .c4g-modal-content .c4g-btn-submit:focus,
 .c4g-modal-content .focus.c4g-btn-submit {
   color: #fff;
-  background-color: #0069d9;
-  border-color: #0062cc;
-  box-shadow: 0 0 0 .2rem rgba(38,143,255,.5)
+  background-color: #0a263c;
+  border-color: #091f31;
+  box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
 }
 .btn-primary.disabled,
 .btn-primary:disabled,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button.disabled,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:disabled,
 .c4g-modal-content .c4g-btn-submit:disabled,
 .c4g-modal-content .disabled.c4g-btn-submit {
   color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+  background-color: #103a5d;
+  border-color: #103a5d
 }
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .show > button.dropdown-toggle,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:not(:disabled):not(.disabled).active,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:not(:disabled):not(.disabled):active,
 .c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled).active,
 .c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled):active,
 .c4g-modal-content .show > .dropdown-toggle.c4g-btn-submit,
 .show > .btn-primary.dropdown-toggle {
   color: #fff;
-  background-color: #0062cc;
-  border-color: #005cbf
+  background-color: #091f31;
+  border-color: #071827
 }
 .btn-primary:not(:disabled):not(.disabled).active:focus,
 .btn-primary:not(:disabled):not(.disabled):active:focus,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .show > button.dropdown-toggle:focus,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:not(:disabled):not(.disabled).active:focus,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button:not(:disabled):not(.disabled):active:focus,
 .c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled).active:focus,
 .c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled):active:focus,
 .c4g-modal-content .show > .dropdown-toggle.c4g-btn-submit:focus,
 .show > .btn-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(38,143,255,.5)
+  box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
 }
 .btn-secondary {
   color: #fff;
@@ -2384,35 +2400,47 @@ fieldset:disabled a.c4g-listfilter-button {
 .show > .btn-dark.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(82,88,93,.5)
 }
-.btn-outline-primary {
-  color: #007bff;
-  border-color: #007bff
+.btn-outline-primary,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button {
+  color: #103a5d;
+  border-color: #103a5d
 }
-.btn-outline-primary:hover {
+.btn-outline-primary:hover,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:hover {
   color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+  background-color: #103a5d;
+  border-color: #103a5d
 }
 .btn-outline-primary.focus,
-.btn-outline-primary:focus {
-  box-shadow: 0 0 0 .2rem rgba(0,123,255,.5)
+.btn-outline-primary:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .focus.c4g-listfilter-button {
+  box-shadow: 0 0 0 .2rem rgba(16,58,93,.5)
 }
 .btn-outline-primary.disabled,
-.btn-outline-primary:disabled {
-  color: #007bff;
+.btn-outline-primary:disabled,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:disabled,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .disabled.c4g-listfilter-button {
+  color: #103a5d;
   background-color: transparent
 }
 .btn-outline-primary:not(:disabled):not(.disabled).active,
 .btn-outline-primary:not(:disabled):not(.disabled):active,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:not(:disabled):not(.disabled).active,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:not(:disabled):not(.disabled):active,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .show > .dropdown-toggle.c4g-listfilter-button,
 .show > .btn-outline-primary.dropdown-toggle {
   color: #fff;
-  background-color: #007bff;
-  border-color: #007bff
+  background-color: #103a5d;
+  border-color: #103a5d
 }
 .btn-outline-primary:not(:disabled):not(.disabled).active:focus,
 .btn-outline-primary:not(:disabled):not(.disabled):active:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:not(:disabled):not(.disabled).active:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:not(:disabled):not(.disabled):active:focus,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .show > .dropdown-toggle.c4g-listfilter-button:focus,
 .show > .btn-outline-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(0,123,255,.5)
+  box-shadow: 0 0 0 .2rem rgba(16,58,93,.5)
 }
 .btn-outline-secondary {
   color: #6c757d;
@@ -2626,11 +2654,11 @@ fieldset:disabled a.c4g-listfilter-button {
 }
 .btn-link {
   font-weight: 400;
-  color: #007bff;
+  color: #103a5d;
   text-decoration: none
 }
 .btn-link:hover {
-  color: #0056b3;
+  color: #05111c;
   text-decoration: underline
 }
 .btn-link.focus,
@@ -2656,8 +2684,6 @@ fieldset:disabled a.c4g-listfilter-button {
 .c4g-list-outer .c4g-list-element__clickcollect-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
-.c4g-listfilter-button,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button,
 .c4g-listfilter-outer .c4g-btn-filter,
 .c4g-modal-content .c4g-btn-close,
 .c4g-modal-content .c4g-btn-top-close,
@@ -2787,8 +2813,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
@@ -2829,8 +2855,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
@@ -2840,16 +2866,16 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
-.c4g-listfilter-button .badge,
-.c4g-listfilter-button .c4g-badge-tagfilter,
-.c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .badge,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-badge-tagfilter,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .badge,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-badge-tagfilter,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .badge,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-badge-tagfilter,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-listfilter-outer .c4g-btn .badge,
 .c4g-listfilter-outer .c4g-btn .c4g-badge-tagfilter,
 .c4g-listfilter-outer .c4g-btn .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -2904,8 +2930,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
@@ -2927,17 +2953,17 @@ a.c4g-badge-tagfilter:hover {
 }
 .badge-primary {
   color: #fff;
-  background-color: #007bff
+  background-color: #103a5d
 }
 a.badge-primary:focus,
 a.badge-primary:hover {
   color: #fff;
-  background-color: #0062cc
+  background-color: #091f31
 }
 a.badge-primary.focus,
 a.badge-primary:focus {
   outline: 0;
-  box-shadow: 0 0 0 .2rem rgba(0,123,255,.5)
+  box-shadow: 0 0 0 .2rem rgba(16,58,93,.5)
 }
 .badge-secondary {
   color: #fff;
@@ -3077,8 +3103,6 @@ a.badge-dark:focus {
 .c4g-grid-outer .c4g-list-element__notice-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
-.c4g-listfilter-button,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button,
 .c4g-listfilter-outer .c4g-btn-filter,
 .c4g-plain-outer .c4g-list-element__more-link,
 .c4g-plain-outer .c4g-list-element__notice-link {
@@ -3091,8 +3115,6 @@ a.badge-dark:focus {
 .c4g-grid-outer .c4g-list-element__notice-link:hover,
 .c4g-list-outer .c4g-list-element__more-link:hover,
 .c4g-list-outer .c4g-list-element__notice-link:hover,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button:hover,
-.c4g-listfilter-button:hover,
 .c4g-listfilter-outer .c4g-btn-filter:hover,
 .c4g-plain-outer .c4g-list-element__more-link:hover,
 .c4g-plain-outer .c4g-list-element__notice-link:hover {
@@ -3110,16 +3132,12 @@ a.badge-dark:focus {
 .c4g-list-outer .c4g-list-element__notice-link:focus,
 .c4g-list-outer .focus.c4g-list-element__more-link,
 .c4g-list-outer .focus.c4g-list-element__notice-link,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button:focus,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .focus.c4g-listfilter-button,
-.c4g-listfilter-button:focus,
 .c4g-listfilter-outer .c4g-btn-filter:focus,
 .c4g-listfilter-outer .focus.c4g-btn-filter,
 .c4g-plain-outer .c4g-list-element__more-link:focus,
 .c4g-plain-outer .c4g-list-element__notice-link:focus,
 .c4g-plain-outer .focus.c4g-list-element__more-link,
-.c4g-plain-outer .focus.c4g-list-element__notice-link,
-.focus.c4g-listfilter-button {
+.c4g-plain-outer .focus.c4g-list-element__notice-link {
   color: #fff;
   background-color: #0a263c;
   border-color: #091f31;
@@ -3135,16 +3153,12 @@ a.badge-dark:focus {
 .c4g-list-outer .c4g-list-element__notice-link:disabled,
 .c4g-list-outer .disabled.c4g-list-element__more-link,
 .c4g-list-outer .disabled.c4g-list-element__notice-link,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .c4g-listfilter-button:disabled,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .disabled.c4g-listfilter-button,
-.c4g-listfilter-button:disabled,
 .c4g-listfilter-outer .c4g-btn-filter:disabled,
 .c4g-listfilter-outer .disabled.c4g-btn-filter,
 .c4g-plain-outer .c4g-list-element__more-link:disabled,
 .c4g-plain-outer .c4g-list-element__notice-link:disabled,
 .c4g-plain-outer .disabled.c4g-list-element__more-link,
-.c4g-plain-outer .disabled.c4g-list-element__notice-link,
-.disabled.c4g-listfilter-button {
+.c4g-plain-outer .disabled.c4g-list-element__notice-link {
   color: #fff;
   background-color: #103a5d;
   border-color: #103a5d
@@ -3163,9 +3177,6 @@ a.badge-dark:focus {
 .c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled):active,
 .c4g-list-outer .show > .dropdown-toggle.c4g-list-element__more-link,
 .c4g-list-outer .show > .dropdown-toggle.c4g-list-element__notice-link,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .show > .dropdown-toggle.c4g-listfilter-button,
-.c4g-listfilter-button:not(:disabled):not(.disabled).active,
-.c4g-listfilter-button:not(:disabled):not(.disabled):active,
 .c4g-listfilter-outer .c4g-btn-filter:not(:disabled):not(.disabled).active,
 .c4g-listfilter-outer .c4g-btn-filter:not(:disabled):not(.disabled):active,
 .c4g-listfilter-outer .show > .dropdown-toggle.c4g-btn-filter,
@@ -3175,8 +3186,7 @@ a.badge-dark:focus {
 .c4g-plain-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled):active,
 .c4g-plain-outer .show > .dropdown-toggle.c4g-list-element__more-link,
 .c4g-plain-outer .show > .dropdown-toggle.c4g-list-element__notice-link,
-.show > .c4g-btn-primary.dropdown-toggle,
-.show > .dropdown-toggle.c4g-listfilter-button {
+.show > .c4g-btn-primary.dropdown-toggle {
   color: #fff;
   background-color: #091f31;
   border-color: #071827
@@ -3195,9 +3205,6 @@ a.badge-dark:focus {
 .c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled):active:focus,
 .c4g-list-outer .show > .dropdown-toggle.c4g-list-element__more-link:focus,
 .c4g-list-outer .show > .dropdown-toggle.c4g-list-element__notice-link:focus,
-.c4g-listfilter-button-wrapper.react-c4g-listfilter-opened .show > .dropdown-toggle.c4g-listfilter-button:focus,
-.c4g-listfilter-button:not(:disabled):not(.disabled).active:focus,
-.c4g-listfilter-button:not(:disabled):not(.disabled):active:focus,
 .c4g-listfilter-outer .c4g-btn-filter:not(:disabled):not(.disabled).active:focus,
 .c4g-listfilter-outer .c4g-btn-filter:not(:disabled):not(.disabled):active:focus,
 .c4g-listfilter-outer .show > .dropdown-toggle.c4g-btn-filter:focus,
@@ -3207,8 +3214,7 @@ a.badge-dark:focus {
 .c4g-plain-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled):active:focus,
 .c4g-plain-outer .show > .dropdown-toggle.c4g-list-element__more-link:focus,
 .c4g-plain-outer .show > .dropdown-toggle.c4g-list-element__notice-link:focus,
-.show > .c4g-btn-primary.dropdown-toggle:focus,
-.show > .dropdown-toggle.c4g-listfilter-button:focus {
+.show > .c4g-btn-primary.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
 }
 .c4g-btn-secondary {
@@ -3484,7 +3490,6 @@ a.badge-dark:focus {
   border-color: var(--gutes-tag-filter-border-color-checked)
 }
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper {
-  display: block;
   margin-top: 2rem;
   margin-bottom: 2rem
 }
@@ -3889,6 +3894,87 @@ html {
   position: absolute;
   bottom: 10px;
   right: 10px
+}
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: center;
+  grid-gap: .5rem
+}
+@media (max-width:991.98px) {
+  .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner {
+    flex-direction: column;
+    grid-gap: inherit
+  }
+}
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner .c4g-listfilter-form-wrapper {
+  flex: 1
+}
+@media (max-width:991.98px) {
+  .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner > div {
+    width: 100%
+  }
+}
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) {
+  margin-top: 1rem;
+  margin-bottom: 1rem
+}
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  grid-gap: .5rem
+}
+@media (max-width:991.98px) {
+  .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form {
+    justify-content: center;
+    flex-direction: column;
+    grid-gap: inherit
+  }
+}
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form .c4g-panel-buttons,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form .form-view__searchinput {
+  border-bottom: none
+}
+@media (max-width:991.98px) {
+  .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form .c4g-panel-buttons {
+    padding-top: 0
+  }
+}
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-group {
+  margin-bottom: 0
+}
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__sorting,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__tag-filter {
+  display: none
+}
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__searchinput {
+  max-width: 400px;
+  width: 100%
+}
+.react-c4g-listfilter-opened .c4g-listfilter-button {
+  text-indent: -999999px;
+  overflow: hidden;
+  background-color: transparent;
+  width: 25px;
+  height: 25px;
+  border: none;
+  padding: 0 0
+}
+.react-c4g-listfilter-opened .c4g-listfilter-button.react-c4g-listfilter-opened:before {
+  content: "";
+  background-image: url(../img/times.svg);
+  display: block;
+  width: 25px;
+  height: 25px;
+  background-position: center;
+  background-repeat: no-repeat
 }
 .c4g-modal-outer {
   position: fixed;

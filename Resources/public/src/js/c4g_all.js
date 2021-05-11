@@ -106,7 +106,7 @@ function reactRenderReady() {
         });
 
         // all the actions in filter
-        const $inputSearch = jQuery('.form-view__searchinput > input');
+        const $inputSearch = jQuery('.form-view__searchinput input');
         const $datepickerInput = jQuery(".react-datepicker__input-container");
         const $datepickerPopper = jQuery(".react-datepicker-popper");
         const $inputPriceRadio = jQuery(".form-check-input[type=radio]");
@@ -204,13 +204,6 @@ function reactRenderReady() {
             jQuery(".js-removeDetailFromWishlist").on('click', handleRemoveFromWishlist);
         }
 
-        // TODO: trigger search button after click on tag-filter item
-        // const $tagFilterItem = jQuery(".form-view__tag-filter .c4g-form-label");
-        // const filterSubmit = jQuery(".c4g-btn-filter-wrapper .c4g-btn-filter");
-        // $tagFilterItem.click().trigger(".c4g-btn-filter-wrapper .c4g-btn-filter");
-
-        // TODO: don't open the filter sidebar after starting search above listing
-
         window.reactRenderReadyDone = true;
     }
 }
@@ -248,10 +241,10 @@ function findAllFilterState() {
     const tagFilterClass = "checked-tag-filter";
 
     // check search input
-    const $inputSearch = jQuery('.form-view__searchinput > input');
-    if ($inputSearch.val()) {
-        searchInput = true;
-    }
+    // const $inputSearch = jQuery('.form-view__searchinput input');
+    // if ($inputSearch.val()) {
+    //     searchInput = true;
+    // }
 
     // check filter tags
     const $tagFilterItemLabel = jQuery(".tag-filter__filter-item > label");
@@ -301,7 +294,6 @@ function checkInput() {
 
 function setFilterButtonActive() {
     jQuery('.c4g-btn-filter').addClass('executeSubmit').text('Suche starten');
-
 }
 
 function executeFormSubmit() {

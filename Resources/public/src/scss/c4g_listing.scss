@@ -1,4 +1,7 @@
 // mandatory
+$primary: #103a5d;
+$secodary: #d35400;
+
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
@@ -14,7 +17,6 @@
 @import "node_modules/bootstrap/scss/buttons";
 @import "node_modules/bootstrap/scss/images";
 @import "node_modules/bootstrap/scss/badge";
-
 
 @import "gutes-buttons";
 @import "gutes-badges";

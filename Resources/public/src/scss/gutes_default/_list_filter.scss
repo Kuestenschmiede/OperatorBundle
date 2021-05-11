@@ -12,13 +12,24 @@
     justify-content: center;
     grid-gap: .5rem;
 
+    @include media-breakpoint-down(md) {
+      flex-direction: column;
+      grid-gap: inherit;
+    }
+
     .c4g-listfilter-form-wrapper {
       flex: 1;
+    }
+
+    > div {
+      @include media-breakpoint-down(md) {
+        width: 100%;
+      }
+
     }
   }
 
 }
-
 
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) {
 
@@ -39,9 +50,21 @@
     justify-content: flex-start;
     grid-gap: .5rem;
 
+    @include media-breakpoint-down(md) {
+      justify-content: center;
+      flex-direction: column;
+      grid-gap: inherit;
+    }
+
     .form-view__searchinput,
     .c4g-panel-buttons {
       border-bottom: none;
+    }
+
+    .c4g-panel-buttons {
+      @include media-breakpoint-down(md) {
+        padding-top: 0;
+      }
     }
 
   }

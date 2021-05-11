@@ -1,7 +1,5 @@
 // mandatory
-$primary: #103a5d;
-$secodary: #d35400;
-
+@import "variables_custom";
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";

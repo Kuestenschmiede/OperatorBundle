@@ -6909,7 +6909,7 @@ html {
   grid-column: span 12/span 12
 }
 .detail-view .imageGallery-item img {
-  max-height: 100%;
+  max-height: 500px;
   transition: ease-in-out .3s
 }
 .detail-view .imageGallery-item:hover img {

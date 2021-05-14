@@ -116,7 +116,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $template->configuration = $jsonConf;
         }
-        ResourceLoader::loadCssResource("/bundles/con4gisframework/css/tiles.css");
+        ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");

@@ -100,8 +100,8 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/bootstrap.bundle.min.js|async|static");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/button.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-buttons");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async|static");
         }

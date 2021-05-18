@@ -116,7 +116,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             if (!empty($data)) {
                 if ($this->model->gutesio_data_render_searchHtml) {
                     $sc = new SearchConfiguration();
-                    $sc->addData($data, ['name', 'description']);
+                    $sc->addData($data, ['name', 'description', 'displayType']);
                 }
             } else {
                 throw new RedirectResponseException($pageUrl);

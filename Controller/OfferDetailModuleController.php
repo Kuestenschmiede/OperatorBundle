@@ -376,6 +376,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     {
         $this->tileList = new TileList('showcase-tiles');
         $this->tileList->setHeadline($this->languageRefs['offeredBy']);
+        $this->tileList->setHeadlineLevel(2);
         $this->tileList->setClassName("showcase-tiles c4g-list-outer");
         $this->tileList->setLayoutType("list");
         $this->tileList->setTileClassName("showcase-tile");

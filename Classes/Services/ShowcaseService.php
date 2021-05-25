@@ -12,7 +12,7 @@ namespace gutesio\OperatorBundle\Classes\Services;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
-use con4gis\RoutingBundle\Classes\Services\AreaService;
+use con4gis\MapsBundle\Classes\Services\AreaService;
 use Contao\Database;
 use Contao\StringUtil;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;

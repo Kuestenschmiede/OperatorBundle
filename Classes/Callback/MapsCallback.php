@@ -11,7 +11,6 @@ namespace gutesio\OperatorBundle\Classes\Callback;
 
 use Contao\DC_Table;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTagModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 use Contao\Backend;
 
@@ -57,19 +56,18 @@ class MapsCallback extends Backend
             foreach ($objReturns  as $objReturn) {
                 $return[$objReturn['uuid']] = $objReturn['name'];
             }
-
-        }
-        else if($dc->filterType == 2) {
+        } elseif ($dc->filterType == 2) {
             $t = 'tl_gutesio_data_directory';
             $arrOptions = [
                 'order' => "$t.name ASC",
             ];
 
-            $objReturns  = GutesioDataDirectoryModel::findAll($arrOptions);
+            $objReturns = GutesioDataDirectoryModel::findAll($arrOptions);
             foreach ($objReturns  as $objReturn) {
                 $return[$objReturn->uuid] = $objReturn->name;
             }
         }
+
         return $return;
     }
 }

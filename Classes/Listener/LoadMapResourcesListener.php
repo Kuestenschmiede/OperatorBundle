@@ -1,6 +1,5 @@
 <?php
 
-
 namespace gutesio\OperatorBundle\Classes\Listener;
 
 use con4gis\CoreBundle\Classes\ResourceLoader;
@@ -14,6 +13,6 @@ class LoadMapResourcesListener
         $eventName,
         EventDispatcherInterface $eventDispatcher
     ) {
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/js/badge_map.js|async|static");
+        ResourceLoader::loadJavaScriptResource('/bundles/gutesiooperator/js/badge_map.js|async|static');
     }
 }

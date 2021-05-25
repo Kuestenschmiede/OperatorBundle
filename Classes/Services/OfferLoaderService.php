@@ -76,7 +76,7 @@ class OfferLoaderService
         if ($dateFilter) {
             $results = $this->applyRangeFilter($results, $filterData['filterFrom'], $filterData['filterUntil']);
         }
-        if ($sortFilter && $sortFilter !== "random") {
+        if ($sortFilter && $sortFilter !== 'random') {
             if ($filterData['sorting'] === 'price_asc') {
                 $sort = 'asc';
             } else {
@@ -158,7 +158,7 @@ class OfferLoaderService
                     $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = $limit;
-                $parameters[] = (int)$offset;
+                $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -191,7 +191,7 @@ class OfferLoaderService
                     $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = $limit;
-                $parameters[] = (int)$offset;
+                $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -225,7 +225,7 @@ class OfferLoaderService
                 $parameters[] = '%' . $rawTermString . '%';
             }
             $parameters[] = $limit;
-            $parameters[] = (int)$offset;
+            $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -257,7 +257,7 @@ class OfferLoaderService
                 $parameters[] = '%' . $rawTermString . '%';
             }
             $parameters[] = $limit;
-            $parameters[] = (int)$offset;
+            $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -293,7 +293,7 @@ class OfferLoaderService
                     'src' => $imageModel->path,
                     'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
                     'width' => $width,
-                    'height' => $height
+                    'height' => $height,
                 ];
             }
             unset($childRows[$key]['imageOffer']);
@@ -303,7 +303,7 @@ class OfferLoaderService
             } else {
                 $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
             }
-            
+
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
@@ -333,7 +333,7 @@ class OfferLoaderService
             if (!empty($tags)) {
                 $parameters = $tags;
                 $parameters[] = $limit;
-                $parameters[] = (int)$offset;
+                $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink,  
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -361,7 +361,7 @@ class OfferLoaderService
             } else {
                 $parameters = [];
                 $parameters[] = $limit;
-                $parameters[] = (int)$offset;
+                $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink,  
                     tl_gutesio_data_element.clickCollect, ' . '
@@ -390,7 +390,7 @@ class OfferLoaderService
         } elseif (empty($categories)) {
             $parameters = $types;
             $parameters[] = $limit;
-            $parameters[] = (int)$offset;
+            $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -416,7 +416,7 @@ class OfferLoaderService
         } else {
             $parameters = $categories;
             $parameters[] = $limit;
-            $parameters[] = (int)$offset;
+            $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, 
                 tl_gutesio_data_element.clickCollect, ' . '
@@ -449,7 +449,7 @@ class OfferLoaderService
                     'src' => $imageModel->path,
                     'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
                     'height' => $height,
-                    'width' => $width
+                    'width' => $width,
                 ];
             }
             unset($childRows[$key]['imageOffer']);
@@ -459,7 +459,7 @@ class OfferLoaderService
             } else {
                 $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
             }
-            
+
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
@@ -671,8 +671,8 @@ class OfferLoaderService
                         'src' => $model->path,
                         'alt' => $r['name'],
                         'width' => 100,
-                        'height' => 100
-                    ]
+                        'height' => 100,
+                    ],
                 ];
                 switch ($r['technicalKey']) {
                     case 'tag_delivery':
@@ -712,6 +712,7 @@ class OfferLoaderService
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+
                         break;
                     case 'tag_table_reservation':
                         $stmt = $database->prepare(
@@ -724,6 +725,7 @@ class OfferLoaderService
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+
                         break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
@@ -1067,7 +1069,7 @@ class OfferLoaderService
                         if ($eventData['beginDate']) {
                             $fieldValue .= ' (';
                             if (!$eventData['endDate']) {
-                                $fieldValue .= $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreement_startingAt']. ' ';
+                                $fieldValue .= $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreement_startingAt'] . ' ';
                             }
                             $fieldValue .= $eventData['beginDate'];
                             if ($eventData['beginTime']) {
@@ -1117,12 +1119,12 @@ class OfferLoaderService
 
                     break;
                 case 'voucher':
-                    $voucherData = $database->prepare('SELECT minCredit, maxCredit '.
+                    $voucherData = $database->prepare('SELECT minCredit, maxCredit ' .
                         'FROM tl_gutesio_data_child_voucher ' .
                         'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_voucher.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
-                    
+
                     if (!empty($voucherData)) {
                         $childRows[$key] = array_merge($row, $voucherData);
                     }

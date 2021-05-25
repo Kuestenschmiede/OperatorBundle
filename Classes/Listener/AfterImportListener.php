@@ -51,7 +51,7 @@ class AfterImportListener
     public function afterImportBaseData(AfterImportEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
         try {
-            System::loadLanguageFile("import");
+            System::loadLanguageFile('import');
             $this->rootDir = $rootDir = System::getContainer()->getParameter('kernel.project_dir');
             $importType = $event->getImportType();
             $createRobots = false;

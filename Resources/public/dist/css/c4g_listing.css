@@ -3905,7 +3905,10 @@ html {
   flex-direction: row-reverse;
   align-items: center;
   justify-content: center;
-  grid-gap: .5rem
+  grid-gap: .5rem;
+  align-items: flex-end;
+  margin-top: 1rem;
+  margin-bottom: 1rem
 }
 @media (max-width:991.98px) {
   .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner {
@@ -3914,7 +3917,20 @@ html {
   }
 }
 .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner .c4g-listfilter-form-wrapper {
-  flex: 1
+  flex: 1;
+  margin-bottom: 0
+}
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner .c4g-listfilter-button-wrapper,
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner .c4g-panel-buttons,
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner .form-view__searchinput {
+  padding-top: 0;
+  padding-bottom: 0
+}
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner .c4g-listfilter-form {
+  align-items: flex-end
+}
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner small.field-description {
+  display: none
 }
 @media (max-width:991.98px) {
   .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner > div {
@@ -3950,6 +3966,8 @@ html {
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-group {
   margin-bottom: 0
 }
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__ascend-descend,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__period,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__sorting,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__tag-filter {
   display: none

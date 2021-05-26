@@ -1,5 +1,44 @@
+//.c4g-btn {
+//  @extend .btn;
+//}
+
+html {
+  --c4g-default: #333333;
+  --c4g-primary: #02A1DB;
+  --c4g-secondary: #103a5d;
+  --btn-font-family: inherit;
+  --btn-font-weight: normal;
+  --btn-color: #333;
+  --btn-white-space: null;
+  --btn-border-width: 1px;
+  --btn-border-radius: .25rem;
+  --gutes2-color-brand: var(--c4g-primary);
+  --gutes2-color-primary: var(--gutes2-color-brand);
+  --gutes2-color-secondary: var(--c4g-secondary);
+
+  --btn-primary-color: #fff;
+  --btn-primary-background-color: var(--c4g-primary);
+  --btn-primary-border-color: var(--c4g-primary);
+
+  --btn-secondary-color: #fff;
+  --btn-secondary-background-color: var(--c4g-secondary);
+  --btn-secondary-border-color: var(--c4g-secondary);
+}
+
 .c4g-btn {
   @extend .btn;
+  font-family: var(--btn-font-family);
+  font-weight: var(--btn-font-weight);
+  color: var(--btn-color);
+  background-color: white;
+  border: var(--btn-border-width) solid var(--btn-color);
+  border-radius: var(--btn-border-radius);
+  filter: brightness(1);
+  transition: filter 250ms ease-in-out;
+
+  &:hover {
+    filter: brightness(0.85);
+  }
 }
 
 .c4g-btn-sm {
@@ -8,16 +47,29 @@
 }
 
 .c4g-btn-default {
-  @include button-variant($gutes-color-default, $gutes-color-default);
+  //@include button-variant($gutes-color-default, $gutes-color-default);
+  @extend .c4g-btn;
 }
 
 .c4g-btn-primary {
-  @include button-variant($gutes-color-primary, $gutes-color-primary);
-  //@extend .btn-primary;
+  //@include button-variant($gutes-color-primary, $gutes-color-primary);
+  color: var(--btn-primary-color);
+  background-color: var(--btn-primary-background-color);
+  border-color: var(--btn-primary-border-color);
 }
 
 .c4g-btn-secondary {
-  @include button-variant($gutes-color-secondary, $gutes-color-secondary);
+  //@include button-variant($gutes-color-secondary, $gutes-color-secondary);
+  color: var(--btn-secondary-color);
+  background-color: var(--btn-secondary-background-color);
+  border-color: var(--btn-secondary-border-color);
+}
+
+.c4g-btn-filter {
+  //@include button-variant($gutes-color-primary, $gutes-color-primary);
+  color: var(--btn-secondary-color);
+  background-color: var(--btn-secondary-background-color);
+  border-color: var(--btn-secondary-border-color);
 }
 
 .c4g-btn-warning {
@@ -26,7 +78,10 @@
 
 // item-on-wishlist button
 .c4g-btn-on-wishlist {
-  @include button-variant($gutes-color-secondary, $gutes-color-secondary);
+  //@include button-variant($gutes-color-secondary, $gutes-color-secondary);
+  color: var(--btn-secondary-color);
+  background-color: var(--btn-secondary-background-color);
+  border-color: var(--btn-secondary-border-color);
 }
 
 .c4g-btn-tagfilter {

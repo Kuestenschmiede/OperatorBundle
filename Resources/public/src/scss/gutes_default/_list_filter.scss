@@ -39,8 +39,9 @@
       padding-bottom: 0;
     }
 
-    .c4g-listfilter-form {
+    form.c4g-listfilter-form {
       align-items: flex-end;
+      margin-bottom: 0;
     }
 
     small.field-description {
@@ -60,8 +61,8 @@
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) {
 
   .c4g-listfilter-button {
-    @extend .btn;
-    @extend .btn-outline-primary;
+    @extend .c4g-btn;
+    @extend .c4g-btn-primary;
   }
 }
 
@@ -114,8 +115,8 @@
 
   .c4g-btn-filter-wrapper {
     button {
-      @extend .btn;
-      @extend .btn-primary;
+      @extend .c4g-btn;
+      @extend .c4g-btn-filter;
     }
   }
 }

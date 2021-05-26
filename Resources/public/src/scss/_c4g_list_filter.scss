@@ -35,7 +35,7 @@
 
     &-btn-filter {
       @extend .c4g-btn;
-      @extend .c4g-btn-sm;
+      //@extend .c4g-btn-sm;
       @extend .c4g-btn-primary;
 
       &.executeSubmit {
@@ -126,9 +126,8 @@
 }
 
 .c4g-listfilter-button {
-  //@extend .c4g-btn;
-  //@extend .c4g-btn-sm;
-  //@extend .c4g-btn-primary;
+  @extend .c4g-btn;
+  @extend .c4g-btn-primary;
 }
 
 .form-view__tag-filter {

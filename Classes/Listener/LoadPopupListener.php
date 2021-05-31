@@ -6,7 +6,6 @@
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
  * @link       https://gutes.io
  */
-
 namespace gutesio\OperatorBundle\Classes\Listener;
 
 use con4gis\MapsBundle\Classes\Events\LoadInfoWindowEvent;
@@ -35,8 +34,7 @@ class LoadPopupListener
         LoadInfoWindowEvent $event,
         $eventName,
         EventDispatcherInterface $eventDispatcher
-    )
-    {
+    ) {
         $popup = $event->getPopup();
         $requestString = $event->getPopupString();
         $reqParams = explode('::', $requestString);

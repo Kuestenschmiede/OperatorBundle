@@ -12,6 +12,10 @@
     justify-content: center;
     grid-gap: .5rem;
 
+    align-items: flex-end;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
     @include media-breakpoint-down(md) {
       flex-direction: column;
       grid-gap: inherit;
@@ -19,6 +23,29 @@
 
     .c4g-listfilter-form-wrapper {
       flex: 1;
+      margin-bottom: 0;
+    }
+
+    //.c4g-listfilter-inner {
+    //  align-items: flex-end;
+    //  margin-top: 1rem;
+    //  margin-bottom: 1rem;
+    //}
+
+    .c4g-listfilter-button-wrapper,
+    .form-view__searchinput,
+    .c4g-panel-buttons {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    form.c4g-listfilter-form {
+      align-items: flex-end;
+      margin-bottom: 0;
+    }
+
+    small.field-description {
+      display: none;
     }
 
     > div {
@@ -34,8 +61,8 @@
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) {
 
   .c4g-listfilter-button {
-    @extend .btn;
-    @extend .btn-outline-primary;
+    @extend .c4g-btn;
+    @extend .c4g-btn-primary;
   }
 }
 
@@ -74,7 +101,9 @@
   }
 
   .form-view__tag-filter,
-  .form-view__sorting {
+  .form-view__sorting,
+  .form-view__ascend-descend,
+  .form-view__period {
     display: none;
   }
 
@@ -86,8 +115,8 @@
 
   .c4g-btn-filter-wrapper {
     button {
-      @extend .btn;
-      @extend .btn-primary;
+      @extend .c4g-btn;
+      @extend .c4g-btn-filter;
     }
   }
 }

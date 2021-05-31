@@ -26,7 +26,7 @@
 
 
                 <?php
-                $shareEnvUrl = \Contao\Controller::replaceInsertTags("{{env::url}}");
+                $shareEnvUrl = \Contao\Controller::replaceInsertTags("{{env::path}}");
                 $shareEnvRequest = \Contao\Controller::replaceInsertTags("{{env::request}}");
 
                 $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;

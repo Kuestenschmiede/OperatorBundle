@@ -1829,6 +1829,7 @@ mark {
 }
 .btn,
 .c4g-btn,
+.c4g-btn-default,
 .c4g-btn-sm,
 .c4g-btn-tagfilter,
 .c4g-list-element__clickcollect,
@@ -1869,6 +1870,7 @@ mark {
 @media (prefers-reduced-motion:reduce) {
   .btn,
   .c4g-btn,
+  .c4g-btn-default,
   .c4g-btn-sm,
   .c4g-btn-tagfilter,
   .c4g-list-element__clickcollect,
@@ -1893,6 +1895,7 @@ mark {
   }
 }
 .btn:hover,
+.c4g-btn-default:hover,
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
 .c4g-btn:hover,
@@ -1919,6 +1922,7 @@ mark {
 }
 .btn.focus,
 .btn:focus,
+.c4g-btn-default:focus,
 .c4g-btn-sm:focus,
 .c4g-btn-tagfilter:focus,
 .c4g-btn:focus,
@@ -1958,6 +1962,7 @@ mark {
 .detail-view__section-tags .menuLink > a.focus,
 .detail-view__section-tags .menuLink > a:focus,
 .focus.c4g-btn,
+.focus.c4g-btn-default,
 .focus.c4g-btn-sm,
 .focus.c4g-btn-tagfilter,
 .focus.c4g-list-element__clickcollect {
@@ -1966,6 +1971,7 @@ mark {
 }
 .btn.disabled,
 .btn:disabled,
+.c4g-btn-default:disabled,
 .c4g-btn-sm:disabled,
 .c4g-btn-tagfilter:disabled,
 .c4g-btn:disabled,
@@ -2005,12 +2011,14 @@ mark {
 .detail-view__section-tags .menuLink > a.disabled,
 .detail-view__section-tags .menuLink > a:disabled,
 .disabled.c4g-btn,
+.disabled.c4g-btn-default,
 .disabled.c4g-btn-sm,
 .disabled.c4g-btn-tagfilter,
 .disabled.c4g-list-element__clickcollect {
   opacity: .65
 }
 .btn:not(:disabled):not(.disabled),
+.c4g-btn-default:not(:disabled):not(.disabled),
 .c4g-btn-sm:not(:disabled):not(.disabled),
 .c4g-btn-tagfilter:not(:disabled):not(.disabled),
 .c4g-btn:not(:disabled):not(.disabled),
@@ -2066,6 +2074,7 @@ mark {
 .detail-view__section-tags fieldset:disabled .menuLink > a,
 a.btn.disabled,
 a.disabled.c4g-btn,
+a.disabled.c4g-btn-default,
 a.disabled.c4g-btn-sm,
 a.disabled.c4g-btn-tagfilter,
 a.disabled.c4g-list-element__clickcollect,
@@ -2086,6 +2095,7 @@ fieldset:disabled .detail-view__contact-wrapper .website > a,
 fieldset:disabled .detail-view__section-tags .menuLink > a,
 fieldset:disabled a.btn,
 fieldset:disabled a.c4g-btn,
+fieldset:disabled a.c4g-btn-default,
 fieldset:disabled a.c4g-btn-sm,
 fieldset:disabled a.c4g-btn-tagfilter,
 fieldset:disabled a.c4g-list-element__clickcollect {
@@ -2807,6 +2817,9 @@ a.c4g-badge-tagfilter:hover {
 .c4g-btn .badge,
 .c4g-btn .c4g-badge-tagfilter,
 .c4g-btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-btn-default .badge,
+.c4g-btn-default .c4g-badge-tagfilter,
+.c4g-btn-default .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-btn-sm .badge,
 .c4g-btn-sm .c4g-badge-tagfilter,
 .c4g-btn-sm .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -2827,6 +2840,7 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .btn .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-default .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
@@ -6409,134 +6423,95 @@ html {
     font-size: 1.125rem
   }
 }
-.c4g-btn-default {
-  color: #fff;
-  background-color: #333;
-  border-color: #333
+html {
+  --c4g-default: #333333;
+  --c4g-primary: #02A1DB;
+  --c4g-secondary: #103a5d;
+  --btn-font-family: inherit;
+  --btn-font-weight: normal;
+  --btn-color: #333;
+  --btn-white-space: null;
+  --btn-border-width: 1px;
+  --btn-border-radius: .25rem;
+  --gutes2-color-brand: var(--c4g-primary);
+  --gutes2-color-primary: var(--gutes2-color-brand);
+  --gutes2-color-secondary: var(--c4g-secondary);
+  --btn-primary-color: #fff;
+  --btn-primary-background-color: var(--c4g-primary);
+  --btn-primary-border-color: var(--c4g-primary);
+  --btn-secondary-color: #fff;
+  --btn-secondary-background-color: var(--c4g-secondary);
+  --btn-secondary-border-color: var(--c4g-secondary)
 }
-.c4g-btn-default:hover {
-  color: #fff;
-  background-color: #202020;
-  border-color: #1a1a1a
+.c4g-btn,
+.c4g-btn-default,
+.c4g-btn-sm,
+.c4g-btn-tagfilter,
+.c4g-list-element__clickcollect,
+.c4g-list-outer .c4g-list-element__clickcollect-link,
+.c4g-list-outer .c4g-list-element__more-link,
+.c4g-list-outer .c4g-list-element__notice-link,
+.c4g-modal-content .c4g-btn-close,
+.c4g-modal-content .c4g-btn-top-close,
+.c4g-modal-content button,
+.detail-view .c4g-icon-wrapper > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
+.detail-view__contact-wrapper .email > a,
+.detail-view__contact-wrapper .phone > a,
+.detail-view__contact-wrapper .website > a,
+.detail-view__modal > button,
+.detail-view__section-tags .menuLink > a {
+  font-family: var(--btn-font-family);
+  font-weight: var(--btn-font-weight);
+  color: var(--btn-color);
+  background-color: #fff;
+  border: var(--btn-border-width) solid var(--btn-color);
+  border-radius: var(--btn-border-radius);
+  filter: brightness(1);
+  transition: filter 250ms ease-in-out
 }
-.c4g-btn-default.focus,
-.c4g-btn-default:focus {
-  color: #fff;
-  background-color: #202020;
-  border-color: #1a1a1a;
-  box-shadow: 0 0 0 .2rem rgba(82,82,82,.5)
-}
-.c4g-btn-default.disabled,
-.c4g-btn-default:disabled {
-  color: #fff;
-  background-color: #333;
-  border-color: #333
-}
-.c4g-btn-default:not(:disabled):not(.disabled).active,
-.c4g-btn-default:not(:disabled):not(.disabled):active,
-.show > .c4g-btn-default.dropdown-toggle {
-  color: #fff;
-  background-color: #1a1a1a;
-  border-color: #131313
-}
-.c4g-btn-default:not(:disabled):not(.disabled).active:focus,
-.c4g-btn-default:not(:disabled):not(.disabled):active:focus,
-.show > .c4g-btn-default.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(82,82,82,.5)
+.c4g-btn-default:hover,
+.c4g-btn-sm:hover,
+.c4g-btn-tagfilter:hover,
+.c4g-btn:hover,
+.c4g-list-element__clickcollect:hover,
+.c4g-list-outer .c4g-list-element__clickcollect-link:hover,
+.c4g-list-outer .c4g-list-element__more-link:hover,
+.c4g-list-outer .c4g-list-element__notice-link:hover,
+.c4g-modal-content .c4g-btn-close:hover,
+.c4g-modal-content .c4g-btn-top-close:hover,
+.c4g-modal-content button:hover,
+.detail-view .c4g-icon-wrapper > a:hover,
+.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:hover,
+.detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
+.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
+.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
+.detail-view__contact-wrapper .email > a:hover,
+.detail-view__contact-wrapper .phone > a:hover,
+.detail-view__contact-wrapper .website > a:hover,
+.detail-view__modal > button:hover,
+.detail-view__section-tags .menuLink > a:hover {
+  filter: brightness(.85)
 }
 .c4g-btn-primary,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link {
-  color: #fff;
-  background-color: #103a5d;
-  border-color: #103a5d
-}
-.c4g-btn-primary:hover,
-.c4g-list-outer .c4g-list-element__more-link:hover,
-.c4g-list-outer .c4g-list-element__notice-link:hover {
-  color: #fff;
-  background-color: #0a263c;
-  border-color: #091f31
-}
-.c4g-btn-primary.focus,
-.c4g-btn-primary:focus,
-.c4g-list-outer .c4g-list-element__more-link:focus,
-.c4g-list-outer .c4g-list-element__notice-link:focus,
-.c4g-list-outer .focus.c4g-list-element__more-link,
-.c4g-list-outer .focus.c4g-list-element__notice-link {
-  color: #fff;
-  background-color: #0a263c;
-  border-color: #091f31;
-  box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
-}
-.c4g-btn-primary.disabled,
-.c4g-btn-primary:disabled,
-.c4g-list-outer .c4g-list-element__more-link:disabled,
-.c4g-list-outer .c4g-list-element__notice-link:disabled,
-.c4g-list-outer .disabled.c4g-list-element__more-link,
-.c4g-list-outer .disabled.c4g-list-element__notice-link {
-  color: #fff;
-  background-color: #103a5d;
-  border-color: #103a5d
-}
-.c4g-btn-primary:not(:disabled):not(.disabled).active,
-.c4g-btn-primary:not(:disabled):not(.disabled):active,
-.c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled).active,
-.c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled):active,
-.c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled).active,
-.c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled):active,
-.c4g-list-outer .show > .dropdown-toggle.c4g-list-element__more-link,
-.c4g-list-outer .show > .dropdown-toggle.c4g-list-element__notice-link,
-.show > .c4g-btn-primary.dropdown-toggle {
-  color: #fff;
-  background-color: #091f31;
-  border-color: #071827
-}
-.c4g-btn-primary:not(:disabled):not(.disabled).active:focus,
-.c4g-btn-primary:not(:disabled):not(.disabled):active:focus,
-.c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled).active:focus,
-.c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled):active:focus,
-.c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled).active:focus,
-.c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled):active:focus,
-.c4g-list-outer .show > .dropdown-toggle.c4g-list-element__more-link:focus,
-.c4g-list-outer .show > .dropdown-toggle.c4g-list-element__notice-link:focus,
-.show > .c4g-btn-primary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
+  color: var(--btn-primary-color);
+  background-color: var(--btn-primary-background-color);
+  border-color: var(--btn-primary-border-color)
 }
 .c4g-btn-secondary {
-  color: #fff;
-  background-color: #d35400;
-  border-color: #d35400
+  color: var(--btn-secondary-color);
+  background-color: var(--btn-secondary-background-color);
+  border-color: var(--btn-secondary-border-color)
 }
-.c4g-btn-secondary:hover {
-  color: #fff;
-  background-color: #ad4500;
-  border-color: #a04000
-}
-.c4g-btn-secondary.focus,
-.c4g-btn-secondary:focus {
-  color: #fff;
-  background-color: #ad4500;
-  border-color: #a04000;
-  box-shadow: 0 0 0 .2rem rgba(218,110,38,.5)
-}
-.c4g-btn-secondary.disabled,
-.c4g-btn-secondary:disabled {
-  color: #fff;
-  background-color: #d35400;
-  border-color: #d35400
-}
-.c4g-btn-secondary:not(:disabled):not(.disabled).active,
-.c4g-btn-secondary:not(:disabled):not(.disabled):active,
-.show > .c4g-btn-secondary.dropdown-toggle {
-  color: #fff;
-  background-color: #a04000;
-  border-color: #933b00
-}
-.c4g-btn-secondary:not(:disabled):not(.disabled).active:focus,
-.c4g-btn-secondary:not(:disabled):not(.disabled):active:focus,
-.show > .c4g-btn-secondary.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(218,110,38,.5)
+.c4g-btn-filter {
+  color: var(--btn-secondary-color);
+  background-color: var(--btn-secondary-background-color);
+  border-color: var(--btn-secondary-border-color)
 }
 .c4g-btn-warning {
   color: #212529;
@@ -6575,50 +6550,9 @@ html {
 }
 .c4g-btn-on-wishlist,
 .c4g-list-element__notice-link.remove-from-wishlist {
-  color: #fff;
-  background-color: #d35400;
-  border-color: #d35400
-}
-.c4g-btn-on-wishlist:hover,
-.c4g-list-element__notice-link.remove-from-wishlist:hover {
-  color: #fff;
-  background-color: #ad4500;
-  border-color: #a04000
-}
-.c4g-btn-on-wishlist.focus,
-.c4g-btn-on-wishlist:focus,
-.c4g-list-element__notice-link.remove-from-wishlist:focus,
-.focus.c4g-list-element__notice-link.remove-from-wishlist {
-  color: #fff;
-  background-color: #ad4500;
-  border-color: #a04000;
-  box-shadow: 0 0 0 .2rem rgba(218,110,38,.5)
-}
-.c4g-btn-on-wishlist.disabled,
-.c4g-btn-on-wishlist:disabled,
-.c4g-list-element__notice-link.remove-from-wishlist:disabled,
-.disabled.c4g-list-element__notice-link.remove-from-wishlist {
-  color: #fff;
-  background-color: #d35400;
-  border-color: #d35400
-}
-.c4g-btn-on-wishlist:not(:disabled):not(.disabled).active,
-.c4g-btn-on-wishlist:not(:disabled):not(.disabled):active,
-.c4g-list-element__notice-link.remove-from-wishlist:not(:disabled):not(.disabled).active,
-.c4g-list-element__notice-link.remove-from-wishlist:not(:disabled):not(.disabled):active,
-.show > .c4g-btn-on-wishlist.dropdown-toggle,
-.show > .dropdown-toggle.c4g-list-element__notice-link.remove-from-wishlist {
-  color: #fff;
-  background-color: #a04000;
-  border-color: #933b00
-}
-.c4g-btn-on-wishlist:not(:disabled):not(.disabled).active:focus,
-.c4g-btn-on-wishlist:not(:disabled):not(.disabled):active:focus,
-.c4g-list-element__notice-link.remove-from-wishlist:not(:disabled):not(.disabled).active:focus,
-.c4g-list-element__notice-link.remove-from-wishlist:not(:disabled):not(.disabled):active:focus,
-.show > .c4g-btn-on-wishlist.dropdown-toggle:focus,
-.show > .dropdown-toggle.c4g-list-element__notice-link.remove-from-wishlist:focus {
-  box-shadow: 0 0 0 .2rem rgba(218,110,38,.5)
+  color: var(--btn-secondary-color);
+  background-color: var(--btn-secondary-background-color);
+  border-color: var(--btn-secondary-border-color)
 }
 .c4g-btn-tagfilter {
   color: #212529;

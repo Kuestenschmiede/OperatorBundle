@@ -25,8 +25,8 @@ class SyncDataCron
         if ($c4gSettings['syncDataAutomaticly'] == 1) {
             $importData = $db->prepare('SELECT * FROM tl_c4g_import_data WHERE importRunning=1')->execute()->fetchAllAssoc();
             foreach ($importData as $import) {
-                $this->Database->prepare("UPDATE tl_c4g_import_data SET tstamp=?, importRunning='' WHERE tstamp<=? AND importRunning='1' AND id=?")
-                    ->execute(time(), time() - 600, $import['id']);
+                $db->prepare("UPDATE tl_c4g_import_data SET tstamp=?, importRunning='' WHERE tstamp<=? AND importRunning='1' AND id=?")
+                    ->execute(time(), time()-600, $import['id']);
             }
             $importData = $db->prepare('SELECT * FROM tl_c4g_import_data WHERE importRunning=1')->execute()->fetchAllAssoc();
 

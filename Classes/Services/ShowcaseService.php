@@ -448,17 +448,20 @@ class ShowcaseService
             }
         }
         $idString .= ')';
-        $sql = 'SELECT DISTINCT `elementId` FROM tl_gutesio_data_element_type';
+        $sql = 'SELECT DISTINCT `elementId` FROM tl_gutesio_data_element_type JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid';
         if ($idString !== '()') {
-            $sql .= ' WHERE `typeId` IN ' . $idString;
+            $sql .= ' WHERE tl_gutesio_data_element_type.`typeId` IN ' . $idString;
             if ($searchString !== '') {
-                $sql .= ' AND WHERE `name` LIKE ?';
+                $sql .= ' AND tl_gutesio_data_element.`name` LIKE ?';
             }
         }
         // get element ids connected to valid types (type name is already checked here)
         if ($idString === '()' && $searchString !== '') {
             // no id constraint, but search constraint -> do not load everything
 //            $arrElements = [];
+            $arrElements = $db->prepare($sql)->execute('%' . $searchString . '%')->fetchAllAssoc();
+        } else if ($idString !== '()' && $searchString !== '') {
+            // id constraint & search constraint
             $arrElements = $db->prepare($sql)->execute('%' . $searchString . '%')->fetchAllAssoc();
         } else {
             $arrElements = $db->prepare($sql)->execute()->fetchAllAssoc();

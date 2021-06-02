@@ -367,6 +367,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setWrapperClass("c4g-list-element__tags-wrapper");
         $field->setClass("c4g-list-element__tag");
         $field->setInnerClass("c4g-list-element__tag-image");
+        $field->setLinkField("linkHref");
         $fields[] = $field;
 
         $field = new DistanceField();

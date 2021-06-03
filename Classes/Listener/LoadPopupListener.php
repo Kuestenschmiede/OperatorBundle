@@ -13,6 +13,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -42,7 +43,7 @@ class LoadPopupListener
             $objElement = $this->Database->prepare('SELECT * FROM tl_gutesio_data_element WHERE uuid = ?')->execute($reqParams[1])->fetchAssoc();
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
             $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
-            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name FROM tl_gutesio_data_tag AS tag
+            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
                                         INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
                                         WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
             $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
@@ -73,11 +74,30 @@ class LoadPopupListener
         }
         $tags = '';
         foreach ($arrTags as $tag) {
+            $link = "";
+            if ($tag['technicalKey']) {
+                $tagFieldName = TagFieldUtil::getFieldnameForTechnicalKey($tag['technicalKey']);
+                if (strpos($tagFieldName, "Link") !== false) {
+                    // is the tag field a link?
+                    $strQueryTagValues = "SELECT * FROM tl_gutesio_data_tag_element_values WHERE `elementId` = ? AND `tagFieldKey` = ?";
+                    $arrTagValue = $this->Database->prepare($strQueryTagValues)->execute($element['uuid'], $tagFieldName)->fetchAssoc();
+                    $link = $arrTagValue['tagFieldValue'];
+                    if (strpos($link, "http") === false) {
+                        $link = "https://" . $link;
+                    }
+                }
+            }
             $imageTagUuid = StringUtil::binToUuid($tag['image']);
             $fileTag = FilesModel::findByUuid($imageTagUuid);
-            $tags .= "<div class='item " . $tag['name'] . "'>
+            if ($link) {
+                $tags .= "<a href='".$link."'><div class='item " . $tag['name'] . "'>
+                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
+                        </div></a>";
+            } else {
+                $tags .= "<div class='item " . $tag['name'] . "'>
                         <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div>";
+            }
         }
         $href = $url . '/' . $element['alias'];
 

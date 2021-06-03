@@ -8,6 +8,7 @@
  */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
+use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\MapsBundle\Classes\Events\LoadInfoWindowEvent;
 use Contao\Controller;
 use Contao\Database;
@@ -82,7 +83,9 @@ class LoadPopupListener
                     $strQueryTagValues = "SELECT * FROM tl_gutesio_data_tag_element_values WHERE `elementId` = ? AND `tagFieldKey` = ?";
                     $arrTagValue = $this->Database->prepare($strQueryTagValues)->execute($element['uuid'], $tagFieldName)->fetchAssoc();
                     $link = $arrTagValue['tagFieldValue'];
-                    if (strpos($link, "http") === false) {
+                    if (!preg_match("/" . RegularExpression::URL ."/", $link)) {
+                        $link = "";
+                    } else if (strpos($link, "http") === false) {
                         $link = "https://" . $link;
                     }
                 }

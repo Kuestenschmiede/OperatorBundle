@@ -162,6 +162,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         } else {
             throw new RedirectResponseException($redirectUrl);
         }
+        
+        if ($this->model->gutesio_load_klaro_consent) {
+            $template->loadKlaro = true;
+        }
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
         if ($this->model->gutesio_data_render_searchHtml) {

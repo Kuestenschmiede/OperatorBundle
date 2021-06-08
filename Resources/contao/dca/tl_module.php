@@ -33,7 +33,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_tag_filter'] = 'g
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page,gutesio_load_klaro_consent;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
@@ -314,4 +314,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_tag'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_load_klaro_consent'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
+    'sql'                     => "char(1) NOT NULL default '0'"
 ];

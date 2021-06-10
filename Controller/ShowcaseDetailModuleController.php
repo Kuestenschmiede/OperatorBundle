@@ -151,13 +151,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     $template->configuration = $jsonConf;
                 }
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description', 'types']);
+                $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             } else {
                 throw new RedirectResponseException($redirectUrl);
             }
             if ($this->model->gutesio_data_render_searchHtml) {
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description', 'types']);
+                $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             }
         } else {
             throw new RedirectResponseException($redirectUrl);
@@ -400,9 +400,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         if (count($detailData) === 0) {
             return [];
         }
+        $db = Database::getInstance();
         $clientUuid = $this->checkCookieForClientUuid($request);
         if ($clientUuid !== null) {
-            $db = Database::getInstance();
             $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
             $result = $db->prepare($sql)->execute($clientUuid, $detailData['uuid'])->fetchAssoc();
             if ($result) {
@@ -435,7 +435,21 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $detailData[$key] = C4GUtils::addProtocolToLink($detailDatum);
             }
         }
-
+        
+        // load extendedSearchTerms
+        $typeParameters = [];
+        foreach ($types as $type) {
+            $typeParameters[] = $type['value'];
+        }
+        $typeInString = C4GUtils::buildInString($types);
+        $sql = "SELECT `extendedSearchTerms` FROM tl_gutesio_data_type WHERE `id` " . $typeInString;
+        $arrSearchTerms = $db->prepare($sql)->execute($typeParameters)->fetchAllAssoc();
+        $strSearchTerms = "";
+        foreach ($arrSearchTerms as $searchTerm) {
+            $strSearchTerms .= $searchTerm['extendedSearchTerms'] . ",";
+        }
+        $detailData['extendedSearchTerms'] = str_replace(",", " ", $strSearchTerms);
+        
         return $detailData;
     }
 

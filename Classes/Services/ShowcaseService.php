@@ -430,8 +430,8 @@ class ShowcaseService
             $typeResult = Database::getInstance()->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                 'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
                 'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
-                'WHERE `tl_gutesio_data_type`.`name` LIKE ?'
-            )->execute($searchString)->fetchAllAssoc();
+                'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ?'
+            )->execute($searchString, $searchString)->fetchAllAssoc();
 
             $arrResult = array_merge($arrResult, $typeResult);
         } else {

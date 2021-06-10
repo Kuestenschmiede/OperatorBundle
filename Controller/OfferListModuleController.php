@@ -153,6 +153,9 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');
+        if (count($tagIds) === 1 && $tagIds[0] === "") {
+            $tagIds = [];
+        }
         $moduleId = $request->query->get('moduleId');
         $filterData = [
             'tagIds' => $tagIds,

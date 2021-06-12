@@ -537,6 +537,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
         $field->setInnerClass("c4g-list-element__taglinks-image");
+        $field->setLinkField("linkHref");
         $fields[] = $field;
     
         $field = new WrapperTileField();
@@ -852,6 +853,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__tags-wrapper");
         $field->setClass("c4g-list-element__tag");
         $field->setInnerClass("c4g-list-element__tag-image");
+        $field->setLinkField("linkHref");
         $fields[] = $field;
 
         $field = new DistanceField();

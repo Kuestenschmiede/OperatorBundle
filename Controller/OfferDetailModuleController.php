@@ -411,6 +411,7 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setName("tags");
         $field->setWrapperClass("c4g-list-element__tags-wrapper");
         $field->setClass("c4g-list-element__tag");
+        $field->setLinkField("linkHref");
         $this->tileItems[] = $field;
 
         $field = new DistanceField();

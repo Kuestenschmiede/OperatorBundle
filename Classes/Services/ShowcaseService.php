@@ -280,15 +280,15 @@ class ShowcaseService
 
         return $distanceInMeters . $unit;
     }
-    
+
     private function updateSearchStringForNonExactSearch($searchString)
     {
-        $arrTerms = explode(" ", $searchString);
-        $result = "%";
+        $arrTerms = explode(' ', $searchString);
+        $result = '%';
         foreach ($arrTerms as $term) {
-            $result .= $term . "%";
+            $result .= $term . '%';
         }
-        
+
         return $result;
     }
 
@@ -474,7 +474,7 @@ class ShowcaseService
 //            $arrElements = [];
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
             $arrElements = $db->prepare($sql)->execute($searchString)->fetchAllAssoc();
-        } else if ($idString !== '()' && $searchString !== '') {
+        } elseif ($idString !== '()' && $searchString !== '') {
             // id constraint & search constraint
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
             $arrElements = $db->prepare($sql)->execute($searchString)->fetchAllAssoc();

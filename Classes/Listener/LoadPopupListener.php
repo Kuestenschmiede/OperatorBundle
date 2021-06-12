@@ -75,25 +75,25 @@ class LoadPopupListener
         }
         $tags = '';
         foreach ($arrTags as $tag) {
-            $link = "";
+            $link = '';
             if ($tag['technicalKey']) {
                 $tagFieldName = TagFieldUtil::getFieldnameForTechnicalKey($tag['technicalKey']);
-                if (strpos($tagFieldName, "Link") !== false) {
+                if (strpos($tagFieldName, 'Link') !== false) {
                     // is the tag field a link?
-                    $strQueryTagValues = "SELECT * FROM tl_gutesio_data_tag_element_values WHERE `elementId` = ? AND `tagFieldKey` = ?";
+                    $strQueryTagValues = 'SELECT * FROM tl_gutesio_data_tag_element_values WHERE `elementId` = ? AND `tagFieldKey` = ?';
                     $arrTagValue = $this->Database->prepare($strQueryTagValues)->execute($element['uuid'], $tagFieldName)->fetchAssoc();
                     $link = $arrTagValue['tagFieldValue'];
-                    if (!preg_match("/" . RegularExpression::URL ."/", $link)) {
-                        $link = "";
-                    } else if (strpos($link, "http") === false) {
-                        $link = "https://" . $link;
+                    if (!preg_match('/' . RegularExpression::URL . '/', $link)) {
+                        $link = '';
+                    } elseif (strpos($link, 'http') === false) {
+                        $link = 'https://' . $link;
                     }
                 }
             }
             $imageTagUuid = StringUtil::binToUuid($tag['image']);
             $fileTag = FilesModel::findByUuid($imageTagUuid);
             if ($link) {
-                $tags .= "<a href='".$link."'><div class='item " . $tag['name'] . "'>
+                $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>
                         <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div></a>";
             } else {

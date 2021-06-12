@@ -150,9 +150,9 @@ class OfferLoaderService
         $arrTagFieldClause = $this->createTagFieldClause();
         $strTagFieldClause = $arrTagFieldClause['str'];
         $fieldCount = $arrTagFieldClause['count'];
-        $sqlExtendedCategoryTerms = " OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?";
+        $sqlExtendedCategoryTerms = ' OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?';
         $fieldCount++;
-        
+
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
@@ -182,7 +182,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
-                WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms .  ') ' . '
+                WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
@@ -249,7 +249,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND type ' . C4GUtils::buildInString($types) .
-                'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms. ') ' .
+                'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();

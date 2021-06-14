@@ -40,7 +40,21 @@ class OfferLoaderService
     private $randomSeed;
 
     private $limit = 10;
-
+    
+    /**
+     * @var VisitCounterService
+     */
+    private $visitCounter = null;
+    
+    /**
+     * OfferLoaderService constructor.
+     */
+    public function __construct()
+    {
+        $this->visitCounter = new VisitCounterService();
+    }
+    
+    
     private function setup()
     {
         $this->createRandomSeed($this->request);
@@ -472,7 +486,10 @@ class OfferLoaderService
 
     public function getDetailData($alias)
     {
-        return $this->getSingleDataset($alias, true);
+        $dataset = $this->getSingleDataset($alias, true);
+        $this->visitCounter->countOfferVisit($dataset['uuid'], $dataset['memberId']);
+        
+        return $dataset;
     }
 
     public function getPreviewData($alias)

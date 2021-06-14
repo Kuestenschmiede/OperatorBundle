@@ -39,6 +39,11 @@ class ShowcaseService
      * @var ShowcaseResultConverter
      */
     private $converter = null;
+    
+    /**
+     * @var VisitCounterService
+     */
+    private $visitCounter = null;
 
     const FILTER_SQL_STRING = '(`name` LIKE ? OR `description` LIKE ? OR `contactName` LIKE ? OR ' .
                                 '`contactStreet` LIKE ? OR `contactCity` LIKE ? OR `locationStreet` LIKE ? OR `locationCity` LIKE ?)';
@@ -66,6 +71,7 @@ class ShowcaseService
         // TODO use kernel.cache_dir
         $this->cache = ShowcaseListApiCache::getInstance('../var/cache/prod/con4gis');
         $this->converter = new ShowcaseResultConverter();
+        $this->visitCounter = new VisitCounterService();
     }
 
     /**
@@ -370,6 +376,8 @@ class ShowcaseService
         if ($returnData['contactable'] && !$returnData['contactName']) {
             $returnData['contactName'] = $returnData['name'];
         }
+        
+        $this->visitCounter->countShowcaseVisit($returnData['uuid'], $returnData['ownerMemberId']);
 
         return $returnData;
     }

@@ -469,7 +469,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $tileList->setWrapperId("offer-tiles");
         $tileList->setHeadlineLevel(2);
         $tileList->setWithTextFilter(true);
-        $tileList->setTextFilterFields(['name']);
+        $tileList->setTextFilterFields(['name', 'shortDescription', 'typeName']);
         
         return $tileList;
     }

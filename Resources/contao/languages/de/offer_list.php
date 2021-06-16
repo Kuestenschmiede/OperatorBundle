@@ -50,6 +50,8 @@ $GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Hier können Sie einen 
 $GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Datum von";
 $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Datum bis";
 
+$GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Andere Angebote des Anbieters";
+
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
     'free' => 'kostenfrei',

@@ -31,6 +31,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -44,6 +45,7 @@ use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
+use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
@@ -112,6 +114,11 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             $data = $this->offerService->getDetailData($this->alias);
             $objPage->pageTitle = $data['name'];
             $conf = $this->getDetailFrontendConfiguration($data, $request);
+            $conf->addTileList(
+                $this->getChildTileList(),
+                $this->getChildTileFields(),
+                $this->getChildTileData($data, $request)
+            );
             $conf->setLanguage($objPage->language);
             if (!empty($data)) {
                 if ($this->model->gutesio_data_render_searchHtml) {
@@ -515,5 +522,337 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     {
         $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
         return $clientUuidCookie === null ? null : $clientUuidCookie;
+    }
+    
+    /**
+     * Methods for creating the "other offers from the vendor" list
+     */
+    
+    private function getChildTileList()
+    {
+        $tileList = new TileList();
+        $tileList->setHeadline($GLOBALS['TL_LANG']["offer_list"]['otherOffers']);
+        $tileList->setLayoutType('list');
+        $tileList->setClassName("offer-tiles c4g-list-outer");
+        $tileList->setListWrapper(true);
+        $tileList->setWrapperId("offer-tiles");
+        $tileList->setHeadlineLevel(2);
+        $tileList->setWithTextFilter(true);
+        $tileList->setTextFilterFields(['name', 'shortDescription', 'typeName']);
+        
+        return $tileList;
+    }
+    
+    private function getChildTileFields()
+    {
+        $fields = [];
+        
+        $field = new ImageTileField();
+        $field->setWrapperClass("c4g-list-element__image-wrapper");
+        $field->setClass("c4g-list-element__image");
+        $field->setName('image');
+        $fields[] = $field;
+        
+        $field = new HeadlineTileField();
+        $field->setName('name');
+        $field->setLevel(4);
+        $field->setWrapperClass("c4g-list-element__title-wrapper");
+        $field->setClass("c4g-list-element__title");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('typeName');
+        $field->setWrapperClass("c4g-list-element__typename-wrapper");
+        $field->setClass("c4g-list-element__typename");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('shortDescription');
+        $field->setWrapperClass("c4g-list-element__shortdescription-wrapper");
+        $field->setClass("c4g-list-element__shortdescription");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('strikePrice');
+        $field->setWrapperClass("c4g-list-element__strikeprice-wrapper");
+        $field->setClass("c4g-list-element__strikeprice");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('price');
+        $field->setWrapperClass("c4g-list-element__price-wrapper");
+        $field->setClass("c4g-list-element__price");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('beginDate');
+        $field->setWrapperClass("c4g-list-element__begindate-wrapper");
+        $field->setClass("c4g-list-element__begindate");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('beginTime');
+        $field->setWrapperClass("c4g-list-element__begintime-wrapper");
+        $field->setClass("c4g-list-element__begintime");
+        $fields[] = $field;
+        
+        $field = new TextTileField();
+        $field->setName('maxCredit');
+        $field->setFormat($GLOBALS['TL_LANG']['offer_list']['maxCredit_format']);
+        $field->setWrapperClass("c4g-list-element__maxcredit-wrapper");
+        $field->setClass("c4g-list-element__maxCredit");
+        $fields[] = $field;
+        
+        $field = new TagTileField();
+        $field->setName('tagLinks');
+        $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
+        $field->setClass("c4g-list-element__taglinks");
+        $field->setInnerClass("c4g-list-element__taglinks-image");
+        $field->setLinkField("linkHref");
+        $fields[] = $field;
+        
+        $field = new WrapperTileField();
+        $field->setWrappedFields(['uuid', 'href']);
+        $field->setClass("c4g-list-element__buttons-wrapper");
+        $fields[] = $field;
+        
+        global $objPage;
+        $settings = C4gSettingsModel::findSettings();
+        $field = new ModalButtonTileField();
+        $field->setName('cc');
+        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
+        $field->setClass('c4g-list-element__clickcollect');
+        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
+        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
+        $field->setUrlField('uuid');
+        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
+        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
+        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
+        $field->setCondition('clickCollect', '1');
+        $field->setCondition('type', 'product');
+        $field->setCondition('type', 'showcase', true);
+        $field->setInnerFields([
+            'imageList',
+            'name',
+            'types'
+        ]);
+        $fields[] = $field;
+        
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefFields(["type", "uuid"]);
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link put-on-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/add/type/uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putOnWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setAsyncCall(true);
+        $field->setConditionField("not_on_wishlist");
+        $field->setConditionValue('1');
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToWishlist");
+        $fields[] = $field;
+        
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__notice-wrapper");
+        $field->setClass("c4g-list-element__notice-link remove-from-wishlist");
+        $field->setHref("/gutesio/operator/wishlist/remove/uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['removeFromWishlist']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->setAsyncCall(true);
+        $field->addConditionalClass("on_wishlist", "on-wishlist");
+        $field->setConditionField("on_wishlist");
+        $field->setConditionValue('1');
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("removeFromWishlist");
+        $fields[] = $field;
+        
+        $detailLinks = $this->getOfferDetailLinks();
+        $urlSuffix = Config::get('urlSuffix');
+        foreach ($detailLinks as $key => $value) {
+            $value = str_replace($urlSuffix, "", $value);
+            $field = new LinkButtonTileField();
+            $field->setName("href");
+            $field->setWrapperClass("c4g-list-element__more-wrapper");
+            $field->setClass("c4g-list-element__more-link");
+            $field->setHrefFields(["href"]);
+            $field->setLinkText($GLOBALS['TL_LANG']['gutesio_frontend']['learnMore']);
+            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+            $field->setHref($value . "/href" . $urlSuffix);
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $field->setConditionField('type');
+            $field->setConditionValue($key);
+            $fields[] = $field;
+        }
+        
+        return $fields;
+    }
+    
+    private function getOfferDetailLinks(): array
+    {
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $productPageModel = PageModel::findByPk($objSettings->productDetailPage);
+        $eventPageModel = PageModel::findByPk($objSettings->eventDetailPage);
+        $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
+        $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
+        $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
+        return [
+            'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
+            'event' => $eventPageModel ? $eventPageModel->getFrontendUrl() : '',
+            'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
+            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
+            'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
+            'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
+        ];
+    }
+    
+    private function getChildTileData($childData, $request)
+    {
+        $database = Database::getInstance();
+        $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
+        a.image, a.imageOffer, a.foreignLink, a.directLink, ' . '
+            (CASE ' . '
+                WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+            ELSE NULL END) AS shortDescription, ' . '
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.clickCollect '.
+            'FROM tl_gutesio_data_child a ' . '
+            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+            JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId ' . '
+            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+            WHERE e.uuid = ?'
+            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY RAND()'
+        )->execute($childData['elementId'])->fetchAllAssoc();
+        
+        foreach ($childRows as $key => $row) {
+            if ($row['uuid'] === $childData['uuid']) {
+                unset($childRows[$key]);
+                continue;
+            }
+            $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
+            if ($imageModel !== null) {
+                $childRows[$key]['image'] = [
+                    'src' => $imageModel->path,
+                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                ];
+                $row['image'] = [
+                    'src' => $imageModel->path,
+                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                ];
+            }
+            unset($childRows[$key]['imageOffer']);
+            unset($row['imageOffer']);
+            
+            $clientUuid = $this->checkCookieForClientUuid($request);
+            if ($clientUuid !== null) {
+                $db = Database::getInstance();
+                $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
+                $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
+                if ($result) {
+                    $row['on_wishlist'] = "1";
+                } else {
+                    $row['not_on_wishlist'] = "1";
+                }
+            }
+            
+            $row['tagLinks'] = $childRows[$key]['tagLinks'];
+            
+            $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+                'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
+                'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
+                ->execute($row['uuid'])->fetchAllAssoc();
+            foreach ($result as $r) {
+                $model = FilesModel::findByUuid($r['image']);
+                if ($model !== null) {
+                    $icon = [
+                        'name' => $r['name'],
+                        'image' => [
+                            'src' => $model->path,
+                            'alt' => $r['name']
+                        ]
+                    ];
+                    switch ($r['technicalKey']) {
+                        case 'tag_delivery':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'deliveryServiceLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Lieferservice';
+                            break;
+                        case 'tag_online_reservation':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'onlineReservationLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Onlinereservierung';
+                            break;
+                        case 'tag_clicknmeet':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'clicknmeetLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Click & Meet';
+                            break;
+                        case 'tag_table_reservation':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'tableReservationLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Tischreservierung';
+                            break;
+                        case 'tag_onlineshop':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'onlineShopLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Onlineshop';
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    $icon['linkHref'] = C4GUtils::addProtocolToLink($icon['linkHref']);
+                    if (!$row['tagLinks']) {
+                        $row['tagLinks'] = [];
+                    }
+                    $row['tagLinks'][] = $icon;
+                }
+            }
+            
+            $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            $childRows[$key] = $row;
+        }
+        
+        $childRows = $this->offerService->getAdditionalData($childRows);
+        
+        return $childRows;
     }
 }

@@ -556,6 +556,7 @@ class OfferLoaderService
             $rows[$key]['geox'] = $result['geox'];
             $rows[$key]['geoy'] = $result['geoy'];
             $rows[$key]['clickCollect'] = $result['clickCollect'];
+            $rows[$key]['elementId'] = $result['uuid'];
 
             if ($row['infoFile']) {
                 $infoFile = FilesModel::findByUuid(StringUtil::binToUuid($row['infoFile']));

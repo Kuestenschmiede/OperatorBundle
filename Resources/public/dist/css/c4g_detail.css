@@ -275,6 +275,7 @@ template {
   display: none!important
 }
 .c4g-modal-content input,
+.detail-view__list-filter-input,
 .form-control {
   display: block;
   width: 100%;
@@ -292,21 +293,25 @@ template {
 }
 @media (prefers-reduced-motion:reduce) {
   .c4g-modal-content input,
+  .detail-view__list-filter-input,
   .form-control {
     transition: none
   }
 }
 .c4g-modal-content input::-ms-expand,
+.detail-view__list-filter-input::-ms-expand,
 .form-control::-ms-expand {
   background-color: transparent;
   border: 0
 }
 .c4g-modal-content input:-moz-focusring,
+.detail-view__list-filter-input:-moz-focusring,
 .form-control:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #495057
 }
 .c4g-modal-content input:focus,
+.detail-view__list-filter-input:focus,
 .form-control:focus {
   color: #495057;
   background-color: #fff;
@@ -315,22 +320,27 @@ template {
   box-shadow: 0 0 0 .2rem rgba(16,58,93,.25)
 }
 .c4g-modal-content input::-moz-placeholder,
+.detail-view__list-filter-input::-moz-placeholder,
 .form-control::-moz-placeholder {
   color: #6c757d;
   opacity: 1
 }
 .c4g-modal-content input:-ms-input-placeholder,
+.detail-view__list-filter-input:-ms-input-placeholder,
 .form-control:-ms-input-placeholder {
   color: #6c757d;
   opacity: 1
 }
 .c4g-modal-content input::placeholder,
+.detail-view__list-filter-input::placeholder,
 .form-control::placeholder {
   color: #6c757d;
   opacity: 1
 }
 .c4g-modal-content input:disabled,
 .c4g-modal-content input[readonly],
+.detail-view__list-filter-input:disabled,
+.detail-view__list-filter-input[readonly],
 .form-control:disabled,
 .form-control[readonly] {
   background-color: #e9ecef;
@@ -340,6 +350,10 @@ template {
 .c4g-modal-content input[type=datetime-local],
 .c4g-modal-content input[type=month],
 .c4g-modal-content input[type=time],
+input.detail-view__list-filter-input[type=date],
+input.detail-view__list-filter-input[type=datetime-local],
+input.detail-view__list-filter-input[type=month],
+input.detail-view__list-filter-input[type=time],
 input[type=date].form-control,
 input[type=datetime-local].form-control,
 input[type=month].form-control,
@@ -348,6 +362,7 @@ input[type=time].form-control {
   -moz-appearance: none;
   appearance: none
 }
+select.detail-view__list-filter-input:focus::-ms-value,
 select.form-control:focus::-ms-value {
   color: #495057;
   background-color: #fff
@@ -407,10 +422,13 @@ select.form-control:focus::-ms-value {
   line-height: 1.5;
   border-radius: .3rem
 }
+select.detail-view__list-filter-input[multiple],
+select.detail-view__list-filter-input[size],
 select.form-control[multiple],
 select.form-control[size] {
   height: auto
 }
+textarea.detail-view__list-filter-input,
 textarea.form-control {
   height: auto
 }
@@ -496,7 +514,9 @@ textarea.form-control {
 .c4g-modal-content .was-validated input:valid,
 .c4g-modal-content input.is-valid,
 .form-control.is-valid,
+.is-valid.detail-view__list-filter-input,
 .was-validated .c4g-modal-content input:valid,
+.was-validated .detail-view__list-filter-input:valid,
 .was-validated .form-control:valid {
   border-color: #28a745;
   padding-right: calc(1.5em + .75rem);
@@ -508,13 +528,17 @@ textarea.form-control {
 .c4g-modal-content .was-validated input:valid:focus,
 .c4g-modal-content input.is-valid:focus,
 .form-control.is-valid:focus,
+.is-valid.detail-view__list-filter-input:focus,
 .was-validated .c4g-modal-content input:valid:focus,
+.was-validated .detail-view__list-filter-input:valid:focus,
 .was-validated .form-control:valid:focus {
   border-color: #28a745;
   box-shadow: 0 0 0 .2rem rgba(40,167,69,.25)
 }
+.was-validated textarea.detail-view__list-filter-input:valid,
 .was-validated textarea.form-control:valid,
-textarea.form-control.is-valid {
+textarea.form-control.is-valid,
+textarea.is-valid.detail-view__list-filter-input {
   padding-right: calc(1.5em + .75rem);
   background-position: top calc(.375em + .1875rem) right calc(.375em + .1875rem)
 }
@@ -604,7 +628,9 @@ textarea.form-control.is-valid {
 .c4g-modal-content .was-validated input:invalid,
 .c4g-modal-content input.is-invalid,
 .form-control.is-invalid,
+.is-invalid.detail-view__list-filter-input,
 .was-validated .c4g-modal-content input:invalid,
+.was-validated .detail-view__list-filter-input:invalid,
 .was-validated .form-control:invalid {
   border-color: #dc3545;
   padding-right: calc(1.5em + .75rem);
@@ -616,13 +642,17 @@ textarea.form-control.is-valid {
 .c4g-modal-content .was-validated input:invalid:focus,
 .c4g-modal-content input.is-invalid:focus,
 .form-control.is-invalid:focus,
+.is-invalid.detail-view__list-filter-input:focus,
 .was-validated .c4g-modal-content input:invalid:focus,
+.was-validated .detail-view__list-filter-input:invalid:focus,
 .was-validated .form-control:invalid:focus {
   border-color: #dc3545;
   box-shadow: 0 0 0 .2rem rgba(220,53,69,.25)
 }
+.was-validated textarea.detail-view__list-filter-input:invalid,
 .was-validated textarea.form-control:invalid,
-textarea.form-control.is-invalid {
+textarea.form-control.is-invalid,
+textarea.is-invalid.detail-view__list-filter-input {
   padding-right: calc(1.5em + .75rem);
   background-position: top calc(.375em + .1875rem) right calc(.375em + .1875rem)
 }
@@ -701,6 +731,7 @@ textarea.form-control.is-invalid {
   }
   .c4g-modal-content .form-inline input,
   .form-inline .c4g-modal-content input,
+  .form-inline .detail-view__list-filter-input,
   .form-inline .form-control {
     display: inline-block;
     width: auto;
@@ -856,6 +887,7 @@ mark {
 .detail-hero__inner-wrapper,
 .detail-view .anchor-menu__inner,
 .detail-view .c4g-container,
+.detail-view__list-filter-wrapper,
 .detail-view__section-headline {
   width: 100%;
   padding-right: 15px;
@@ -871,6 +903,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
     max-width: 540px
   }
@@ -884,6 +917,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
     max-width: 720px
   }
@@ -898,6 +932,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
     max-width: 960px
   }
@@ -913,6 +948,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
     max-width: 1140px
   }
@@ -4004,7 +4040,6 @@ button.bg-dark:hover {
 .user-select-all {
   -webkit-user-select: all!important;
   -moz-user-select: all!important;
-  -ms-user-select: all!important;
   user-select: all!important
 }
 .user-select-auto {
@@ -7204,6 +7239,12 @@ html {
   border-radius: var(--gutes-base-border-radius);
   padding: .5rem;
   background-color: #fff
+}
+@media (min-width:992px) {
+  .detail-view__list-filter-input {
+    max-width: 50%;
+    margin: 2rem auto 1rem auto
+  }
 }
 .c4g-tile-headline-wrapper {
   width: 100%;

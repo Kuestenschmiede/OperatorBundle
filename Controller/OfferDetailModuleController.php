@@ -114,11 +114,14 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             $data = $this->offerService->getDetailData($this->alias);
             $objPage->pageTitle = $data['name'];
             $conf = $this->getDetailFrontendConfiguration($data, $request);
-            $conf->addTileList(
-                $this->getChildTileList(),
-                $this->getChildTileFields(),
-                $this->getChildTileData($data, $request)
-            );
+            $otherChildData = $this->getChildTileData($data, $request);
+            if (count($otherChildData) > 0) {
+                $conf->addTileList(
+                    $this->getChildTileList(),
+                    $this->getChildTileFields(),
+                    $otherChildData
+                );
+            }
             $conf->setLanguage($objPage->language);
             if (!empty($data)) {
                 if ($this->model->gutesio_data_render_searchHtml) {

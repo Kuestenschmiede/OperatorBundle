@@ -140,8 +140,12 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
                 $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
                 $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
-                $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
-                $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                if (count($childData) > 0) {
+                    $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
+                }
+                if (count($relatedShowcaseData) > 0) {
+                    $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                }
                 $conf->setLanguage($objPage->language);
                 $jsonConf = json_encode($conf);
                 if ($jsonConf === false) {

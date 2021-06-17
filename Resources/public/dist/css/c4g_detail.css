@@ -7399,7 +7399,7 @@ html {
 @media (min-width:992px) {
   .detail-view__list-filter-input {
     max-width: 50%;
-    margin: 2rem auto 1rem auto
+    margin: 1rem auto
   }
 }
 .c4g-tile-headline-wrapper {

@@ -262,8 +262,15 @@
 
   // logos
   &__logos {
-    @include make-col-ready();
-    @include make-col(12);
+    //@include make-col-ready();
+    //@include make-col(12);
+    display: inline-block;
+    max-width: 110px;
+    margin-right: 1rem;
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 
 

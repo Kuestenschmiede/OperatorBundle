@@ -7111,12 +7111,12 @@ html {
   box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
 }
 .detail-view__logos {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
+  display: inline-block;
+  max-width: 110px;
+  margin-right: 1rem
+}
+.detail-view__logos:last-child {
+  margin-right: 0
 }
 .detail-view__display-type {
   position: relative;

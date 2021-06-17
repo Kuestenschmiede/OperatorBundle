@@ -46,6 +46,8 @@ $GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Here you can select a f
 $GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Date from";
 $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Date until";
 
+$GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Other offers from the vendors";
+
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
     'free' => 'free',
     'on_demand' => 'on demand'

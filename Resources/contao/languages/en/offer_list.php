@@ -39,7 +39,7 @@ $GLOBALS['TL_LANG'][$strName]['contact'] = "Contact";
 $GLOBALS['TL_LANG'][$strName]['displayType'] = "Category:";
 $GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "More information";
 $GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "View more information";
-$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Offered by the following vendors:";
+$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Offered by the following vendors";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Select period";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Here you can select a filter period to narrow down the events.";
 

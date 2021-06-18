@@ -39,7 +39,7 @@ class ShowcaseService
      * @var ShowcaseResultConverter
      */
     private $converter = null;
-    
+
     /**
      * @var VisitCounterService
      */
@@ -376,7 +376,7 @@ class ShowcaseService
         if ($returnData['contactable'] && !$returnData['contactName']) {
             $returnData['contactName'] = $returnData['name'];
         }
-        
+
         $this->visitCounter->countShowcaseVisit($returnData['uuid'], $returnData['ownerMemberId']);
 
         return $returnData;

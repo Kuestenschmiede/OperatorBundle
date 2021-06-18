@@ -24,9 +24,9 @@ class AdditionalImportProxyDataListener
         $operatorVersion = $installedPackages['gutesio/operator'];
         $dataModelVersion = $installedPackages['gutesio/data-model'];
 
-        $offerStatistic = $db->prepare("SELECT * FROM tl_gutesio_offer_statistic")
+        $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic')
             ->execute()->fetchAllAssoc();
-        $showcaseStatistic = $db->prepare("SELECT * FROM tl_gutesio_showcase_statistic")
+        $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic')
             ->execute()->fetchAllAssoc();
 
         $proxyData = [
@@ -43,16 +43,16 @@ class AdditionalImportProxyDataListener
         if ($offerStatistic) {
             foreach ($offerStatistic as $statisticEntry) {
                 $proxyData[] = [
-                    "proxyKey" => "offerStatistic_".$statisticEntry['id'],
-                    "proxyData" =>  $statisticEntry['uuid'].",".$statisticEntry['date'].",".$statisticEntry['offerId'].",".$statisticEntry['visits'].",".$statisticEntry['ownerId']
+                    'proxyKey' => 'offerStatistic_' . $statisticEntry['id'],
+                    'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['offerId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
             }
         }
         if ($showcaseStatistic) {
             foreach ($showcaseStatistic as $statisticEntry) {
                 $proxyData[] = [
-                    "proxyKey" => "showcaseStatistic_".$statisticEntry['id'],
-                    "proxyData" =>  $statisticEntry['uuid'].",".$statisticEntry['date'].",".$statisticEntry['offerId'].",".$statisticEntry['visits'].",".$statisticEntry['ownerId']
+                    'proxyKey' => 'showcaseStatistic_' . $statisticEntry['id'],
+                    'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['offerId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
             }
         }

@@ -1,20 +1,17 @@
 <?php
 
-
 namespace gutesio\OperatorBundle\Classes\Cron;
 
-
 use Contao\Database;
-use Contao\System;
 
 class SendStatisticDataCron
 {
     private $offerStatisticIds = [];
-    
+
     private $showcaseStatisticIds = [];
-    
+
     const MAX_TRANSFER_DATA = 500;
-    
+
     public function onHourly()
     {
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
@@ -24,7 +21,7 @@ class SendStatisticDataCron
         $data['data'] = $this->getStatisticData();
         $data['domain'] = $_SERVER['SERVER_NAME'];
         $request = new \Contao\Request();
-        $request->method = "POST";
+        $request->method = 'POST';
         $request->data = $data;
         if ($_SERVER['HTTP_REFERER']) {
             $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
@@ -38,28 +35,27 @@ class SendStatisticDataCron
         if ($success) {
             $db = Database::getInstance();
             if (count($this->offerStatisticIds) > 0) {
-                $offerStatisticIdString = "(".implode(",", $this->offerStatisticIds).")";
-                $db->prepare("UPDATE tl_gutesio_offer_statistic SET `transferred` = 1 WHERE `id` IN " . $offerStatisticIdString)
+                $offerStatisticIdString = '(' . implode(',', $this->offerStatisticIds) . ')';
+                $db->prepare('UPDATE tl_gutesio_offer_statistic SET `transferred` = 1 WHERE `id` IN ' . $offerStatisticIdString)
                     ->execute();
-                
             }
             if (count($this->showcaseStatisticIds) > 0) {
-                $showcaseStatisticIdString = "(".implode(",", $this->showcaseStatisticIds) .")";
-                $db->prepare("UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN " . $offerStatisticIdString)
+                $showcaseStatisticIdString = '(' . implode(',', $this->showcaseStatisticIds) . ')';
+                $db->prepare('UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN ' . $offerStatisticIdString)
                     ->execute();
             }
         }
     }
-    
+
     private function getStatisticData()
     {
         $db = Database::getInstance();
-    
+
         $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0')
             ->execute()->fetchAllAssoc();
         $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0')
             ->execute()->fetchAllAssoc();
-    
+
         $dataCtr = 0;
         if ($offerStatistic) {
             foreach ($offerStatistic as $statisticEntry) {
@@ -87,7 +83,7 @@ class SendStatisticDataCron
                 $this->showcaseStatisticIds[] = $statisticEntry['id'];
             }
         }
-    
+
         return $proxyData;
     }
 }

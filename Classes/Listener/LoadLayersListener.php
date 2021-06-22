@@ -220,7 +220,7 @@ class LoadLayersListener
                 'graphicTitle' => $objElement['name'],
             ], $tagUuids);
             $data = [];
-            if ($objLocstyle['loctype'] === 'LineString' || $objLocstyle['loctype'] === 'Polygon') {
+            if ($objLocstyle['loctype'] === 'Editor' || $objLocstyle['loctype'] === 'LineString' || $objLocstyle['loctype'] === 'Polygon') {
                 $element['cluster'] = false;
                 $element['excludeFromSingleLayer'] = true;
                 $geojson = strpos($objElement['geojson'], 'FeatureCollection') ? $objElement['geojson'] : '{"type": "FeatureCollection", "features": ' . $objElement['geojson'] . '}';

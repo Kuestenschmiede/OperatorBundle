@@ -20,7 +20,9 @@ class SendStatisticDataCron
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
         $statisticUrl = rtrim($objSettings->con4gisIoUrl, '/') . '/saveStats.php';
         $statisticUrl .= '?key=' . $objSettings->con4gisIoKey;
-        $data = $this->getStatisticData();
+        $data = [];
+        $data['data'] = $this->getStatisticData();
+        $data['domain'] = $_SERVER['SERVER_NAME'];
         $request = new \Contao\Request();
         $request->method = "POST";
         $request->data = $data;
@@ -53,25 +55,10 @@ class SendStatisticDataCron
     {
         $db = Database::getInstance();
     
-//        $installedPackages = System::getContainer()->getParameter('kernel.packages');
-//        $operatorVersion = $installedPackages['gutesio/operator'];
-//        $dataModelVersion = $installedPackages['gutesio/data-model'];
-    
         $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0')
             ->execute()->fetchAllAssoc();
         $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0')
             ->execute()->fetchAllAssoc();
-    
-//        $proxyData = [
-//            [
-//                'proxyKey' => 'operatorVersion',
-//                'proxyData' => $operatorVersion,
-//            ],
-//            [
-//                'proxyKey' => 'dataModelVersion',
-//                'proxyData' => $dataModelVersion,
-//            ],
-//        ];
     
         $dataCtr = 0;
         if ($offerStatistic) {

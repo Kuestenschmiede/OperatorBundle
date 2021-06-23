@@ -51,10 +51,11 @@ class SendStatisticDataCron
     {
         $db = Database::getInstance();
 
-        $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0')
-            ->execute()->fetchAllAssoc();
-        $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0')
-            ->execute()->fetchAllAssoc();
+        $today = strtotime("today midnight");
+        $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0 AND `date` <= ?')
+            ->execute($today)->fetchAllAssoc();
+        $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0 AND `date` <= ?')
+            ->execute($today)->fetchAllAssoc();
 
         $dataCtr = 0;
         if ($offerStatistic) {
@@ -74,7 +75,7 @@ class SendStatisticDataCron
             foreach ($showcaseStatistic as $statisticEntry) {
                 $proxyData[] = [
                     'proxyKey' => 'showcaseStatistic_' . $statisticEntry['id'],
-                    'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['offerId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
+                    'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['showcaseId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
                 $dataCtr++;
                 if ($dataCtr >= self::MAX_TRANSFER_DATA) {

@@ -60,10 +60,11 @@ class SendStatisticDataCron
         $dataCtr = 0;
         if ($offerStatistic) {
             foreach ($offerStatistic as $statisticEntry) {
-                $proxyData[] = [
+                $datum = [
                     'proxyKey' => 'offerStatistic_' . $statisticEntry['id'],
                     'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['offerId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
+                $proxyData[$datum['proxyKey']] = $datum['proxyData'];
                 $dataCtr++;
                 if ($dataCtr >= self::MAX_TRANSFER_DATA) {
                     break;
@@ -73,10 +74,11 @@ class SendStatisticDataCron
         }
         if ($showcaseStatistic && $dataCtr < self::MAX_TRANSFER_DATA) {
             foreach ($showcaseStatistic as $statisticEntry) {
-                $proxyData[] = [
+                $datum = [
                     'proxyKey' => 'showcaseStatistic_' . $statisticEntry['id'],
                     'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['showcaseId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
+                $proxyData[$datum['proxyKey']] = $datum['proxyData'];
                 $dataCtr++;
                 if ($dataCtr >= self::MAX_TRANSFER_DATA) {
                     break;

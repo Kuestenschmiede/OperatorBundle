@@ -497,13 +497,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
         $fields[] = $sortFilter;
         
-        $typeField = new SelectFormField();
-        $typeField->setName("types");
-        $typeField->setClassName("form-view__type-filter");
-        $typeField->setPlaceholder("Kategorie auswählen");
-        $typeField->setOptions($this->getTypeOptions());
-        $typeField->setMultiple(true);
-        $fields[] = $typeField;
+        if ($this->model->gutesio_enable_type_filter) {
+            $typeField = new SelectFormField();
+            $typeField->setName("types");
+            $typeField->setClassName("form-view__type-filter");
+            $typeField->setPlaceholder("Kategorie auswählen");
+            $typeField->setOptions($this->getTypeOptions());
+            $typeField->setMultiple(true);
+            $fields[] = $typeField;
+        }
 
         // module id field so the id gets transferred when loading data async
         $moduleId = new HiddenFormField();

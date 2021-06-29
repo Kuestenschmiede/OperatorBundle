@@ -17,6 +17,7 @@ use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\MultiCheckboxWithImageLabelFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RadioGroupFormField;
+use con4gis\FrameworkBundle\Classes\FormFields\SelectFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\TextFormField;
 use con4gis\FrameworkBundle\Classes\Forms\Form;
 use con4gis\FrameworkBundle\Classes\Forms\ToggleableForm;
@@ -184,7 +185,13 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tagFilterIds = explode(",", $tagFilterIds);
         }
-
+        $requestTypeIds = $request->query->get("types");
+        if ($requestTypeIds === "" || $requestTypeIds === null) {
+            $requestTypeIds = [];
+        } else {
+            $requestTypeIds = explode(",", $requestTypeIds);
+        }
+    
         $moduleModel = ModuleModel::findByPk($moduleId);
         $max = (int) $moduleModel->gutesio_data_max_data;
         if ($max !== 0 && $offset >= $max) {
@@ -199,7 +206,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($mode === 1 || $mode === 2) {
             $typeIds = $this->getTypeConstraintForModule($moduleModel);
         } else {
-            $typeIds = [];
+            $typeIds = $requestTypeIds;
         }
         if ($mode === 3) {
             $tagIds = $this->getTagConstraintForModule($moduleModel);
@@ -489,6 +496,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $sortFilter->setChecked("random");
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
         $fields[] = $sortFilter;
+        
+        $typeField = new SelectFormField();
+        $typeField->setName("types");
+        $typeField->setClassName("form-view__type-filter");
+        $typeField->setPlaceholder("Kategorie auswählen");
+        $typeField->setOptions($this->getTypeOptions());
+        $typeField->setMultiple(true);
+        $fields[] = $typeField;
 
         // module id field so the id gets transferred when loading data async
         $moduleId = new HiddenFormField();
@@ -509,6 +524,21 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $arrFilter['buttons'] = $buttons;
 
         return $arrFilter;
+    }
+    
+    private function getTypeOptions()
+    {
+        $sql = "SELECT * FROM tl_gutesio_data_type";
+        $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
+        $options = [];
+        foreach ($typeResult as $result) {
+            $options[] = [
+                'value' => $result['uuid'],
+                'label' => $result['name']
+            ];
+        }
+        
+        return $options;
     }
 
     private function getTagOptions()

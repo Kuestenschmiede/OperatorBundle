@@ -171,7 +171,7 @@ class ShowcaseService
         $sorting = $params['sorting'] ?: '';
         $randKey = $params['randKey'];
         $position = explode(',', $params['pos']);
-        $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds);
+        $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
         if ($this->checkForCacheFile($key)) {
             $arrIds = $this->getDataFromCache($key);
             if ($arrIds && is_array($arrIds)) {
@@ -192,7 +192,7 @@ class ShowcaseService
                 switch ($sorting) {
                     case 'random':
                         $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds);
-                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds), $arrIds);
+                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIds);
                         $arrIds = array_slice($arrIds, $offset, $limit);
                         if (count($arrIds) > 0) {
                             $arrResult = $this->loadByIds($arrIds);
@@ -204,7 +204,7 @@ class ShowcaseService
                         break;
                     case 'distance':
                         $arrIdsWithDistances = $this->generateDistanceSortingMap($position, $searchString, $typeIds, $tagIds);
-                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds), $arrIdsWithDistances);
+                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIdsWithDistances);
                         $arrIdsWithDistances = array_slice($arrIdsWithDistances, $offset, $limit);
                         if (count($arrIdsWithDistances) > 0) {
                             $arrResult = $this->loadByIds($arrIdsWithDistances, true);
@@ -777,9 +777,9 @@ class ShowcaseService
         return $data;
     }
 
-    private function getCacheKey($randKey, $filter, $sorting, $tagIds)
+    private function getCacheKey($randKey, $filter, $sorting, $tagIds, $typeIds)
     {
-        return sha1($randKey . '_' . $filter . '_' . $sorting . '_' . implode(',', $tagIds));
+        return sha1($randKey . '_' . $filter . '_' . $sorting . '_' . implode(',', $tagIds) . '_' . implode(',', $typeIds));
     }
 
     private function checkForCacheFile($key)

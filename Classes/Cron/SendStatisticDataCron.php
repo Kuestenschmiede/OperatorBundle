@@ -22,7 +22,7 @@ class SendStatisticDataCron
         $data['domain'] = $_SERVER['SERVER_NAME'];
         $request = new \Contao\Request();
         $request->method = 'POST';
-        $request->data = $data;
+        $request->data = json_encode($data);
         if ($_SERVER['HTTP_REFERER']) {
             $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
         }
@@ -31,7 +31,7 @@ class SendStatisticDataCron
         }
         $request->send($statisticUrl);
         $response = $request->response;
-        $success = json_decode($response)['success'];
+        $success = json_decode($response, true)['success'];
         if ($success) {
             $db = Database::getInstance();
             if (count($this->offerStatisticIds) > 0) {
@@ -41,7 +41,7 @@ class SendStatisticDataCron
             }
             if (count($this->showcaseStatisticIds) > 0) {
                 $showcaseStatisticIdString = '(' . implode(',', $this->showcaseStatisticIds) . ')';
-                $db->prepare('UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN ' . $offerStatisticIdString)
+                $db->prepare('UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN ' . $showcaseStatisticIdString)
                     ->execute();
             }
         }
@@ -72,7 +72,7 @@ class SendStatisticDataCron
                 $this->offerStatisticIds[] = $statisticEntry['id'];
             }
         }
-        if ($showcaseStatistic && $dataCtr < self::MAX_TRANSFER_DATA) {
+        if ($showcaseStatistic && ($dataCtr < self::MAX_TRANSFER_DATA)) {
             foreach ($showcaseStatistic as $statisticEntry) {
                 $datum = [
                     'proxyKey' => 'showcaseStatistic_' . $statisticEntry['id'],

@@ -21,7 +21,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'image', 'logo', 'previewimage', 'description', 'meta'];
+    const TAG_PAYLOAD = ['name', 'image', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     //ToDO -> Core
     private function isBinary($str)
@@ -150,6 +150,17 @@ class ShowcaseInsertTag
                         }
 
                         break;
+                    case 'canonical':
+                        $currentUrl = $_SERVER['REQUEST_URI'];
+                        // remove query string, if it exists
+                        if (($pos = strpos($currentUrl, '?')) !== false) {
+                            $currentUrl = substr($currentUrl, 0, $pos);
+                        }
+
+                        $currentUrl = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $currentUrl;
+
+
+                        return '<link rel="canonical" href="'.$currentUrl.'" />';
                     default:
                         return false;
                 }

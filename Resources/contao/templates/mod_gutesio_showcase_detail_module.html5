@@ -91,13 +91,13 @@
 
                 ?>
                 <nav class="nav flex-column">
-                    <a href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                    <a href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-                    <a href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                    <a href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>
 

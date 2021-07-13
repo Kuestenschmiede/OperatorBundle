@@ -49,7 +49,13 @@ class LoadLayersListener
         $alias = $_SERVER['HTTP_REFERER'];
         $strC = substr_count($alias, '/');
         $arrUrl = explode('/', $alias);
-        $alias = explode('.', $arrUrl[$strC])[0];
+
+        if (strpos($arrUrl[$strC], ".html")) {
+            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], ".html"));
+        }
+        else {
+            $alias = $arrUrl[$strC];
+        }
 
         if (C4GUtils::isValidGUID($alias)) {
             $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')

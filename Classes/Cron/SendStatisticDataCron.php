@@ -1,29 +1,28 @@
 <?php
 
-
 namespace gutesio\OperatorBundle\Classes\Cron;
 
-
 use Contao\Database;
-use Contao\System;
 
 class SendStatisticDataCron
 {
     private $offerStatisticIds = [];
-    
+
     private $showcaseStatisticIds = [];
-    
+
     const MAX_TRANSFER_DATA = 500;
-    
+
     public function onHourly()
     {
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
         $statisticUrl = rtrim($objSettings->con4gisIoUrl, '/') . '/saveStats.php';
         $statisticUrl .= '?key=' . $objSettings->con4gisIoKey;
-        $data = $this->getStatisticData();
+        $data = [];
+        $data['data'] = $this->getStatisticData();
+        $data['domain'] = $_SERVER['SERVER_NAME'];
         $request = new \Contao\Request();
-        $request->method = "POST";
-        $request->data = $data;
+        $request->method = 'POST';
+        $request->data = json_encode($data);
         if ($_SERVER['HTTP_REFERER']) {
             $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
         }
@@ -32,54 +31,40 @@ class SendStatisticDataCron
         }
         $request->send($statisticUrl);
         $response = $request->response;
-        $success = json_decode($response)['success'];
+        $success = json_decode($response, true)['success'];
         if ($success) {
             $db = Database::getInstance();
             if (count($this->offerStatisticIds) > 0) {
-                $offerStatisticIdString = "(".implode(",", $this->offerStatisticIds).")";
-                $db->prepare("UPDATE tl_gutesio_offer_statistic SET `transferred` = 1 WHERE `id` IN " . $offerStatisticIdString)
+                $offerStatisticIdString = '(' . implode(',', $this->offerStatisticIds) . ')';
+                $db->prepare('UPDATE tl_gutesio_offer_statistic SET `transferred` = 1 WHERE `id` IN ' . $offerStatisticIdString)
                     ->execute();
-                
             }
             if (count($this->showcaseStatisticIds) > 0) {
-                $showcaseStatisticIdString = "(".implode(",", $this->showcaseStatisticIds) .")";
-                $db->prepare("UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN " . $offerStatisticIdString)
+                $showcaseStatisticIdString = '(' . implode(',', $this->showcaseStatisticIds) . ')';
+                $db->prepare('UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN ' . $showcaseStatisticIdString)
                     ->execute();
             }
         }
     }
-    
+
     private function getStatisticData()
     {
         $db = Database::getInstance();
-    
-//        $installedPackages = System::getContainer()->getParameter('kernel.packages');
-//        $operatorVersion = $installedPackages['gutesio/operator'];
-//        $dataModelVersion = $installedPackages['gutesio/data-model'];
-    
-        $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0')
-            ->execute()->fetchAllAssoc();
-        $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0')
-            ->execute()->fetchAllAssoc();
-    
-//        $proxyData = [
-//            [
-//                'proxyKey' => 'operatorVersion',
-//                'proxyData' => $operatorVersion,
-//            ],
-//            [
-//                'proxyKey' => 'dataModelVersion',
-//                'proxyData' => $dataModelVersion,
-//            ],
-//        ];
-    
+
+        $today = strtotime("today midnight");
+        $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0 AND `date` <= ?')
+            ->execute($today)->fetchAllAssoc();
+        $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0 AND `date` <= ?')
+            ->execute($today)->fetchAllAssoc();
+
         $dataCtr = 0;
         if ($offerStatistic) {
             foreach ($offerStatistic as $statisticEntry) {
-                $proxyData[] = [
+                $datum = [
                     'proxyKey' => 'offerStatistic_' . $statisticEntry['id'],
                     'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['offerId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
+                $proxyData[$datum['proxyKey']] = $datum['proxyData'];
                 $dataCtr++;
                 if ($dataCtr >= self::MAX_TRANSFER_DATA) {
                     break;
@@ -87,12 +72,13 @@ class SendStatisticDataCron
                 $this->offerStatisticIds[] = $statisticEntry['id'];
             }
         }
-        if ($showcaseStatistic && $dataCtr < self::MAX_TRANSFER_DATA) {
+        if ($showcaseStatistic && ($dataCtr < self::MAX_TRANSFER_DATA)) {
             foreach ($showcaseStatistic as $statisticEntry) {
-                $proxyData[] = [
+                $datum = [
                     'proxyKey' => 'showcaseStatistic_' . $statisticEntry['id'],
-                    'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['offerId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
+                    'proxyData' => $statisticEntry['uuid'] . ',' . $statisticEntry['date'] . ',' . $statisticEntry['showcaseId'] . ',' . $statisticEntry['visits'] . ',' . $statisticEntry['ownerId'],
                 ];
+                $proxyData[$datum['proxyKey']] = $datum['proxyData'];
                 $dataCtr++;
                 if ($dataCtr >= self::MAX_TRANSFER_DATA) {
                     break;
@@ -100,7 +86,7 @@ class SendStatisticDataCron
                 $this->showcaseStatisticIds[] = $statisticEntry['id'];
             }
         }
-    
+
         return $proxyData;
     }
 }

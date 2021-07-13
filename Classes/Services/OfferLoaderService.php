@@ -486,7 +486,9 @@ class OfferLoaderService
     public function getDetailData($alias)
     {
         $dataset = $this->getSingleDataset($alias, true);
-        $this->visitCounter->countOfferVisit($dataset['uuid'], $dataset['memberId']);
+        if ($dataset) {
+            $this->visitCounter->countOfferVisit($dataset['uuid'], $dataset['memberId']);
+        }
 
         return $dataset;
     }

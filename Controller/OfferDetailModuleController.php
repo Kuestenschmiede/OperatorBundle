@@ -112,34 +112,38 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
-            $objPage->pageTitle = $data['name'];
-            $conf = $this->getDetailFrontendConfiguration($data, $request);
-            $otherChildData = $this->getChildTileData($data, $request);
-            if (count($otherChildData) > 0) {
-                $conf->addTileList(
-                    $this->getChildTileList(),
-                    $this->getChildTileFields(),
-                    $otherChildData
-                );
-            }
-            $conf->setLanguage($objPage->language);
-            if (!empty($data)) {
+            if ($data) {
+                $objPage->pageTitle = $data['name'];
+                $conf = $this->getDetailFrontendConfiguration($data, $request);
+                $otherChildData = $this->getChildTileData($data, $request);
+                if (count($otherChildData) > 0) {
+                    $conf->addTileList(
+                        $this->getChildTileList(),
+                        $this->getChildTileFields(),
+                        $otherChildData
+                    );
+                }
+                $conf->setLanguage($objPage->language);
+                if (!empty($data)) {
+                    if ($this->model->gutesio_data_render_searchHtml) {
+                        $sc = new SearchConfiguration();
+                        $sc->addData($data, ['name', 'description', 'displayType', 'extendedSearchTerms']);
+                    }
+                } else {
+                    throw new RedirectResponseException($pageUrl);
+                }
+                $template->entrypoint = 'entrypoint_' . $this->model->id;
+                $strConf = json_encode($conf);
+                $error = json_last_error_msg();
+                if ($error && (strtoupper($error) !== "NO ERROR")) {
+                    C4gLogModel::addLogEntry("operator", $error);
+                }
+                $template->configuration = $strConf;
                 if ($this->model->gutesio_data_render_searchHtml) {
-                    $sc = new SearchConfiguration();
-                    $sc->addData($data, ['name', 'description', 'displayType', 'extendedSearchTerms']);
+                    $template->searchHTML = $sc->getHTML();
                 }
             } else {
                 throw new RedirectResponseException($pageUrl);
-            }
-            $template->entrypoint = 'entrypoint_' . $this->model->id;
-            $strConf = json_encode($conf);
-            $error = json_last_error_msg();
-            if ($error && (strtoupper($error) !== "NO ERROR")) {
-                C4gLogModel::addLogEntry("operator", $error);
-            }
-            $template->configuration = $strConf;
-            if ($this->model->gutesio_data_render_searchHtml) {
-                $template->searchHTML = $sc->getHTML();
             }
         } else {
             throw new RedirectResponseException($pageUrl);

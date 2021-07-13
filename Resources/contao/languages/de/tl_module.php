@@ -36,6 +36,8 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_tags'] = ['Tags', 'Nur Schaufenst
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_tag_filter'] = ['Tag-Filter', 'Aktiviert die Tag-Auswahl über dieser Schaufensterliste.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_tag_filter_selection'] = ['Tag-Auswahl', 'Bestimmt die Tags, die im Tag-Filter zur Verfügung stehen.'];
 
+$GLOBALS['TL_LANG']['tl_module']['gutesio_enable_type_filter'] = ['Kategorie-Filter', 'Aktiviert die Kategorie-Auswahl über dieser Schaufensterliste.'];
+
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_label'] = ['Label des Suchfeldes', 'Das Label des Suchfeldes.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter'] = ['Angebotsfilter', 'Wählen Sie aus, welche Filter über der Liste zur Verfügung stehen sollen.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_placeholder'] = ['Platzhalter des Suchfeldes', 'Der Platzhalter des Scuhfeldes.'];

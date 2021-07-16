@@ -75,6 +75,15 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Abholzeitpu
 $GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Anmerkungen', ''];
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterte Suche';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['modal_button_label'] = 'Click and Pay';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['confirm_button_text'] = 'jetzt bestellen';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['close_button_text'] = 'schließen';
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['email'] = ['Ihre E-Mail-Adresse für Rückfragen', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['name'] = ['Name', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['credit'] = ['Guthaben', ''];
+$GLOBALS['TL_LANG'][$strName]['frontend']['cp_form']['notes'] = ['Anmerkungen', ''];
+
+$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Filter öffnen';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Standard";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_asc'] = "Preis aufsteigend";

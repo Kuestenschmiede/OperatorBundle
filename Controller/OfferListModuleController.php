@@ -18,7 +18,6 @@ use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\DateRangeField;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\MultiCheckboxWithImageLabelFormField;
-use con4gis\FrameworkBundle\Classes\FormFields\NumberRangeFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RadioGroupFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RequestTokenFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\SelectFormField;
@@ -51,7 +50,6 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildVoucherModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -69,7 +67,6 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     protected $tileList = null;
     
     const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
-    const CP_FORM_SUBMIT_URL = '/showcase_child_cp_form_submit.php';
     const COOKIE_WISHLIST = "clientUuid";
 
     /**
@@ -113,7 +110,6 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
-        ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/slider.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");
@@ -306,90 +302,6 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setMaxLength(10000);
         $formFields[] = $field->getConfiguration();
 
-
-        return new JsonResponse([
-            'formFields' => $formFields
-        ]);
-    }
-
-    /**
-     * @Route(
-     *     "/gutesio/operator/showcase_child_cp_form/{lang}/{alias}",
-     *     name="showcase_child_cp_form",
-     *     methods={"GET"}
-     *     )
-     * @param Request $request
-     * @param string $lang
-     * @param string $alias
-     * @return JsonResponse
-     */
-    public function getClickPayForm(Request $request, string $lang, string $alias): JsonResponse
-    {
-        System::loadLanguageFile('offer_list', $lang);
-        $formFields = [];
-
-        $comkey = C4GUtils::getKey(
-            C4gSettingsModel::findSettings(),
-            10
-        );
-
-        $uuid = $alias;
-        if (C4GUtils::startsWith($uuid, '{') !== true) {
-            $uuid = '{' . $uuid;
-        }
-        if (C4GUtils::endsWith($uuid, '}') !== true) {
-            $uuid .= '}';
-        }
-
-        $childVoucherModel = GutesioDataChildVoucherModel::findByChildId($uuid);
-
-        $field = new HiddenFormField();
-        $field->setName('uuid');
-        $field->setValue($uuid);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new HiddenFormField();
-        $field->setName('key');
-        $field->setValue((string) $comkey);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new HiddenFormField();
-        $field->setName('lang');
-        $field->setValue($lang);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextFormField();
-        $field->setName('email');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['email'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['email'][1]);
-        $field->setRequired();
-        $field->setPattern(RegularExpression::EMAIL);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextFormField();
-        $field->setName('name');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['name'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['name'][1]);
-        $field->setRequired();
-        $formFields[] = $field->getConfiguration();
-
-        $field = new NumberRangeFormField();
-        $field->setName('credit');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['credit'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['credit'][1]);
-        $field->setRequired();
-        $field->setMin((int) $childVoucherModel->minCredit);
-        $field->setValue($childVoucherModel->minCredit);
-        $field->setMax((int) $childVoucherModel->maxCredit);
-        $field->setFormat('%s€');
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextAreaFormField();
-        $field->setName('notes');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['notes'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['notes'][1]);
-        $field->setMaxLength(10000);
-        $formFields[] = $field->getConfiguration();
 
         return new JsonResponse([
             'formFields' => $formFields
@@ -712,28 +624,6 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             'price',
             'beginDate',
             'beginTime',
-        ]);
-        $fields[] = $field;
-
-        $field = new ModalButtonTileField();
-        $field->setName('cp');
-        $field->setWrapperClass("c4g-list-element__clickpay-wrapper");
-        $field->setClass("c4g-list-element__clickpay-link");
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cp_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cp_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CP_FORM_SUBMIT_URL);
-//        $field->setSubmitUrl('https://gutes.localhost/gutesio/main/showcase_child_cp_form_submit');
-//        $field->setCondition('clickpay', '1');
-//        $field->setCondition('type', 'voucher');
-        $field->setInnerFields([
-            'image',
-            'name',
-            'typeName',
-            'minCredit',
-            'maxCredit'
         ]);
         $fields[] = $field;
     

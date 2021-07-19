@@ -1,6 +1,6 @@
 {{showcase::meta}}
 
-<?php if ($this->loadKlaro):?>
+<?php if ($this->loadKlaro): ?>
     <!-- make sure the config gets loaded before Klaro -->
     <script defer type="text/javascript" src="/bundles/gutesiooperator/dist/js/klaro-config.js"></script>
     <script defer type="text/javascript" src="https://cdn.kiprotect.com/klaro/v0.7.18/klaro.js"></script>
@@ -54,7 +54,6 @@
     </div>
 </div>
 
-
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
     <script>
         window.frameworkData = window.frameworkData || [];
@@ -63,11 +62,90 @@
     <div style="display: none">
         <?php echo $this->searchHTML; ?>
     </div>
+
 </div>
 
-<div class="c4g-container" id="showcase-imprint">
-    <div class="c4g-row">
-<!--        <?php echo json_encode($this->imprintData); ?>-->
+<div id="showcase-imprint" class="detail-view__imprint-container">
+    <div class="detail-view__imprint-row">
+        <?php
+        //        dump($this->imprintData);
+
+        $addressName = $this->imprintData["addressName"];
+        $addressStreet = $this->imprintData["addressStreet"];
+        $addressStreetNumber = $this->imprintData["addressStreetNumber"];
+        $addressZipcode = $this->imprintData["addressZipcode"];
+        $addressCity = $this->imprintData["addressCity"];
+        $addressCountry = $this->imprintData["addressCountry"];
+        $owner = $this->imprint["owner"];
+        $contactEmail = $this->imprint["contactEmail"];
+        $contactPhone = $this->imprint["contactPhone"];
+        $contactFax = $this->imprint["contactFax"];
+        $tradeID = $this->imprint["tradeID"];
+        $registryCourt = $this->imprint["registryCourt"];
+        $registerNumber = $this->imprint["registerNumber"];
+        $responsibleName = $this->imprint["responsibleName 1"];
+        $responsibleStreet = $this->imprint["responsibleStreet"];
+        $responsibleStreetNumber = $this->imprint["responsibleStreetNumber"];
+        $responsibleZipcode = $this->imprint["responsibleZipcode"];
+        $responsibleCity = $this->imprint["responsibleCity"];
+
+        // custom strings
+        $addressStreetAll = $addressStreet . " " . $addressStreetNumber;
+        $addressCityAll = $addressZipcode . " " . $addressCity;
+        $responsibleStreetAll = $responsibleStreet . " " . $responsibleStreetNumber;
+        $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
+
+        ?>
+
+        <div class="detail-view__imprint-col">
+
+            <div class="detail-view__imprint-inner">
+
+                <h3 class="mt-4 mb-4">Schaufenster Impressum</h3>
+
+                <p>
+                    <strong><?= $addressName ?></strong>
+                    <br><?= $addressStreetAll ?>
+                    <br><?= $addressCityAll ?>
+                    <br><?= $addressCountry ?>
+                </p>
+
+                <p>
+                    Inhaber: <?= $owner ?>
+                </p>
+
+                <p>
+                    E-Mail: <?= $contactEmail ?>
+                    Tel.: <?= $contactPhone ?>
+                </p>
+
+                <p>
+                    U.-St.-Nr.: <?= $tradeID ?>
+                </p>
+
+
+                <p>
+                    <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
+                    <?= $responsibleName ?>
+                    <br><?= $responsibleStreetAll ?>
+                    <br><?= $responsibleCityAll ?>
+                </p>
+
+                <p>
+                    <strong>Das gutes.io Schaufenster wird entwickelt und bereitgestellt durch:</strong>
+                    <br>Küstenschmiede GmbH
+                    <br>Software & Design
+                    <br>Alter Markt 10
+                    <br>26441 Jever
+                    <br>Deutschland
+                </p>
+
+                <p>
+                    E-Mail: ahoi@kuestenschmiede.de
+                    <br>Telefon: +49 4461 8 999 777
+                </p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -97,13 +175,17 @@
 
                 ?>
                 <nav class="nav flex-column">
-                    <a rel="noopener" href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareFacebookUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                    <a rel="noopener" href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareTwitterUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                    <a rel="noopener" href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareEmailUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>
 

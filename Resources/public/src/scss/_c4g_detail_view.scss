@@ -495,6 +495,22 @@
     }
   }
 
+  //  start imprint container
+
+  &__imprint-container {
+    @include make-container();
+    @extend .container;
+  }
+
+  &__imprint-row {
+    @include make-row();
+  }
+
+  &__imprint-col {
+    @include make-col-ready();
+    @include make-col(12);
+  }
+
 }
 
 .c4g-tile {

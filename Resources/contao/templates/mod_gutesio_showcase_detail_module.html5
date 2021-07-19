@@ -65,6 +65,12 @@
     </div>
 </div>
 
+<div class="c4g-container" id="showcase-imprint">
+    <div class="c4g-row">
+<!--        <?php echo json_encode($this->imprintData); ?>-->
+    </div>
+</div>
+
 <!-- Modal Shade Detail Page-->
 <div class="modal fade share-modal" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">

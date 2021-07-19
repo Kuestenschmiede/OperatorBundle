@@ -136,6 +136,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     );
                     $detailPage->addAdditionalLink($link);
                 }
+                if ($detailData['imprintData']) {
+                    $link = new DetailAnchorMenuLink(
+                        $GLOBALS['TL_LANG']["operator_showcase_list"]['imprint'],
+                        "#showcase-imprint"
+                    );
+                    $detailPage->addAdditionalLink($link);
+                }
                 $conf->addDetailPage($detailPage, $this->getDetailFields($detailData), $detailData);
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
                 $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
@@ -169,6 +176,10 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         
         if ($this->model->gutesio_load_klaro_consent) {
             $template->loadKlaro = true;
+        }
+        
+        if ($detailData['imprintData']) {
+            $template->imprintData = $detailData['imprintData'];
         }
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;

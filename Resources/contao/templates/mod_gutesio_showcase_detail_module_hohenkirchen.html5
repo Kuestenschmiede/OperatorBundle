@@ -1,47 +1,27 @@
 {{showcase::meta}}
 
-<?php if ($this->loadKlaro): ?>
-    <!-- make sure the config gets loaded before Klaro -->
-    <script defer type="text/javascript" src="/bundles/gutesiooperator/dist/js/klaro-config.js"></script>
-    <script defer type="text/javascript" src="https://cdn.kiprotect.com/klaro/v0.7.18/klaro.js"></script>
-<?php endif ?>
-
-<?php if ($imageUuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
-
-    <?php
+<?php
+if ($imageUuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}")) {
     $image = \Contao\FilesModel::findByUuid($imageUuid);
-    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
-    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
+//    $imageXL = $this->getImage($image->path, 1920, 1200, 'box');
+    $imageXL = $this->getImage($image->path, null, null, '_example');
+//    $imageXL = $this->getImage($image->path, 1920, 1200, 'crop');
+    $imageXS = $this->getImage($image->path, $_GET['width'], null, 'proportional');
+}
+?>
 
-
-    /**
-     * For Contao Users:
-     * You can use srcset image url by adding the id of image-size configured in contao backend
-     * $imageResized = $this->getImage($image->path, null, null, 1);
-     */
-    ?>
-
-    <style>
-        @media screen and (max-width: 900px) {
-            .detail-hero2 {
-                background-image: url("<?= $imageXS?>");
-            }
-        }
-
-        @media screen and (min-width: 901px) {
-            .detail-hero2 {
-                background-image: url("<?= $imageXL?>");
-            }
-        }
-    </style>
-<?php endif; ?>
+<style>
+    .detail-hero2 {
+        background-image: url("<?= $imageXL;?>");
+    }
+</style>
 
 <div class="detail-hero2">
 
     <div class="detail-hero2__blur-layer"></div>
     <!--    Image -->
     <div class="detail-hero2__image-wrapper">
-        <img src="<?= $imageXS ?>" alt="">
+        <img src="<?= $imageXL ?>" alt="">
     </div>
 
     <!--    Filter / Overlay -->
@@ -90,7 +70,7 @@
 
 
                 <?php
-                $shareEnvUrl = \Contao\Controller::replaceInsertTags("{{env::path}}");
+                $shareEnvUrl = \Contao\Controller::replaceInsertTags("{{env::url}}");
                 $shareEnvRequest = \Contao\Controller::replaceInsertTags("{{env::request}}");
 
                 $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
@@ -100,17 +80,13 @@
 
                 ?>
                 <nav class="nav flex-column">
-                    <a rel="noopener" href="<?= $shareFacebookUrl ?>"
-                       class="nav-link btn btn-block btn-light share-modal__link"
+                    <a href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                    <a rel="noopener" href="<?= $shareTwitterUrl ?>"
-                       class="nav-link btn btn-block btn-light share-modal__link"
+                    <a href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
-                       class="nav-link btn btn-block btn-light share-modal__link"
+                    <a href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                    <a rel="noopener" href="<?= $shareEmailUrl ?>"
-                       class="nav-link btn btn-block btn-light share-modal__link"
+                    <a href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>
 

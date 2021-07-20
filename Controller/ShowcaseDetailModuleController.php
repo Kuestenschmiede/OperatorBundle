@@ -45,6 +45,7 @@ use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
@@ -56,8 +57,10 @@ use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
@@ -122,6 +125,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
 
         if ($this->alias !== '') {
+            MapsResourceLoader::loadResources(["router" => true], ['router_enable' => true]);
             $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
             $detailData = $this->getDetailData($request);
             $objPage->pageTitle = $detailData['name'];
@@ -178,11 +182,17 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 
         return $template->getResponse();
     }
-
-    protected function getDetailPage()
+    
+    /**
+     * @Route("/gutesio/operator/showcase_detail_get_map_data", name="showcase_detail_get_map_data", methods={"GET"})
+     * @param Request $request
+     * @param ContaoFramework $framework
+     * @param $offset
+     * @return JsonResponse
+     */
+    public function getMapData(Request $request, ContaoFramework $framework)
     {
-        $page = new DetailPage();
-        $page->setHeadline($this->languageRefs['details']['headline']);
+        $framework->initialize();
         $settings = GutesioOperatorSettingsModel::findSettings();
         $mapData = MapDataConfigurator::prepareMapData(
             ContentModel::findById($settings->detail_map),
@@ -190,11 +200,17 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             ["profile" => $settings->detail_profile],
             false
         );
-        MapsResourceLoader::loadResources(["router" => true], $mapData);
-
+    
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
-        $page->setMapData($mapData);
+        
+        return new JsonResponse($mapData);
+    }
+
+    protected function getDetailPage()
+    {
+        $page = new DetailPage();
+        $page->setHeadline($this->languageRefs['details']['headline']);
         $page->setSections($this->getSections());
         $page->setShowAnchorMenu(true);
         $page->setMenuSectionIndex(3);
@@ -316,6 +332,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName('mapLocation');
         $field->setGeoxField('geox');
         $field->setGeoyField('geoy');
+        $field->setAsyncMapData(true);
+        $field->setAsyncMapDataUrl("/gutesio/operator/showcase_detail_get_map_data");
         $fields[] = $field;
 
         $field = new DetailLinkField();

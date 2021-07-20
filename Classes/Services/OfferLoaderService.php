@@ -588,12 +588,15 @@ class OfferLoaderService
                 foreach ($images as $image) {
                     $model = FilesModel::findByUuid(StringUtil::deserialize($image));
                     if ($model !== null) {
+                        $size = getimagesize($model->path);
                         $rows[$key]['imageGallery_' . $idx] = [
                             'src' => $model->path,
                             'path' => $model->path,
                             'uuid' => StringUtil::binToUuid($model->uuid),
                             'alt' => $model->meta && unserialize($model->meta)['de'] ? unserialize($model->meta)['de']['alt'] : $model->name,
                             'name' => $model->name,
+                            'width' => $size[0],
+                            'height' => $size[1],
                             'importantPart' => [
                                 'x' => $model->importantPartX,
                                 'y' => $model->importantPartY,

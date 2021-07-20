@@ -7595,8 +7595,8 @@ html {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   margin: 0 5px 5px 0;
   display: flex;
   align-items: center;

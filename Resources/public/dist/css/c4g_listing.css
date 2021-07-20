@@ -3547,14 +3547,22 @@ html {
 .c4g-modal-content .c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form input {
   font-size: 1rem
 }
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper .form-view__period {
+  display: flex;
+  flex-direction: column
+}
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .form-view__period > label {
   display: block
 }
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .form-view__period small {
   font-size: .8rem
 }
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper .form-view__period .c4g-field-description {
+  font-size: .8rem
+}
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .form-view__ascend-descend {
-  display: flex
+  display: flex;
+  flex-direction: column
 }
 .c4g-listfilter-outer.react-c4g-listfilter-opened {
   position: fixed;
@@ -4044,8 +4052,9 @@ html {
 .react-c4g-listfilter-opened .form-view__searchinput > .form-group {
   margin-bottom: 0
 }
-.react-c4g-listfilter-opened .form-view__sorting > span,
-.react-c4g-listfilter-opened .form-view__tag-filter > span {
+.react-c4g-listfilter-opened .form-view__ascend-descend > .custom-label,
+.react-c4g-listfilter-opened .form-view__sorting > .custom-label,
+.react-c4g-listfilter-opened .form-view__tag-filter > .custom-label {
   display: block;
   width: 100%;
   margin-bottom: .5rem

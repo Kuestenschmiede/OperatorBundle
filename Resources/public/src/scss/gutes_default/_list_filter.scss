@@ -106,7 +106,6 @@
   .form-view__type-filter,
   .form-view__period {
     display: none;
-
   }
 
 
@@ -162,8 +161,9 @@
   }
 
   .form-view__tag-filter,
-  .form-view__sorting {
-    > span {
+  .form-view__sorting,
+  .form-view__ascend-descend {
+    > .custom-label {
       display: block;
       width: 100%;
       margin-bottom: .5rem;
@@ -171,7 +171,7 @@
   }
 
   .c4g-panel-buttons {
-    border-bottom-width: 0!important;
+    border-bottom-width: 0 !important;
   }
 
   .c4g-form-field {

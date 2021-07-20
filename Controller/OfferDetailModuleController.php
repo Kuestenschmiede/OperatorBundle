@@ -855,6 +855,9 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             }
             
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            if ($row['foreignLink']) {
+                $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
+            }
             $childRows[$key] = $row;
         }
         

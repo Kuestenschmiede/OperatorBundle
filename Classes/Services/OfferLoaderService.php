@@ -129,6 +129,12 @@ class OfferLoaderService
         // data cleaning
         foreach ($results as $key => $result) {
             $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
+            if ($result['foreignLink']) {
+                // search for http to avoid prepending https to insecure links
+                if (strpos($result['foreignLink'], "http") === false) {
+                    $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
+                }
+            }
         }
 
         return $results;

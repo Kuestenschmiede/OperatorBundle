@@ -779,6 +779,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             }
 
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            if ($row['foreignLink']) {
+                $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
+            }
             $childRows[$key] = $row;
         }
 

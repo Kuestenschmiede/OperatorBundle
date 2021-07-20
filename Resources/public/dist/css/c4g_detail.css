@@ -7460,6 +7460,11 @@ html {
   margin-bottom: 1rem;
   text-align: center
 }
+@media (min-width:768px) {
+  .detail-hero2__title {
+    font-size: 3rem
+  }
+}
 .detail-hero2__logo {
   max-width: 150px;
   width: 25vh;

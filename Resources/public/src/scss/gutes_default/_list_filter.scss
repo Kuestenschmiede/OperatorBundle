@@ -113,6 +113,12 @@
   .form-view__searchinput {
     max-width: 400px;
     width: 100%;
+
+    .c4g-form-field {
+      > label {
+        display: none;
+      }
+    }
   }
 
   .c4g-btn-filter-wrapper {
@@ -145,6 +151,32 @@
         background-position: center;
         background-repeat: no-repeat;
       }
+    }
+  }
+
+  .form-view__searchinput {
+
+    > .form-group {
+      margin-bottom: 0;
+    }
+  }
+
+  .form-view__tag-filter,
+  .form-view__sorting {
+    > span {
+      display: block;
+      width: 100%;
+      margin-bottom: .5rem;
+    }
+  }
+
+  .c4g-panel-buttons {
+    border-bottom-width: 0!important;
+  }
+
+  .c4g-form-field {
+    > label {
+      display: block;
     }
   }
 }

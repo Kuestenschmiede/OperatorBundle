@@ -4020,6 +4020,9 @@ html {
   max-width: 400px;
   width: 100%
 }
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__searchinput .c4g-form-field > label {
+  display: none
+}
 .react-c4g-listfilter-opened .c4g-listfilter-button {
   text-indent: -999999px;
   overflow: hidden;
@@ -4037,6 +4040,21 @@ html {
   height: 25px;
   background-position: center;
   background-repeat: no-repeat
+}
+.react-c4g-listfilter-opened .form-view__searchinput > .form-group {
+  margin-bottom: 0
+}
+.react-c4g-listfilter-opened .form-view__sorting > span,
+.react-c4g-listfilter-opened .form-view__tag-filter > span {
+  display: block;
+  width: 100%;
+  margin-bottom: .5rem
+}
+.react-c4g-listfilter-opened .c4g-panel-buttons {
+  border-bottom-width: 0!important
+}
+.react-c4g-listfilter-opened .c4g-form-field > label {
+  display: block
 }
 .c4g-modal-outer {
   position: fixed;

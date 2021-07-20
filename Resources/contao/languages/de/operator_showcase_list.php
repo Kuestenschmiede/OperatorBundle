@@ -69,3 +69,10 @@ $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Z - A";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['tstamp_desc'] = "Datum";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['distance'] = "Entfernung";
 
+/*
+ * Filter Labels
+ */
+$GLOBALS['TL_LANG'][$strName]['filter']['searchfilter']['label'] = "Filtern nach Suchbegriff";
+$GLOBALS['TL_LANG'][$strName]['filter']['typefilter']['label'] = "Filtern nach Kategorie";
+$GLOBALS['TL_LANG'][$strName]['filter']['tagfilter']['label'] = "Filtern nach Zusatzinformation";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['label'] = "Sortieren nach:";

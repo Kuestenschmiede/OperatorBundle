@@ -76,18 +76,18 @@
         $addressZipcode = $this->imprintData["addressZipcode"];
         $addressCity = $this->imprintData["addressCity"];
         $addressCountry = $this->imprintData["addressCountry"];
-        $owner = $this->imprint["owner"];
-        $contactEmail = $this->imprint["contactEmail"];
-        $contactPhone = $this->imprint["contactPhone"];
-        $contactFax = $this->imprint["contactFax"];
-        $tradeID = $this->imprint["tradeID"];
-        $registryCourt = $this->imprint["registryCourt"];
-        $registerNumber = $this->imprint["registerNumber"];
-        $responsibleName = $this->imprint["responsibleName 1"];
-        $responsibleStreet = $this->imprint["responsibleStreet"];
-        $responsibleStreetNumber = $this->imprint["responsibleStreetNumber"];
-        $responsibleZipcode = $this->imprint["responsibleZipcode"];
-        $responsibleCity = $this->imprint["responsibleCity"];
+        $owner = $this->imprintData["owner"];
+        $contactEmail = $this->imprintData["contactEmail"];
+        $contactPhone = $this->imprintData["contactPhone"];
+        $contactFax = $this->imprintData["contactFax"];
+        $tradeID = $this->imprintData["tradeID"];
+        $registryCourt = $this->imprintData["registryCourt"];
+        $registerNumber = $this->imprintData["registerNumber"];
+        $responsibleName = $this->imprintData["responsibleName"];
+        $responsibleStreet = $this->imprintData["responsibleStreet"];
+        $responsibleStreetNumber = $this->imprintData["responsibleStreetNumber"];
+        $responsibleZipcode = $this->imprintData["responsibleZipcode"];
+        $responsibleCity = $this->imprintData["responsibleCity"];
 
         // custom strings
         $addressStreetAll = $addressStreet . " " . $addressStreetNumber;

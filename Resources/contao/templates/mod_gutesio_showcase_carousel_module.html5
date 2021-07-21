@@ -7,3 +7,45 @@
         <?php echo $this->searchHTML; ?>
     </div>
 </div>
+
+<script>
+    /**
+     * Owl Carousel 2
+     * You can find all api-options in the docs.
+     * Docs: https://owlcarousel2.github.io/OwlCarousel2/
+     */
+    function owl() {
+
+        if (jQuery('.owl-carousel').owlCarousel && typeof jQuery('.owl-carousel').owlCarousel === "function") {
+
+            jQuery('.owl-carousel').owlCarousel({
+                // center: true,
+                loop: true,
+                autoplay: true,
+                autoplaySpeed: 2000,
+                autoplayTimeout: 2000,
+                autoplayHoverPause: true,
+                margin: 15,
+                // stagePadding: 40,
+                responsiveClass: true,
+                nav: true,
+                autoHeight: false,
+                autoHeightClass: 'owl-height',
+                responsive: {
+                    0: {
+                        items: 1,
+
+                    },
+                    600: {
+                        items: 2,
+
+                    },
+                    1000: {
+                        items: 4,
+                        loop: true
+                    }
+                }
+            });
+        }
+    }
+</script>

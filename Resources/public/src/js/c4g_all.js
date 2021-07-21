@@ -341,39 +341,5 @@ function getBadgeValue() {
     return valBadge;
 }
 
-// owl carousel
-function owl() {
 
-    if (jQuery('.owl-carousel').owlCarousel && typeof jQuery('.owl-carousel').owlCarousel === "function") {
-
-        jQuery('.owl-carousel').owlCarousel({
-            // center: true,
-            loop: true,
-            autoplay: false,
-            autoplaySpeed: 500,
-            autoplayTimeout: 1000,
-            autoplayHoverPause: true,
-            margin: 15,
-            // stagePadding: 40,
-            responsiveClass: true,
-            nav: true,
-            autoHeight: false,
-            autoHeightClass: 'owl-height',
-            responsive: {
-                0: {
-                    items: 1,
-
-                },
-                600: {
-                    items: 2,
-
-                },
-                1000: {
-                    items: 4,
-                    loop: false
-                }
-            }
-        });
-    }
-}
 

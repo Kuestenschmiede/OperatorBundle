@@ -7111,12 +7111,10 @@ html {
   box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
 }
 .detail-view__logos {
-  display: inline-block;
-  max-width: 110px;
-  margin-right: 1rem
+  display: inline-block
 }
-.detail-view__logos:last-child {
-  margin-right: 0
+.detail-view__logos > img {
+  max-height: 60px
 }
 .detail-view__display-type {
   position: relative;

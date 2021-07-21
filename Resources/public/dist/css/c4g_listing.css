@@ -4302,10 +4302,6 @@ html {
   padding-top: 0;
   padding-bottom: 0
 }
-.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner form.c4g-listfilter-form {
-  align-items: flex-end;
-  margin-bottom: 0
-}
 .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner small.field-description {
   display: none
 }
@@ -4320,15 +4316,15 @@ html {
 }
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form {
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: flex-start;
   grid-gap: .5rem
 }
-@media (max-width:991.98px) {
+@media (min-width:992px) {
   .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form {
-    justify-content: center;
-    flex-direction: column;
-    grid-gap: inherit
+    flex-direction: row;
+    justify-content: flex-start
   }
 }
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-form .c4g-panel-buttons,

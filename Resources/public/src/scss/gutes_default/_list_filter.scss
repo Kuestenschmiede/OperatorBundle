@@ -39,10 +39,10 @@
       padding-bottom: 0;
     }
 
-    form.c4g-listfilter-form {
-      align-items: flex-end;
-      margin-bottom: 0;
-    }
+    //form.c4g-listfilter-form {
+    //  align-items: flex-end;
+    //  margin-bottom: 0;
+    //}
 
     small.field-description {
       display: none;
@@ -73,14 +73,24 @@
 
   .c4g-listfilter-form {
     display: flex;
+    //align-items: center;
+    //justify-content: flex-start;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: flex-start;
+
     grid-gap: .5rem;
 
-    @include media-breakpoint-down(md) {
-      justify-content: center;
-      flex-direction: column;
-      grid-gap: inherit;
+
+    //@include media-breakpoint-down(md) {
+    //  justify-content: center;
+    //  flex-direction: column;
+    //  grid-gap: inherit;
+    //}
+
+    @include media-breakpoint-up(lg) {
+      flex-direction: row;
+      justify-content: flex-start;
     }
 
     .form-view__searchinput,

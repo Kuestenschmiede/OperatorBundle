@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode;';
+    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_carousel_template;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;';
 
@@ -330,4 +330,13 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_load_klaro_consent'] = [
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
     'sql'                     => "char(1) NOT NULL default '0'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_carousel_template'] = [
+    'exclude'                 => true,
+    'default'                 => "",
+    'inputType'               => 'select',
+    'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getCarouselTemplateOptions"],
+    'eval'                    => ['includeBlankOption' => true, 'tl_class' => 'clr'],
+    'sql'                     => "VARCHAR(250) NOT NULL default ''"
 ];

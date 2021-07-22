@@ -26,6 +26,7 @@ use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\Database;
+use Contao\FrontendTemplate;
 use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\Template;
@@ -54,6 +55,9 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
+        if ($model->gutesio_carousel_template) {
+            $template = new FrontendTemplate($model->gutesio_carousel_template);
+        }
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
         $tileList = $this->getTileList();
         $fields = $this->getFields();

@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Classes\Callback;
 
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
+use Contao\Controller;
 use Contao\DataContainer;
 use Contao\Message;
 use Contao\ModuleModel;
@@ -127,5 +128,10 @@ class GutesioModuleCallback
                 Message::addInfo($message);
             }
         }
+    }
+    
+    public function getCarouselTemplateOptions()
+    {
+        return Controller::getTemplateGroup('mod_gutesio_showcase_carousel_module_');
     }
 }

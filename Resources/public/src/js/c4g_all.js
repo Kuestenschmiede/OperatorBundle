@@ -5,14 +5,19 @@ jQuery(function () {
     // ============== start - owl carousel ==============
     // if (window.owlCarousel) {
     jQuery(window).on('resize', function () {
-        owl();
+        if (owl) {
+            owl();
+        }
+
     });
 
     window.setTimeout(function () {
         jQuery(window).trigger('resize');
     }, 500);
 
-    owl();
+    if (owl) {
+        owl();
+    }
     // }
     // ============== end - owl carousel ==============
 
@@ -84,9 +89,9 @@ function reactRenderReady() {
         updateWishlistBadgeAtRefresh();
 
 
-        // if (window.owlCarousel) {
-        owl();
-        // }
+        if (window.owlCarousel) {
+            owl();
+        }
         // delete all items on global wishlist
         jQuery('.js-delete-list').on("click", deleteAllOnGlobalList);
 

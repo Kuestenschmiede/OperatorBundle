@@ -1,5 +1,5 @@
 <?php
-$carouselClass = "carousel-id-" . $this->id;
+$carouselClass = "carousel-item-" . $this->id;
 ?>
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module <?= $carouselClass ?>">
 <script>

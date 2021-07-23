@@ -21,7 +21,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'image', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'image','imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     //ToDO -> Core
     private function isBinary($str)
@@ -91,6 +91,15 @@ class ShowcaseInsertTag
                         }
 
                         return $uuid ?: ''; //Further processing in the template
+
+                    case 'imageList':
+                        $uuid = $arrShowcase['imageList'];
+                        if ($this->isBinary($uuid)) {
+                            $uuid = StringUtil::binToUuid($uuid);
+                        }
+
+                        return $uuid ?: ''; //Further processing in the template
+
                     case 'previewimage':
                         $uuid = $arrShowcase['image'];
                         if ($this->isBinary($uuid)) {

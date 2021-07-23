@@ -4,20 +4,20 @@ let reactRenderReadyDone = false;
 jQuery(function () {
     // ============== start - owl carousel ==============
     // if (window.owlCarousel) {
-    jQuery(window).on('resize', function () {
-        if (owl) {
-            owl();
-        }
-
-    });
+    // jQuery(window).on('resize', function () {
+    //     if (owl) {
+    //         owl();
+    //     }
+    //
+    // });
 
     window.setTimeout(function () {
         jQuery(window).trigger('resize');
     }, 500);
 
-    if (owl) {
-        owl();
-    }
+    // if (owl) {
+    //     owl();
+    // }
     // }
     // ============== end - owl carousel ==============
 
@@ -88,10 +88,10 @@ function reactRenderReady() {
 
         updateWishlistBadgeAtRefresh();
 
-
-        if (window.owlCarousel) {
+        if (jQuery("div").hasClass("owl-carousel")) {
             owl();
         }
+
         // delete all items on global wishlist
         jQuery('.js-delete-list').on("click", deleteAllOnGlobalList);
 

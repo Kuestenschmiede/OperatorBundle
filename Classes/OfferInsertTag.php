@@ -43,8 +43,14 @@ class OfferInsertTag
         $length = abs((int) $length);
         $firstFullstop = strpos($text, '.');
         if ($firstFullstop && $firstFullstop <= ($length - 1)) {
-            return substr($text, 0, $firstFullstop);
+            for ($i = 0, $j = strlen($text); $i < $j; $i++) {
+                if ((strstr('.',$text[$i])) && ($i <= ($length -1))) {
+                    $firstFullstop = $i;
+                }
+            }
+            return substr($text, 0, $firstFullstop+1);
         }
+
         if (strlen($text) > $length) {
             $text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
         }

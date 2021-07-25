@@ -41,6 +41,7 @@ class ShowcaseInsertTag
     //ToDO -> Core
     private function truncate($text, $length)
     {
+        $text = str_replace('><', '> <', $text);
         $text = strip_tags($text);
         $length = abs((int) $length);
         $firstFullstop = strpos($text, '.');

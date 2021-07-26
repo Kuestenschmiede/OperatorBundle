@@ -7035,6 +7035,7 @@ html {
 }
 .detail-view .imageGallery-item img {
   max-height: 500px;
+  width: auto;
   transition: ease-in-out .3s
 }
 .detail-view .imageGallery-item:hover img {

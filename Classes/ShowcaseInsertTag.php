@@ -43,6 +43,7 @@ class ShowcaseInsertTag
     {
         $text = str_replace('><', '> <', $text);
         $text = strip_tags($text);
+        $text = htmlspecialchars($text, ENT_QUOTES, "utf-8");
         $length = abs((int) $length);
         $firstFullstop = strpos($text, '.');
         if ($firstFullstop && $firstFullstop <= ($length - 1)) {

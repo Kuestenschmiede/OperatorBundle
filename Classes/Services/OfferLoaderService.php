@@ -65,7 +65,7 @@ class OfferLoaderService
         $limit = $this->limit;
         $tagIds = $filterData['tagIds'];
         $tagFilter = $tagIds && count($tagIds) > 0;
-        $dateFilter = $filterData['filterFrom'] && $filterData['filterUntil'];
+        $dateFilter = $filterData['filterFrom'] || $filterData['filterUntil'];
         $sortFilter = $filterData['sorting'];
         $hasFilter = $tagFilter || $sortFilter || $dateFilter;
         if ($hasFilter) {
@@ -87,7 +87,7 @@ class OfferLoaderService
         }
 
         if ($dateFilter) {
-            $results = $this->applyRangeFilter($results, $filterData['filterFrom'], $filterData['filterUntil']);
+            $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
         }
         if ($sortFilter && $sortFilter !== 'random') {
             if ($filterData['sorting'] === 'price_asc') {
@@ -1028,63 +1028,61 @@ class OfferLoaderService
                     );
                     $endDateTime = new \DateTime();
                     $endDateTime->setTimestamp($eventData['endDate']);
-
-                    if ($dateFilter) {
-                        // date filter will be applied later on
-                        $tooOld = false;
-                    } else {
-                        if ($beginDateTime->getTimestamp() < time()) {
-                            if ($eventData['recurring']) {
-                                $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
-                                $times = (int) $eventData['recurrences'];
-                                $value = (int) $repeatEach['value'];
-                                while ($times > 0) {
-                                    $times -= 1;
-                                    switch ($repeatEach['unit']) {
-                                        case 'weeks':
-                                            $beginDateTime->setDate(
-                                                $beginDateTime->format('Y'),
-                                                $beginDateTime->format('m'),
-                                                ((int) $beginDateTime->format('d')) + ($value * 7)
-                                            );
-                        
-                                            break;
-                                        case 'months':
-                                            $beginDateTime->setDate(
-                                                $beginDateTime->format('Y'),
-                                                ((int) $beginDateTime->format('m')) + $value,
-                                                $beginDateTime->format('d')
-                                            );
-                        
-                                            break;
-                                        case 'years':
-                                            $beginDateTime->setDate(
-                                                ((int) $beginDateTime->format('Y')) + $value,
-                                                $beginDateTime->format('m'),
-                                                $beginDateTime->format('d')
-                                            );
-                        
-                                            break;
-                                        default:
-                                            $beginDateTime->setDate(
-                                                $beginDateTime->format('Y'),
-                                                $beginDateTime->format('m'),
-                                                ((int) $beginDateTime->format('d')) + $value
-                                            );
-                        
-                                            break;
-                                    }
-                                    if ($beginDateTime->getTimestamp() >= time()) {
-                                        break;
-                                    } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
-                                        $tooOld = true;
                     
-                                        break;
-                                    }
-                                }
-                            } elseif (($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
-                                $tooOld = true;
+                    if ($beginDateTime->getTimestamp() < time()) {
+                        if ($eventData['recurring']) {
+                            $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
+                            $times = (int) $eventData['recurrences'];
+                            $value = (int) $repeatEach['value'];
+                            if ($times === 0) {
+                                $times = 100;
                             }
+                            while ($times > 0) {
+                                $times -= 1;
+                                switch ($repeatEach['unit']) {
+                                    case 'weeks':
+                                        $beginDateTime->setDate(
+                                            $beginDateTime->format('Y'),
+                                            $beginDateTime->format('m'),
+                                            ((int) $beginDateTime->format('d')) + ($value * 7)
+                                        );
+                        
+                                        break;
+                                    case 'months':
+                                        $beginDateTime->setDate(
+                                            $beginDateTime->format('Y'),
+                                            ((int) $beginDateTime->format('m')) + $value,
+                                            $beginDateTime->format('d')
+                                        );
+                        
+                                        break;
+                                    case 'years':
+                                        $beginDateTime->setDate(
+                                            ((int) $beginDateTime->format('Y')) + $value,
+                                            $beginDateTime->format('m'),
+                                            $beginDateTime->format('d')
+                                        );
+                        
+                                        break;
+                                    default:
+                                        $beginDateTime->setDate(
+                                            $beginDateTime->format('Y'),
+                                            $beginDateTime->format('m'),
+                                            ((int) $beginDateTime->format('d')) + $value
+                                        );
+                        
+                                        break;
+                                }
+                                if ($beginDateTime->getTimestamp() >= time()) {
+                                    break;
+                                } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
+                                    $tooOld = true;
+                    
+                                    break;
+                                }
+                            }
+                        } elseif (($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
+                            $tooOld = true;
                         }
                     }
                     
@@ -1144,7 +1142,10 @@ class OfferLoaderService
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);
                     }
-
+                    if ($dateFilter) {
+                        // date filter will be applied later on
+                        $tooOld = false;
+                    }
                     break;
                 case 'job':
                     $jobData = $database->prepare('SELECT beginDate AS beginDate ' .
@@ -1249,12 +1250,17 @@ class OfferLoaderService
                     // add one day so events are displayed on the day they expire
                     $beginTstamp = strtotime($datum['beginDate']);
                     $endTstamp = strtotime($datum['endDate']);
-                    $fromDt = (new \DateTime())->setTimestamp($filterFrom);
-                    $untilDt = (new \DateTime())->setTimestamp($filterUntil + 86400);
-                    $filterFrom = $fromDt->setTime(0, 0, 0)->getTimestamp();
-                    $filterUntil = $untilDt->setTime(23, 59, 59)->getTimestamp();
-                    $beginDateMatchesFilter = $beginTstamp >= $filterFrom && $beginTstamp <= $filterUntil;
-                    $endDateMatchesFilter = !$endTstamp || $endTstamp <= $filterUntil;
+                    if ($filterFrom !== 0) {
+                        $fromDt = (new \DateTime())->setTimestamp($filterFrom);
+                        $filterFrom = $fromDt->setTime(0, 0, 0)->getTimestamp();
+                    }
+                    if ($filterUntil !== 0) {
+                        $untilDt = (new \DateTime())->setTimestamp($filterUntil + 86400);
+                        $filterUntil = $untilDt->setTime(23, 59, 59)->getTimestamp();
+                    }
+                    $beginDateMatchesFilter = ($filterFrom === 0 || ($beginTstamp >= $filterFrom))
+                        && ($filterUntil === 0 || ($beginTstamp <= $filterUntil));
+                    $endDateMatchesFilter = !$endTstamp || ($filterUntil === 0) || ($endTstamp <= $filterUntil);
                     if ($beginDateMatchesFilter && $endDateMatchesFilter) {
                         $result[] = $datum;
                     }

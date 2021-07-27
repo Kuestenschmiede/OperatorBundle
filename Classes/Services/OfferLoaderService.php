@@ -1137,7 +1137,11 @@ class OfferLoaderService
 
                     $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
                     if ($elementModel !== null) {
-                        $eventData['locationElementId'] = $elementModel->name;
+                        $eventData['locationElementName'] = $elementModel->name;
+                    } else {
+                        $elementId = $row['elementId'];
+                        $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
+                        $eventData['locationElementName'] = $elementModel->name;
                     }
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);

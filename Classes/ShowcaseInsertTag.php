@@ -21,7 +21,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'image', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'image','imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     //ToDO -> Core
     private function isBinary($str)
@@ -41,11 +41,18 @@ class ShowcaseInsertTag
     //ToDO -> Core
     private function truncate($text, $length)
     {
+        $text = str_replace('><', '> <', $text);
         $text = strip_tags($text);
+        $text = htmlspecialchars($text, ENT_QUOTES, "utf-8");
         $length = abs((int) $length);
         $firstFullstop = strpos($text, '.');
         if ($firstFullstop && $firstFullstop <= ($length - 1)) {
-            return substr($text, 0, $firstFullstop);
+            for ($i = 0, $j = strlen($text); $i < $j; $i++) {
+                if ((strstr('.',$text[$i])) && ($i <= ($length -1))) {
+                    $firstFullstop = $i;
+                }
+            }
+            return substr($text, 0, $firstFullstop+1);
         }
         if (strlen($text) > $length) {
             $text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
@@ -91,6 +98,15 @@ class ShowcaseInsertTag
                         }
 
                         return $uuid ?: ''; //Further processing in the template
+
+                    case 'imageList':
+                        $uuid = $arrShowcase['imageList'];
+                        if ($this->isBinary($uuid)) {
+                            $uuid = StringUtil::binToUuid($uuid);
+                        }
+
+                        return $uuid ?: ''; //Further processing in the template
+
                     case 'previewimage':
                         $uuid = $arrShowcase['image'];
                         if ($this->isBinary($uuid)) {

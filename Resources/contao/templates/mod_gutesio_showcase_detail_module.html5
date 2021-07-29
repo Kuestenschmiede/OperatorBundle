@@ -69,6 +69,17 @@
     <div class="detail-view__imprint-row">
         <?php
         //        dump($this->imprintData);
+        // $this->imprintData["companyForm"] -> Unternehmensform
+        //      freelancer-> Freiberufler
+        //      soleProprietor-> Einzelunternehmen
+        //      other-> GbR, GmbH, UG, etc.
+        //      smallBusiness-> Kleinunternehmer
+        //      society-> Verein
+        //      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
+        // $this->imprintData["fundStatement"] -> Angaben zum Kapital
+        // $this->imprintData["inspectorate"] -> Aufsichtsbehörde
+        // $this->imprintData["standeskammer"] -> Standeskammer
+        // $this->imprintData["liquidation"] -> Liquidation / Auflösung
 
         $addressName = $this->imprintData["addressName"];
         $addressStreet = $this->imprintData["addressStreet"];

@@ -65,99 +65,152 @@
 
 </div>
 
+
+<?php
+// $this->imprintData["companyForm"] -> Unternehmensform
+//      freelancer-> Freiberufler
+//      soleProprietor-> Einzelunternehmen
+//      other-> GbR, GmbH, UG, etc.
+//      smallBusiness-> Kleinunternehmer
+//      society-> Verein
+//      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
+
+$imprintData = $this->imprintData;
+
+$addressName = $imprintData["addressName"];
+$addressStreet = $imprintData["addressStreet"];
+$addressStreetNumber = $imprintData["addressStreetNumber"];
+$addressZipcode = $imprintData["addressZipcode"];
+$addressCity = $imprintData["addressCity"];
+$addressCountry = $imprintData["addressCountry"];
+
+$fundStatement = $imprintData["fundStatement"]; //Angaben zum Kapital
+$inspectorate = $imprintData["inspectorate"]; //Aufsichtsbehörde
+$standeskammer = $imprintData["standeskammer"]; //Standeskammer
+$liquidation = $imprintData["liquidation"]; //Liquidation / Auflösung
+
+$owner = $imprintData["owner"];
+$contactEmail = $imprintData["contactEmail"];
+$contactPhone = $imprintData["contactPhone"];
+$contactFax = $imprintData["contactFax"];
+$tradeID = $imprintData["tradeID"];
+$registryCourt = $imprintData["registryCourt"];
+$registerNumber = $imprintData["registerNumber"];
+$responsibleName = $imprintData["responsibleName"];
+$responsibleStreet = $imprintData["responsibleStreet"];
+$responsibleStreetNumber = $imprintData["responsibleStreetNumber"];
+$responsibleZipcode = $imprintData["responsibleZipcode"];
+$responsibleCity = $imprintData["responsibleCity"];
+
+// custom strings
+$addressStreetAll = $addressStreet . " " . $addressStreetNumber;
+$addressCityAll = $addressZipcode . " " . $addressCity;
+$responsibleStreetAll = $responsibleStreet . " " . $responsibleStreetNumber;
+$responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
+
+?>
+
+<hr>
 <div id="showcase-imprint" class="detail-view__imprint-container">
-    <div class="detail-view__imprint-row">
-        <?php
-        //        dump($this->imprintData);
-        // $this->imprintData["companyForm"] -> Unternehmensform
-        //      freelancer-> Freiberufler
-        //      soleProprietor-> Einzelunternehmen
-        //      other-> GbR, GmbH, UG, etc.
-        //      smallBusiness-> Kleinunternehmer
-        //      society-> Verein
-        //      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
-        // $this->imprintData["fundStatement"] -> Angaben zum Kapital
-        // $this->imprintData["inspectorate"] -> Aufsichtsbehörde
-        // $this->imprintData["standeskammer"] -> Standeskammer
-        // $this->imprintData["liquidation"] -> Liquidation / Auflösung
+    <?php if (!empty($imprintData)): ?>
+        <div class="detail-view__imprint-row">
+            <div class="detail-view__imprint-col">
 
-        $addressName = $this->imprintData["addressName"];
-        $addressStreet = $this->imprintData["addressStreet"];
-        $addressStreetNumber = $this->imprintData["addressStreetNumber"];
-        $addressZipcode = $this->imprintData["addressZipcode"];
-        $addressCity = $this->imprintData["addressCity"];
-        $addressCountry = $this->imprintData["addressCountry"];
-        $owner = $this->imprintData["owner"];
-        $contactEmail = $this->imprintData["contactEmail"];
-        $contactPhone = $this->imprintData["contactPhone"];
-        $contactFax = $this->imprintData["contactFax"];
-        $tradeID = $this->imprintData["tradeID"];
-        $registryCourt = $this->imprintData["registryCourt"];
-        $registerNumber = $this->imprintData["registerNumber"];
-        $responsibleName = $this->imprintData["responsibleName"];
-        $responsibleStreet = $this->imprintData["responsibleStreet"];
-        $responsibleStreetNumber = $this->imprintData["responsibleStreetNumber"];
-        $responsibleZipcode = $this->imprintData["responsibleZipcode"];
-        $responsibleCity = $this->imprintData["responsibleCity"];
+                <div class="detail-view__imprint-inner">
 
-        // custom strings
-        $addressStreetAll = $addressStreet . " " . $addressStreetNumber;
-        $addressCityAll = $addressZipcode . " " . $addressCity;
-        $responsibleStreetAll = $responsibleStreet . " " . $responsibleStreetNumber;
-        $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
+                    <h3 class="mt-4 mb-4">Schaufenster Impressum</h3>
 
-        ?>
+                    <p>
+                        <strong><?= $addressName ?></strong>
+                        <br><?= $addressStreetAll ?>
+                        <br><?= $addressCityAll ?>
+                        <br><?= $addressCountry ?>
+                    </p>
 
-        <div class="detail-view__imprint-col">
+                    <?php if (key_exists("owner", $imprintData)): ?>
+                        <p>
+                            Inhaber: <?= $owner ?>
+                        </p>
+                    <?php endif; ?>
 
-            <div class="detail-view__imprint-inner">
+                    <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
+                        <p>
+                            <?php if (key_exists("contactEmail", $imprintData)): ?>
+                                <span style="display: block;">E-Mail: <?= $contactEmail ?></span>
+                            <?php endif; ?>
 
-                <h3 class="mt-4 mb-4">Schaufenster Impressum</h3>
+                            <?php if (key_exists("contactPhone", $imprintData)): ?>
+                                <span style="display: block;">Tel.: <?= $contactPhone ?></span>
+                            <?php endif; ?>
 
-                <p>
-                    <strong><?= $addressName ?></strong>
-                    <br><?= $addressStreetAll ?>
-                    <br><?= $addressCityAll ?>
-                    <br><?= $addressCountry ?>
-                </p>
+                        </p>
+                    <?php endif; ?>
 
-                <p>
-                    Inhaber: <?= $owner ?>
-                </p>
+                    <?php if (key_exists("tradeID", $imprintData)): ?>
+                        <p>
+                            Umsatzsteuer-Identifikationsnummer: <?= $tradeID ?>
+                        </p>
+                    <?php endif; ?>
 
-                <p>
-                    E-Mail: <?= $contactEmail ?>
-                    Tel.: <?= $contactPhone ?>
-                </p>
+                    <?php if (key_exists("inspectorate", $imprintData)): ?>
+                        <p>
+                            Aufsichtsbehörde: <?= $inspectorate ?>
+                        </p>
+                    <?php endif; ?>
 
-                <p>
-                    U.-St.-Nr.: <?= $tradeID ?>
-                </p>
+                    <?php if (key_exists("fundStatement", $imprintData)): ?>
+                        <p>
+                            Angaben zum Kapital: <?= $fundStatement ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("standeskammer", $imprintData)): ?>
+                        <p>
+                            Standeskammer: <?= $standeskammer ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("liquidation", $imprintData)): ?>
+                        <p>
+                            Liquidation/Auflösung: <?= $liquidation ?>
+                        </p>
+                    <?php endif; ?>
 
 
-                <p>
-                    <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
-                    <?= $responsibleName ?>
-                    <br><?= $responsibleStreetAll ?>
-                    <br><?= $responsibleCityAll ?>
-                </p>
-
-                <p>
-                    <strong>Das gutes.io Schaufenster wird entwickelt und bereitgestellt durch:</strong>
-                    <br>Küstenschmiede GmbH
-                    <br>Software & Design
-                    <br>Alter Markt 10
-                    <br>26441 Jever
-                    <br>Deutschland
-                </p>
-
-                <p>
-                    E-Mail: ahoi@kuestenschmiede.de
-                    <br>Telefon: +49 4461 8 999 777
-                </p>
+                    <?php if (key_exists("responsibleName", $imprintData)): ?>
+                        <p>
+                            <span style="display: block;">
+                                <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
+                            </span>
+                            <?= $responsibleName ?>
+                            <br><?= $responsibleStreetAll ?>
+                            <br><?= $responsibleCityAll ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
+    <?php endif; ?>
+
+    <div class="detail-view__imprint-row">
+        <div class="detail-view__imprint-col">
+            <p>
+                <span style="display: block;">
+                <strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong>
+            </span>
+                Küstenschmiede GmbH
+                <br>Software & Design
+                <br>Alter Markt 10
+                <br>26441 Jever
+                <br>Deutschland
+            </p>
+            <p>
+                E-Mail: ahoi@kuestenschmiede.de
+                <br>Telefon: +49 4461 8 999 777
+            </p>
+        </div>
     </div>
+
 </div>
 
 <!-- Modal Shade Detail Page-->

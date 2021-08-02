@@ -10,8 +10,9 @@
 
     <?php
     $image = \Contao\FilesModel::findByUuid($imageUuid);
-    $imageXL = $this->getImage($image->path, $_GET['width'], null, 'proportional');
-    $imageXS = $this->getImage($image->path, $_GET['width'], null, 'proportional');
+    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
+    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
+
 
     /**
      * For Contao Users:
@@ -22,35 +23,43 @@
 
     <style>
         @media screen and (max-width: 900px) {
-            .detail-hero {
+            .detail-hero2 {
                 background-image: url("<?= $imageXS?>");
             }
         }
 
         @media screen and (min-width: 901px) {
-            .detail-hero {
+            .detail-hero2 {
                 background-image: url("<?= $imageXL?>");
             }
         }
     </style>
 <?php endif; ?>
 
-<div class="detail-hero">
-    <div class="detail-hero__inner-overlay">
+<div class="detail-hero2">
 
-        <div class="detail-hero__inner-wrapper">
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::name}}")): ?>
-                <div class="detail-hero__title">
-                    {{showcase::name}}
-                </div>
-            <?php endif; ?>
+    <div class="detail-hero2__blur-layer"></div>
+    <!--    Image -->
+    <div class="detail-hero2__image-wrapper">
+        <img src="<?= $imageXS ?>" alt="">
+    </div>
 
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
-                <div class="detail-hero__logo">
-                    {{showcase::logo}}
-                </div>
-            <?php endif ?>
-        </div>
+    <!--    Filter / Overlay -->
+    <div class="detail-hero2__inner-overlay"></div>
+
+
+    <div class="detail-hero2__inner-wrapper">
+        <?php if (\Contao\Controller::replaceInsertTags("{{showcase::name}}")): ?>
+            <div class="detail-hero2__title">
+                {{showcase::name}}
+            </div>
+        <?php endif; ?>
+
+        <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
+            <div class="detail-hero2__logo">
+                {{showcase::logo}}
+            </div>
+        <?php endif ?>
     </div>
 </div>
 

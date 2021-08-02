@@ -25,6 +25,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_limit'] = ['Ladeschritte', 'Besti
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_max_data'] = ['Maximale Anzahl Datensätze', 'Bestimmt, wieviele Datensätze maximal in der Liste angezeigt werden (0 bedeutet keine Begrenzung).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode'] = ['Lademodus', 'Bestimmt, wie die Daten geladen werden.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_load_klaro_consent'] = ['Klaro Consent-Tool aktivieren', 'Lädt das Klaro Consent-Tool für die Anzeige von YouTube- und Vimeo-Videos.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_carousel_template'] = ['Eigenes Template verwenden', 'Wenn gewünscht, kann hier ein eigenes Template ausgewählt werden, welches vom Carousel-Modul verwendet wird (der Name der Template-Datei muss dann "mit mod_gutesio_showcase_carousel_module_" beginnen).'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Filter aktivieren', 'Aktiviert den Filter oberhalb der Liste.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_change_layout_filter'] = ['Layout der Liste nach Filtern ändern', 'Setzen Sie diese Checkbox, wenn die Liste ihr Layout verändern soll, nachdem eine Filtereingabe getätigt wurde.'];

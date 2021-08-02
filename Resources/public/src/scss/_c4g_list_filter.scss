@@ -72,6 +72,9 @@
     }
 
     .form-view__period {
+      display: flex;
+      flex-direction: column;
+
       > label {
         display: block;
       }
@@ -79,10 +82,15 @@
       small {
         font-size: .8rem;
       }
+
+      .c4g-field-description {
+        font-size: .8rem;
+      }
     }
 
     .form-view__ascend-descend {
       display: flex;
+      flex-direction: column;
     }
 
   }

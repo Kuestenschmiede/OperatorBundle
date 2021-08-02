@@ -70,3 +70,4 @@ $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Z - A";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['tstamp_desc'] = "Datum";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['distance'] = "Entfernung";
 
+

@@ -4198,6 +4198,7 @@ button.bg-dark:hover {
 .user-select-all {
   -webkit-user-select: all!important;
   -moz-user-select: all!important;
+  -ms-user-select: all!important;
   user-select: all!important
 }
 .user-select-auto {
@@ -7040,6 +7041,7 @@ html {
 }
 .detail-view .imageGallery-item img {
   max-height: 500px;
+  width: auto;
   transition: ease-in-out .3s
 }
 .detail-view .imageGallery-item:hover img {
@@ -7116,12 +7118,10 @@ html {
   box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
 }
 .detail-view__logos {
-  display: inline-block;
-  max-width: 110px;
-  margin-right: 1rem
+  display: inline-block
 }
-.detail-view__logos:last-child {
-  margin-right: 0
+.detail-view__logos > img {
+  max-height: 60px
 }
 .detail-view__display-type {
   position: relative;
@@ -7438,6 +7438,68 @@ html {
 .c4g-tile-headline {
   text-align: center
 }
+.detail-hero2 {
+  position: relative;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  background-attachment: fixed
+}
+.detail-hero2__inner-overlay {
+  position: absolute;
+  z-index: 10;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%
+}
+.detail-hero2__inner-wrapper {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column
+}
+.detail-hero2__image-wrapper {
+  height: 55vh;
+  overflow: hidden
+}
+.detail-hero2__image-wrapper img {
+  height: 55vh;
+  width: 100%;
+  -o-object-fit: contain;
+  object-fit: contain;
+  background: rgba(255,255,255,.5);
+  padding: 2vh 0
+}
+.detail-hero2__title {
+  color: #fff;
+  text-shadow: 0 0 10px #000;
+  font-size: 6vw;
+  max-width: 700px;
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  text-align: center
+}
+@media (min-width:768px) {
+  .detail-hero2__title {
+    font-size: 3rem
+  }
+}
+.detail-hero2__logo {
+  max-width: 150px;
+  width: 25vh;
+  text-align: center
+}
+.detail-hero2__logo img {
+  background: #fff;
+  border: 5px solid #fff
+}
 html {
   box-sizing: border-box
 }
@@ -7559,8 +7621,8 @@ html {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   margin: 0 5px 5px 0;
   display: flex;
   align-items: center;

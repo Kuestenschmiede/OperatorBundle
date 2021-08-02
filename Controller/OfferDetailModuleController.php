@@ -43,6 +43,7 @@ use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\Controller;
+use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
 use Contao\FilesModel;
@@ -52,10 +53,11 @@ use Contao\System;
 use Contao\Template;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
+use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class OfferDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
+class OfferDetailModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
@@ -67,6 +69,11 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
      * @var OfferLoaderService
      */
     private $offerService = null;
+    
+    /**
+     * @var ShowcaseService
+     */
+    private $showcaseService;
 
     private $languageRefs = [];
 
@@ -76,10 +83,14 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
     /**
      * OfferDetailModuleController constructor.
      * @param OfferLoaderService|null $offerService
+     * @param ShowcaseService $showcaseService
      */
-    public function __construct(?OfferLoaderService $offerService)
-    {
+    public function __construct(
+        ?OfferLoaderService $offerService,
+        ShowcaseService $showcaseService
+    ) {
         $this->offerService = $offerService;
+        $this->showcaseService = $showcaseService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -114,7 +125,32 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             $data = $this->offerService->getDetailData($this->alias);
             if ($data) {
                 $objPage->pageTitle = $data['name'];
-                $conf = $this->getDetailFrontendConfiguration($data, $request);
+                $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
+                $components = $this->getDetailComponents($data, $request);
+                $conf->addDetailPage(
+                    $components['details'][0],
+                    $components['details'][1],
+                    $components['details'][2]
+                );
+                if ($data['type'] === "event") {
+                    if ($data['locationElementId']) {
+                        $elementUuid = $components['elements'][2][0]['uuid'];
+                        if ($elementUuid !== $data['locationElementId']) {
+                            $locationElementData = $this->getLocationElementData($data['locationElementId']);
+                            $locationList = $this->getLocationList();
+                            $conf->addTileList(
+                                $locationList,
+                                $this->tileItems,
+                                [$locationElementData]
+                            );
+                        }
+                    }
+                }
+                $conf->addTileList(
+                    $components['elements'][0],
+                    $components['elements'][1],
+                    $components['elements'][2]
+                );
                 $otherChildData = $this->getChildTileData($data, $request);
                 if (count($otherChildData) > 0) {
                     $conf->addTileList(
@@ -161,21 +197,21 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $this->languageRefs = $GLOBALS['TL_LANG']['offer_list'];
     }
 
-    private function getDetailFrontendConfiguration(array $data, Request $request)
+    private function getDetailComponents(array $data, Request $request)
     {
-        $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
-        $conf->addDetailPage(
+        $components = [];
+        $components['details'] = [
             $this->getDetailPage(),
             $this->getDetailFields(),
             $data
-        );
-        $conf->addTileList(
+        ];
+        $components['elements'] = [
             $this->getElementTileList(),
             $this->getElementFields(),
             $this->getElementData($data, $request)
-        );
+        ];
 
-        return $conf;
+        return $components;
     }
 
 
@@ -286,6 +322,13 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $field->setName("beginTime");
         $field->setClass('detail-view__begin-time');
         $fields[] = $field;
+    
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setLabel($this->languageRefs['location']);
+        $field->setName("locationElementName");
+        $field->setClass('detail-view__location-element-name');
+        $fields[] = $field;
 
         $field = new DetailTextField();
         $field->setSection(4);
@@ -395,6 +438,19 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
         $this->tileList->setLayoutType("list");
         $this->tileList->setTileClassName("showcase-tile");
         return $this->tileList;
+    }
+    
+    private function getLocationList()
+    {
+        $locationList = new TileList('location-tiles');
+        $locationList->setHeadline($this->languageRefs['location']);
+        $locationList->setHeadlineLevel(2);
+        $locationList->setClassName("showcase-tiles c4g-list-outer");
+        $locationList->setLayoutType("list");
+        $locationList->setListWrapper(true);
+        $locationList->setWrapperId("location-tiles");
+        $locationList->setTileClassName("showcase-tile");
+        return $locationList;
     }
 
     protected function getElementFields(): array
@@ -855,11 +911,19 @@ class OfferDetailModuleController extends \Contao\CoreBundle\Controller\Frontend
             }
             
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            if ($row['foreignLink']) {
+                $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
+            }
             $childRows[$key] = $row;
         }
         
         $childRows = $this->offerService->getAdditionalData($childRows);
         
         return $childRows;
+    }
+    
+    private function getLocationElementData($locationElementUuid)
+    {
+        return $this->showcaseService->loadByUuid($locationElementUuid);
     }
 }

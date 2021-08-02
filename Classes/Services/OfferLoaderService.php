@@ -65,7 +65,7 @@ class OfferLoaderService
         $limit = $this->limit;
         $tagIds = $filterData['tagIds'];
         $tagFilter = $tagIds && count($tagIds) > 0;
-        $dateFilter = $filterData['filterFrom'] && $filterData['filterUntil'];
+        $dateFilter = $filterData['filterFrom'] || $filterData['filterUntil'];
         $sortFilter = $filterData['sorting'];
         $hasFilter = $tagFilter || $sortFilter || $dateFilter;
         if ($hasFilter) {
@@ -77,9 +77,9 @@ class OfferLoaderService
 
         if ($search !== '') {
             $terms = explode(' ', $search);
-            $results = $this->getFullTextData($terms, $offset, $type, $limit);
+            $results = $this->getFullTextData($terms, $offset, $type, $limit, $dateFilter);
         } else {
-            $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit);
+            $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit, $dateFilter);
         }
         if ($tagFilter) {
             // filter using actual limit & offset
@@ -87,7 +87,7 @@ class OfferLoaderService
         }
 
         if ($dateFilter) {
-            $results = $this->applyRangeFilter($results, $filterData['filterFrom'], $filterData['filterUntil']);
+            $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
         }
         if ($sortFilter && $sortFilter !== 'random') {
             if ($filterData['sorting'] === 'price_asc') {
@@ -129,13 +129,24 @@ class OfferLoaderService
         // data cleaning
         foreach ($results as $key => $result) {
             $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
+            if ($result['foreignLink']) {
+                // search for http to avoid prepending https to insecure links
+                if (strpos($result['foreignLink'], "http") === false) {
+                    $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
+                }
+            }
         }
 
         return $results;
     }
 
-    public function getFullTextData(array $terms, $offset = 0, string $type = '', int $limit = 0)
-    {
+    public function getFullTextData(
+        array $terms,
+        $offset = 0,
+        string $type = '',
+        int $limit = 0,
+        bool $dateFilter = false
+    ) {
         System::loadLanguageFile('gutesio_frontend');
         $rawTermString = implode(' ', $terms);
         $database = Database::getInstance();
@@ -324,11 +335,15 @@ class OfferLoaderService
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
         }
 
-        return $this->getAdditionalData($childRows);
+        return $this->getAdditionalData($childRows, $dateFilter);
     }
 
-    public function getFullTextDataWithoutTerms($offset = 0, string $type = '', int $limit = 0)
-    {
+    public function getFullTextDataWithoutTerms(
+        $offset = 0,
+        string $type = '',
+        int $limit = 0,
+        bool $dateFilter = false
+    ) {
         System::loadLanguageFile('gutesio_frontend');
         $database = Database::getInstance();
 
@@ -480,7 +495,7 @@ class OfferLoaderService
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
         }
 
-        return $this->getAdditionalData($childRows);
+        return $this->getAdditionalData($childRows, $dateFilter);
     }
 
     public function getDetailData($alias)
@@ -582,12 +597,15 @@ class OfferLoaderService
                 foreach ($images as $image) {
                     $model = FilesModel::findByUuid(StringUtil::deserialize($image));
                     if ($model !== null) {
+                        $size = getimagesize($model->path);
                         $rows[$key]['imageGallery_' . $idx] = [
                             'src' => $model->path,
                             'path' => $model->path,
                             'uuid' => StringUtil::binToUuid($model->uuid),
                             'alt' => $model->meta && unserialize($model->meta)['de'] ? unserialize($model->meta)['de']['alt'] : $model->name,
                             'name' => $model->name,
+                            'width' => $size[0],
+                            'height' => $size[1],
                             'importantPart' => [
                                 'x' => $model->importantPartX,
                                 'y' => $model->importantPartY,
@@ -667,7 +685,7 @@ class OfferLoaderService
             }
         }
 
-        $rows = $this->getAdditionalData($rows, !$isPreview);
+        $rows = $this->getAdditionalData($rows, false, !$isPreview);
 
         return $rows[0];
     }
@@ -791,7 +809,7 @@ class OfferLoaderService
         return $response;
     }
 
-    public function getAdditionalData($childRows, $checkEventTime = true)
+    public function getAdditionalData($childRows, $dateFilter = false, $checkEventTime = true)
     {
         $database = Database::getInstance();
         foreach ($childRows as $key => $row) {
@@ -1010,12 +1028,15 @@ class OfferLoaderService
                     );
                     $endDateTime = new \DateTime();
                     $endDateTime->setTimestamp($eventData['endDate']);
-
+                    
                     if ($beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
                             $times = (int) $eventData['recurrences'];
                             $value = (int) $repeatEach['value'];
+                            if ($times === 0) {
+                                $times = 100;
+                            }
                             while ($times > 0) {
                                 $times -= 1;
                                 switch ($repeatEach['unit']) {
@@ -1025,7 +1046,7 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             ((int) $beginDateTime->format('d')) + ($value * 7)
                                         );
-
+                        
                                         break;
                                     case 'months':
                                         $beginDateTime->setDate(
@@ -1033,7 +1054,7 @@ class OfferLoaderService
                                             ((int) $beginDateTime->format('m')) + $value,
                                             $beginDateTime->format('d')
                                         );
-
+                        
                                         break;
                                     case 'years':
                                         $beginDateTime->setDate(
@@ -1041,7 +1062,7 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             $beginDateTime->format('d')
                                         );
-
+                        
                                         break;
                                     default:
                                         $beginDateTime->setDate(
@@ -1049,14 +1070,14 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             ((int) $beginDateTime->format('d')) + $value
                                         );
-
+                        
                                         break;
                                 }
                                 if ($beginDateTime->getTimestamp() >= time()) {
                                     break;
                                 } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
                                     $tooOld = true;
-
+                    
                                     break;
                                 }
                             }
@@ -1064,7 +1085,7 @@ class OfferLoaderService
                             $tooOld = true;
                         }
                     }
-
+                    
                     // remove the extra day added previously
                     $beginDateTime->setDate(
                         $beginDateTime->format('Y'),
@@ -1116,12 +1137,19 @@ class OfferLoaderService
 
                     $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
                     if ($elementModel !== null) {
-                        $eventData['locationElementId'] = $elementModel->name;
+                        $eventData['locationElementName'] = $elementModel->name;
+                    } else {
+                        $elementId = $row['elementId'];
+                        $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
+                        $eventData['locationElementName'] = $elementModel->name;
                     }
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);
                     }
-
+                    if ($dateFilter) {
+                        // date filter will be applied later on
+                        $tooOld = false;
+                    }
                     break;
                 case 'job':
                     $jobData = $database->prepare('SELECT beginDate AS beginDate ' .
@@ -1223,10 +1251,20 @@ class OfferLoaderService
                 if ($datum['appointmentUponAgreement']) {
                     $result[] = $datum;
                 } else {
+                    // add one day so events are displayed on the day they expire
                     $beginTstamp = strtotime($datum['beginDate']);
                     $endTstamp = strtotime($datum['endDate']);
-                    $beginDateMatchesFilter = $beginTstamp >= $filterFrom && $beginTstamp <= $filterUntil;
-                    $endDateMatchesFilter = !$endTstamp || $endTstamp <= $filterUntil;
+                    if ($filterFrom !== 0) {
+                        $fromDt = (new \DateTime())->setTimestamp($filterFrom);
+                        $filterFrom = $fromDt->setTime(0, 0, 0)->getTimestamp();
+                    }
+                    if ($filterUntil !== 0) {
+                        $untilDt = (new \DateTime())->setTimestamp($filterUntil + 86400);
+                        $filterUntil = $untilDt->setTime(23, 59, 59)->getTimestamp();
+                    }
+                    $beginDateMatchesFilter = ($filterFrom === 0 || ($beginTstamp >= $filterFrom))
+                        && ($filterUntil === 0 || ($beginTstamp <= $filterUntil));
+                    $endDateMatchesFilter = !$endTstamp || ($filterUntil === 0) || ($endTstamp <= $filterUntil);
                     if ($beginDateMatchesFilter && $endDateMatchesFilter) {
                         $result[] = $datum;
                     }

@@ -1046,6 +1046,14 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             ((int) $beginDateTime->format('d')) + ($value * 7)
                                         );
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                $nextDateTime->format('Y'),
+                                                $nextDateTime->format('m'),
+                                                ((int) $nextDateTime->format('d')) + ($value * 7)
+                                            );
+                                        }
                         
                                         break;
                                     case 'months':
@@ -1054,6 +1062,14 @@ class OfferLoaderService
                                             ((int) $beginDateTime->format('m')) + $value,
                                             $beginDateTime->format('d')
                                         );
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                $nextDateTime->format('Y'),
+                                                ((int) $nextDateTime->format('m')) + $value,
+                                                $nextDateTime->format('d')
+                                            );
+                                        }
                         
                                         break;
                                     case 'years':
@@ -1062,6 +1078,14 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             $beginDateTime->format('d')
                                         );
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                ((int) $nextDateTime->format('Y')) + $value,
+                                                $nextDateTime->format('m'),
+                                                $nextDateTime->format('d')
+                                            );
+                                        }
                         
                                         break;
                                     default:
@@ -1070,6 +1094,14 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             ((int) $beginDateTime->format('d')) + $value
                                         );
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                $nextDateTime->format('Y'),
+                                                $nextDateTime->format('m'),
+                                                ((int) $nextDateTime->format('d')) + $value
+                                            );
+                                        }
                         
                                         break;
                                 }
@@ -1094,6 +1126,9 @@ class OfferLoaderService
                     );
                     $eventData['beginDate'] = $beginDateTime->format('d.m.Y');
                     $eventData['endDate'] = $endDateTime->format('d.m.Y');
+                    if ($nextDateTime) {
+                        $eventData['nextDate'] = $nextDateTime->format('d.m.Y');
+                    }
                     if ($eventData['beginTime'] !== null) {
                         $eventData['beginTime'] = gmdate('H:i', $eventData['beginTime']) . ' Uhr'; //ToDo
                     }

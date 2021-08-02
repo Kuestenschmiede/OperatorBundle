@@ -325,6 +325,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     
         $field = new DetailTextField();
         $field->setSection(4);
+        $field->setName("nextDate");
+        $field->setLabel($this->languageRefs['nextDate'][0]);
+        $field->setClass('detail-view__next-date');
+        $fields[] = $field;
+    
+        $field = new DetailTextField();
+        $field->setSection(4);
         $field->setLabel($this->languageRefs['location']);
         $field->setName("locationElementName");
         $field->setClass('detail-view__location-element-name');

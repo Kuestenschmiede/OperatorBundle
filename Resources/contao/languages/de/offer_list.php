@@ -21,6 +21,7 @@ $GLOBALS['TL_LANG'][$strName]['appointmentUponAgreement_startingAt'] = "ab";
 
 $GLOBALS['TL_LANG'][$strName]['beginDate'] = ['Beginndatum', ''];
 $GLOBALS['TL_LANG'][$strName]['beginTime'] = ['Beginnzeit', ''];
+$GLOBALS['TL_LANG'][$strName]['nextDate'] = ['Auch am:', ''];
 $GLOBALS['TL_LANG'][$strName]['endDate'] = ['Enddatum', ''];
 $GLOBALS['TL_LANG'][$strName]['endTime'] = ['Endzeit', ''];
 $GLOBALS['TL_LANG'][$strName]['minCredit'] = 'Mindestguthaben';

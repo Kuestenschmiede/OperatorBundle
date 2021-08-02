@@ -20,6 +20,7 @@ $GLOBALS['TL_LANG'][$strName]['appointmentUponAgreement_startingAt'] = "from";
 
 $GLOBALS['TL_LANG'][$strName]['beginDate'] = ['Begin date', ''];
 $GLOBALS['TL_LANG'][$strName]['beginTime'] = ['Begin time', ''];
+$GLOBALS['TL_LANG'][$strName]['nextDate'] = ['Also at:', ''];
 $GLOBALS['TL_LANG'][$strName]['endDate'] = ['End date', ''];
 $GLOBALS['TL_LANG'][$strName]['endTime'] = ['End time', ''];
 $GLOBALS['TL_LANG'][$strName]['locationElementId'] = ['Place of the event', 'The place of the event.'];

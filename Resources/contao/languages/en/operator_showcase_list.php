@@ -36,7 +36,7 @@ $GLOBALS['TL_LANG'][$strName]['sections']['tags'] = "Tags";
 $GLOBALS['TL_LANG'][$strName]['sections']['contact_map'] = "Contact & Directions";
 $GLOBALS['TL_LANG'][$strName]['sections']['relatedShowcaseLogos'] = "Partner logos";
 $GLOBALS['TL_LANG'][$strName]['contact'] = "Contact";
-
+$GLOBALS['TL_LANG'][$strName]['imprint'] = "Imprint";
 
 $GLOBALS['TL_LANG'][$strName]['types'] = ['Category(ies)', 'The showcase category(ies).'];
 

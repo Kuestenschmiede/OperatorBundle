@@ -683,6 +683,12 @@ class OfferLoaderService
             } else {
                 $rows[$key]['on_wishlist'] = 0;
             }
+            
+            $typeValues = $database->prepare("SELECT * FROM tl_gutesio_data_type_child_values WHERE `childId` = ?")
+                ->execute($row['uuid'])->fetchAllAssoc();
+            foreach ($typeValues as $typeValue) {
+                $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
+            }
         }
 
         $rows = $this->getAdditionalData($rows, false, !$isPreview);

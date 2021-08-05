@@ -37,6 +37,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
+use con4gis\FrameworkBundle\Classes\Utility\FieldUtil;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use con4gis\MapsBundle\Classes\MapDataConfigurator;
 use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
@@ -49,8 +50,10 @@ use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\PageModel;
+use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
@@ -202,7 +205,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $components = [];
         $components['details'] = [
             $this->getDetailPage(),
-            $this->getDetailFields(),
+            $this->getDetailFields($data),
             $data
         ];
         $components['elements'] = [
@@ -261,7 +264,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         return $sections;
     }
 
-    protected function getDetailFields()
+    protected function getDetailFields(array $data)
     {
         $settings = C4gSettingsModel::findSettings();
         $fields = [];
@@ -396,6 +399,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setName("tags");
         $field->setClass('detail-view__tags');
         $fields[] = $field;
+        
+        $typeFields = $this->getTypeFields($data['typeId']);
+        foreach ($typeFields as $key => $typeField) {
+            $typeField->setSection(5);
+            $typeFields[$key] = $typeField;
+        }
+        $fields = array_merge($fields, $typeFields);
 
         $field = new DetailTextField();
         $field->setSection(5);
@@ -434,6 +444,25 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $fields[] = $field;
 
         return $fields;
+    }
+    
+    private function getTypeFields(string $typeId): array
+    {
+        $stm = Database::getInstance()
+            ->prepare("SELECT * FROM tl_gutesio_data_child_type WHERE `uuid` = ?");
+        $arrTypes = $stm->execute($typeId)->fetchAllAssoc();
+        $typeFields = [];
+        foreach ($arrTypes as $type) {
+            if ($type['technicalKey']) {
+                $arrTechnicalKeys = StringUtil::deserialize($type['technicalKey'], true);
+                if ($arrTechnicalKeys && is_array($arrTechnicalKeys) && count($arrTechnicalKeys) > 0) {
+                    $typeFields = array_merge($typeFields, TypeDetailFieldGenerator::getFieldsForTypes($arrTechnicalKeys));
+                }
+            }
+        }
+        
+        
+        return FieldUtil::makeFieldArrayUnique($typeFields);
     }
 
     protected function getElementTileList(): TileList

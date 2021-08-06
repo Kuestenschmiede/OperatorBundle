@@ -36,6 +36,7 @@ $GLOBALS['TL_LANG'][$strName]['sections']['tags'] = "Besonderheiten";
 $GLOBALS['TL_LANG'][$strName]['sections']['contact_map'] = "Kontakt & Anfahrt";
 $GLOBALS['TL_LANG'][$strName]['sections']['relatedShowcaseLogos'] = "Partnerlogos";
 $GLOBALS['TL_LANG'][$strName]['contact'] = "Kontakt";
+$GLOBALS['TL_LANG'][$strName]['imprint'] = "Impressum";
 
 $GLOBALS['TL_LANG'][$strName]['types'] = ['Kategorie(n)', 'Die Schaufensterkategorie(n).'];
 
@@ -68,4 +69,5 @@ $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_asc'] = "A - Z";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Z - A";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['tstamp_desc'] = "Datum";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['distance'] = "Entfernung";
+
 

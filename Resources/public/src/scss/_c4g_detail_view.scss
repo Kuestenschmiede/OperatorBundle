@@ -186,6 +186,7 @@
 
       img {
         max-height: 500px;
+        width: auto;
         transition: ease-in-out 300ms;
       }
 
@@ -262,8 +263,19 @@
 
   // logos
   &__logos {
-    @include make-col-ready();
-    @include make-col(12);
+    //@include make-col-ready();
+    //@include make-col(12);
+    display: inline-block;
+    //max-width: 110px;
+    //margin-right: 1rem;
+
+    > img {
+      max-height: 60px;
+    }
+
+    &:last-child {
+      //margin-right: 0;
+    }
   }
 
 
@@ -473,6 +485,35 @@
       @extend .c4g-btn;
       @extend .btn-light;
     }
+  }
+
+  &__list-filter-wrapper {
+    @extend .container;
+  }
+
+  &__list-filter-input {
+    @extend .form-control;
+
+    @include media-breakpoint-up(lg) {
+      max-width: 50%;
+      margin: 1rem auto;
+    }
+  }
+
+  //  start imprint container
+
+  &__imprint-container {
+    @include make-container();
+    @extend .container;
+  }
+
+  &__imprint-row {
+    @include make-row();
+  }
+
+  &__imprint-col {
+    @include make-col-ready();
+    @include make-col(12);
   }
 
 }

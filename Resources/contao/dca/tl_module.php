@@ -20,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
     'gutesio_data_max_data,gutesio_data_mode;' .
-    '{showcase_filter_legend},gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter;';
+    '{showcase_filter_legend},gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_0'] = '';
@@ -33,7 +33,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_tag_filter'] = 'g
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page,gutesio_load_klaro_consent;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode;';
+    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_carousel_template;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;';
 
@@ -204,6 +204,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_enable_tag_filter'] = [
     'sql'                     => "char(1) NOT NULL default '0'"
 ];
 
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_enable_type_filter'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '0'"
+];
+
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_tag_filter_selection'] = [
     'default'                 => null,
     'exclude'                 => true,
@@ -314,4 +322,21 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_tag'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_load_klaro_consent'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
+    'sql'                     => "char(1) NOT NULL default '0'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_carousel_template'] = [
+    'exclude'                 => true,
+    'default'                 => "",
+    'inputType'               => 'select',
+    'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getCarouselTemplateOptions"],
+    'eval'                    => ['includeBlankOption' => true, 'tl_class' => 'clr'],
+    'sql'                     => "VARCHAR(250) NOT NULL default ''"
 ];

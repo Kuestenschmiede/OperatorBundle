@@ -1,9 +1,54 @@
-<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
-    <script>
-      window.frameworkData = window.frameworkData || [];
-      window.frameworkData.push(<?php echo $this->configuration; ?>);
-    </script>
-    <div style="display: none">
-        <?php echo $this->searchHTML; ?>
-    </div>
+<?php
+$carouselClass = "carousel-item-" . $this->id;
+?>
+<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module <?= $carouselClass ?>">
+<script>
+    window.frameworkData = window.frameworkData || [];
+    window.frameworkData.push(<?php echo $this->configuration; ?>);
+</script>
+<div style="display: none">
+    <?php echo $this->searchHTML; ?>
 </div>
+</div>
+
+<script>
+    /**
+     * Owl Carousel 2
+     * You can find all api-options in the docs.
+     * Docs: https://owlcarousel2.github.io/OwlCarousel2/
+     */
+    function owl() {
+
+        if (jQuery('.<?= $carouselClass?> .owl-carousel').owlCarousel && typeof jQuery('.<?= $carouselClass?> .owl-carousel').owlCarousel === "function") {
+
+            jQuery('.<?= $carouselClass?> .owl-carousel').owlCarousel({
+                // center: true,
+                loop: true,
+                autoplay: true,
+                autoplaySpeed: 3000,
+                autoplayTimeout: 6000,
+                autoplayHoverPause: true,
+                margin: 15,
+                // stagePadding: 40,
+                responsiveClass: true,
+                nav: true,
+                autoHeight: false,
+                autoHeightClass: 'owl-height',
+                responsive: {
+                    0: {
+                        items: 1,
+
+                    },
+                    600: {
+                        items: 2,
+
+                    },
+                    1000: {
+                        items: 4,
+                        loop: true
+                    }
+                }
+            });
+        }
+    }
+</script>

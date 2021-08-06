@@ -78,6 +78,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     private $offerService = null;
 
     private $languageRefs = [];
+    private $languageRefsFrontend = [];
 
     /**
      * OfferListModuleController constructor.
@@ -157,6 +158,9 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');
+        if (count($tagIds) === 1 && $tagIds[0] === "") {
+            $tagIds = [];
+        }
         $moduleId = $request->query->get('moduleId');
         $filterData = [
             'tagIds' => $tagIds,
@@ -413,6 +417,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         System::loadLanguageFile("offer_list");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']['offer_list'];
+        $this->languageRefsFrontend = $GLOBALS['TL_LANG']['gutesio_frontend'];
     }
 
     private function getListFrontendConfiguration(string $search, $type)
@@ -504,6 +509,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         if ($useProductFilter) {
             $sortFilter = new RadioGroupFormField();
             $sortFilter->setName("sorting");
+            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
             $sortFilter->setOptions([
                 'random' => $this->languageRefs['filter']['sorting']['random'],
                 'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
@@ -518,6 +524,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();
             $tagFilter->setName("tags");
+            $tagFilter->setLabel($this->languageRefsFrontend['filter']['tagfilter']['label']);
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item offer tag-filter__filter-item");

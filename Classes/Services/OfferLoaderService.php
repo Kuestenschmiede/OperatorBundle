@@ -41,6 +41,19 @@ class OfferLoaderService
 
     private $limit = 10;
 
+    /**
+     * @var VisitCounterService
+     */
+    private $visitCounter = null;
+
+    /**
+     * OfferLoaderService constructor.
+     */
+    public function __construct()
+    {
+        $this->visitCounter = new VisitCounterService();
+    }
+
     private function setup()
     {
         $this->createRandomSeed($this->request);
@@ -52,7 +65,7 @@ class OfferLoaderService
         $limit = $this->limit;
         $tagIds = $filterData['tagIds'];
         $tagFilter = $tagIds && count($tagIds) > 0;
-        $dateFilter = $filterData['filterFrom'] && $filterData['filterUntil'];
+        $dateFilter = $filterData['filterFrom'] || $filterData['filterUntil'];
         $sortFilter = $filterData['sorting'];
         $hasFilter = $tagFilter || $sortFilter || $dateFilter;
         if ($hasFilter) {
@@ -64,9 +77,9 @@ class OfferLoaderService
 
         if ($search !== '') {
             $terms = explode(' ', $search);
-            $results = $this->getFullTextData($terms, $offset, $type, $limit);
+            $results = $this->getFullTextData($terms, $offset, $type, $limit, $dateFilter);
         } else {
-            $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit);
+            $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit, $dateFilter);
         }
         if ($tagFilter) {
             // filter using actual limit & offset
@@ -74,7 +87,7 @@ class OfferLoaderService
         }
 
         if ($dateFilter) {
-            $results = $this->applyRangeFilter($results, $filterData['filterFrom'], $filterData['filterUntil']);
+            $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
         }
         if ($sortFilter && $sortFilter !== 'random') {
             if ($filterData['sorting'] === 'price_asc') {
@@ -116,13 +129,24 @@ class OfferLoaderService
         // data cleaning
         foreach ($results as $key => $result) {
             $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
+            if ($result['foreignLink']) {
+                // search for http to avoid prepending https to insecure links
+                if (strpos($result['foreignLink'], "http") === false) {
+                    $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
+                }
+            }
         }
 
         return $results;
     }
 
-    public function getFullTextData(array $terms, $offset = 0, string $type = '', int $limit = 0)
-    {
+    public function getFullTextData(
+        array $terms,
+        $offset = 0,
+        string $type = '',
+        int $limit = 0,
+        bool $dateFilter = false
+    ) {
         System::loadLanguageFile('gutesio_frontend');
         $rawTermString = implode(' ', $terms);
         $database = Database::getInstance();
@@ -150,6 +174,8 @@ class OfferLoaderService
         $arrTagFieldClause = $this->createTagFieldClause();
         $strTagFieldClause = $arrTagFieldClause['str'];
         $fieldCount = $arrTagFieldClause['count'];
+        $sqlExtendedCategoryTerms = ' OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?';
+        $fieldCount++;
 
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
@@ -180,7 +206,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
-                WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' . '
+                WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
@@ -212,7 +238,7 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
-                WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' . '
+                WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
                 ORDER BY relevance DESC LIMIT ? OFFSET ?')
                     ->execute(
@@ -247,7 +273,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND type ' . C4GUtils::buildInString($types) .
-                'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' .
+                'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();
@@ -309,11 +335,15 @@ class OfferLoaderService
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
         }
 
-        return $this->getAdditionalData($childRows);
+        return $this->getAdditionalData($childRows, $dateFilter);
     }
 
-    public function getFullTextDataWithoutTerms($offset = 0, string $type = '', int $limit = 0)
-    {
+    public function getFullTextDataWithoutTerms(
+        $offset = 0,
+        string $type = '',
+        int $limit = 0,
+        bool $dateFilter = false
+    ) {
         System::loadLanguageFile('gutesio_frontend');
         $database = Database::getInstance();
 
@@ -465,12 +495,17 @@ class OfferLoaderService
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
         }
 
-        return $this->getAdditionalData($childRows);
+        return $this->getAdditionalData($childRows, $dateFilter);
     }
 
     public function getDetailData($alias)
     {
-        return $this->getSingleDataset($alias, true);
+        $dataset = $this->getSingleDataset($alias, true);
+        if ($dataset) {
+            $this->visitCounter->countOfferVisit($dataset['uuid'], $dataset['memberId']);
+        }
+
+        return $dataset;
     }
 
     public function getPreviewData($alias)
@@ -493,7 +528,7 @@ class OfferLoaderService
                 WHEN c.description IS NOT NULL THEN c.description ' . '
                 WHEN d.description IS NOT NULL THEN d.description ' . '
             ELSE NULL END) AS description, ' . '
-            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName FROM tl_gutesio_data_child a ' . '
+            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, tl_gutesio_data_child_type.extendedSearchTerms as extendedSearchTerms FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
             LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
@@ -537,6 +572,7 @@ class OfferLoaderService
             $rows[$key]['geox'] = $result['geox'];
             $rows[$key]['geoy'] = $result['geoy'];
             $rows[$key]['clickCollect'] = $result['clickCollect'];
+            $rows[$key]['elementId'] = $result['uuid'];
 
             if ($row['infoFile']) {
                 $infoFile = FilesModel::findByUuid(StringUtil::binToUuid($row['infoFile']));
@@ -561,12 +597,15 @@ class OfferLoaderService
                 foreach ($images as $image) {
                     $model = FilesModel::findByUuid(StringUtil::deserialize($image));
                     if ($model !== null) {
+                        $size = getimagesize($model->path);
                         $rows[$key]['imageGallery_' . $idx] = [
                             'src' => $model->path,
                             'path' => $model->path,
                             'uuid' => StringUtil::binToUuid($model->uuid),
                             'alt' => $model->meta && unserialize($model->meta)['de'] ? unserialize($model->meta)['de']['alt'] : $model->name,
                             'name' => $model->name,
+                            'width' => $size[0],
+                            'height' => $size[1],
                             'importantPart' => [
                                 'x' => $model->importantPartX,
                                 'y' => $model->importantPartY,
@@ -644,9 +683,15 @@ class OfferLoaderService
             } else {
                 $rows[$key]['on_wishlist'] = 0;
             }
+            
+            $typeValues = $database->prepare("SELECT * FROM tl_gutesio_data_type_child_values WHERE `childId` = ?")
+                ->execute($row['uuid'])->fetchAllAssoc();
+            foreach ($typeValues as $typeValue) {
+                $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
+            }
         }
 
-        $rows = $this->getAdditionalData($rows, !$isPreview);
+        $rows = $this->getAdditionalData($rows, false, !$isPreview);
 
         return $rows[0];
     }
@@ -770,7 +815,7 @@ class OfferLoaderService
         return $response;
     }
 
-    public function getAdditionalData($childRows, $checkEventTime = true)
+    public function getAdditionalData($childRows, $dateFilter = false, $checkEventTime = true)
     {
         $database = Database::getInstance();
         foreach ($childRows as $key => $row) {
@@ -989,12 +1034,15 @@ class OfferLoaderService
                     );
                     $endDateTime = new \DateTime();
                     $endDateTime->setTimestamp($eventData['endDate']);
-
+                    
                     if ($beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
                             $times = (int) $eventData['recurrences'];
                             $value = (int) $repeatEach['value'];
+                            if ($times === 0) {
+                                $times = 100;
+                            }
                             while ($times > 0) {
                                 $times -= 1;
                                 switch ($repeatEach['unit']) {
@@ -1004,7 +1052,15 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             ((int) $beginDateTime->format('d')) + ($value * 7)
                                         );
-
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                $nextDateTime->format('Y'),
+                                                $nextDateTime->format('m'),
+                                                ((int) $nextDateTime->format('d')) + ($value * 7)
+                                            );
+                                        }
+                        
                                         break;
                                     case 'months':
                                         $beginDateTime->setDate(
@@ -1012,7 +1068,15 @@ class OfferLoaderService
                                             ((int) $beginDateTime->format('m')) + $value,
                                             $beginDateTime->format('d')
                                         );
-
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                $nextDateTime->format('Y'),
+                                                ((int) $nextDateTime->format('m')) + $value,
+                                                $nextDateTime->format('d')
+                                            );
+                                        }
+                        
                                         break;
                                     case 'years':
                                         $beginDateTime->setDate(
@@ -1020,7 +1084,15 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             $beginDateTime->format('d')
                                         );
-
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                ((int) $nextDateTime->format('Y')) + $value,
+                                                $nextDateTime->format('m'),
+                                                $nextDateTime->format('d')
+                                            );
+                                        }
+                        
                                         break;
                                     default:
                                         $beginDateTime->setDate(
@@ -1028,14 +1100,22 @@ class OfferLoaderService
                                             $beginDateTime->format('m'),
                                             ((int) $beginDateTime->format('d')) + $value
                                         );
-
+                                        if ($times > 0) {
+                                            $nextDateTime = clone $beginDateTime;
+                                            $nextDateTime->setDate(
+                                                $nextDateTime->format('Y'),
+                                                $nextDateTime->format('m'),
+                                                ((int) $nextDateTime->format('d')) + $value
+                                            );
+                                        }
+                        
                                         break;
                                 }
                                 if ($beginDateTime->getTimestamp() >= time()) {
                                     break;
                                 } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
                                     $tooOld = true;
-
+                    
                                     break;
                                 }
                             }
@@ -1043,7 +1123,7 @@ class OfferLoaderService
                             $tooOld = true;
                         }
                     }
-
+                    
                     // remove the extra day added previously
                     $beginDateTime->setDate(
                         $beginDateTime->format('Y'),
@@ -1052,6 +1132,9 @@ class OfferLoaderService
                     );
                     $eventData['beginDate'] = $beginDateTime->format('d.m.Y');
                     $eventData['endDate'] = $endDateTime->format('d.m.Y');
+                    if ($nextDateTime) {
+                        $eventData['nextDate'] = $nextDateTime->format('d.m.Y');
+                    }
                     if ($eventData['beginTime'] !== null) {
                         $eventData['beginTime'] = gmdate('H:i', $eventData['beginTime']) . ' Uhr'; //ToDo
                     }
@@ -1095,12 +1178,19 @@ class OfferLoaderService
 
                     $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
                     if ($elementModel !== null) {
-                        $eventData['locationElementId'] = $elementModel->name;
+                        $eventData['locationElementName'] = $elementModel->name;
+                    } else {
+                        $elementId = $row['elementId'];
+                        $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
+                        $eventData['locationElementName'] = $elementModel->name;
                     }
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);
                     }
-
+                    if ($dateFilter) {
+                        // date filter will be applied later on
+                        $tooOld = false;
+                    }
                     break;
                 case 'job':
                     $jobData = $database->prepare('SELECT beginDate AS beginDate ' .
@@ -1202,10 +1292,20 @@ class OfferLoaderService
                 if ($datum['appointmentUponAgreement']) {
                     $result[] = $datum;
                 } else {
+                    // add one day so events are displayed on the day they expire
                     $beginTstamp = strtotime($datum['beginDate']);
                     $endTstamp = strtotime($datum['endDate']);
-                    $beginDateMatchesFilter = $beginTstamp >= $filterFrom && $beginTstamp <= $filterUntil;
-                    $endDateMatchesFilter = !$endTstamp || $endTstamp <= $filterUntil;
+                    if ($filterFrom !== 0) {
+                        $fromDt = (new \DateTime())->setTimestamp($filterFrom);
+                        $filterFrom = $fromDt->setTime(0, 0, 0)->getTimestamp();
+                    }
+                    if ($filterUntil !== 0) {
+                        $untilDt = (new \DateTime())->setTimestamp($filterUntil + 86400);
+                        $filterUntil = $untilDt->setTime(23, 59, 59)->getTimestamp();
+                    }
+                    $beginDateMatchesFilter = ($filterFrom === 0 || ($beginTstamp >= $filterFrom))
+                        && ($filterUntil === 0 || ($beginTstamp <= $filterUntil));
+                    $endDateMatchesFilter = !$endTstamp || ($filterUntil === 0) || ($endTstamp <= $filterUntil);
                     if ($beginDateMatchesFilter && $endDateMatchesFilter) {
                         $result[] = $datum;
                     }

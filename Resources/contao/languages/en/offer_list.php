@@ -20,6 +20,7 @@ $GLOBALS['TL_LANG'][$strName]['appointmentUponAgreement_startingAt'] = "from";
 
 $GLOBALS['TL_LANG'][$strName]['beginDate'] = ['Begin date', ''];
 $GLOBALS['TL_LANG'][$strName]['beginTime'] = ['Begin time', ''];
+$GLOBALS['TL_LANG'][$strName]['nextDate'] = ['Also at:', ''];
 $GLOBALS['TL_LANG'][$strName]['endDate'] = ['End date', ''];
 $GLOBALS['TL_LANG'][$strName]['endTime'] = ['End time', ''];
 $GLOBALS['TL_LANG'][$strName]['locationElementId'] = ['Place of the event', 'The place of the event.'];
@@ -39,12 +40,15 @@ $GLOBALS['TL_LANG'][$strName]['contact'] = "Contact";
 $GLOBALS['TL_LANG'][$strName]['displayType'] = "Category:";
 $GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "More information";
 $GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "View more information";
-$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Offered by the following vendors:";
+$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Offered by the following vendors";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Select period";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Here you can select a filter period to narrow down the events.";
 
 $GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Date from";
 $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Date until";
+
+$GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Other offers from the vendors";
+$GLOBALS['TL_LANG'][$strName]['location'] = "Event location";
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
     'free' => 'free',

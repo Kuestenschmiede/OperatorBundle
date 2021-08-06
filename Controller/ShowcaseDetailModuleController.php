@@ -45,6 +45,7 @@ use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
@@ -56,8 +57,10 @@ use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
@@ -122,6 +125,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
 
         if ($this->alias !== '') {
+            MapsResourceLoader::loadResources(["router" => true], ['router_enable' => true]);
             $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
             $detailData = $this->getDetailData($request);
             $objPage->pageTitle = $detailData['name'];
@@ -136,12 +140,23 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     );
                     $detailPage->addAdditionalLink($link);
                 }
+                if ($detailData['imprintData']) {
+                    $link = new DetailAnchorMenuLink(
+                        $GLOBALS['TL_LANG']["operator_showcase_list"]['imprint'],
+                        "#showcase-imprint"
+                    );
+                    $detailPage->addAdditionalLink($link);
+                }
                 $conf->addDetailPage($detailPage, $this->getDetailFields($detailData), $detailData);
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
                 $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
                 $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
-                $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
-                $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                if (count($childData) > 0) {
+                    $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
+                }
+                if (count($relatedShowcaseData) > 0) {
+                    $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                }
                 $conf->setLanguage($objPage->language);
                 $jsonConf = json_encode($conf);
                 if ($jsonConf === false) {
@@ -151,16 +166,24 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                     $template->configuration = $jsonConf;
                 }
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description', 'types']);
+                $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             } else {
                 throw new RedirectResponseException($redirectUrl);
             }
             if ($this->model->gutesio_data_render_searchHtml) {
                 $sc = new SearchConfiguration();
-                $sc->addData($detailData, ['name', 'description', 'types']);
+                $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             }
         } else {
             throw new RedirectResponseException($redirectUrl);
+        }
+        
+        if ($this->model->gutesio_load_klaro_consent) {
+            $template->loadKlaro = true;
+        }
+        
+        if ($detailData['imprintData']) {
+            $template->imprintData = $detailData['imprintData'];
         }
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
@@ -170,11 +193,17 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 
         return $template->getResponse();
     }
-
-    protected function getDetailPage()
+    
+    /**
+     * @Route("/gutesio/operator/showcase_detail_get_map_data", name="showcase_detail_get_map_data", methods={"GET"})
+     * @param Request $request
+     * @param ContaoFramework $framework
+     * @param $offset
+     * @return JsonResponse
+     */
+    public function getMapData(Request $request, ContaoFramework $framework)
     {
-        $page = new DetailPage();
-        $page->setHeadline($this->languageRefs['details']['headline']);
+        $framework->initialize();
         $settings = GutesioOperatorSettingsModel::findSettings();
         $mapData = MapDataConfigurator::prepareMapData(
             ContentModel::findById($settings->detail_map),
@@ -182,11 +211,17 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             ["profile" => $settings->detail_profile],
             false
         );
-        MapsResourceLoader::loadResources(["router" => true], $mapData);
-
+    
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
-        $page->setMapData($mapData);
+        
+        return new JsonResponse($mapData);
+    }
+
+    protected function getDetailPage()
+    {
+        $page = new DetailPage();
+        $page->setHeadline($this->languageRefs['details']['headline']);
         $page->setSections($this->getSections());
         $page->setShowAnchorMenu(true);
         $page->setMenuSectionIndex(3);
@@ -308,6 +343,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setName('mapLocation');
         $field->setGeoxField('geox');
         $field->setGeoyField('geoy');
+        $field->setAsyncMapData(true);
+        $field->setAsyncMapDataUrl("/gutesio/operator/showcase_detail_get_map_data");
         $fields[] = $field;
 
         $field = new DetailLinkField();
@@ -396,9 +433,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         if (count($detailData) === 0) {
             return [];
         }
+        $db = Database::getInstance();
         $clientUuid = $this->checkCookieForClientUuid($request);
         if ($clientUuid !== null) {
-            $db = Database::getInstance();
             $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
             $result = $db->prepare($sql)->execute($clientUuid, $detailData['uuid'])->fetchAssoc();
             if ($result) {
@@ -431,7 +468,21 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $detailData[$key] = C4GUtils::addProtocolToLink($detailDatum);
             }
         }
-
+        
+        // load extendedSearchTerms
+        $typeParameters = [];
+        foreach ($types as $type) {
+            $typeParameters[] = $type['value'];
+        }
+        $typeInString = C4GUtils::buildInString($types);
+        $sql = "SELECT `extendedSearchTerms` FROM tl_gutesio_data_type WHERE `id` " . $typeInString;
+        $arrSearchTerms = $db->prepare($sql)->execute($typeParameters)->fetchAllAssoc();
+        $strSearchTerms = "";
+        foreach ($arrSearchTerms as $searchTerm) {
+            $strSearchTerms .= $searchTerm['extendedSearchTerms'] . ",";
+        }
+        $detailData['extendedSearchTerms'] = str_replace(",", " ", $strSearchTerms);
+        
         return $detailData;
     }
 
@@ -450,6 +501,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $tileList->setListWrapper(true);
         $tileList->setWrapperId("offer-tiles");
         $tileList->setHeadlineLevel(2);
+        $tileList->setWithTextFilter(true);
+        $tileList->setTextFilterFields(['name', 'shortDescription', 'typeName']);
         
         return $tileList;
     }
@@ -519,6 +572,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__taglinks-wrapper");
         $field->setClass("c4g-list-element__taglinks");
         $field->setInnerClass("c4g-list-element__taglinks-image");
+        $field->setLinkField("linkHref");
         $fields[] = $field;
     
         $field = new WrapperTileField();
@@ -754,6 +808,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             }
 
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            if ($row['foreignLink']) {
+                $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
+            }
             $childRows[$key] = $row;
         }
 
@@ -834,6 +891,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setWrapperClass("c4g-list-element__tags-wrapper");
         $field->setClass("c4g-list-element__tag");
         $field->setInnerClass("c4g-list-element__tag-image");
+        $field->setLinkField("linkHref");
         $fields[] = $field;
 
         $field = new DistanceField();

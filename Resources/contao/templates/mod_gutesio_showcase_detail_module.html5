@@ -1,11 +1,18 @@
 {{showcase::meta}}
 
+<?php if ($this->loadKlaro): ?>
+    <!-- make sure the config gets loaded before Klaro -->
+    <script defer type="text/javascript" src="/bundles/gutesiooperator/dist/js/klaro-config.js"></script>
+    <script defer type="text/javascript" src="https://cdn.kiprotect.com/klaro/v0.7.18/klaro.js"></script>
+<?php endif ?>
+
 <?php if ($imageUuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
 
     <?php
     $image = \Contao\FilesModel::findByUuid($imageUuid);
-    $imageXL = $this->getImage($image->path, $_GET['width'], null, 'proportional');
-    $imageXS = $this->getImage($image->path, $_GET['width'], null, 'proportional');
+    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
+    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
+
 
     /**
      * For Contao Users:
@@ -16,38 +23,45 @@
 
     <style>
         @media screen and (max-width: 900px) {
-            .detail-hero {
+            .detail-hero2 {
                 background-image: url("<?= $imageXS?>");
             }
         }
 
         @media screen and (min-width: 901px) {
-            .detail-hero {
+            .detail-hero2 {
                 background-image: url("<?= $imageXL?>");
             }
         }
     </style>
 <?php endif; ?>
 
-<div class="detail-hero">
-    <div class="detail-hero__inner-overlay">
+<div class="detail-hero2">
 
-        <div class="detail-hero__inner-wrapper">
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::name}}")): ?>
-                <div class="detail-hero__title">
-                    {{showcase::name}}
-                </div>
-            <?php endif; ?>
+    <div class="detail-hero2__blur-layer"></div>
+    <!--    Image -->
+    <div class="detail-hero2__image-wrapper">
+        <img src="<?= $imageXS ?>" alt="">
+    </div>
 
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
-                <div class="detail-hero__logo">
-                    {{showcase::logo}}
-                </div>
-            <?php endif ?>
-        </div>
+    <!--    Filter / Overlay -->
+    <div class="detail-hero2__inner-overlay"></div>
+
+
+    <div class="detail-hero2__inner-wrapper">
+        <?php if (\Contao\Controller::replaceInsertTags("{{showcase::name}}")): ?>
+            <div class="detail-hero2__title">
+                {{showcase::name}}
+            </div>
+        <?php endif; ?>
+
+        <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
+            <div class="detail-hero2__logo">
+                {{showcase::logo}}
+            </div>
+        <?php endif ?>
     </div>
 </div>
-
 
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
     <script>
@@ -57,6 +71,155 @@
     <div style="display: none">
         <?php echo $this->searchHTML; ?>
     </div>
+
+</div>
+
+
+<?php
+// $this->imprintData["companyForm"] -> Unternehmensform
+//      freelancer-> Freiberufler
+//      soleProprietor-> Einzelunternehmen
+//      other-> GbR, GmbH, UG, etc.
+//      smallBusiness-> Kleinunternehmer
+//      society-> Verein
+//      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
+
+$imprintData = $this->imprintData;
+
+$addressName = $imprintData["addressName"];
+$addressStreet = $imprintData["addressStreet"];
+$addressStreetNumber = $imprintData["addressStreetNumber"];
+$addressZipcode = $imprintData["addressZipcode"];
+$addressCity = $imprintData["addressCity"];
+$addressCountry = $imprintData["addressCountry"];
+
+$fundStatement = $imprintData["fundStatement"]; //Angaben zum Kapital
+$inspectorate = $imprintData["inspectorate"]; //Aufsichtsbehörde
+$standeskammer = $imprintData["standeskammer"]; //Standeskammer
+$liquidation = $imprintData["liquidation"]; //Liquidation / Auflösung
+
+$owner = $imprintData["owner"];
+$contactEmail = $imprintData["contactEmail"];
+$contactPhone = $imprintData["contactPhone"];
+$contactFax = $imprintData["contactFax"];
+$tradeID = $imprintData["tradeID"];
+$registryCourt = $imprintData["registryCourt"];
+$registerNumber = $imprintData["registerNumber"];
+$responsibleName = $imprintData["responsibleName"];
+$responsibleStreet = $imprintData["responsibleStreet"];
+$responsibleStreetNumber = $imprintData["responsibleStreetNumber"];
+$responsibleZipcode = $imprintData["responsibleZipcode"];
+$responsibleCity = $imprintData["responsibleCity"];
+
+// custom strings
+$addressStreetAll = $addressStreet . " " . $addressStreetNumber;
+$addressCityAll = $addressZipcode . " " . $addressCity;
+$responsibleStreetAll = $responsibleStreet . " " . $responsibleStreetNumber;
+$responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
+
+?>
+
+<hr>
+<div id="showcase-imprint" class="detail-view__imprint-container">
+    <?php if (!empty($imprintData)): ?>
+        <div class="detail-view__imprint-row">
+            <div class="detail-view__imprint-col">
+
+                <div class="detail-view__imprint-inner">
+
+                    <h3 class="mt-4 mb-4">Schaufenster Impressum</h3>
+
+                    <p>
+                        <strong><?= $addressName ?></strong>
+                        <br><?= $addressStreetAll ?>
+                        <br><?= $addressCityAll ?>
+                        <br><?= $addressCountry ?>
+                    </p>
+
+                    <?php if (key_exists("owner", $imprintData)): ?>
+                        <p>
+                            Inhaber: <?= $owner ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
+                        <p>
+                            <?php if (key_exists("contactEmail", $imprintData)): ?>
+                                <span style="display: block;">E-Mail: <?= $contactEmail ?></span>
+                            <?php endif; ?>
+
+                            <?php if (key_exists("contactPhone", $imprintData)): ?>
+                                <span style="display: block;">Tel.: <?= $contactPhone ?></span>
+                            <?php endif; ?>
+
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("tradeID", $imprintData)): ?>
+                        <p>
+                            Umsatzsteuer-Identifikationsnummer: <?= $tradeID ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("inspectorate", $imprintData)): ?>
+                        <p>
+                            Aufsichtsbehörde: <?= $inspectorate ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("fundStatement", $imprintData)): ?>
+                        <p>
+                            Angaben zum Kapital: <?= $fundStatement ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("standeskammer", $imprintData)): ?>
+                        <p>
+                            Standeskammer: <?= $standeskammer ?>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php if (key_exists("liquidation", $imprintData)): ?>
+                        <p>
+                            Liquidation/Auflösung: <?= $liquidation ?>
+                        </p>
+                    <?php endif; ?>
+
+
+                    <?php if (key_exists("responsibleName", $imprintData)): ?>
+                        <p>
+                            <span style="display: block;">
+                                <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
+                            </span>
+                            <?= $responsibleName ?>
+                            <br><?= $responsibleStreetAll ?>
+                            <br><?= $responsibleCityAll ?>
+                        </p>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="detail-view__imprint-row">
+        <div class="detail-view__imprint-col">
+            <p>
+                <span style="display: block;">
+                <strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong>
+            </span>
+                Küstenschmiede GmbH
+                <br>Software & Design
+                <br>Alter Markt 10
+                <br>26441 Jever
+                <br>Deutschland
+            </p>
+            <p>
+                E-Mail: ahoi@kuestenschmiede.de
+                <br>Telefon: +49 4461 8 999 777
+            </p>
+        </div>
+    </div>
+
 </div>
 
 <!-- Modal Shade Detail Page-->
@@ -85,13 +248,17 @@
 
                 ?>
                 <nav class="nav flex-column">
-                    <a href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareFacebookUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                    <a href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareTwitterUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-                    <a href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                    <a href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareEmailUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>
 

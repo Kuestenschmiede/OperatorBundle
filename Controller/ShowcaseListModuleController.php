@@ -17,6 +17,7 @@ use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\MultiCheckboxWithImageLabelFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RadioGroupFormField;
+use con4gis\FrameworkBundle\Classes\FormFields\SelectFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\TextFormField;
 use con4gis\FrameworkBundle\Classes\Forms\Form;
 use con4gis\FrameworkBundle\Classes\Forms\ToggleableForm;
@@ -64,6 +65,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     private $showcaseService = null;
 
     private $languageRefs = [];
+    private $languageRefsFrontend = [];
+
 
     public function __construct(ShowcaseService $showcaseService)
     {
@@ -90,6 +93,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
+        $this->languageRefsFrontend = $GLOBALS['TL_LANG']['gutesio_frontend'];
 
         $tileList = $this->getTileList();
         $fields = $this->getFields();
@@ -184,7 +188,13 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tagFilterIds = explode(",", $tagFilterIds);
         }
-
+        $requestTypeIds = $request->query->get("types");
+        if ($requestTypeIds === "" || $requestTypeIds === null) {
+            $requestTypeIds = [];
+        } else {
+            $requestTypeIds = explode(",", $requestTypeIds);
+        }
+    
         $moduleModel = ModuleModel::findByPk($moduleId);
         $max = (int) $moduleModel->gutesio_data_max_data;
         if ($max !== 0 && $offset >= $max) {
@@ -199,7 +209,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($mode === 1 || $mode === 2) {
             $typeIds = $this->getTypeConstraintForModule($moduleModel);
         } else {
-            $typeIds = [];
+            $typeIds = $requestTypeIds;
         }
         if ($mode === 3) {
             $tagIds = $this->getTagConstraintForModule($moduleModel);
@@ -461,15 +471,28 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $fields = [];
         $textFilter = new TextFormField();
         $textFilter->setName("filter");
+        $textFilter->setLabel($this->languageRefsFrontend['filter']['searchfilter']['label']);
         $textFilter->setClassName("form-group");
         $textFilter->setPlaceholder($this->languageRefs['filter_placeholder']);
         $textFilter->setWrappingDiv(true);
         $textFilter->setWrappingDivClass("form-view__searchinput");
         $fields[] = $textFilter;
 
+        if ($this->model->gutesio_enable_type_filter) {
+            $typeField = new SelectFormField();
+            $typeField->setName("types");
+            $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
+            $typeField->setClassName("form-view__type-filter");
+            $typeField->setPlaceholder("Kategorie auswählen");
+            $typeField->setOptions($this->getTypeOptions());
+            $typeField->setMultiple(true);
+            $fields[] = $typeField;
+        }
+
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();
             $tagFilter->setName("tags");
+            $tagFilter->setLabel($this->languageRefsFrontend['filter']['tagfilter']['label']);
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");
@@ -478,6 +501,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $sortFilter = new RadioGroupFormField();
         $sortFilter->setName("sorting");
+        $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
         $sortFilter->setOptions([
             'random' => $this->languageRefs['filter']['sorting']['random'],
             'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
@@ -489,6 +513,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $sortFilter->setChecked("random");
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
         $fields[] = $sortFilter;
+        
+
 
         // module id field so the id gets transferred when loading data async
         $moduleId = new HiddenFormField();
@@ -509,6 +535,21 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $arrFilter['buttons'] = $buttons;
 
         return $arrFilter;
+    }
+    
+    private function getTypeOptions()
+    {
+        $sql = "SELECT * FROM tl_gutesio_data_type";
+        $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
+        $options = [];
+        foreach ($typeResult as $result) {
+            $options[] = [
+                'value' => $result['uuid'],
+                'label' => $result['name']
+            ];
+        }
+        
+        return $options;
     }
 
     private function getTagOptions()

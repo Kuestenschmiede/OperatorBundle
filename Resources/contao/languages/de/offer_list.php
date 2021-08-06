@@ -21,6 +21,7 @@ $GLOBALS['TL_LANG'][$strName]['appointmentUponAgreement_startingAt'] = "ab";
 
 $GLOBALS['TL_LANG'][$strName]['beginDate'] = ['Beginndatum', ''];
 $GLOBALS['TL_LANG'][$strName]['beginTime'] = ['Beginnzeit', ''];
+$GLOBALS['TL_LANG'][$strName]['nextDate'] = ['Auch am:', ''];
 $GLOBALS['TL_LANG'][$strName]['endDate'] = ['Enddatum', ''];
 $GLOBALS['TL_LANG'][$strName]['endTime'] = ['Endzeit', ''];
 $GLOBALS['TL_LANG'][$strName]['minCredit'] = 'Mindestguthaben';
@@ -43,12 +44,15 @@ $GLOBALS['TL_LANG'][$strName]['contact'] = "Kontakt";
 $GLOBALS['TL_LANG'][$strName]['displayType'] = "Kategorie:";
 $GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "Weitere Informationen";
 $GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "Weitere Informationen ansehen";
-$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Angeboten von folgenden Anbietern:";
+$GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Angeboten von folgenden Anbietern";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Zeitraum auswählen";
 $GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Hier können Sie einen Filterzeitraum auswählen, um die Veranstaltungen einzugrenzen.";
 
 $GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Datum von";
 $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Datum bis";
+
+$GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Andere Angebote der Anbieter";
+$GLOBALS['TL_LANG'][$strName]['location'] = "Veranstaltungsort";
 
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [

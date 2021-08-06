@@ -49,7 +49,13 @@ class LoadLayersListener
         $alias = $_SERVER['HTTP_REFERER'];
         $strC = substr_count($alias, '/');
         $arrUrl = explode('/', $alias);
-        $alias = explode('.', $arrUrl[$strC])[0];
+
+        if (strpos($arrUrl[$strC], ".html")) {
+            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], ".html"));
+        }
+        else {
+            $alias = $arrUrl[$strC];
+        }
 
         if (C4GUtils::isValidGUID($alias)) {
             $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
@@ -220,7 +226,7 @@ class LoadLayersListener
                 'graphicTitle' => $objElement['name'],
             ], $tagUuids);
             $data = [];
-            if ($objLocstyle['loctype'] === 'LineString' || $objLocstyle['loctype'] === 'Polygon') {
+            if ($objLocstyle['loctype'] === 'Editor' || $objLocstyle['loctype'] === 'LineString' || $objLocstyle['loctype'] === 'Polygon') {
                 $element['cluster'] = false;
                 $element['excludeFromSingleLayer'] = true;
                 $geojson = strpos($objElement['geojson'], 'FeatureCollection') ? $objElement['geojson'] : '{"type": "FeatureCollection", "features": ' . $objElement['geojson'] . '}';

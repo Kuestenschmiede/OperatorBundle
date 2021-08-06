@@ -18,7 +18,7 @@ class OfferInsertTag
 {
     const TAG = 'offer';
 
-    const TAG_PAYLOAD = ['description', 'firstGalleryImage', 'name', 'meta'];
+    const TAG_PAYLOAD = ['description', 'firstGalleryImage', 'name', 'meta', 'canonical'];
 
     //ToDO -> Core
     private function isBinary($str)
@@ -38,12 +38,20 @@ class OfferInsertTag
     //ToDO -> Core
     private function truncate($text, $length)
     {
+        $text = str_replace('><', '> <', $text);
         $text = strip_tags($text);
+        $text = htmlspecialchars($$text, ENT_QUOTES, "utf-8");
         $length = abs((int) $length);
         $firstFullstop = strpos($text, '.');
         if ($firstFullstop && $firstFullstop <= ($length - 1)) {
-            return substr($text, 0, $firstFullstop);
+            for ($i = 0, $j = strlen($text); $i < $j; $i++) {
+                if ((strstr('.',$text[$i])) && ($i <= ($length -1))) {
+                    $firstFullstop = $i;
+                }
+            }
+            return substr($text, 0, $firstFullstop+1);
         }
+
         if (strlen($text) > $length) {
             $text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
         }
@@ -163,6 +171,14 @@ class OfferInsertTag
                         }
 
                         break;
+                    case 'canonical':
+                        $currentUrl = $_SERVER['REQUEST_URI'];
+                        // remove query string, if it exists
+                        if (($pos = strpos($currentUrl, '?')) !== false) {
+                            $currentUrl = substr($currentUrl, 0, $pos);
+                        }
+                        $currentUrl = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $currentUrl;
+                        return '<link rel="canonical" href="'.$currentUrl.'" />';
                     default:
                         return false;
                 }

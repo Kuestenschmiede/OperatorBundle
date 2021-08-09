@@ -65,7 +65,6 @@
 $config = json_decode($this->configuration);
 $data = $config->components->detail->data;
 ?>
-<pre>ab hier NEU </pre>
 
 <div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">
     <div class="detail-view" style="">
@@ -144,11 +143,42 @@ $data = $config->components->detail->data;
                 </div>
             </div>
         </div>
-        <div class="detail-view__section-detaildata" id="detail-section-5">
-            <div class="c4g-container">
-                <div class="c4g-row"></div>
-            </div>
-        </div>
+
+        <!-- youtube video section -->
+        <?php if (isset($data->videoPreview) && !empty($data->videoPreview)): ?>
+
+            <?php
+            $youtubeSrc = "";
+            $youtubeId = "";
+            if ($data->videoPreview->videoType == "youtube") {
+                $youtubeSrc = $data->videoPreview->video;
+                $youtubeSrc = rtrim($youtubeSrc, "/");
+                $youtubeSrcArr = explode("/", $youtubeSrc);
+
+                $youtubeId = end($youtubeSrcArr);
+            }
+            ?>
+
+            <?php if ($data->videoPreview->videoType == "youtube"): ?>
+                <div class="detail-view__section-detaildata" id="detail-section-5">
+                    <div class="c4g-container">
+                        <div class="c4g-row">
+                            <div class="detail-view__video-preview">
+                                <div class="embed-responsive embed-responsive-16by9">
+                                    <div class="">
+                                        <iframe class="video-preview-youtube" frameborder="0" allowfullscreen="1"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                title="YouTube video player" width="100%" height="100%"
+                                                src="https://www.youtube-nocookie.com/embed/<?= $youtubeId ?>"
+                                                id="widget2"></iframe>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
         <div class="detail-view__section-tags" id="detail-section-6">
             <div class="c4g-container">
                 <div class="c4g-row">
@@ -222,6 +252,8 @@ $data = $config->components->detail->data;
                                 </div>
                             </div>
 
+                            <!-- todo: insert videoPreview -->
+
                         </div>
                     <?php endif; ?>
                 </div>
@@ -249,14 +281,25 @@ $data = $config->components->detail->data;
 
                         </div>
 
-                        <?php if (!empty($data->phone)): ?>
-                            <span class="entry-content phone" itemprop="phone"><a
-                                        href="tel:<?= str_replace(" ", "", $data->phone) ?>"><?= $data->phone ?></a></span>
+                        <?php if (isset($data->phone) && !empty($data->phone)): ?>
+                            <span class="entry-content phone" itemprop="phone">
+                                <a href="tel:<?= str_replace(" ", "", $data->phone) ?>"><?= $data->phone ?></a>
+                            </span>
                         <?php endif; ?>
 
-                        <!-- todo: email, mobile, -->
+                        <?php if (isset($data->mobile) && !empty($data->mobile)): ?>
+                            <span class="entry-content phone" itemprop="phone">
+                                <a href="tel:<?= str_replace(" ", "", $data->mobile) ?>"><?= $data->mobile ?></a>
+                            </span>
+                        <?php endif; ?>
 
-                        <?php if (!empty($data->website)): ?>
+                        <?php if (isset($data->email) && !empty($data->email)): ?>
+                            <span class="entry-content email" itemprop="email">
+                                <a href="mailto:{{email_url::<?= $data->email ?>}}"><?= $data->email ?></a>
+                            </span>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->website) && !empty($data->website)): ?>
                             <span class="entry-content website"><a href="https://gutes.io">Website</a></span>
                         <?php endif; ?>
 
@@ -275,8 +318,7 @@ $data = $config->components->detail->data;
 
                     </div>
 
-                    <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper">
-                    </div>
+                    <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper"></div>
                 </div>
             </div>
         </div>
@@ -288,19 +330,11 @@ $data = $config->components->detail->data;
 
 <?php
 $newArr = json_decode($this->configuration, true);
-//unset($newArr["components"]["detail"]["data"]["tags"]);
-//unset($newArr["components"]["detail"]["data"]["description"]);
-//unset($newArr["components"]["detail"]["data"]["types"]);
-//unset($newArr["components"]["detail"]["data"]["displayType"]);
-//unset($newArr["components"]["detail"]["data"]["imageGallery_0"]);
-//unset($newArr["components"]["detail"]["data"]["imageGallery_1"]);
-//unset($newArr["components"]["detail"]["data"]["imageGallery_2"]);
-//unset($newArr["components"]["detail"]["data"]["sections"]);
 $newArr["detailData"]["openingHours"] = $newArr["components"]["detail"]["data"]["opening_hours"];
 unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);
 //dump($newArr);
-//dump(json_decode($this->configuration));
+dump(json_decode($this->configuration));
 ?>
 
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">

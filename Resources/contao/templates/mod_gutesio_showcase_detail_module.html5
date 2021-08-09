@@ -22,10 +22,8 @@
     ?>
 
     <style>
-        @media screen and (max-width: 900px) {
-            .detail-hero2 {
-                background-image: url("<?= $imageXS?>");
-            }
+        .detail-hero2 {
+            background-image: url("<?= $imageXS?>");
         }
 
         @media screen and (min-width: 901px) {
@@ -63,11 +61,370 @@
     </div>
 </div>
 
+<?php
+$config = json_decode($this->configuration);
+$data = $config->components->detail->data;
+//dump($config);
+?>
+
+<div id="custom-<?= $this->entrypoint ?>" class="projects-tile-list-module">
+    <div class="detail-view" style="">
+        <div id="anchor-menu">
+            <div class="anchor-menu__inner">
+                <ul class="anchor-menu__list">
+                    <li>
+                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#detail-section-4">Bildergalerie</a>
+                    </li>
+                    <li>
+                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#detail-section-7">Kontakt
+                            &amp; Anfahrt</a></li>
+                    <li>
+                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#offer-tiles">Unsere
+                            Angebote</a></li>
+                    <li>
+                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#showcase-imprint">Impressum</a>
+                    </li>
+                </ul>
+                <div class="anchor-menu__share">
+                    <button class="c4g-btn c4g-btn-warning c4g-btn-removefromwishlist js-removeDetailFromWishlist"
+                            title="Vom Merkzettel entfernen." style="display: none;"><i class="fas fa-heart"></i>
+                    </button>
+                    <button class="c4g-btn c4g-btn-primary c4g-btn-putonwishlist js-putDetailOnWishlist"
+                            title="Auf den Merkzettel setzen."><i class="fas fa-heart"></i></button>
+                    <button type="button" class="c4g-btn c4g-btn-primary c4g-btn-sharedetail js-modalShare"
+                            data-toggle="modal" data-target="#shareModal" title="Teilen"><i
+                                class="fas fa-share-alt"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-gallery" id="detail-section-4">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="item description detail-view__description">
+                        <span class="entry-content">
+                        <?= $data->description ?>
+                        </span>
+                    </div>
+                    <div class="detail-view__image-gallery">
+                        <div class="detail-view__image-gallery-inner">
+                            <?php if ($data->imageGallery_0): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_0->path ?>"
+                                   class="imageGallery-item first"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_0->src ?>"
+                                            alt="<?= $data->imageGallery_0->alt ?>"
+                                            width="<?= $data->imageGallery_0->width ?>"
+                                            height="<?= $data->imageGallery_0->height ?>"></a>
+                            <?php endif; ?>
+
+                            <?php if ($data->imageGallery_1): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_1->path ?>"
+                                   class="imageGallery-item"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_1->src ?>"
+                                            alt="<?= $data->imageGallery_1->alt ?>"
+                                            width="<?= $data->imageGallery_1->width ?>"
+                                            height="<?= $data->imageGallery_1->height ?>"></a>
+                            <?php endif; ?>
+
+                            <?php if ($data->imageGallery_2): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_2->path ?>"
+                                   class="imageGallery-item"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_2->src ?>"
+                                            alt="<?= $data->imageGallery_2->alt ?>"
+                                            width="<?= $data->imageGallery_2->width ?>"
+                                            height="<?= $data->imageGallery_2->height ?>"></a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-detaildata" id="detail-section-5">
+            <div class="c4g-container">
+                <div class="c4g-row"></div>
+            </div>
+        </div>
+        <div class="detail-view__section-tags" id="detail-section-6">
+            <div class="c4g-container">
+                <div class="c4g-row">
+
+                    <!-- todo: do not forget logos-wrapper - relatedShowcaseLogos -->
+                    <?php if (!empty($data->relatedShowcaseLogos)): ?>
+                        <div class="detail-view__logos-wrapper">
+                            <a href="https://gutes-aus-jever.de/schaufenster/jever_aktiv_geschenk_gutschein"
+                               class="relatedShowcaseLogos detail-view__logos"><img
+                                        src="files/con4gis_import_data/529/showcases/{4846D7E8-472C-30E1-6891-A3EF5AE5147C}/jever-aktiv-vereinslogo-import.png"
+                                        alt="Logo des Schaufensters Jever Aktiv Geschenk Gutschein"
+                                        class="detail-view__logos-image"></a>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($data->types): ?>
+                        <div class="detail-field-text displayType detail-view__display-type">
+                            <div class="detail-field-text__label">Kategorien:</div>
+                            <?php foreach ($data->types as $type): ?>
+                                <span class="detail-field-text__text"><?= $type->label ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($data->diet)): ?>
+                        <div class="detail-field-text diet">
+                            <div class="detail-field-text__label">Kost</div>
+                            <span class="detail-field-text__text"><?= $data->diet ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($data->cuisine)): ?>
+                        <div class="detail-field-text cuisine">
+                            <div class="detail-field-text__label">Küche</div>
+                            <span class="detail-field-text__text"><?= $data->cuisine ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($data->tags): ?>
+                        <div class="detail-field-wrapper">
+                            <div class="detail-field-wrapper__tags">
+                                <?php foreach ($data->tags as $k => $v): ?>
+                                    <div class="tag-entry <?= $v->technicalKey ?>">
+                                        <div class="detail-field-image"><img class="img-fluid"
+                                                                             src="<?= $v->image->src ?>"
+                                                                             alt="<?= $v->image->name ?>"
+                                                                             data-toggle="tooltip"
+                                                                             width="100" height="100"
+                                                                             data-content="<?= $v->name ?>"
+                                                                             title="<?= $v->name ?>"></div>
+                                        <div class="detail-field-text"><span
+                                                    class="detail-field-text__text"><?= $v->name ?></span></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="detail-field-wrapper__tag-fields">
+                                <?php if (!empty($data->onlineReservationLink)): ?>
+                                    <div class="tag_online_reservation tag_online_reservation"><a
+                                                href="<?= $data->onlineReservationLink ?>">Onlinereservierung</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- todo: Corona Hinweis - Wonach soll ich schauen? Welche Variable abfragen? -->
+                                <div class="item coronaNotes tag_corona"><span class="entry-label">Hinweise zur Corona Situation</span>
+                                    <div class="entry-content">
+                                        <p>
+                                            ... hier folgt die Ausgabe der entsprechenden Variable.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-contact-map" id="detail-section-7">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
+                        <div>
+                            <h3 class="entry-content name"><?= $data->name ?></h3>
+                            <span class="entry-content additionalName"></span>
+
+                            <?php if ($data->addressStreetAll): ?>
+                                <div class="street">
+                                    <?= $data->addressStreetAll ?>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($data->addressCityAll): ?>
+                                <div class="entry-content">
+                                    <?= $data->addressCityAll ?>
+                                </div>
+                            <?php endif; ?>
+
+                        </div>
+
+                        <?php if (!empty($data->phone)): ?>
+                            <span class="entry-content phone" itemprop="phone"><a
+                                        href="tel:<?= str_replace(" ", "", $data->phone) ?>"><?= $data->phone ?></a></span>
+                        <?php endif; ?>
+
+                        <!-- todo: email, mobile, -->
+
+                        <?php if (!empty($data->website)): ?>
+                            <span class="entry-content website"><a href="https://gutes.io">Website</a></span>
+                        <?php endif; ?>
+
+                        <!-- todo: opening-hours via REACT ??? -->
+                        <div class="opening-hours">
+                            <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
+                            <div class="opening-hours-days">
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Freitag</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">14:00 Uhr - 20:00 Uhr</div>
+                                    </div>
+                                </div>
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Samstag</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">12:00 Uhr - 19:00 Uhr</div>
+                                    </div>
+                                </div>
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Sonntag</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">12:00 Uhr - 19:00 Uhr</div>
+                                    </div>
+                                </div>
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Montag</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">14:00 Uhr - 20:00 Uhr</div>
+                                    </div>
+                                </div>
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Dienstag</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">14:00 Uhr - 20:00 Uhr</div>
+                                    </div>
+                                </div>
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Mittwoch</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">14:00 Uhr - 20:00 Uhr</div>
+                                    </div>
+                                </div>
+                                <div class="opening-hours-day-entry">
+                                    <div class="opening-hours-day">Donnerstag</div>
+                                    <div class="opening-hours-day-interval-wrapper">
+                                        <div class="opening-hours-day-interval">14:00 Uhr - 20:00 Uhr</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="opening-hours-opened">
+                                <div class="opening-hours-opened-state"> Wir haben zurzeit geschlossen und sind um 14:00
+                                    Uhr wieder für Sie da.
+                                </div>
+                            </div>
+                        </div>
+
+                        <?php if (!empty($data->twitter)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-twitter">
+                                <a href="<?= $data->twitter ?>">Twitter</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <!-- todo: do not forget facebook, instagram, xing, linkedin, whatsapp, vimeoChannelLink, wikipediaLink -->
+
+                    </div>
+                    <div class="detail-field-map detail-view__map-wrapper">
+                        <div id="c4g_map_120" class="c4g_map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php dump($data) ?>
+    </div>
+
+
+    <div id="offer-tiles" class="list-wrapper">
+        <div class="c4g-tile-headline-wrapper"><h2 class="c4g-tile-headline">Unsere Angebote</h2></div>
+        <div class="detail-view__list-filter-wrapper"><input class="detail-view__list-filter-input" type="text"
+                                                             placeholder="Suchbegriff eingeben" value=""></div>
+        <div class="infinite-scroll-component__outerdiv" style="">
+            <div class="infinite-scroll-component offer-tiles c4g-list-outer" style="height: auto; overflow: auto;">
+                <div class="c4g-list-elements">
+                    <div class="c4g-list-element">
+                        <div class="c4g-list-element__inner">
+                            <div class="c4g-list-element__image-wrapper"><img class="c4g-list-element__image"
+                                                                              loading="lazy"
+                                                                              src="files/con4gis_import_data/727/offers/3ece7269401ffc95bbca4bcf74758e35-imageOfferSize.jpg"
+                                                                              alt="Hauptbild des Angebots Blockflötenunterricht Fortgeschrittene"
+                                                                              title="Hauptbild des Angebots Blockflötenunterricht Fortgeschrittene">
+                            </div>
+                            <div class="c4g-list-element__title-wrapper"><h4 class="c4g-list-element__title">
+                                    Blockflötenunterricht Fortgeschrittene</h4></div>
+                            <div class="c4g-list-element__typename-wrapper"><span class="c4g-list-element__typename">Kurse &amp; Seminare</span>
+                            </div>
+                            <div class="c4g-list-element__shortdescription-wrapper"><span
+                                        class="c4g-list-element__shortdescription">Blockflötenunterricht für Fortgeschrittene</span>
+                            </div>
+                            <div class="c4g-list-element__begindate-wrapper"><span class="c4g-list-element__begindate">16.10.2025</span>
+                            </div>
+                            <div class="c4g-list-element__begintime-wrapper"><span class="c4g-list-element__begintime">19:00 Uhr</span>
+                            </div>
+                            <div class="c4g-list-element__taglinks-wrapper">
+                                <div class="c4g-list-element__taglinks onlinereservierung"><img
+                                            class="c4g-list-element__taglinks-image onlinereservierung" loading="lazy"
+                                            src="files/con4gis_import_data/727/icons/tag_icons/tags_in_farbe/Onlinebuchung.svg"
+                                            alt="Onlinereservierung" title="Onlinereservierung"></div>
+                            </div>
+                            <div class="c4g-list-element__buttons-wrapper">
+                                <div class="c4g-list-element__notice-wrapper"><a
+                                            class="c4g-list-element__notice-link put-on-wishlist"
+                                            data-image="files/con4gis_import_data/727/offers/3ece7269401ffc95bbca4bcf74758e35-imageOfferSize.jpg"
+                                            data-name="Blockflötenunterricht Fortgeschrittene"
+                                            data-moreurl="/gutesio/operator/wishlist/add/event/{74F8D354-01D6-21BE-ABB1-17247543FB81}"
+                                            href="#" rel="noreferrer noopener">Merken</a></div>
+                                <div class="c4g-list-element__more-wrapper"><a class="c4g-list-element__more-link"
+                                                                               href="events/events-detailseite/74f8d354-01d6-21be-abb1-17247543fb81"
+                                                                               rel="noreferrer noopener">Mehr</a></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="c4g-list-element">
+                        <div class="c4g-list-element__inner">
+                            <div class="c4g-list-element__image-wrapper"><img class="c4g-list-element__image"
+                                                                              loading="lazy"
+                                                                              src="files/con4gis_import_data/727/offers/dd20fe582ff7d4307c8619fcc3dd9f07-imageOfferSize.jpg"
+                                                                              alt="Hauptbild des Angebots Gitarrenunterricht Anfängerkurs"
+                                                                              title="Hauptbild des Angebots Gitarrenunterricht Anfängerkurs">
+                            </div>
+                            <div class="c4g-list-element__title-wrapper"><h4 class="c4g-list-element__title">
+                                    Gitarrenunterricht Anfängerkurs</h4></div>
+                            <div class="c4g-list-element__typename-wrapper"><span class="c4g-list-element__typename">Kurse &amp; Seminare</span>
+                            </div>
+                            <div class="c4g-list-element__shortdescription-wrapper"><span
+                                        class="c4g-list-element__shortdescription">Gitarrenunterricht für Anfänger </span>
+                            </div>
+                            <div class="c4g-list-element__taglinks-wrapper">
+                                <div class="c4g-list-element__taglinks onlinereservierung"><img
+                                            class="c4g-list-element__taglinks-image onlinereservierung" loading="lazy"
+                                            src="files/con4gis_import_data/727/icons/tag_icons/tags_in_farbe/Onlinebuchung.svg"
+                                            alt="Onlinereservierung" title="Onlinereservierung"></div>
+                            </div>
+                            <div class="c4g-list-element__buttons-wrapper">
+                                <div class="c4g-list-element__notice-wrapper"><a
+                                            class="c4g-list-element__notice-link put-on-wishlist"
+                                            data-image="files/con4gis_import_data/727/offers/dd20fe582ff7d4307c8619fcc3dd9f07-imageOfferSize.jpg"
+                                            data-name="Gitarrenunterricht Anfängerkurs"
+                                            data-moreurl="/gutesio/operator/wishlist/add/event/{DB6DE1D8-B151-C5BD-E771-129A2E1FA9EC}"
+                                            href="#" rel="noreferrer noopener">Merken</a></div>
+                                <div class="c4g-list-element__more-wrapper"><a class="c4g-list-element__more-link"
+                                                                               href="events/events-detailseite/db6de1d8-b151-c5bd-e771-129a2e1fa9ec"
+                                                                               rel="noreferrer noopener">Mehr</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
-    <script>
-        window.frameworkData = window.frameworkData || [];
-        window.frameworkData.push(<?php echo $this->configuration; ?>);
-    </script>
+    <!--    <script>-->
+    <!--        window.frameworkData = window.frameworkData || [];-->
+    <!--        window.frameworkData.push(--><?php //echo $this->configuration; ?>//);
+    //    </script>
     <div style="display: none">
         <?php echo $this->searchHTML; ?>
     </div>

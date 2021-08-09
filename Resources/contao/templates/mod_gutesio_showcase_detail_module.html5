@@ -328,9 +328,7 @@ $data = $config->components->detail->data;
 
                     </div>
 
-                    <!-- todo-replace: map output via REACT ??? -->
                     <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper">
-                        <div id="c4g_map_120" class="c4g_map"></div>
                     </div>
                 </div>
             </div>

@@ -112,7 +112,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $redirectPage = $model->gutesio_showcase_list_page;
         $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js?v=" . time(), ResourceLoader::BODY, "c4g-maps");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
 //        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/jquery/jquery-3.5.1.slim.min.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-jquery");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-util");

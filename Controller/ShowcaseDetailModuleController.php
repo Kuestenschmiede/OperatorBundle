@@ -119,6 +119,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-modal");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/detailmap.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "detailmap");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "openinghours");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async|static");
         System::loadLanguageFile("operator_showcase_list");

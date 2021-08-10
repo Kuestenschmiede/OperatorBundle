@@ -334,7 +334,7 @@ $newArr["detailData"]["openingHours"] = $newArr["components"]["detail"]["data"][
 unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);
 //dump($newArr);
-dump(json_decode($this->configuration));
+//dump(json_decode($this->configuration));
 ?>
 
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">

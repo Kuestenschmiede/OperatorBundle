@@ -1,9 +1,137 @@
 {{offer::meta}}
 
+<div id="entrypoint_48" class="projects-tile-list-module">
+
+    <!--    todo-ajo: html markup work -->
+    <div class="detail-view" style="">
+        <div class="detail-view__section-headline" id="detail-section-1">
+            <div class="item name detail-view__headline"><h1>3-ply Topfset 5-tlg. - LE CREUSET®</h1></div>
+        </div>
+        <div id="anchor-menu">
+            <div class="anchor-menu__inner">
+                <ul class="anchor-menu__list">
+                    <li>
+                        <a href="https://gutes-aus-jever.de/angebot/bcc3327d-a4cf-25f6-13ed-7b77f167a4e0#detail-section-3">Beschreibung</a>
+                    </li>
+                    <li>
+                        <a href="https://gutes-aus-jever.de/angebot/bcc3327d-a4cf-25f6-13ed-7b77f167a4e0#detail-section-4">Detaildaten</a>
+                    </li>
+                    <li>
+                        <a href="https://gutes-aus-jever.de/angebot/bcc3327d-a4cf-25f6-13ed-7b77f167a4e0#detail-section-6">Kontakt</a>
+                    </li>
+                </ul>
+                <div class="anchor-menu__share">
+                    <button class="c4g-btn c4g-btn-warning c4g-btn-removefromwishlist js-removeDetailFromWishlist"
+                            title="Vom Merkzettel entfernen." style="display: none;"><i class="fas fa-heart"></i>
+                    </button>
+                    <button class="c4g-btn c4g-btn-primary c4g-btn-putonwishlist js-putDetailOnWishlist"
+                            title="Auf den Merkzettel setzen."><i class="fas fa-heart"></i></button>
+                    <button type="button" class="c4g-btn c4g-btn-primary c4g-btn-sharedetail js-modalShare"
+                            data-toggle="modal" data-target="#shareModal" title="Teilen"><i
+                                class="fas fa-share-alt"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-description" id="detail-section-3">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="item description detail-view__description"><span class="entry-content"><h2>3-ply Topfset 5-tlg. - LE CREUSET®</h2><h3>Induktionsgeeignet</h3><p>Edelstahl-Mehrschicht-Material.</p><p>Bestehend aus: Fleischtopf mit den Durchmessern 18, 20, 24 cm, Bratentopf Durchmesser 20 cm und Profitopf Durchmesser 16 cm.</p><p>&nbsp;</p><p><i>*Streichpreis - Beim Kauf der Einzelprodukte</i></p></span>
+                    </div>
+                    <div class="detail-view__image-gallery">
+                        <div class="detail-view__image-gallery-inner"><a data-fancybox="gallery_imageGallery"
+                                                                         href="files/con4gis_import_data/529/offers/{BCC3327D-A4CF-25F6-13ED-7B77F167A4E0}/c5d9dcb9ecf98a2e4173427fac88d086-imageGallerySize.jpg"
+                                                                         class="imageGallery-item first"><img
+                                        class="img-fluid"
+                                        src="files/con4gis_import_data/529/offers/{BCC3327D-A4CF-25F6-13ED-7B77F167A4E0}/c5d9dcb9ecf98a2e4173427fac88d086-imageGallerySize.jpg"
+                                        alt="Hauptbild des Angebots Angebot" width="600" height="332"></a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-detaildata" id="detail-section-4">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="detail-field-text detail-view__strike-price"><span class="detail-field-text__text">863,00 €*</span>
+                    </div>
+                    <div class="detail-field-text detail-view__price"><span
+                                class="detail-field-text__text">449,00 €*</span></div>
+                    <div class="detail-field-text cc detail-view__modal">
+                        <button class="cc">Click and Collect</button>
+                        <div class="c4g-modal-outer c4g-modal-hide">
+                            <div class="c4g-modal-inner">
+                                <div class="c4g-modal-content">
+                                    <div><span class="title">Click and Collect</span></div>
+                                    <div>
+                                        <div style="text-align: center; margin: auto;"><img
+                                                    src="bundles/con4gisframework/img/preloader-image.svg"
+                                                    class="preloader-image" alt=""></div>
+                                    </div>
+                                    <div>
+                                        <button class="highlight" type="button">schließen</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-tags" id="detail-section-5">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="detail-field-text displayType detail-view__display-type">
+                        <div class="detail-field-text__label">Kategorie:</div>
+                        <span class="detail-field-text__text">Kochtöpfe &amp; Dampfkochtöpfe</span></div>
+                    <div class="detail-field-text taxNote detail-view__taxnote"><span class="detail-field-text__text">*Preise inkl. 19% MwSt.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-contact" id="detail-section-6">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
+                        <div><h3 class="entry-content name">J. F. Oetken</h3><span
+                                    class="entry-content additionalName"></span>
+                            <div class="street"><span class="street">Neue Str.</span>&nbsp;<span
+                                        class="streetNumber">3</span></div>
+                            <div class="entry-content"><span class="zip">26441</span>&nbsp;<span
+                                        class="city">Jever</span></div>
+                        </div>
+                        <span class="entry-content phone" itemprop="phone"><a
+                                    href="tel:04461/3227">04461/3227</a></span><span class="entry-content email"
+                                                                                     itemprop="email"><a
+                                    href="mailto:j.f.oetken@ewetel.net">j.f.oetken@ewetel.net</a></span><span
+                                class="entry-content website"><a href="http://www.oetken-jever.de/">Website</a></span>
+
+
+                        <!-- todo-replace: opening hours -->
+                        <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
+                            <div id="react__opening-hours" class="opening-hours" style="min-heigh:500">
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <!-- todo-replace: replace map via REACT -->
+                    <div class="detail-field-map detail-view__map-wrapper">
+                        <div id="c4g_map_12" class="c4g_map">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--    todo-replace: Angeboten von folgenden Anbietern -->
+
+    <!--    todo-replace: Andere Angebote der Anbieter-->
+
+</div>
+
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
     <script>
-      window.frameworkData = window.frameworkData || [];
-      window.frameworkData.push(<?php echo $this->configuration; ?>);
+        window.frameworkData = window.frameworkData || [];
+        window.frameworkData.push(<?php echo $this->configuration; ?>);
     </script>
     <div style="display: none">
         <?php echo $this->searchHTML; ?>
@@ -36,13 +164,17 @@
 
                 ?>
                 <nav class="nav flex-column">
-                    <a rel="noopener" href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareFacebookUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                    <a rel="noopener" href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareTwitterUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
-                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
-                    <a rel="noopener" href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
+                    <a rel="noopener" href="<?= $shareEmailUrl ?>"
+                       class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>
 

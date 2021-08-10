@@ -134,23 +134,13 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             $objPage->pageTitle = $detailData['name'];
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
-                $detailPage = $this->getDetailPage();
                 $childData = $this->getChildTileData($request);
                 if (count($childData) > 0) {
-                    $link = new DetailAnchorMenuLink(
-                        $GLOBALS['TL_LANG']["operator_showcase_list"]['our_offers'],
-                        "#" . $this->getChildTileList()->getWrapperId()
-                    );
-                    $detailPage->addAdditionalLink($link);
+                    $template->hasOffers = true;
                 }
                 if ($detailData['imprintData']) {
-                    $link = new DetailAnchorMenuLink(
-                        $GLOBALS['TL_LANG']["operator_showcase_list"]['imprint'],
-                        "#showcase-imprint"
-                    );
-                    $detailPage->addAdditionalLink($link);
+                    $template->hasImprint = true;
                 }
-                $conf->addDetailPage($detailPage, $this->getDetailFields($detailData), $detailData);
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
                 $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
                 $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
@@ -190,6 +180,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         }
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
+        $template->detailData = $detailData;
         if ($this->model->gutesio_data_render_searchHtml) {
             $template->searchHTML = $sc->getHTML();
         }
@@ -220,215 +211,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $mapData['addIdToDiv'] = false;
         
         return new JsonResponse($mapData);
-    }
-
-    protected function getDetailPage()
-    {
-        $page = new DetailPage();
-        $page->setHeadline($this->languageRefs['details']['headline']);
-        $page->setSections($this->getSections());
-        $page->setShowAnchorMenu(true);
-        $page->setMenuSectionIndex(3);
-
-        return $page;
-    }
-
-    private function getSections()
-    {
-        /**
-         * Section 1: Name und Logo
-         * Section 2: Header-Bild
-         * Section 3: Anchor menü
-         * Section 4: Beschreibung und Bildergalerie
-         * Section 5: Tags
-         * Section 6: Kontakt und Karte
-         * Section 7: Partnerlogos
-         */
-        $sections = [];
-        $section = new DetailPageSection($this->languageRefs['sections']['name_logo'], true, "detail-view__section-name-logo", false);
-        $section->setRowForEachField(true);
-        $sections[] = $section;
-
-        $section = new DetailPageSection($this->languageRefs['sections']['header'], false, "detail-view__section-header", false);
-        $sections[] = $section;
-
-        $section = new DetailPageSection($this->languageRefs['sections']['menu'], true, "detail-view__section-menu", false);
-        $sections[] = $section;
-
-        $section = new DetailPageSection($this->languageRefs['sections']['gallery'], true, "detail-view__section-gallery", true);
-        $sections[] = $section;
-
-        $section = new DetailPageSection("", true, "detail-view__section-detaildata", false);
-        $sections[] = $section;
-
-        $section = new DetailPageSection($this->languageRefs['sections']['tags'], true, "detail-view__section-tags", false);
-        $sections[] = $section;
-
-        $section = new DetailPageSection($this->languageRefs['sections']['contact_map'], true, "detail-view__section-contact-map", true);
-        $sections[] = $section;
-
-        $section = new DetailPageSection($this->languageRefs['sections']['relatedShowcaseLogos'], true, "detail-view__section-related-showcase-logos", false);
-        $sections[] = $section;
-
-        return $sections;
-    }
-
-    protected function getDetailFields(array $detailData)
-    {
-        $fields = [];
-
-        $field = new DetailHTMLField();
-        $field->setName('description');
-        $field->setSection(4);
-        $field->setClass("detail-view__description");
-        $fields[] = $field;
-
-        $field = new DetailFancyboxImageGallery();
-        $field->setName("imageGallery");
-        $field->setClass("detail-view__image-gallery");
-        $field->setSection(4);
-        $fields[] = $field;
-
-        $field = new DetailVideoPreviewField();
-        $field->setName("videoPreview");
-        $field->setClass("detail-view__video-preview");
-        $field->setSection(5);
-        $fields[] = $field;
-
-        $field = new DetailImageLinkField();
-        $field->setName("relatedShowcaseLogos");
-        $field->setClass("relatedShowcaseLogos detail-view__logos");
-        $field->setWrapperClass("detail-view__logos-wrapper");
-        $field->setInnerClass("detail-view__logos-image");
-        $field->setSection(6);
-        $fields[] = $field;
-
-        if (is_array($detailData['types']) && count($detailData['types']) > 1) {
-            $typeFieldLabel = $GLOBALS['TL_LANG']["operator_showcase_list"]['typeSingular'];
-        } else {
-            $typeFieldLabel = $GLOBALS['TL_LANG']["operator_showcase_list"]['typePlural'];
-        }
-
-        $field = new DetailTextField();
-        $field->setSection(6);
-        $field->setName("displayType");
-        $field->setClass("displayType detail-view__display-type");
-        $field->setLabel($typeFieldLabel);
-        $fields[] = $field;
-
-        $typeFields = $this->getTypeFields($detailData['types'] && is_array($detailData['types']) ? $detailData['types'] : []);
-        foreach ($typeFields as $typeField) {
-            $typeField->setSection(6);
-            $fields[] = $typeField;
-        }
-
-        $field = new DetailTagField();
-        $field->setSection(6);
-        $field->setName("tags");
-        $fields[] = $field;
-
-        $contactField = new DetailContactField();
-        $contactField->setSection(7);
-        $contactField->setLabel($this->languageRefs['contact']);
-        $contactField->setEmailFieldName('email');
-        $contactField->setPhoneFieldName('phone');
-        $contactField->setWebsiteFieldName('website');
-        $contactField->setWebsiteTextFieldName("websiteLabel");
-        $contactField->setOpeningTimesFieldName("opening_hours");
-        $contactField->setAddressFieldnamePrefix("contact");
-        $contactField->setAddressFieldnameFallbackPrefix("location");
-        $contactField->setClass("detail-view__contact-wrapper");
-        $contactField->setWithSocialMedia(true);
-        $fields[] = $contactField;
-
-        $field = new DetailMapLocationField();
-        $field->setSection(7);
-        $field->setClass("detail-view__map-wrapper");
-        $field->setName('mapLocation');
-        $field->setGeoxField('geox');
-        $field->setGeoyField('geoy');
-        $field->setAsyncMapData(true);
-        $field->setAsyncMapDataUrl("/gutesio/operator/showcase_detail_get_map_data");
-        $fields[] = $field;
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("facebook");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['facebook']);
-        $field->setClass("social-media-link c4g-icon-wrapper icon-facebook");
-        $contactField->addSocialMediaField($field);
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("instagram");
-        $field->setClass("social-media-link c4g-icon-wrapper icon-instagram");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['instagram']);
-        $contactField->addSocialMediaField($field);
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("twitter");
-        $field->setClass("social-media-link c4g-icon-wrapper icon-twitter");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['twitter']);
-        $contactField->addSocialMediaField($field);
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("whatsapp");
-        $field->setClass("social-media-link c4g-icon-wrapper icon-whatsapp");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['whatsapp']);
-        $contactField->addSocialMediaField($field);
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("youtubeChannelLink");
-        $field->setClass("social-media-link c4g-icon-wrapper icon-youtube");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['youtubeChannelLink']);
-        $contactField->addSocialMediaField($field);
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("vimeoChannelLink");
-        $field->setClass("social-media-link c4g-icon-wrapper icon-vimeo");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['vimeoChannelLink']);
-        $contactField->addSocialMediaField($field);
-
-        $field = new DetailLinkField();
-        $field->setSection(7);
-        $field->setName("wikipediaLink");
-        $field->setClass("wikipedia-link c4g-icon-wrapper icon-wikipedia");
-        $field->setLinkText($GLOBALS['TL_LANG']["operator_showcase_list"]['wikipedia']);
-        $contactField->addSocialMediaField($field);
-
-        return $fields;
-    }
-
-    private function getTypeFields(array $typeOptions): array
-    {
-        $typeIds = [];
-        foreach ($typeOptions as $type) {
-            if ($type['value']) {
-                $typeIds[] = $type['value'];
-            }
-        }
-        $typeFields = [];
-        if (count($typeIds) > 0) {
-            $inString = "(" . implode(",", $typeIds) . ")";
-            $stm = Database::getInstance()
-                ->prepare("SELECT * FROM tl_gutesio_data_type WHERE `id` IN $inString");
-            $arrTypes = $stm->execute()->fetchAllAssoc();
-
-            foreach ($arrTypes as $type) {
-                if ($type['technicalKey']) {
-                    $arrTechnicalKeys = StringUtil::deserialize($type['technicalKey'], true);
-                    if ($arrTechnicalKeys && is_array($arrTechnicalKeys) && count($arrTechnicalKeys) > 0) {
-                        $typeFields = array_merge($typeFields, TypeDetailFieldGenerator::getFieldsForTypes($arrTechnicalKeys));
-                    }
-                }
-            }
-        }
-
-        return FieldUtil::makeFieldArrayUnique($typeFields);
     }
 
     private function getDetailData(Request $request): array

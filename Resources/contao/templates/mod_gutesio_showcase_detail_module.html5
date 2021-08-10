@@ -62,8 +62,7 @@
 </div>
 
 <?php
-$config = json_decode($this->configuration);
-$data = $config->components->detail->data;
+$data = json_decode(json_encode($this->detailData));
 ?>
 
 <div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">
@@ -161,6 +160,7 @@ $data = $config->components->detail->data;
 
             <?php if ($data->videoPreview->videoType == "youtube"): ?>
                 <div class="detail-view__section-detaildata" id="detail-section-5">
+                    <div class="c4g-container">
                     <div class="c4g-container">
                         <div class="c4g-row">
                             <div class="detail-view__video-preview">

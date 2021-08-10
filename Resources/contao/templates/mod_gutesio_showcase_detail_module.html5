@@ -148,7 +148,7 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
-        <!-- youtube video section -->
+        <!-- todo: youtube video section - videoPreviewImage is missing -->
         <?php if (isset($data->videoPreview) && !empty($data->videoPreview)): ?>
 
             <?php
@@ -166,16 +166,17 @@ $data = json_decode(json_encode($this->detailData));
             <?php if ($data->videoPreview->videoType == "youtube"): ?>
                 <div class="detail-view__section-detaildata" id="detail-section-5">
                     <div class="c4g-container">
-                    <div class="c4g-container">
-                        <div class="c4g-row">
-                            <div class="detail-view__video-preview">
-                                <div class="embed-responsive embed-responsive-16by9">
-                                    <div class="">
-                                        <iframe class="video-preview-youtube" frameborder="0" allowfullscreen="1"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                title="YouTube video player" width="100%" height="100%"
-                                                src="https://www.youtube-nocookie.com/embed/<?= $youtubeId ?>"
-                                                id="widget2"></iframe>
+                        <div class="c4g-container">
+                            <div class="c4g-row">
+                                <div class="detail-view__video-preview">
+                                    <div class="embed-responsive embed-responsive-16by9">
+                                        <div class="">
+                                            <iframe class="video-preview-youtube" frameborder="0" allowfullscreen="1"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    title="YouTube video player" width="100%" height="100%"
+                                                    src="https://www.youtube-nocookie.com/embed/<?= $youtubeId ?>"
+                                                    id="widget2"></iframe>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -184,18 +185,21 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             <?php endif; ?>
         <?php endif; ?>
+        
         <div class="detail-view__section-tags" id="detail-section-6">
             <div class="c4g-container">
                 <div class="c4g-row">
 
-                    <!-- todo: do not forget logos-wrapper - relatedShowcaseLogos -->
-                    <?php if (!empty($data->relatedShowcaseLogos)): ?>
+                    <!-- todo: !!! check if it works !!! do not forget logos-wrapper - relatedShowcaseLogos -->
+                    <?php if (isset($data->relatedShowcaseLogos) && !empty($data->relatedShowcaseLogos)): ?>
                         <div class="detail-view__logos-wrapper">
-                            <a href="https://gutes-aus-jever.de/schaufenster/jever_aktiv_geschenk_gutschein"
-                               class="relatedShowcaseLogos detail-view__logos"><img
-                                        src="files/con4gis_import_data/529/showcases/{4846D7E8-472C-30E1-6891-A3EF5AE5147C}/jever-aktiv-vereinslogo-import.png"
-                                        alt="Logo des Schaufensters Jever Aktiv Geschenk Gutschein"
-                                        class="detail-view__logos-image"></a>
+                            <?php foreach ($data->relatedShowcaseLogos as $logo): ?>
+                                <a href="<?= $logo->href ?>"
+                                   class="relatedShowcaseLogos detail-view__logos"><img
+                                            src="<?= $logo->src ?>"
+                                            alt="<?= $logo->alt ?>"
+                                            class="detail-view__logos-image"></a>
+                            <?php endforeach; ?>
                         </div>
                     <?php endif; ?>
 
@@ -276,6 +280,21 @@ $data = json_decode(json_encode($this->detailData));
                                     </div>
                                 <?php endif; ?>
 
+                                <!-- todo: !!! check if it works !!! online shop link -->
+                                <?php
+                                $onlineshopLink = "";
+                                foreach ($data->tags as $tag) {
+                                    if ($tag->technicalKey == "tag_onlineshop" && $data->published && (isset($data->linkHref) && !empty($data->linkHref))) {
+                                        $onlineshopLink = $data->linkHref;
+                                    }
+                                }
+                                ?>
+                                <?php if (!empty($onlineshopLink)): ?>
+                                    <div class="tag_onlineshop tag_onlineshop"><a
+                                                href="<?= $onlineshopLink ?>">Onlineshop</a>
+                                    </div>
+                                <?php endif; ?>
+
                                 <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
                                     <div class="item wheelchairNotes tag_wheelchair">
                                         <div class="entry-label">Hinweise zur Rollstuhleignung</div>
@@ -286,9 +305,6 @@ $data = json_decode(json_encode($this->detailData));
                                     </div>
                                 <?php endif; ?>
                             </div>
-
-                            <!-- todo: insert videoPreview -->
-
                         </div>
                     <?php endif; ?>
                 </div>
@@ -313,7 +329,6 @@ $data = json_decode(json_encode($this->detailData));
                                     <?= $data->addressCityAll ?>
                                 </div>
                             <?php endif; ?>
-
                         </div>
 
                         <?php if (isset($data->phone) && !empty($data->phone)): ?>
@@ -361,8 +376,23 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         <?php endif; ?>
 
-                        <!-- todo: do not forget facebook, instagram, xing, linkedin, whatsapp, vimeoChannelLink, wikipediaLink -->
+                        <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
+                                        href="<?= $data->whatsapp ?>">Whatsapp</a>
+                            </div>
+                        <?php endif; ?>
 
+                        <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
+                                        href="<?= $data->youtubeChannelLink ?>">YouTube-Kanal</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
+                            <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
+                                        href="<?= $data->wikipediaLink ?>">Wikipedia</a>
+                            </div>
+                        <?php endif; ?>
                     </div>
 
                     <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper"></div>
@@ -542,11 +572,13 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 </div>
 
 <!-- Modal Shade Detail Page-->
-<div class="modal fade share-modal" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+<div class="modal fade share-modal" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="shareModalLabel"><i class="fas fa-share-alt"></i> Teilen mit Freunden</h5>
+                <h5 class="modal-title" id="shareModalLabel"><i class="fas fa-share-alt"></i> Teilen mit Freunden
+                </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

@@ -1,5 +1,14 @@
 {{offer::meta}}
 
+<?php
+$data = json_decode(json_encode($this->detailData));
+?>
+
+<script>
+  window.detailData = window.detailData || {};
+  window.detailData.openingHours = <?php echo "\"" .  $data->opening_hours . "\""?> ;
+</script>
+
 <div id="entrypoint_48" class="projects-tile-list-module">
 
     <!--    todo-ajo: html markup work -->
@@ -113,9 +122,13 @@
                     </div>
 
                     <!-- todo-replace: replace map via REACT -->
-                    <div class="detail-field-map detail-view__map-wrapper">
-                        <div id="c4g_map_12" class="c4g_map">
-                        </div>
+                    <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper">
+                        <script>
+                          window.mapData = window.mapData || {};
+                          window.mapData<?php echo '['.$this->mapData['mapId'] . ']' ?> = <?php echo json_encode($this->mapData) ?>;
+                          window.mapData[<?php echo $this->mapData['mapId'] ?>]['mapDiv'] = "c4g-map-container-" + <?php echo $this->mapData['mapId'] ?>;
+                        </script>
+                        <div class="c4g-map" id="c4g-map-container-<?php echo $this->mapData['mapId'] ?>"></div>
                     </div>
                 </div>
             </div>

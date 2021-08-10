@@ -65,6 +65,11 @@
 $data = json_decode(json_encode($this->detailData));
 ?>
 
+<script>
+  window.detailData = window.detailData || {};
+  window.detailData.openingHours = <?php echo "\"" .  $data->opening_hours . "\""?> ;
+</script>
+
 <div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">
     <div class="detail-view" style="">
         <div id="anchor-menu">

@@ -5,29 +5,24 @@ $data = json_decode(json_encode($this->detailData));
 ?>
 
 <script>
-  window.detailData = window.detailData || {};
-  window.detailData.openingHours = <?php echo "\"" .  $data->opening_hours . "\""?> ;
+    window.detailData = window.detailData || {};
+    window.detailData.openingHours = <?php echo "\"" . $data->opening_hours . "\""?> ;
 </script>
 
-<div id="entrypoint_48" class="projects-tile-list-module">
+<?php //dump($data) ?>
 
-    <!--    todo-ajo: html markup work -->
+<div id="entrypoint_<?= $this->id ?>__mod" class="projects-tile-list-module_mod">
     <div class="detail-view" style="">
-        <div class="detail-view__section-headline" id="detail-section-1">
-            <div class="item name detail-view__headline"><h1>3-ply Topfset 5-tlg. - LE CREUSET®</h1></div>
+        <div class="detail-view__section-headline" id="section-id-headline">
+            <div class="item name detail-view__headline">
+                <h1><?= $data->name ?></h1>
+            </div>
         </div>
+        <!-- todo @ajo: anchor menu - new idea needed -->
         <div id="anchor-menu">
             <div class="anchor-menu__inner">
                 <ul class="anchor-menu__list">
-                    <li>
-                        <a href="https://gutes-aus-jever.de/angebot/bcc3327d-a4cf-25f6-13ed-7b77f167a4e0#detail-section-3">Beschreibung</a>
-                    </li>
-                    <li>
-                        <a href="https://gutes-aus-jever.de/angebot/bcc3327d-a4cf-25f6-13ed-7b77f167a4e0#detail-section-4">Detaildaten</a>
-                    </li>
-                    <li>
-                        <a href="https://gutes-aus-jever.de/angebot/bcc3327d-a4cf-25f6-13ed-7b77f167a4e0#detail-section-6">Kontakt</a>
-                    </li>
+
                 </ul>
                 <div class="anchor-menu__share">
                     <button class="c4g-btn c4g-btn-warning c4g-btn-removefromwishlist js-removeDetailFromWishlist"
@@ -41,42 +36,88 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         </div>
-        <div class="detail-view__section-description" id="detail-section-3">
+
+        <!-- todo @ajo: check if more content is needed by special condition -->
+        <div class="detail-view__section-description" id="section-id-description-and-gallery">
             <div class="c4g-container">
                 <div class="c4g-row">
-                    <div class="item description detail-view__description"><span class="entry-content"><h2>3-ply Topfset 5-tlg. - LE CREUSET®</h2><h3>Induktionsgeeignet</h3><p>Edelstahl-Mehrschicht-Material.</p><p>Bestehend aus: Fleischtopf mit den Durchmessern 18, 20, 24 cm, Bratentopf Durchmesser 20 cm und Profitopf Durchmesser 16 cm.</p><p>&nbsp;</p><p><i>*Streichpreis - Beim Kauf der Einzelprodukte</i></p></span>
+                    <div class="item description detail-view__description">
+                        <div class="entry-content">
+                            <?= $data->description ?>
+                        </div>
                     </div>
                     <div class="detail-view__image-gallery">
-                        <div class="detail-view__image-gallery-inner"><a data-fancybox="gallery_imageGallery"
-                                                                         href="files/con4gis_import_data/529/offers/{BCC3327D-A4CF-25F6-13ED-7B77F167A4E0}/c5d9dcb9ecf98a2e4173427fac88d086-imageGallerySize.jpg"
-                                                                         class="imageGallery-item first"><img
-                                        class="img-fluid"
-                                        src="files/con4gis_import_data/529/offers/{BCC3327D-A4CF-25F6-13ED-7B77F167A4E0}/c5d9dcb9ecf98a2e4173427fac88d086-imageGallerySize.jpg"
-                                        alt="Hauptbild des Angebots Angebot" width="600" height="332"></a></div>
+
+                        <div class="detail-view__image-gallery-inner">
+                            <?php if ($data->imageGallery_0): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_0->path ?>"
+                                   class="imageGallery-item first"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_0->src ?>"
+                                            alt="<?= $data->imageGallery_0->alt ?>"
+                                            width="<?= $data->imageGallery_0->width ?>"
+                                            height="<?= $data->imageGallery_0->height ?>"></a>
+                            <?php endif; ?>
+
+                            <?php if ($data->imageGallery_1): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_1->path ?>"
+                                   class="imageGallery-item"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_1->src ?>"
+                                            alt="<?= $data->imageGallery_1->alt ?>"
+                                            width="<?= $data->imageGallery_1->width ?>"
+                                            height="<?= $data->imageGallery_1->height ?>"></a>
+                            <?php endif; ?>
+
+                            <?php if ($data->imageGallery_2): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_2->path ?>"
+                                   class="imageGallery-item"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_2->src ?>"
+                                            alt="<?= $data->imageGallery_2->alt ?>"
+                                            width="<?= $data->imageGallery_2->width ?>"
+                                            height="<?= $data->imageGallery_2->height ?>"></a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <div class="detail-view__section-detaildata" id="detail-section-4">
             <div class="c4g-container">
-                <div class="c4g-row">
-                    <div class="detail-field-text detail-view__strike-price"><span class="detail-field-text__text">863,00 €*</span>
-                    </div>
-                    <div class="detail-field-text detail-view__price"><span
-                                class="detail-field-text__text">449,00 €*</span></div>
-                    <div class="detail-field-text cc detail-view__modal">
-                        <button class="cc">Click and Collect</button>
-                        <div class="c4g-modal-outer c4g-modal-hide">
-                            <div class="c4g-modal-inner">
-                                <div class="c4g-modal-content">
-                                    <div><span class="title">Click and Collect</span></div>
-                                    <div>
-                                        <div style="text-align: center; margin: auto;"><img
-                                                    src="bundles/con4gisframework/img/preloader-image.svg"
-                                                    class="preloader-image" alt=""></div>
-                                    </div>
-                                    <div>
-                                        <button class="highlight" type="button">schließen</button>
+                <div class="c4g-container">
+                    <div class="c4g-row">
+                        <?php if (isset($data->strikePrice) && !empty($data->strikePrice)): ?>
+                            <div class="detail-field-text detail-view__strike-price"><span
+                                        class="detail-field-text__text"><?= $data->strikePrice ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->price) && !empty($data->price)): ?>
+                            <div class="detail-field-text detail-view__price"><span
+                                        class="detail-field-text__text"><?= $data->price ?></span></div>
+                        <?php endif; ?>
+
+                        <!-- todo @ajo: click&collect solution -->
+                        <div class="detail-field-text cc detail-view__modal">
+                            <button class="cc">Click and Collect</button>
+                            <div class="c4g-modal-outer c4g-modal-hide">
+                                <div class="c4g-modal-inner">
+                                    <div class="c4g-modal-content">
+                                        <div><span class="title">Click and Collect</span></div>
+
+                                        <div>
+                                            <div style="text-align: center; margin: auto;"><img
+                                                        src="bundles/con4gisframework/img/preloader-image.svg"
+                                                        class="preloader-image" alt=""></div>
+                                        </div>
+                                        <div>
+                                            <button class="highlight" type="button">schließen</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -85,48 +126,100 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         </div>
+
         <div class="detail-view__section-tags" id="detail-section-5">
             <div class="c4g-container">
                 <div class="c4g-row">
                     <div class="detail-field-text displayType detail-view__display-type">
                         <div class="detail-field-text__label">Kategorie:</div>
-                        <span class="detail-field-text__text">Kochtöpfe &amp; Dampfkochtöpfe</span></div>
+                        <div class="detail-field-text__text"><?= $data->typeName ?></div>
+                    </div>
+
+
+                    <div class="detail-field-wrapper">
+
+                        <?php if (isset($data->tags) && !empty($data->tags)): ?>
+                            <div class="detail-field-wrapper__tags">
+                                <!-- todo @ajo: tagfields -->
+                                <pre> hier mit foreach die tags ausgeben </pre>
+                                <!--                                <div class="tag-entry tag_onlineshop">-->
+                                <!--                                    <div class="detail-field-image"><img class="img-fluid"-->
+                                <!--                                                                         src="files/con4gis_import_data/529/icons/tag_icons/tags_in_farbe/Onlineshop.svg"-->
+                                <!--                                                                         alt="Onlineshop" data-toggle="tooltip"-->
+                                <!--                                                                         data-content="Onlineshop" title="Onlineshop">-->
+                                <!--                                    </div>-->
+                                <!--                                    <div class="detail-field-text tag_onlineshop"><span class="detail-field-text__text">Onlineshop</span>-->
+                                <!--                                    </div>-->
+                                <!--                                </div>-->
+                            </div>
+                        <?php endif; ?>
+
+                        <div class="detail-field-wrapper__tag-fields">
+                            <div class="tag_onlineshop tag_onlineshop"><a
+                                        href="https://glasperlen.art/shop/perlenkette-aus-glas-blau-und-wei%C3%9F">Onlineshop</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="detail-field-text taxNote detail-view__taxnote"><span class="detail-field-text__text">*Preise inkl. 19% MwSt.</span>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- todo @ajo: contact -->
         <div class="detail-view__section-contact" id="detail-section-6">
             <div class="c4g-container">
                 <div class="c4g-row">
-                    <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
-                        <div><h3 class="entry-content name">J. F. Oetken</h3><span
-                                    class="entry-content additionalName"></span>
-                            <div class="street"><span class="street">Neue Str.</span>&nbsp;<span
-                                        class="streetNumber">3</span></div>
-                            <div class="entry-content"><span class="zip">26441</span>&nbsp;<span
-                                        class="city">Jever</span></div>
+                    <div class="detail-field-contact detail-view__contact-wrapper">
+                        <h2>Kontakt</h2>
+
+                        <div>
+                            <h3 class="entry-content name"><?= $data->contactName ?></h3>
+                            <?php if (isset($data->contactAdditionalName) && !empty($data->contactAdditionalName)): ?>
+                                <span class="entry-content additionalName"></span>
+                            <?php endif; ?>
+
+                            <div class="street"><span class="street"><?= $data->locationStreet ?></span>&nbsp;<span
+                                        class="streetNumber"><?= $data->locationStreetNumber ?></span>
+                            </div>
+                            <div class="entry-content"><span class="zip"><?= $data->locationZip ?></span>&nbsp;<span
+                                        class="city"><?= $data->locationCity ?></span>
+                            </div>
                         </div>
-                        <span class="entry-content phone" itemprop="phone"><a
-                                    href="tel:04461/3227">04461/3227</a></span><span class="entry-content email"
-                                                                                     itemprop="email"><a
-                                    href="mailto:j.f.oetken@ewetel.net">j.f.oetken@ewetel.net</a></span><span
-                                class="entry-content website"><a href="http://www.oetken-jever.de/">Website</a></span>
 
+                        <?php if (isset($data->phone) && !empty($data->phone)): ?>
+                            <div class="entry-content phone" itemprop="phone">
+                                <a href="tel:<?= str_replace(" ", "", $data->phone) ?>"><?= $data->phone ?></a>
+                            </div>
+                        <?php endif; ?>
 
-                        <!-- todo-replace: opening hours -->
+                        <?php if (isset($data->email) && !empty($data->email)): ?>
+                            <div class="entry-content email" itemprop="email">
+                                {{email::<?= $data->email ?>}}
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->website) && !empty($data->website)): ?>
+                            <div class="entry-content website">
+                                <a href="<?= $data->website?>" title="<?= $data->website?>" target="_blank" rel="nofollow noopener">Website</a>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
-                            <div id="react__opening-hours" class="opening-hours" style="min-heigh:500">
+                            <div class="opening-hours__wrapper">
+                                <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
+                                <div id="react__opening-hours" class="opening-hours" style="min-heigh:500">
+                                    <!-- todo @cro: no need for headline output via REACT -->
+                                </div>
                             </div>
                         <?php endif; ?>
                     </div>
 
-                    <!-- todo-replace: replace map via REACT -->
                     <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper">
                         <script>
-                          window.mapData = window.mapData || {};
-                          window.mapData<?php echo '['.$this->mapData['mapId'] . ']' ?> = <?php echo json_encode($this->mapData) ?>;
-                          window.mapData[<?php echo $this->mapData['mapId'] ?>]['mapDiv'] = "c4g-map-container-" + <?php echo $this->mapData['mapId'] ?>;
+                            window.mapData = window.mapData || {};
+                            window.mapData<?php echo '[' . $this->mapData['mapId'] . ']' ?> = <?php echo json_encode($this->mapData) ?>;
+                            window.mapData[<?php echo $this->mapData['mapId'] ?>]['mapDiv'] = "c4g-map-container-" + <?php echo $this->mapData['mapId'] ?>;
                         </script>
                         <div class="c4g-map" id="c4g-map-container-<?php echo $this->mapData['mapId'] ?>"></div>
                     </div>
@@ -134,11 +227,6 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
     </div>
-
-    <!--    todo-replace: Angeboten von folgenden Anbietern -->
-
-    <!--    todo-replace: Andere Angebote der Anbieter-->
-
 </div>
 
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">

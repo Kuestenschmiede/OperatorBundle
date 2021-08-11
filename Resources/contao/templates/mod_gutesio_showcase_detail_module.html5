@@ -148,6 +148,7 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
+        <!-- todo #mdv: we need a preview image for vimeo and youtube needed - !!! import issue will be solved soon -->
         <?php if (isset($data->videoPreview) && !empty($data->videoPreview)): ?>
 
             <div class="detail-view__section-detaildata" id="detail-section-5">
@@ -170,11 +171,12 @@ $data = json_decode(json_encode($this->detailData));
                                         $youtubeId = get_youtube_id_from_url($youtubeSrc);
                                         ?>
                                         <div class="">
-                                            <iframe class="video-preview-youtube" frameborder="0" allowfullscreen="1"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    title="YouTube video player" width="100%" height="100%"
+                                            <iframe class="video-preview-youtube"
+                                                    width="100%" height="100%"
                                                     src="https://www.youtube-nocookie.com/embed/<?= $youtubeId ?>"
-                                                    id="widget2"></iframe>
+                                                    title="YouTube video player" frameborder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowfullscreen></iframe>
                                         </div>
                                     <?php endif; ?>
 
@@ -200,14 +202,13 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         <?php endif; ?>
 
-        <?php dump($data); ?>
-
         <div class="detail-view__section-tags" id="detail-section-6">
             <div class="c4g-container">
                 <div class="c4g-row">
 
                     <!-- todo: !!! check if it works !!! do not forget logos-wrapper - relatedShowcaseLogos -->
                     <?php if (isset($data->relatedShowcaseLogos) && !empty($data->relatedShowcaseLogos)): ?>
+                        <div class="detail-field-text__label">Verknüpfte Schaufenster:</div>
                         <div class="detail-view__logos-wrapper">
                             <?php foreach ($data->relatedShowcaseLogos as $logo): ?>
                                 <a href="<?= $logo->href ?>"
@@ -228,9 +229,13 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
 
+                    <!-- todo: do not forget to remove dump output after dev -->
+                    <?php // dump($data); ?>
+
                     <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
                         <div class="menuLink">
-                            <a href="<?= $data->menuLink ?>">Speisekarte</a>
+                            <a href="<?= $data->menuLink ?>" target="_blank" rel="nofollow noopener"
+                               title="Speisekarte aufrufen">Speisekarte</a>
                         </div>
                     <?php endif; ?>
 
@@ -285,33 +290,36 @@ $data = json_decode(json_encode($this->detailData));
                                 <?php endif; ?>
 
                                 <?php if (isset($data->deliveryServiceLink) && !empty($data->deliveryServiceLink)): ?>
-                                    <div class="tag_delivery tag_delivery"><a
-                                                href="https://i.picsum.photos/id/1025/4951/3301.jpg?hmac=_aGh5AtoOChip_iaMo8ZvvytfEojcgqbCH7dzaz-H8Y">Lieferservice</a>
+                                    <div class="tag_delivery tag_delivery">
+                                        <a href="https://i.picsum.photos/id/1025/4951/3301.jpg?hmac=_aGh5AtoOChip_iaMo8ZvvytfEojcgqbCH7dzaz-H8Y"
+                                           target="_blank" rel="nofollow noopener"
+                                           title="Lieferservice">Lieferservice</a>
                                     </div>
                                 <?php endif; ?>
 
                                 <?php if (isset($data->onlineReservationLink) && !empty($data->onlineReservationLink)): ?>
-                                    <div class="tag_online_reservation tag_online_reservation"><a
-                                                href="<?= $data->onlineReservationLink ?>">Onlinereservierung</a>
+                                    <div class="tag_online_reservation tag_online_reservation">
+                                        <a href="<?= $data->onlineReservationLink ?>" target="_blank"
+                                           rel="nofollow noopener"
+                                           title="Onlinereservierung">Onlinereservierung</a>
                                     </div>
                                 <?php endif; ?>
 
-                                <!-- todo: !!! check if it works !!! online shop link -->
                                 <?php
                                 $onlineshopLink = "";
-                                echo "<pre>here onlineShopLink</pre>";
                                 foreach ($data->tags as $tag) {
-//                                    echo $tag . "\n";
-                                    if ($tag->technicalKey == "tag_onlineshop" && $data->published) {
-                                        $onlineshopLink = $data->linkHref;
+                                    if ($tag->technicalKey == "tag_onlineshop") {
+                                        $onlineshopLink = $tag->linkHref;
                                     }
                                 }
                                 ?>
                                 <?php if (!empty($onlineshopLink)): ?>
-                                    <div class="tag_onlineshop tag_onlineshop"><a
-                                                href="<?= $onlineshopLink ?>">Onlineshop</a>
+                                    <div class="tag_onlineshop tag_onlineshop">
+                                        <a href="<?= $onlineshopLink ?>" target="_blank" rel="nofollow noopener">Onlineshop</a>
                                     </div>
                                 <?php endif; ?>
+
+
 
                                 <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
                                     <div class="item wheelchairNotes tag_wheelchair">
@@ -351,24 +359,30 @@ $data = json_decode(json_encode($this->detailData));
 
                         <?php if (isset($data->phone) && !empty($data->phone)): ?>
                             <span class="entry-content phone" itemprop="phone">
-                                <a href="tel:<?= str_replace(" ", "", $data->phone) ?>"><?= $data->phone ?></a>
+                                <a href="tel:<?= str_replace(" ", "", $data->phone) ?>"
+                                   title="Festnetz-Telefonnummer"><?= $data->phone ?></a>
                             </span>
                         <?php endif; ?>
 
                         <?php if (isset($data->mobile) && !empty($data->mobile)): ?>
                             <span class="entry-content phone" itemprop="phone">
-                                <a href="tel:<?= str_replace(" ", "", $data->mobile) ?>"><?= $data->mobile ?></a>
+                                <a href="tel:<?= str_replace(" ", "", $data->mobile) ?>"
+                                   title="Mobile Telefonnummer"><?= $data->mobile ?></a>
                             </span>
                         <?php endif; ?>
 
                         <?php if (isset($data->email) && !empty($data->email)): ?>
                             <span class="entry-content email" itemprop="email">
-                                <a href="mailto:{{email_url::<?= $data->email ?>}}"><?= $data->email ?></a>
+                                <a href="mailto:{{email_url::<?= $data->email ?>}}"
+                                   title="E-Mail Adresse"><?= $data->email ?></a>
                             </span>
                         <?php endif; ?>
 
                         <?php if (isset($data->website) && !empty($data->website)): ?>
-                            <span class="entry-content website"><a href="https://gutes.io">Website</a></span>
+                            <div class="entry-content website">
+                                <a href="<?= $data->website ?>" target="_blank"
+                                   rel="nofollow noopener" title="<?= $data->website ?>">Website</a>
+                            </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
@@ -378,37 +392,42 @@ $data = json_decode(json_encode($this->detailData));
 
                         <?php if (isset($data->facebook) && !empty($data->facebook)): ?>
                             <div class="social-media-link c4g-icon-wrapper icon-facebook">
-                                <a href="<?= $data->facebook ?>">Facebook</a>
+                                <a href="<?= $data->facebook ?>" target="_blank" rel="nofollow noopener"
+                                   title="Facebook">Facebook</a>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->instagram) && !empty($data->instagram)): ?>
                             <div class="social-media-link c4g-icon-wrapper icon-instagram">
-                                <a href="<?= $data->instagram ?>">Instagram</a>
+                                <a href="<?= $data->instagram ?>" target="_blank" rel="nofollow noopener"
+                                   title="Instagram">Instagram</a>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
                             <div class="social-media-link c4g-icon-wrapper icon-twitter">
-                                <a href="<?= $data->twitter ?>">Twitter</a>
+                                <a href="<?= $data->twitter ?>" target="_blank" rel="nofollow noopener" title="Twitter">Twitter</a>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
                             <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
-                                        href="<?= $data->whatsapp ?>">Whatsapp</a>
+                                        href="<?= $data->whatsapp ?>" target="_blank" rel="nofollow noopener"
+                                        title="Whatsapp">Whatsapp</a>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
                             <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
-                                        href="<?= $data->youtubeChannelLink ?>">YouTube-Kanal</a>
+                                        href="<?= $data->youtubeChannelLink ?>" target="_blank" rel="nofollow noopener"
+                                        title="YouTube">YouTube-Kanal</a>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
                             <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
-                                        href="<?= $data->wikipediaLink ?>">Wikipedia</a>
+                                        href="<?= $data->wikipediaLink ?>" target="_blank" rel="nofollow noopener"
+                                        title="Wikipedia">Wikipedia</a>
                             </div>
                         <?php endif; ?>
                     </div>

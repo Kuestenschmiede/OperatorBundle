@@ -149,6 +149,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 }
                 if (count($relatedShowcaseData) > 0) {
                     $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
+                    $template->hasRelatedShowcases = true;
                 }
                 $conf->setLanguage($objPage->language);
                 $jsonConf = json_encode($conf);

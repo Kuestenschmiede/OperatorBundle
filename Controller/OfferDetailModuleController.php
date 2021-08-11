@@ -131,11 +131,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
                 $components = $this->getDetailComponents($data, $request);
-//                $conf->addDetailPage(
-//                    $components['details'][0],
-//                    $components['details'][1],
-//                    $components['details'][2]
-//                );
                 if ($data['type'] === "event") {
                     if ($data['locationElementId']) {
                         $elementUuid = $components['elements'][2][0]['uuid'];

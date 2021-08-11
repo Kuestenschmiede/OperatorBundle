@@ -148,9 +148,8 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
-        <!-- todo #mdv: we need a preview image for vimeo and youtube needed - !!! import issue will be solved soon -->
-        <?php if (isset($data->videoPreview) && !empty($data->videoPreview)): ?>
-
+        <!-- todo @mdv: we need a preview image for vimeo and youtube needed - !!! import issue will be solved soon -->
+        <?php if (isset($data->videoPreview) && !empty($data->videoPreview) && (isset($data->videoPreview->video) && !empty($data->videoPreview->video))): ?>
             <div class="detail-view__section-detaildata" id="detail-section-5">
                 <div class="c4g-container">
                     <div class="c4g-container">
@@ -202,11 +201,13 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         <?php endif; ?>
 
+        <!-- todo: do not forget to remove dump output after dev -->
+        <?php // dump($data); ?>
+
         <div class="detail-view__section-tags" id="detail-section-6">
             <div class="c4g-container">
                 <div class="c4g-row">
 
-                    <!-- todo: !!! check if it works !!! do not forget logos-wrapper - relatedShowcaseLogos -->
                     <?php if (isset($data->relatedShowcaseLogos) && !empty($data->relatedShowcaseLogos)): ?>
                         <div class="detail-field-text__label">Verknüpfte Schaufenster:</div>
                         <div class="detail-view__logos-wrapper">
@@ -229,8 +230,6 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
 
-                    <!-- todo: do not forget to remove dump output after dev -->
-                    <?php // dump($data); ?>
 
                     <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
                         <div class="menuLink">

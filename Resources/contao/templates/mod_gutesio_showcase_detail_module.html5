@@ -66,8 +66,8 @@ $data = json_decode(json_encode($this->detailData));
 ?>
 
 <script>
-  window.detailData = window.detailData || {};
-  window.detailData.openingHours = <?php echo "\"" .  $data->opening_hours . "\""?> ;
+    window.detailData = window.detailData || {};
+    window.detailData.openingHours = <?php echo "\"" . $data->opening_hours . "\""?> ;
 </script>
 
 <div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">
@@ -148,28 +148,27 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
-        <!-- todo: youtube video section - videoPreviewImage is missing -->
         <?php if (isset($data->videoPreview) && !empty($data->videoPreview)): ?>
 
-            <?php
-            $youtubeSrc = "";
-            $youtubeId = "";
-            if ($data->videoPreview->videoType == "youtube") {
-                $youtubeSrc = $data->videoPreview->video;
-                $youtubeSrc = rtrim($youtubeSrc, "/");
-                $youtubeSrcArr = explode("/", $youtubeSrc);
-
-                $youtubeId = end($youtubeSrcArr);
-            }
-            ?>
-
-            <?php if ($data->videoPreview->videoType == "youtube"): ?>
-                <div class="detail-view__section-detaildata" id="detail-section-5">
+            <div class="detail-view__section-detaildata" id="detail-section-5">
+                <div class="c4g-container">
                     <div class="c4g-container">
-                        <div class="c4g-container">
-                            <div class="c4g-row">
-                                <div class="detail-view__video-preview">
-                                    <div class="embed-responsive embed-responsive-16by9">
+                        <div class="c4g-row">
+                            <div class="detail-view__video-preview">
+                                <div class="embed-responsive embed-responsive-16by9">
+
+                                    <?php if ($data->videoPreview->videoType == "youtube"): ?>
+
+                                        <?php
+                                        function get_youtube_id_from_url($url)
+                                        {
+                                            preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $url, $results);
+                                            return $results[6];
+                                        }
+
+                                        $youtubeSrc = $data->videoPreview->video;
+                                        $youtubeId = get_youtube_id_from_url($youtubeSrc);
+                                        ?>
                                         <div class="">
                                             <iframe class="video-preview-youtube" frameborder="0" allowfullscreen="1"
                                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -177,15 +176,32 @@ $data = json_decode(json_encode($this->detailData));
                                                     src="https://www.youtube-nocookie.com/embed/<?= $youtubeId ?>"
                                                     id="widget2"></iframe>
                                         </div>
-                                    </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($data->videoPreview->videoType == "vimeo"): ?>
+                                        <?php
+                                        $vimeoURL = $data->videoPreview->video;
+                                        $pos = strrpos($vimeoURL, '/');
+                                        $vimeoId = $pos === false ? $vimeoURL : substr($vimeoURL, $pos + 1);
+                                        ?>
+                                        <div data-vimeo-initialized="true">
+                                            <iframe src="https://player.vimeo.com/video/<?= $vimeoId ?>?h=d753e034aa&portrait=0"
+                                                    width="480" height="270" frameborder="0"
+                                                    allow="autoplay; fullscreen; picture-in-picture"
+                                                    allowfullscreen data-vimeoId="<?= $vimeoId ?>"></iframe>
+                                        </div>
+                                    <?php endif; ?>
+
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+            </div>
         <?php endif; ?>
-        
+
+        <?php dump($data); ?>
+
         <div class="detail-view__section-tags" id="detail-section-6">
             <div class="c4g-container">
                 <div class="c4g-row">
@@ -283,8 +299,10 @@ $data = json_decode(json_encode($this->detailData));
                                 <!-- todo: !!! check if it works !!! online shop link -->
                                 <?php
                                 $onlineshopLink = "";
+                                echo "<pre>here onlineShopLink</pre>";
                                 foreach ($data->tags as $tag) {
-                                    if ($tag->technicalKey == "tag_onlineshop" && $data->published && (isset($data->linkHref) && !empty($data->linkHref))) {
+//                                    echo $tag . "\n";
+                                    if ($tag->technicalKey == "tag_onlineshop" && $data->published) {
                                         $onlineshopLink = $data->linkHref;
                                     }
                                 }

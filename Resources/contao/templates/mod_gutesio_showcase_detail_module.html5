@@ -13,7 +13,6 @@
     $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
     $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
 
-
     /**
      * For Contao Users:
      * You can use srcset image url by adding the id of image-size configured in contao backend
@@ -76,17 +75,25 @@ $data = json_decode(json_encode($this->detailData));
             <div class="anchor-menu__inner">
                 <ul class="anchor-menu__list">
                     <li>
-                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#detail-section-4">Bildergalerie</a>
+                        <a href="{{env::request}}#section-id-gallery">Bildergalerie</a>
                     </li>
                     <li>
-                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#detail-section-7">Kontakt
-                            &amp; Anfahrt</a></li>
-                    <li>
-                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#offer-tiles">Unsere
-                            Angebote</a></li>
-                    <li>
-                        <a href="https://demobetreiber.localhost/dev-plain-schaufenster-detailseite/gutes.digital_musikschule#showcase-imprint">Impressum</a>
+                        <a href="{{env::request}}#section-id-contact">Kontakt
+                            &amp; Anfahrt</a>
                     </li>
+
+                    <?php if ($this->hasOffers): ?>
+                        <li>
+                            <a href="{{env::request}}#offer-tiles">Unsere
+                                Angebote</a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if ($this->hasImprint): ?>
+                        <li>
+                            <a href="{{env::request}}#showcase-imprint">Impressum</a>
+                        </li>
+                    <?php endif; ?>
                 </ul>
                 <div class="anchor-menu__share">
                     <button class="c4g-btn c4g-btn-warning c4g-btn-removefromwishlist js-removeDetailFromWishlist"
@@ -100,7 +107,12 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         </div>
-        <div class="detail-view__section-gallery" id="detail-section-4">
+
+
+        <!-- todo: do not forget to remove dump output after dev -->
+        <?php // dump($data); ?>
+
+        <div class="detail-view__section-gallery" id="detail-section-description-and-gallery">
             <div class="c4g-container">
                 <div class="c4g-row">
                     <div class="item description detail-view__description">
@@ -108,7 +120,7 @@ $data = json_decode(json_encode($this->detailData));
                         <?= $data->description ?>
                         </span>
                     </div>
-                    <div class="detail-view__image-gallery">
+                    <div id="section-id-gallery" class="detail-view__image-gallery">
                         <div class="detail-view__image-gallery-inner">
                             <?php if ($data->imageGallery_0): ?>
                                 <a data-fancybox="gallery_imageGallery"
@@ -200,9 +212,6 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         <?php endif; ?>
-
-        <!-- todo: do not forget to remove dump output after dev -->
-        <?php // dump($data); ?>
 
         <div class="detail-view__section-tags" id="detail-section-6">
             <div class="c4g-container">
@@ -335,7 +344,7 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         </div>
-        <div class="detail-view__section-contact-map" id="detail-section-7">
+        <div class="detail-view__section-contact-map" id="section-id-contact">
             <div class="c4g-container">
                 <div class="c4g-row">
                     <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>

@@ -121,7 +121,6 @@ class Openinghours extends Component {
 
     return (
       <div className={"opening-hours"}>
-        <h3 key={0} className={"opening-hours-headline"}>{this.props.languageRefs.OPENING_HOURS}</h3>
         {daysNode}
         {openingHours}
       </div>

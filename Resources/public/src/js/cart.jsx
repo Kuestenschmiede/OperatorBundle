@@ -16,7 +16,15 @@ class Cart extends React.Component {
       vendors: this.props.vendors
     };
 
+    this.getCartUrl = this.props.getCartUrl;
+    this.addCartUrl = this.props.addCartUrl;
+    this.removeCartUrl = this.props.removeCartUrl;
+    this.configCartUrl = this.props.configCartUrl;
+    this.toggleClass = this.props.toggleClass;
+    this.toggleButtonText = this.props.toggleButtonText;
+
     this.toggle = this.toggle.bind(this);
+    this.removeArticle = this.removeArticle.bind(this);
   }
 
   toggle() {
@@ -39,41 +47,83 @@ class Cart extends React.Component {
     vendors[vendorKey].articles[articleKey].amount = value;
     this.setState({vendors: vendors});
     if (Number.isInteger(parseInt(value))) {
-      let xhr = new XMLHttpRequest();
-      xhr.open('POST', this.props.configCartUrl, true);
-      xhr.withCredentials = true;
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      let onReady = function(xhr) {
-        if (xhr.readyState === 4) {
-          if (xhr.status !== 200) {
-            console.log('Config Cart returned ' + xhr.status);
-          }
-        }
+      let data = {
+        amount: value,
+        childId: vendors[vendorKey].articles[articleKey].childId
       };
-      onReady = onReady.bind(this, xhr);
-      xhr.onreadystatechange = onReady;
-      let formData = new FormData();
-      formData.set('amount', value);
-      formData.set('childId', vendors[vendorKey].articles[articleKey].childId);
-      xhr.send(formData);
+      fetch(this.configCartUrl, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: JSON.stringify(data)
+      }).then(response => response.json()).then((responseData) => {
+        console.log('config cart returned');
+        console.log(responseData);
+      });
     }
   }
 
+  removeArticle(articleData, articleIndex, vendorIndex) {
+    fetch(this.removeCartUrl, {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify({
+        articleData: articleData,
+      })
+    }).then(response => response.json())
+      .then((data) => {
+        if (data.success) {
+          const vendors = this.state.vendors;
+          const newVendors = [];
+          vendors.forEach((vendor, index) => {
+            if (index !== vendorIndex) {
+              newVendors.push(vendor);
+            } else {
+              const articles = vendor.articles;
+              const newArticles = [];
+              articles.forEach((article, aIndex) => {
+                if (article.articleId !== articleData.articleId) {
+                  newArticles.push(article);
+                }
+              });
+              vendor.articles = newArticles;
+              newVendors.push(vendor);
+            }
+          });
+          this.setState({vendors: newVendors});
+        } else {
+          // todo fehlermeldung
+        }
+    });
+  }
+
   render() {
-    const e = React.createElement;
     let vendors = [];
     let vendorTotal = 0;
 
     if (typeof this.state.vendors.forEach === 'function') {
-      this.state.vendors.forEach(function (vendor) {
+      this.state.vendors.forEach(function (vendor, vIndex) {
         let articles = [];
         vendorTotal = 0;
         if (typeof vendor.articles.forEach === 'function') {
-          vendor.articles.forEach(function (article) {
+          vendor.articles.forEach(function (article, index) {
             vendorTotal += article.pricePerUnit * article.amount;
             articles.push(
-              (<div key={0} className={"c4g-cart-vendor-article"}>
-                <form action={""} className={"c4g-cart-vendor-article-form"}>
+              (<div key={index} className={"c4g-cart-vendor-article"}>
+                <form key={index} action={""} className={"c4g-cart-vendor-article-form"}>
                   <span key={0} className={"c4g-cart-vendor-article-name"}>
                     {article.name}
                   </span>
@@ -83,17 +133,18 @@ class Cart extends React.Component {
                   <input key={2} type="number" className={"c4g-cart-vendor-article-amount"} step={1} min={1}
                          onInput={this.updateAmount.bind(this, vendors.length, articles.length)}
                          defaultValue={article.amount}/>
-                  <span key={0} className={"c4g-cart-vendor-article-total-price"}>
+                  <span key={3} className={"c4g-cart-vendor-article-total-price"}>
                     {this.numberFormat(
                       article.pricePerUnit * (article.amount || 0)
                     )}
                   </span>
                 </form>
+                <button className={"btn btn-remove btn-primary"} onClick={() => {this.removeArticle(article, index, vIndex)}}>Löschen</button>
               </div>));
           }, this);
         }
         vendors.push(
-          <div className={"c4g-cart-vendor"}>
+          <div key={vIndex} className={"c4g-cart-vendor"}>
             <span className={"c4g-cart-vendor"}>{vendor.name}</span>
             <div className={"c4g-cart-vendor-article-list"}>
               <div className={"c4g-cart-vendor-article-header"}>
@@ -132,32 +183,21 @@ class Cart extends React.Component {
       </div>
     </div>);
   }
-
-
-  static fetch() {
-    let carts = document.getElementsByClassName('c4g-cart-wrapper');
-    let i = 0;
-    while (i < carts.length) {
-      let cart = carts[i];
-      let xhr = new XMLHttpRequest();
-      xhr.open('GET', cart.dataset.getCartUrl, true);
-      xhr.withCredentials = true;
-      xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-      let onReady = function(xhr, cart) {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200 && xhr.responseText !== null) {
-            let json = JSON.parse(xhr.responseText);
-            ReactDOM.render(React.createElement(Cart, json), cart);
-          }
-        }
-      };
-      onReady = onReady.bind(this, xhr, cart);
-      xhr.onreadystatechange = onReady;
-      xhr.send();
-      i += 1;
-    }
-  }
-
 }
 
-Cart.fetch();
+jQuery(document).ready(() => {
+  let carts = document.getElementsByClassName('c4g-cart-wrapper');
+  const cart = carts[0];
+  if (cart) {
+    let cartUrlData = cart.dataset;
+    fetch(cartUrlData.getCartUrl)
+      .then(response => response.json())
+      .then((data) => {
+        let cartData = Object.assign(data, cartUrlData);
+        ReactDOM.render(
+          <Cart {...cartData} />,
+          cart
+        );
+    });
+  }
+});

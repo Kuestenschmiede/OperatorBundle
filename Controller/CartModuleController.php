@@ -94,11 +94,10 @@ class CartModuleController extends AbstractFrontendModuleController
 
         $template->toggleButtonText = 'Warenkorb';
         $template->cartClass = 'cart';
-        $template->getCartUrl = 'http://proxy.localhost/getCart.php';
-//        $template->getCartUrl = 'http://gutes.localhost/gutesio/main/cart/items';
-        $template->addCartUrl = 'http://gutes.localhost/gutesio/main/cart/add';
-        $template->removeCartUrl = 'http://gutes.localhost/gutesio/main/cart/remove';
-        $template->configCartUrl = 'http://gutes.localhost/gutesio/main/cart/config';
+        $template->getCartUrl = '/gutesio/operator/cart/items';
+        $template->addCartUrl = '/gutesio/operator/cart/add';
+        $template->removeCartUrl = '/gutesio/operator/cart/remove';
+        $template->configCartUrl = '/gutesio/operator/cart/config';
         $template->toggleClass = 'hidden';
         return $template->getResponse();
     }

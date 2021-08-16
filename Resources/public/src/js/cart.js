@@ -52,6 +52,7 @@ class Cart extends React.Component {
       let formData = new FormData();
       formData.set('amount', value);
       formData.set('childId', vendors[vendorKey].articles[articleKey].childId);
+      formData.set('articleId', vendors[vendorKey].articles[articleKey].articleId);
       xhr.send(formData);
     }
   }

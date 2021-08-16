@@ -88,7 +88,7 @@ class CartModuleController extends AbstractFrontendModuleController
             ResourceLoader::HEAD
         );
         ResourceLoader::loadJavaScriptResource(
-            'bundles/gutesiooperator/src/js/cart.js',
+            'bundles/gutesiooperator/dist/js/cart.js',
             ResourceLoader::HEAD
         );
 

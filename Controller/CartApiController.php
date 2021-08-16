@@ -102,6 +102,11 @@ class CartApiController extends AbstractController
      */
     public function removeCartItem(Request $request) : Response {
         $response = new JsonResponse();
+        $member = FrontendUser::getInstance();
+        if ($member->id < 1 || (string) $member->cartId === '') {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            return $response;
+        }
         $curlRequest = new CurlPostRequest();
         $curlRequest->setUrl($this->proxyUrl . '/' . self::REMOVE_CART_URL);
         $curlResponse = $curlRequest->send();

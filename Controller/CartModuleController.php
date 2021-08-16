@@ -45,6 +45,7 @@ use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\Security\Authentication\Token\TokenChecker;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
@@ -63,42 +64,48 @@ use Symfony\Component\Routing\Annotation\Route;
 class CartModuleController extends AbstractFrontendModuleController
 {
     const COOKIE_CART = "cart";
-
-    public function __construct(ContaoFramework $framework)
-    {
+    
+    /**
+     * @var TokenChecker $tokenChecker
+     */
+    private $tokenChecker;
+    
+    public function __construct(
+        ContaoFramework $framework,
+        TokenChecker $tokenChecker
+    ) {
         $framework->initialize();
+        $this->tokenChecker = $tokenChecker;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
-//        ResourceLoader::loadJavaScriptResource(
-//            'bundles/gutesiooperator/src/js/react.production.min.js',
-//            ResourceLoader::HEAD
-//        );
-//        ResourceLoader::loadJavaScriptResource(
-//            'bundles/gutesiooperator/src/js/react-dom.production.min.js',
-//            ResourceLoader::HEAD
-//        );
-        ResourceLoader::loadJavaScriptResource(
-            'bundles/gutesiooperator/src/js/react.development.js',
-            ResourceLoader::HEAD
-        );
-        ResourceLoader::loadJavaScriptResource(
-            'bundles/gutesiooperator/src/js/react-dom.development.js',
-            ResourceLoader::HEAD
-        );
         ResourceLoader::loadJavaScriptResource(
             'bundles/gutesiooperator/dist/js/cart.js',
             ResourceLoader::HEAD
         );
+        
+        // TODO markup für warenkorb bauen
+        // TODO markup für Info registrierung bauen
+        // TODO "in den warenkorb"-buttons an produkten
+    
+        // TODO check if user is authenticated via LDAP
+        $userAuthenticated = $this->tokenChecker->hasFrontendUser();
+        if ($userAuthenticated) {
+            // TODO prüfen, ob warenkorb leer oder gefüllt
+            $template->toggleButtonText = 'Warenkorb';
+            $template->cartClass = 'cart';
+            $template->getCartUrl = '/gutesio/operator/cart/items';
+            $template->addCartUrl = '/gutesio/operator/cart/add';
+            $template->removeCartUrl = '/gutesio/operator/cart/remove';
+            $template->configCartUrl = '/gutesio/operator/cart/config';
+            $template->toggleClass = 'hidden';
+            $template->userAuthenticated = true;
+        } else {
+            $template->userAuthenticated = false;
+        }
 
-        $template->toggleButtonText = 'Warenkorb';
-        $template->cartClass = 'cart';
-        $template->getCartUrl = '/gutesio/operator/cart/items';
-        $template->addCartUrl = '/gutesio/operator/cart/add';
-        $template->removeCartUrl = '/gutesio/operator/cart/remove';
-        $template->configCartUrl = '/gutesio/operator/cart/config';
-        $template->toggleClass = 'hidden';
+        
         return $template->getResponse();
     }
 }

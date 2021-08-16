@@ -5,7 +5,8 @@
   "scripts": {
     "build-css": "gulp deploy",
     "watch-css": "gulp",
-    "build-prod": "gulp deploy && webpack --config webpack.production.config.js"
+    "build-prod": "gulp deploy && webpack --config webpack.production.config.js",
+    "build-dev": "webpack --config webpack.development.config.js --watch"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",

@@ -109,6 +109,7 @@ class CartApiController extends AbstractController
         }
         $curlRequest = new CurlPostRequest();
         $curlRequest->setUrl($this->proxyUrl . '/' . self::REMOVE_CART_URL);
+        $curlRequest->setPostData(array_merge($request->request->all(), ['cartId' => $member->cartId]));
         $curlResponse = $curlRequest->send();
         $response->setStatusCode((int) $curlResponse->getStatusCode());
         return $response;

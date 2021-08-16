@@ -140,19 +140,26 @@ $data = json_decode(json_encode($this->detailData));
 
                         <?php if (isset($data->tags) && !empty($data->tags)): ?>
                             <div class="detail-field-wrapper__tags">
-                                <!-- todo @ajo: tagfields -->
-                                <pre> hier mit foreach die tags ausgeben </pre>
-                                <!--                                <div class="tag-entry tag_onlineshop">-->
-                                <!--                                    <div class="detail-field-image"><img class="img-fluid"-->
-                                <!--                                                                         src="files/con4gis_import_data/529/icons/tag_icons/tags_in_farbe/Onlineshop.svg"-->
-                                <!--                                                                         alt="Onlineshop" data-toggle="tooltip"-->
-                                <!--                                                                         data-content="Onlineshop" title="Onlineshop">-->
-                                <!--                                    </div>-->
-                                <!--                                    <div class="detail-field-text tag_onlineshop"><span class="detail-field-text__text">Onlineshop</span>-->
-                                <!--                                    </div>-->
-                                <!--                                </div>-->
+                                <?php foreach ($data->tags as $tag): ?>
+                                    <div class="tag-entry tag_onlineshop">
+                                        <div class="detail-field-image"><img class="img-fluid"
+                                                                             src="<?= $tag->image->src ?>"
+                                                                             alt="<?= $tag->name ?>"
+                                                                             data-toggle="tooltip"
+                                                                             data-content="<?= $tag->name ?>"
+                                                                             title="<?= $tag->name ?>">
+                                        </div>
+                                        <div class="detail-field-text tag_onlineshop"><span
+                                                    class="detail-field-text__text"><?= $tag->name ?></span>
+                                        </div>
+                                    </div>
+                                <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
+
+                        <div>
+                            <?php dump($data); ?>
+                        </div>
 
                         <div class="detail-field-wrapper__tag-fields">
                             <div class="tag_onlineshop tag_onlineshop"><a
@@ -201,16 +208,15 @@ $data = json_decode(json_encode($this->detailData));
 
                         <?php if (isset($data->website) && !empty($data->website)): ?>
                             <div class="entry-content website">
-                                <a href="<?= $data->website?>" title="<?= $data->website?>" target="_blank" rel="nofollow noopener">Website</a>
+                                <a href="<?= $data->website ?>" title="<?= $data->website ?>" target="_blank"
+                                   rel="nofollow noopener">Website</a>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
                             <div class="opening-hours__wrapper">
                                 <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
-                                <div id="react__opening-hours" class="opening-hours" style="min-heigh:500">
-                                    <!-- todo @cro: no need for headline output via REACT -->
-                                </div>
+                                <div id="react__opening-hours" class="opening-hours" style="min-heigh:500"></div>
                             </div>
                         <?php endif; ?>
                     </div>

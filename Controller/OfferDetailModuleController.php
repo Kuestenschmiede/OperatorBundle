@@ -740,7 +740,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             'name',
             'types'
         ]);
-        $fields[] = $field;
+//        $fields[] = $field;
         
         $field = new LinkButtonTileField();
         $field->setName("uuid");

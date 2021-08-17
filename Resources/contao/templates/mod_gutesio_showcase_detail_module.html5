@@ -108,10 +108,6 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
-
-        <!-- todo: do not forget to remove dump output after dev -->
-        <?php // dump($data); ?>
-
         <div class="detail-view__section-gallery" id="detail-section-description-and-gallery">
             <div class="c4g-container">
                 <div class="c4g-row">
@@ -453,8 +449,6 @@ $newArr = json_decode($this->configuration, true);
 $newArr["detailData"]["openingHours"] = $newArr["components"]["detail"]["data"]["opening_hours"];
 unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);
-//dump($newArr);
-//dump(json_decode($this->configuration));
 ?>
 
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
@@ -514,9 +508,11 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
 ?>
 
-<hr>
-<div id="showcase-imprint" class="detail-view__imprint-container">
-    <?php if (!empty($imprintData)): ?>
+
+<?php if (!empty($imprintData)): ?>
+    <hr>
+    <div id="showcase-imprint" class="detail-view__imprint-container">
+
         <div class="detail-view__imprint-row">
             <div class="detail-view__imprint-col">
 
@@ -594,28 +590,26 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                 </div>
             </div>
         </div>
-    <?php endif; ?>
 
-    <div class="detail-view__imprint-row">
-        <div class="detail-view__imprint-col">
-            <p>
-                <span style="display: block;">
-                <strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong>
-            </span>
-                Küstenschmiede GmbH
-                <br>Software & Design
-                <br>Alter Markt 10
-                <br>26441 Jever
-                <br>Deutschland
-            </p>
-            <p>
-                E-Mail: ahoi@kuestenschmiede.de
-                <br>Telefon: +49 4461 8 999 777
-            </p>
+        <div class="detail-view__imprint-row">
+            <div class="detail-view__imprint-col">
+                <p>
+                    <span style="display: block;"><strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong></span>
+                    Küstenschmiede GmbH
+                    <br>Software & Design
+                    <br>Software & Design
+                    <br>Alter Markt 10
+                    <br>26441 Jever
+                    <br>Deutschland
+                </p>
+                <p>
+                    E-Mail: ahoi@kuestenschmiede.de
+                    <br>Telefon: +49 4461 8 999 777
+                </p>
+            </div>
         </div>
     </div>
-
-</div>
+<?php endif; ?>
 
 <!-- Modal Shade Detail Page-->
 <div class="modal fade share-modal" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel"

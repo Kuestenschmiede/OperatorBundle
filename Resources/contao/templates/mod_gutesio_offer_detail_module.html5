@@ -6,7 +6,9 @@ $data = json_decode(json_encode($this->detailData));
 
 <script>
     window.detailData = window.detailData || {};
-    window.detailData.openingHours = <?php echo "\"" . $data->opening_hours . "\""?> ;
+    window.detailData.uuid = "<?= $data->uuid ?>";
+    window.detailData.internal_type = "<?= $data->internal_type?>";
+    window.detailData.openingHours = "<?= $data->opening_hours;?>";
 </script>
 
 <div id="entrypoint_<?= $this->id ?>__mod" class="projects-tile-list-module_mod">

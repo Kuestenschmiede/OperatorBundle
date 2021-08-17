@@ -461,7 +461,7 @@ $data = json_decode(json_encode($this->detailData));
 
 <!-- Modal Click&Collect -->
 <div class="modal fade" id="ccModal" tabindex="-1" aria-labelledby="ccModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="ccModalLabel">Click and Collect</h5>
@@ -470,46 +470,80 @@ $data = json_decode(json_encode($this->detailData));
                 </button>
             </div>
             <div class="modal-body">
-                <!-- todo @ajo: cc-modal - include gallery -->
-                <div class="">
-                    <pre>gallery here</pre>
+                <?php if (isset($data->name) && !empty($data->name)): ?>
+                    <div class="cc-modal__name lead text-center mb-3"><?= $data->name ?></div>
+                <?php endif; ?>
+
+                <?php if ($data->imageGallery_0): ?>
+                    <div class="cc-modal__image-wrapper mb-3">
+                        <a data-fancybox="gallery_imageGallery"
+                           href="<?= $data->imageGallery_0->path ?>"
+                           class="imageGallery-item first"><img
+                                    class="img-fluid"
+                                    src="<?= $data->imageGallery_0->src ?>"
+                                    alt="<?= $data->imageGallery_0->alt ?>"
+                                    width="<?= $data->imageGallery_0->width ?>"
+                                    height="<?= $data->imageGallery_0->height ?>">
+                        </a>
+                    </div>
+                <?php endif; ?>
+
+                <style>
+                    .cc-modal__form-wrapper form-group.required label:after {
+                        content: "*";
+                        color: red;
+                    }
+                </style>
+                <div class="cc-modal__form-wrapper">
+                    <form>
+
+                        <!-- todo @rro: if validation fail, add css class "is-invalid" to input -->
+                        <div class="mb-3">
+                            <div class="form-group required">
+                                <label for="ccInputEmail" class="form-label">Ihre E-Mail-Adresse für Rückfragen</label>
+                                <input type="email" class="form-control" id="ccInputEmail" name="ccInputEmail"
+                                       aria-describedby="emailHelp" required>
+                                <div class="invalid-feedback">
+                                    Bitte geben Sie eine korrekte E-Mail Adresse ein.
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-group required">
+                                <label for="ccInputName" class="form-label">Name</label>
+                                <input class="form-control" type="text" placeholder="" id="ccInputName"
+                                       name="ccInputName"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-group required">
+                                <label for="ccFormControlSelectCollect">Abholzeitpunkt</label>
+                                <select class="form-control" id="ccFormControlSelectCollect"
+                                        name="ccFormControlSelectCollect" required>
+                                    <option value="">bitte wählen</option>
+                                    <option value="next_day">am nächsten Werktag</option>
+                                    <option value="this_week">diese Woche</option>
+                                    <option value="next_week">nächste Woche</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-group">
+                                <label for="ccFormControlTextareaMessage">Anmerkungen</label>
+                                <textarea class="form-control" id="ccFormControlTextareaMessage"
+                                          name="ccFormControlTextareaMessage" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <button type="submit" class="btn btn-primary">Jetzt bestellen</button>
+                        </div>
+                    </form>
                 </div>
-                <form>
-                    <div class="mb-3">
-                        <div class="form-group">
-                            <label for="ccInputEmail1" class="form-label">Ihre E-Mail-Adresse für Rückfragen</label>
-                            <input type="email" class="form-control" id="ccInputEmail1"
-                                   aria-describedby="emailHelp" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <div class="form-group">
-                            <label for="ccInputEmail1" class="form-label">Name</label>
-                            <input class="form-control" type="text" placeholder="">
-                        </div>
-                    </div>
-
-
-                    <div class="mb-3">
-                        <div class="form-group">
-                            <label for="ccFormControlSelect1">Abholzeitpunkt</label>
-                            <select class="form-control" id="ccFormControlSelect1" required>
-                                <option value="">bitte wählen</option>
-                                <option value="next_day">am nächsten Werktag</option>
-                                <option value="this_week">diese Woche</option>
-                                <option value="next_week">nächste Woche</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="ccFormControlTextarea1">Anmerkungen</label>
-                        <textarea class="form-control" id="ccFormControlTextarea1" rows="3"></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Jetzt bestellen</button>
-                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Schliessen</button>

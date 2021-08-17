@@ -488,20 +488,32 @@ $data = json_decode(json_encode($this->detailData));
                     </div>
                 <?php endif; ?>
 
+                <?php if (isset($data->strikePrice) && !empty($data->strikePrice)): ?>
+                    <p class="text-center">
+                        <?= $data->strikePrice ?>
+                    </p>
+                <?php endif; ?>
+
+                <?php if (isset($data->price) && !empty($data->price)): ?>
+                    <p class="text-center">
+                        <?= $data->price ?>
+                    </p>
+                <?php endif; ?>
+
                 <style>
-                    .cc-modal__form-wrapper form-group.required label:after {
+                    .cc-modal__form-wrapper .form-group.required label:after {
                         content: "*";
                         color: red;
                     }
                 </style>
                 <div class="cc-modal__form-wrapper">
-                    <form>
-
+                    <form class="cc-modal__form">
                         <!-- todo @rro: if validation fail, add css class "is-invalid" to input -->
                         <div class="mb-3">
                             <div class="form-group required">
                                 <label for="ccInputEmail" class="form-label">Ihre E-Mail-Adresse für Rückfragen</label>
-                                <input type="email" class="form-control" id="ccInputEmail" name="ccInputEmail"
+                                <input type="email" class="form-control" id="ccInputEmail"
+                                       name="ccInputEmail"
                                        aria-describedby="emailHelp" required>
                                 <div class="invalid-feedback">
                                     Bitte geben Sie eine korrekte E-Mail Adresse ein.
@@ -515,6 +527,9 @@ $data = json_decode(json_encode($this->detailData));
                                 <input class="form-control" type="text" placeholder="" id="ccInputName"
                                        name="ccInputName"
                                        required>
+                                <div class="invalid-feedback">
+                                    Bitte geben Sie Ihren Namen ein.
+                                </div>
                             </div>
                         </div>
 
@@ -522,12 +537,15 @@ $data = json_decode(json_encode($this->detailData));
                             <div class="form-group required">
                                 <label for="ccFormControlSelectCollect">Abholzeitpunkt</label>
                                 <select class="form-control" id="ccFormControlSelectCollect"
-                                        name="ccFormControlSelectCollect" required>
-                                    <option value="">bitte wählen</option>
-                                    <option value="next_day">am nächsten Werktag</option>
-                                    <option value="this_week">diese Woche</option>
-                                    <option value="next_week">nächste Woche</option>
+                                        name="ccFormControlSelectCollect" required">
+                                <option value="">bitte wählen</option>
+                                <option value="next_day">am nächsten Werktag</option>
+                                <option value="this_week">diese Woche</option>
+                                <option value="next_week">nächste Woche</option>
                                 </select>
+                                <div class="invalid-feedback">
+                                    Bitte treffen Sie eine Auswahl.
+                                </div>
                             </div>
                         </div>
 
@@ -536,6 +554,17 @@ $data = json_decode(json_encode($this->detailData));
                                 <label for="ccFormControlTextareaMessage">Anmerkungen</label>
                                 <textarea class="form-control" id="ccFormControlTextareaMessage"
                                           name="ccFormControlTextareaMessage" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-group form-check">
+                                <input type="checkbox" class="form-check-input" id="ccCheckPrivacy"
+                                       name="ccCheckPrivacy" required>
+                                <label class="form-check-label" for="ccCheckPrivacy">Ich stimme zu, dass meine Angaben
+                                    aus diesem Formular zur Beantwortung und Realisierung meiner Anfrage erhoben und
+                                    verarbeitet werden. Detaillierte Informationen zum Umgang mit Nutzerdaten finden Sie
+                                    in unserer Datenschutzerklärung.</label>
                             </div>
                         </div>
 

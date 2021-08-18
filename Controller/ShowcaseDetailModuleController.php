@@ -387,7 +387,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             'name',
             'types'
         ]);
-//        $fields[] = $field;
+        $fields[] = $field;
 
         $field = new LinkButtonTileField();
         $field->setName("uuid");

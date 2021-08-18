@@ -625,7 +625,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
             'beginDate',
             'beginTime',
         ]);
-//        $fields[] = $field;
+        $fields[] = $field;
     
         $field = new WrapperTileField();
         $field->setWrappedFields(['uuid', 'href']);

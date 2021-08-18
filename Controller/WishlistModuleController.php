@@ -352,7 +352,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
             'name',
             'types'
         ]);
-//        $fields[] = $field;
+        $fields[] = $field;
     
         $urlSuffix = Config::get('urlSuffix');
         

@@ -1,0 +1,1 @@
+import langConstantsGerman from"./i18n-de";import langConstantsEnglish from"./i18n-en";function getLanguage(n){return"de"===n?langConstantsGerman:langConstantsEnglish}export{getLanguage};

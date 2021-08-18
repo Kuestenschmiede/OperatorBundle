@@ -4198,7 +4198,6 @@ button.bg-dark:hover {
 .user-select-all {
   -webkit-user-select: all!important;
   -moz-user-select: all!important;
-  -ms-user-select: all!important;
   user-select: all!important
 }
 .user-select-auto {
@@ -7427,6 +7426,12 @@ html {
   padding-left: 15px;
   flex: 0 0 100%;
   max-width: 100%
+}
+.detail-view__logos-wrapper {
+  display: flex;
+  align-items: center;
+  grid-gap: 1rem;
+  flex-wrap: wrap
 }
 .c4g-tile-headline-wrapper {
   width: 100%;

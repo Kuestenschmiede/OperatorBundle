@@ -50,10 +50,9 @@ class LoadLayersListener
         $strC = substr_count($alias, '/');
         $arrUrl = explode('/', $alias);
 
-        if (strpos($arrUrl[$strC], ".html")) {
-            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], ".html"));
-        }
-        else {
+        if (strpos($arrUrl[$strC], '.html')) {
+            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
+        } else {
             $alias = $arrUrl[$strC];
         }
 

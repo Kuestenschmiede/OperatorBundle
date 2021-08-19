@@ -24,7 +24,7 @@
   },
   "require": {
     "contao/core-bundle": "^4.9",
-    "gutesio/data-model": "^1.0.14"
+    "gutesio/data-model": "^1.0.15"
   },
   "conflict": {
     "contao/core": "*",

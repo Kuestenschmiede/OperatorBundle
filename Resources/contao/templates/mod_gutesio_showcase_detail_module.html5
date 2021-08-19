@@ -249,7 +249,7 @@ $data = json_decode(json_encode($this->detailData));
                         <div class="detail-field-pdf menuUpload">
                             <a class="btn btn-primary"
                                href="<?= $data->menuUpload->path ?>"
-                               title="Speisekarte öffnen">Speisekarte [pdf]</a>
+                               title="Speisekarte öffnen" target="_blank" rel="nofollow noopener">Speisekarte [pdf]</a>
                         </div>
                     <?php endif; ?>
 

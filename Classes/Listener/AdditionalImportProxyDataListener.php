@@ -28,8 +28,8 @@ class AdditionalImportProxyDataListener
         //check if all images for import are correctly linked
         $db = Database::getInstance();
 
-        $dbImageFields = array('imageOffer', 'infoFile', array('array', 'imageGallery'));
-        $slcDataChild = $db->prepare("SELECT * FROM tl_gutesio_data_child")
+        $dbImageFields = ['imageOffer', 'infoFile', ['array', 'imageGallery']];
+        $slcDataChild = $db->prepare('SELECT * FROM tl_gutesio_data_child')
             ->execute();
         $missingFiles = [];
         while ($dataChild = $slcDataChild->fetchAssoc()) {
@@ -50,7 +50,7 @@ class AdditionalImportProxyDataListener
             $missingFiles['messageSend'] = 0;
             $missingFiles = serialize($missingFiles);
         } else {
-            $missingFiles = "a:0:{}";
+            $missingFiles = 'a:0:{}';
         }
 
         $proxyData = [
@@ -71,7 +71,8 @@ class AdditionalImportProxyDataListener
         $event->setProxyData($proxyData);
     }
 
-    private function checkMissingImage($image, $dataChild, $imageField, $missingFiles, $imageItem = false) {
+    private function checkMissingImage($image, $dataChild, $imageField, $missingFiles, $imageItem = false)
+    {
         if (is_array($image)) {
             foreach ($image as $imageItem => $imageValue) {
                 $missingFileCheck = $this->checkMissingImage($imageValue, $dataChild, $imageField, $missingFiles, $imageItem);
@@ -79,15 +80,16 @@ class AdditionalImportProxyDataListener
                     $missingFiles = $missingFileCheck;
                 }
             }
+
             return $missingFiles;
         }
-        if ($image != "" || $image != null) {
+        if ($image != '' || $image != null) {
             if (!C4GUtils::isValidGUID($image)) {
                 $imageUuid = StringUtil::binToUuid($image);
             } else {
                 $imageUuid = $image;
             }
-            if ($imageUuid == "00000000-0000-0000-0000-000000000000") {
+            if ($imageUuid == '00000000-0000-0000-0000-000000000000') {
                 return false;
             }
             $fileModel = FilesModel::findByUuid($imageUuid);
@@ -97,11 +99,13 @@ class AdditionalImportProxyDataListener
                 } else {
                     $missingFiles[$dataChild['name']][$imageField] = $imageUuid;
                 }
+
                 return $missingFiles;
             }
         } else {
             return false;
         }
+
         return false;
     }
 }

@@ -381,7 +381,7 @@ class ShowcaseService
 
         return $returnData;
     }
-    
+
     public function loadByUuid(string $uuid)
     {
         $arrResult = Database::getInstance()
@@ -389,15 +389,15 @@ class ShowcaseService
                 "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND uuid = ? LIMIT 1")
             ->execute($uuid)->fetchAllAssoc();
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
-        $typeString = "";
+        $typeString = '';
         foreach ($returnData['types'] as $key => $type) {
             $typeString .= $type['label'];
             if (array_key_last($returnData['types']) !== $key) {
-                $typeString .= ",";
+                $typeString .= ',';
             }
         }
         $returnData['types'] = $typeString;
-        
+
         return $returnData;
     }
 

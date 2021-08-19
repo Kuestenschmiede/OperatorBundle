@@ -297,7 +297,7 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php if (isset($data->deliveryServiceLink) && !empty($data->deliveryServiceLink)): ?>
                                     <div class="tag_delivery tag_delivery">
-                                        <a href="https://i.picsum.photos/id/1025/4951/3301.jpg?hmac=_aGh5AtoOChip_iaMo8ZvvytfEojcgqbCH7dzaz-H8Y"
+                                        <a href="<?= $data->deliveryServiceLink?>"
                                            target="_blank" rel="nofollow noopener"
                                            title="Lieferservice">Lieferservice</a>
                                     </div>

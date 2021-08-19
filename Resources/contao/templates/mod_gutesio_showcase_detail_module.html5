@@ -76,9 +76,11 @@ $data = json_decode(json_encode($this->detailData));
         <div id="anchor-menu">
             <div class="anchor-menu__inner">
                 <ul class="anchor-menu__list">
-                    <li>
-                        <a href="{{env::request}}#section-id-gallery">Bildergalerie</a>
-                    </li>
+                    <?php if ($data->imageGallery_0): ?>
+                        <li>
+                            <a href="{{env::request}}#section-id-gallery">Bildergalerie</a>
+                        </li>
+                    <?php endif; ?>
                     <li>
                         <a href="{{env::request}}#section-id-contact">Kontakt
                             &amp; Anfahrt</a>
@@ -297,7 +299,7 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php if (isset($data->deliveryServiceLink) && !empty($data->deliveryServiceLink)): ?>
                                     <div class="tag_delivery tag_delivery">
-                                        <a href="<?= $data->deliveryServiceLink?>"
+                                        <a href="<?= $data->deliveryServiceLink ?>"
                                            target="_blank" rel="nofollow noopener"
                                            title="Lieferservice">Lieferservice</a>
                                     </div>

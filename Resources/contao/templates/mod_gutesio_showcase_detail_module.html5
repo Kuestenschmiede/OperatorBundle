@@ -160,7 +160,6 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
-        <!-- todo @mdv: we need a preview image for vimeo and youtube needed - !!! import issue will be solved soon -->
         <?php if (isset($data->videoPreview) && !empty($data->videoPreview) && (isset($data->videoPreview->video) && !empty($data->videoPreview->video))): ?>
             <div class="detail-view__section-detaildata" id="detail-section-5">
                 <div class="c4g-container">

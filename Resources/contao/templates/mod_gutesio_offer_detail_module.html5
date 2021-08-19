@@ -18,7 +18,7 @@ $data = json_decode(json_encode($this->detailData));
                 <h1><?= $data->name ?></h1>
             </div>
         </div>
-        <!-- todo @ajo: anchor menu - new idea needed -->
+
         <div id="anchor-menu">
             <div class="anchor-menu__inner">
                 <ul class="anchor-menu__list">

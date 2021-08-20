@@ -65,8 +65,7 @@ class Cart extends React.Component {
         referrerPolicy: 'no-referrer',
         body: JSON.stringify(data)
       }).then(response => response.json()).then((responseData) => {
-        console.log('config cart returned');
-        console.log(responseData);
+
       });
     }
   }

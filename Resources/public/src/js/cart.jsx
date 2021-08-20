@@ -57,7 +57,8 @@ class Cart extends React.Component {
         cache: 'no-cache',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Requested-With' : 'XMLHttpRequest'
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
@@ -76,7 +77,8 @@ class Cart extends React.Component {
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'X-Requested-With' : 'XMLHttpRequest'
       },
       redirect: 'follow',
       referrerPolicy: 'no-referrer',
@@ -190,7 +192,11 @@ jQuery(document).ready(() => {
   const cart = carts[0];
   if (cart) {
     let cartUrlData = cart.dataset;
-    fetch(cartUrlData.getCartUrl)
+    fetch(cartUrlData.getCartUrl, {
+      headers: {
+        'X-Requested-With' : 'XMLHttpRequest'
+      }
+    })
       .then(response => response.json())
       .then((data) => {
         let cartData = Object.assign(data, cartUrlData);

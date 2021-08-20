@@ -30154,7 +30154,8 @@ var Cart = /*#__PURE__*/function (_React$Component) {
           cache: 'no-cache',
           credentials: 'same-origin',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
           },
           redirect: 'follow',
           referrerPolicy: 'no-referrer',
@@ -30178,7 +30179,8 @@ var Cart = /*#__PURE__*/function (_React$Component) {
         cache: 'no-cache',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
@@ -30313,7 +30315,11 @@ jQuery(document).ready(function () {
 
   if (cart) {
     var cartUrlData = cart.dataset;
-    fetch(cartUrlData.getCartUrl).then(function (response) {
+    fetch(cartUrlData.getCartUrl, {
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    }).then(function (response) {
       return response.json();
     }).then(function (data) {
       var cartData = Object.assign(data, cartUrlData);

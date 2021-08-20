@@ -30146,7 +30146,8 @@ var Cart = /*#__PURE__*/function (_React$Component) {
       if (Number.isInteger(parseInt(value))) {
         var data = {
           amount: value,
-          childId: vendors[vendorKey].articles[articleKey].childId
+          childId: vendors[vendorKey].articles[articleKey].childId,
+          articleId: vendors[vendorKey].articles[articleKey].articleId
         };
         fetch(this.configCartUrl, {
           method: 'POST',

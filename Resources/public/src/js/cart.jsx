@@ -47,23 +47,21 @@ class Cart extends React.Component {
     vendors[vendorKey].articles[articleKey].amount = value;
     this.setState({vendors: vendors});
     if (Number.isInteger(parseInt(value))) {
-      let data = {
-        amount: value,
-        childId: vendors[vendorKey].articles[articleKey].childId,
-        articleId: vendors[vendorKey].articles[articleKey].articleId
-      };
+      let data = new FormData();
+      data.set('amount', value);
+      data.set('childId', vendors[vendorKey].articles[articleKey].childId);
+      data.set('articleId', vendors[vendorKey].articles[articleKey].articleId);
       fetch(this.configCartUrl, {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
         credentials: 'same-origin',
         headers: {
-          'Content-Type': 'application/json',
           'X-Requested-With' : 'XMLHttpRequest'
         },
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
-        body: JSON.stringify(data)
+        body: data
       }).then(response => response.json()).then((responseData) => {
 
       });
@@ -71,20 +69,21 @@ class Cart extends React.Component {
   }
 
   removeArticle(articleData, articleIndex, vendorIndex) {
+    let data = new FormData();
+    for (let key in articleData ) {
+      data.append(key, articleData[key]);
+    }
     fetch(this.removeCartUrl, {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
       credentials: 'same-origin',
       headers: {
-        'Content-Type': 'application/json',
         'X-Requested-With' : 'XMLHttpRequest'
       },
       redirect: 'follow',
       referrerPolicy: 'no-referrer',
-      body: JSON.stringify({
-        articleData: articleData,
-      })
+      body: data
     }).then(response => response.json())
       .then((data) => {
         if (data.success) {

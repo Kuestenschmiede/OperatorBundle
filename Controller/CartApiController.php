@@ -12,6 +12,8 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\Database;
+use Contao\FilesModel;
 use Contao\FrontendUser;
 use gutesio\OperatorBundle\Classes\Curl\CurlGetRequest;
 use gutesio\OperatorBundle\Classes\Curl\CurlPostRequest;
@@ -62,6 +64,36 @@ class CartApiController extends AbstractController
         $data = json_decode($data, true);
         $data['configCartUrl'] = '/gutesio/operator/cart/config';
         $data['hiddenClass'] = 'hidden';
+
+        $database =  Database::getInstance();
+        foreach ($data['vendors'] as $key => $vendor) {
+            $statement = $database->prepare(
+                "SELECT image, imageList FROM tl_gutesio_data_element WHERE uuid = ?"
+            );
+            $result = $statement->execute($vendor['uuid'])->fetchAssoc();
+            $imageUuid = $result['imageList'] ?: $result['image'];
+            $imageModel = FilesModel::findByUuid($imageUuid);
+            if ($imageModel !== null) {
+                $data['vendors'][$key]['image'] = [
+                    'src' => $imageModel->path,
+                    'alt' => ''
+                ];
+            }
+            foreach ($data['vendors'][$key]['articles'] as $k => $article) {
+                $statement = $database->prepare(
+                    "SELECT image FROM tl_gutesio_data_child WHERE uuid = ?"
+                );
+                $result = $statement->execute($article['childId'])->fetchAssoc();
+                $imageModel = FilesModel::findByUuid($result['image']);
+                if ($imageModel !== null) {
+                    $data['vendors'][$key]['articles'][$k]['image'] = [
+                        'src' => $imageModel->path,
+                        'alt' => ''
+                    ];
+                }
+            }
+        }
+
         $response->setData($data);
 
         return $response;

@@ -9,7 +9,14 @@ $data = json_decode(json_encode($this->detailData));
     window.detailData.uuid = "<?= $data->uuid ?>";
     window.detailData.internal_type = "<?= $data->internal_type?>";
     window.detailData.openingHours = "<?= $data->opening_hours;?>";
+
+    window.detailData.beginDate = "<?php $data->beginDate;?>";
+    window.detailData.beginTime = "<?php $data->beginTime;?>";
+    window.detailData.endDate = "<?php $data->endDate;?>";
+    window.detailData.endTime = "<?php $data->endTime;?>";
 </script>
+
+<?php //dump($this)?>
 
 <div id="entrypoint_<?= $this->id ?>__mod" class="projects-tile-list-module_mod">
     <div class="detail-view" style="">
@@ -85,6 +92,27 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         </div>
+
+        <?php if (isset($data->beginDate) && !empty($data->beginDate)): ?>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <strong>Wann: </strong><?php echo $data->beginDate; ?>
+                    </div>
+
+                    <?php if (isset($data->beginTime) && !empty($data->beginTime)): ?>
+                        <div class="col-12">
+                            <strong>Uhrzeit: </strong>
+                            <span><?php echo $data->beginTime; ?></span>
+
+                            <?php if (isset($data->endTime) && !empty($data->endTime)): ?>
+                                <span> - <?php echo $data->endTime; ?> Uhr</span>
+                            <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        <?php endif; ?>
 
         <div class="detail-view__section-detaildata" id="detail-section-4">
             <div class="c4g-container">

@@ -1,18 +1,124 @@
-
-// Todo Felder zur Bearbeitung mit Validierung (Guthaben)
-// Todo API Aufruf bei erfolgreichem Ausfüllen der Felder
-// Todo Update UI bei erfolgreichem Ausfüllen der felder
-// Todo Bei Fehler Fehlermeldung ausgeben
-
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
+
+class Article extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      collapsed: true
+    };
+
+    this.toggleCollapse = this.toggleCollapse.bind(this);
+
+    // Wie Internationalisierung?
+    this.int = {
+      amount: 'Anzahl:',
+      priceSingle: 'Einzelpreis:',
+      priceTotal: 'Gesamtpreis',
+      tax: 'inkl. %s% MwSt.',
+      moreOptions: 'Weitere Optionen',
+      remove: 'Entfernen'
+    };
+  }
+
+  numberFormat(value) {
+    value = parseFloat(value);
+    if (value > 0) {
+      value = value.toFixed(2);
+      return value.replace('.',',') + ' EUR';
+    } else {
+      return '';
+    }
+  }
+
+  textFormat(text, value) {
+    return text.replace(/%s/g, value);
+  }
+
+  toggleCollapse() {
+    this.setState({collapsed: !this.state.collapsed});
+  }
+
+  render() {
+    try {
+      return (
+        <div key={this.props.index} className={"cart__article-row mb-3"}>
+          <div className="card">
+            <div className="card-body">
+              <div className="cart__product-row--one">
+                <div className="cart__product-info">
+                  <div className="cart__product-image">
+                    <img src={this.props.article.image.src}
+                         alt={this.props.article.image.alt}
+                         height={80}/>
+                  </div>
+                  <div className="cart__product-detail">
+                    <div className="cart__product-name">
+                      <a href={this.props.article.href}
+                         target={"_blank"}>
+                        {this.props.article.name}
+                      </a>
+                    </div>
+                    <div className="cart__product-amount">
+                      <label>
+                    <span>
+                      {this.int.amount}
+                    </span>
+                        <span>
+                      <input type={"number"}
+                             step={1}
+                             min={1}
+                             onInput={this.props.updateAmount.bind(this, this.props.vendorKey, this.props.articleKey)}
+                             defaultValue={this.props.article.amount}/>
+                    </span>
+                      </label>
+                    </div>
+                    <div className="cart__product-action">
+                      <button className="btn btn-sm btn-outline-dark" onClick={this.toggleCollapse}>
+                        {this.int.moreOptions}
+                      </button>
+                      <button className="btn btn-sm btn-danger"
+                              onClick={() => {
+                                this.props.removeArticle(this.props.article, this.props.index, this.props.vIndex)
+                              }}>
+                        {this.int.remove}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className="cart__product-price">
+                  <div className="product-price__one-piece">
+                    {this.int.priceSingle + ' ' + this.numberFormat(this.props.article.pricePerUnit)}
+                    <br/>
+                    <small className="text-muted">
+                      {this.textFormat(this.int.tax, this.props.article.tax)}
+                    </small>
+                  </div>
+                  <div className="product-price__sum">
+                    {this.int.priceTotal + ' ' + this.numberFormat(this.props.article.pricePerUnit * (this.props.article.amount || 0))}
+                  </div>
+                </div>
+              </div>
+              <div className="cart__product-row--two">
+                <div className={'cart__product-more ' + (this.state.collapsed ? 'collapse' : '') + ' mt-3'}>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>);
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+}
 
 class Cart extends React.Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      hidden: true,
       vendors: this.props.vendors
     };
 
@@ -23,22 +129,8 @@ class Cart extends React.Component {
     this.toggleClass = this.props.toggleClass;
     this.toggleButtonText = this.props.toggleButtonText;
 
-    this.toggle = this.toggle.bind(this);
+    this.updateAmount = this.updateAmount.bind(this);
     this.removeArticle = this.removeArticle.bind(this);
-  }
-
-  toggle() {
-    this.setState({hidden: !this.state.hidden});
-  }
-
-  numberFormat(value) {
-    value = parseFloat(value);
-    if (value > 0) {
-      value = value.toFixed(2);
-      return value.replace('.',',') + '€';
-    } else {
-      return '';
-    }
   }
 
   updateAmount(vendorKey, articleKey, event) {
@@ -113,74 +205,63 @@ class Cart extends React.Component {
 
   render() {
     let vendors = [];
-    let vendorTotal = 0;
 
     if (typeof this.state.vendors.forEach === 'function') {
       this.state.vendors.forEach(function (vendor, vIndex) {
         let articles = [];
-        vendorTotal = 0;
         if (typeof vendor.articles.forEach === 'function') {
           vendor.articles.forEach(function (article, index) {
-            vendorTotal += article.pricePerUnit * article.amount;
-            articles.push(
-              (<div key={index} className={"c4g-cart-vendor-article"}>
-                <form key={index} action={""} className={"c4g-cart-vendor-article-form"}>
-                  <span key={0} className={"c4g-cart-vendor-article-name"}>
-                    {article.name}
-                  </span>
-                  <span key={1} className={"c4g-cart-vendor-article-price-per-unit"}>
-                    {this.numberFormat(article.pricePerUnit)}
-                  </span>
-                  <input key={2} type="number" className={"c4g-cart-vendor-article-amount"} step={1} min={1}
-                         onInput={this.updateAmount.bind(this, vendors.length, articles.length)}
-                         defaultValue={article.amount}/>
-                  <span key={3} className={"c4g-cart-vendor-article-total-price"}>
-                    {this.numberFormat(
-                      article.pricePerUnit * (article.amount || 0)
-                    )}
-                  </span>
-                </form>
-                <button className={"btn btn-remove btn-primary"} onClick={() => {this.removeArticle(article, index, vIndex)}}>Löschen</button>
-              </div>));
+            try {
+              articles.push(
+                (
+                  <Article key={index}
+                           index={index}
+                           vIndex={vIndex}
+                           article={article}
+                           articleKey={articles.length}
+                           vendorKey={vendors.length}
+                           updateAmount={this.updateAmount}
+                           removeArticle={this.removeArticle}>
+                  </Article>
+                )
+              );
+            } catch (e) {
+              console.log(e);
+            }
           }, this);
         }
         vendors.push(
-          <div key={vIndex} className={"c4g-cart-vendor"}>
-            <span className={"c4g-cart-vendor"}>{vendor.name}</span>
-            <div className={"c4g-cart-vendor-article-list"}>
-              <div className={"c4g-cart-vendor-article-header"}>
-                <span className={"c4g-cart-vendor-article-name"}>Artikel</span>
-                <span className={"c4g-cart-vendor-article-price-per-unit"}>Einzelpreis</span>
-                <span className={"c4g-cart-vendor-article-amount"}>Anzahl</span>
-                <span className={"c4g-cart-vendor-article-total-price"}>Gesamtpreis</span>
-                {articles}
-                <div className={"c4g-cart-vendor-total"}>
-                  <span className={"c4g-cart-vendor-total-label"}>
-                    {this.props.totalPriceLabel}
-                  </span>
-                  <span className={"c4g-cart-vendor-total-price"}>
-                    {this.numberFormat(vendorTotal)}
-                  </span>
-                </div>
-                <div className={"c4g-cart-vendor-checkout"}>
-                  <button className={"c4g-cart-vendor-checkout-button"}>
-                    <span className={"c4g-cart-vendor-checkout-button-text"}>
-                      {this.props.checkoutButtonText}
-                    </span>
-                  </button>
+          <div key={vIndex} className={"card vendor-card mb-4"}>
+            <div className={"card-header"}>
+              <div className={"card-header__title"}>
+                {vendor.name}
+              </div>
+
+              <div className="card-header__image">
+                <img src={vendor.image.src}
+                     alt={vendor.image.alt}
+                     height={80} />
+              </div>
+
+            </div>
+            <div className={"card-body"}>
+              <div className={"cart__product-row mb-3"}>
+                <div className="card">
+                  <div className="card-body">
+                    {articles}
+                  </div>
                 </div>
               </div>
             </div>
-          </div>)
+          </div>);
       }, this);
     }
 
-    return (<div>
-      <button className={"c4g-cart-toggle-button"} onClick={this.toggle}>
-        {this.props.toggleButtonText}
-      </button>
-      <div className={"c4g-cart" + (this.state.hidden ? " " + this.props.hiddenClass : "")}>
-        {vendors}
+    return (<div className={"container"}>
+      <div className={"row"}>
+        <div className={"col-12"}>
+          {vendors}
+        </div>
       </div>
     </div>);
   }

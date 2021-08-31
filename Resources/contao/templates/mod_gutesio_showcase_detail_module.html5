@@ -392,9 +392,6 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         <?php endif; ?>
 
-                        <?php dump($data->opening_hours)?>
-
-
                         <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
                             <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
                             <div id="react__opening-hours" class="opening-hours" style="min-height:500px;">

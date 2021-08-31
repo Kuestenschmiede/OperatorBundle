@@ -16,8 +16,6 @@ $data = json_decode(json_encode($this->detailData));
     window.detailData.endTime = "<?php $data->endTime;?>";
 </script>
 
-<?php //dump($this)?>
-
 <div id="entrypoint_<?= $this->id ?>__mod" class="projects-tile-list-module_mod">
     <div class="detail-view" style="">
         <div class="detail-view__section-headline" id="section-id-headline">

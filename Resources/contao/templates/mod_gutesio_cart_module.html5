@@ -4,5 +4,4 @@
      data-remove-cart-url="<?php echo $this->removeCartUrl; ?>"
      data-config-cart-url="<?php echo $this->configCartUrl; ?>"
      data-toggle-class="<?php echo $this->toggleClass; ?>">
-    <button class="c4g-cart-toggle-button"><?php echo $this->toggleButtonText; ?></button>
 </div>

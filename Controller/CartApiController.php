@@ -69,10 +69,10 @@ class CartApiController extends AbstractController
         $database =  Database::getInstance();
         foreach ($data['vendors'] as $key => $vendor) {
             $statement = $database->prepare(
-                "SELECT image, imageList FROM tl_gutesio_data_element WHERE uuid = ?"
+                "SELECT logo FROM tl_gutesio_data_element WHERE uuid = ?"
             );
             $result = $statement->execute($vendor['uuid'])->fetchAssoc();
-            $imageUuid = $result['imageList'] ?: $result['image'];
+            $imageUuid = $result['logo'];
             $imageModel = FilesModel::findByUuid($imageUuid);
             if ($imageModel !== null) {
                 $data['vendors'][$key]['image'] = [

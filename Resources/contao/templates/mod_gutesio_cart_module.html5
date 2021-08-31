@@ -1,7 +1,3 @@
 <div class="c4g-cart-wrapper"
-     data-get-cart-url="<?php echo $this->getCartUrl; ?>"
-     data-add-cart-url="<?php echo $this->addCartUrl; ?>"
-     data-remove-cart-url="<?php echo $this->removeCartUrl; ?>"
-     data-config-cart-url="<?php echo $this->configCartUrl; ?>"
-     data-toggle-class="<?php echo $this->toggleClass; ?>">
+     data-get-cart-url="<?php echo $this->getCartUrl; ?>">
 </div>

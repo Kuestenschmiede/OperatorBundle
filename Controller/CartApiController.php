@@ -63,6 +63,7 @@ class CartApiController extends AbstractController
         $data = $curlResponse->getData();
         $data = json_decode($data, true);
         $data['configCartUrl'] = '/gutesio/operator/cart/config';
+        $data['removeCartUrl'] = '/gutesio/operator/cart/remove';
         $data['hiddenClass'] = 'hidden';
 
         $database =  Database::getInstance();

@@ -93,13 +93,7 @@ class CartModuleController extends AbstractFrontendModuleController
         $userAuthenticated = $this->tokenChecker->hasFrontendUser();
         if ($userAuthenticated) {
             // TODO prüfen, ob warenkorb leer oder gefüllt
-            $template->toggleButtonText = 'Warenkorb';
-            $template->cartClass = 'cart';
             $template->getCartUrl = '/gutesio/operator/cart/items';
-            $template->addCartUrl = '/gutesio/operator/cart/add';
-            $template->removeCartUrl = '/gutesio/operator/cart/remove';
-            $template->configCartUrl = '/gutesio/operator/cart/config';
-            $template->toggleClass = 'hidden';
             $template->userAuthenticated = true;
         } else {
             $template->userAuthenticated = false;

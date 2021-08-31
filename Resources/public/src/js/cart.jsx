@@ -272,18 +272,20 @@ jQuery(document).ready(() => {
   const cart = carts[0];
   if (cart) {
     let cartUrlData = cart.dataset;
-    fetch(cartUrlData.getCartUrl, {
-      headers: {
-        'X-Requested-With' : 'XMLHttpRequest'
-      }
-    })
-      .then(response => response.json())
-      .then((data) => {
-        let cartData = Object.assign(data, cartUrlData);
-        ReactDOM.render(
-          <Cart {...cartData} />,
-          cart
-        );
-    });
+    if (cartUrlData.getCartUrl) {
+      fetch(cartUrlData.getCartUrl, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+        .then(response => response.json())
+        .then((data) => {
+          let cartData = Object.assign(data, cartUrlData);
+          ReactDOM.render(
+            <Cart {...cartData} />,
+            cart
+          );
+        });
+    }
   }
 });

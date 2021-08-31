@@ -94,8 +94,8 @@ $data = json_decode(json_encode($this->detailData));
         </div>
 
         <?php if (isset($data->beginDate) && !empty($data->beginDate)): ?>
-            <div class="container">
-                <div class="row">
+            <div class="c4g-container">
+                <div class="c4g-row">
                     <div class="col-12">
                         <strong>Wann: </strong><?php echo $data->beginDate; ?>
                     </div>

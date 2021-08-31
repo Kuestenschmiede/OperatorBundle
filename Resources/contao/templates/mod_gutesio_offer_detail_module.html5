@@ -7,8 +7,8 @@ $data = json_decode(json_encode($this->detailData));
 <script>
     window.detailData = window.detailData || {};
     window.detailData.uuid = "<?= $data->uuid ?>";
-    window.detailData.internal_type = "<?= $data->internal_type?>";
-    window.detailData.openingHours = "<?= $data->opening_hours;?>";
+    window.detailData.internal_type = '<?= $data->internal_type?>';
+    window.detailData.openingHours = '<?= $data->opening_hours;?>';
 
     window.detailData.beginDate = "<?php $data->beginDate;?>";
     window.detailData.beginTime = "<?php $data->beginTime;?>";

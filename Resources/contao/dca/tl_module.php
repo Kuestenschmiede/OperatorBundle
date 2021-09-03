@@ -50,6 +50,10 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page;'
 ;
 
+$GLOBALS['TL_DCA']['tl_module']['palettes']['cart_module'] =
+    '{title_legend},name,headline,type,cart_payment_url,cart_no_items_text;'
+;
+
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_child_data_mode';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_0'] = '';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_1'] = 'gutesio_child_type';
@@ -339,4 +343,20 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_carousel_template'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getCarouselTemplateOptions"],
     'eval'                    => ['includeBlankOption' => true, 'tl_class' => 'clr'],
     'sql'                     => "VARCHAR(250) NOT NULL default ''"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['cart_payment_url'] = [
+    'exclude'                 => true,
+    'default'                 => "",
+    'inputType'               => 'text',
+    'eval'                    => ['tl_class' => 'clr'],
+    'sql'                     => "varchar(255) NOT NULL default ''"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['cart_no_items_text'] = [
+    'exclude'                 => true,
+    'default'                 => "",
+    'inputType'               => 'textarea',
+    'eval'                    => ['tl_class' => 'clr'],
+    'sql'                     => "text NOT NULL default ''"
 ];

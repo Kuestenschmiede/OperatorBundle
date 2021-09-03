@@ -52,6 +52,9 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Anzuzeigende Typen', 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Anzuzeigende Kategorien', 'Nur der gewählte Kategorien werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'Nur Angebote, denen mindestens eines dieser Tags zugeordnet wurde, werden angezeigt.'];
 
+$GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link zur Bezahlseite', 'Die Seite, auf der der Bezahlprozess durchgeführt wird.'];
+$GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text bei leerem Warenkorb', 'Dieser text wird angezeigt, wenn der Warenkorb leer ist.'];
+
 $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Lade-Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter-Einstellungen';

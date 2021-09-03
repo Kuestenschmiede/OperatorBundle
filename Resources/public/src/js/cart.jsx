@@ -131,6 +131,13 @@ class Cart extends React.Component {
 
     this.updateAmount = this.updateAmount.bind(this);
     this.removeArticle = this.removeArticle.bind(this);
+    this.removeAllArticles = this.removeAllArticles.bind(this);
+
+    // Wie Internationalisierung?
+    this.int = {
+      clearCart: 'Warenkorb leeren',
+      toPayment: 'Zum Bezahlprozess'
+    };
   }
 
   updateAmount(vendorKey, articleKey, event) {
@@ -203,10 +210,31 @@ class Cart extends React.Component {
     });
   }
 
+  removeAllArticles() {
+    fetch(this.props.removeAllCartUrl, {
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
+      headers: {
+        'X-Requested-With' : 'XMLHttpRequest'
+      },
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer'
+    }).then(response => {
+      if (response.ok) {
+        this.setState({vendors: []});
+      }
+    });
+  }
+
   render() {
     let vendors = [];
 
     if (typeof this.state.vendors.forEach === 'function') {
+      if (this.state.vendors.length === 0) {
+        return (<p dangerouslySetInnerHTML={{__html: this.props.cartNoItemsText}}></p>);
+      }
       this.state.vendors.forEach(function (vendor, vIndex) {
         let articles = [];
         if (typeof vendor.articles.forEach === 'function') {
@@ -261,6 +289,22 @@ class Cart extends React.Component {
       <div className={"row"}>
         <div className={"col-12"}>
           {vendors}
+        </div>
+      </div>
+      <div className={"row"}>
+        <div className={"col-12"}>
+          <div className={"card"}>
+            <div className={"card-body"}>
+              <div className={"text-right"}>
+                <button type={"button"} className={"btn btn-danger"} onClick={this.removeAllArticles}>
+                  {this.int.clearCart}
+                </button>
+                <a className={"btn btn-primary"} href={this.props.cartPaymentUrl}>
+                  {this.int.toPayment}
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>);

@@ -88,15 +88,12 @@ class CartModuleController extends AbstractFrontendModuleController
         // TODO markup für warenkorb bauen
         // TODO markup für Info registrierung bauen
         // TODO "in den warenkorb"-buttons an produkten
-    
-        // TODO check if user is authenticated via LDAP
-        $userAuthenticated = $this->tokenChecker->hasFrontendUser();
-        if ($userAuthenticated) {
+
+        if ($this->tokenChecker->hasFrontendUser()) {
             // TODO prüfen, ob warenkorb leer oder gefüllt
             $template->getCartUrl = '/gutesio/operator/cart/items';
-            $template->userAuthenticated = true;
-        } else {
-            $template->userAuthenticated = false;
+            $template->cart_payment_url = $model->cart_payment_url;
+            $template->cart_no_items_text = nl2br($model->cart_no_items_text);
         }
 
         

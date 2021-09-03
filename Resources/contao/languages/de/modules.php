@@ -45,3 +45,8 @@ $GLOBALS['TL_LANG']['FMD']['wishlist_module'] = [
     'Kachelansicht der gemerkten Elemente.',
 ];
 
+$GLOBALS['TL_LANG']['FMD']['cart_module'] = [
+    'Warenkorb',
+    '',
+];
+

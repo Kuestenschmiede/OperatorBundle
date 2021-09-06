@@ -47,9 +47,9 @@ class CartApiController extends AbstractController
      *     methods={"GET"}
      * )
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      */
-    public function getCartItems(Request $request) : Response {
+    public function getCartItems(Request $request) : JsonResponse {
         $response = new JsonResponse();
         $member = FrontendUser::getInstance();
         if ($member->id < 1 || (string) $member->cartId === '') {
@@ -109,9 +109,9 @@ class CartApiController extends AbstractController
      *     methods={"POST"}
      * )
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      */
-    public function addCartItem(Request $request) : Response {
+    public function addCartItem(Request $request) : JsonResponse {
         $response = new JsonResponse();
         $member = FrontendUser::getInstance();
         if ($member->id < 1 || (string) $member->cartId === '') {
@@ -133,9 +133,9 @@ class CartApiController extends AbstractController
      *     methods={"POST"}
      * )
      * @param Request $request
-     * @return Response
+     * @return JsonResponse
      */
-    public function removeCartItem(Request $request) : Response {
+    public function removeCartItem(Request $request) : JsonResponse {
         $response = new JsonResponse();
         $member = FrontendUser::getInstance();
         if ($member->id < 1 || (string) $member->cartId === '') {
@@ -159,7 +159,7 @@ class CartApiController extends AbstractController
      * @param Request $request
      * @return JsonResponse
      */
-    public function configCartItem(Request $request) : Jsonresponse {
+    public function configCartItem(Request $request) : JsonResponse {
         $response = new JsonResponse();
         $member = FrontendUser::getInstance();
         if ($member->id < 1 || (string) $member->cartId === '') {

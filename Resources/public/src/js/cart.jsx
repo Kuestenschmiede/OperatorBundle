@@ -1,6 +1,107 @@
 import React, {Component} from "react";
 import ReactDOM from "react-dom";
 
+class Slider extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.props.defaultValue
+    };
+
+    this.onChange = this.onChange.bind(this);
+
+    Slider.instances = (Slider.instances || 0) + 1;
+  }
+
+  onChange(event) {
+    let value = event.target.value;
+    this.setState({value: value});
+    this.props.onChange(this.props.name, value);
+  }
+
+  textFormat(value) {
+    if (this.props.text && typeof this.props.text.replace === 'function') {
+      return this.props.text.replace(/%s/g, value);
+    } else {
+      return value;
+    }
+  }
+
+  render() {
+    try {
+      let id = 'cart__article-option-slider-' + Slider.instances;
+      let left = parseFloat(this.props.left);
+      left = (100.00 - (2 * left)) / (this.props.max - this.props.min) * (this.state.value - this.props.min) + left;
+
+      return (
+        <div className={"cart__article-option-slider"}>
+          <label htmlFor={id}>
+            {this.props.label}
+          </label>
+          <div className={'cart__article-option-slider-inner'}>
+            <div className={'cart__article-option-slider-value-wrapper'}
+                 style={{left: String(left) + '%'}}>
+            <span className={'cart__article-option-slider-value'}>
+              {this.textFormat(this.state.value)}
+            </span>
+            </div>
+            <span className={'cart__article-option-slider-min'}>{this.textFormat(this.props.min)}</span>
+            <input id={id}
+                   type={'range'}
+                   min={this.props.min}
+                   max={this.props.max}
+                   step={this.props.interval}
+                   value={this.state.value}
+                   onChange={this.onChange}
+                   className={'cart__article-option-slider-input'}
+                   name={this.props.name}/>
+            <span className={'cart__article-option-slider-max'}>{this.textFormat(this.props.max)}</span>
+          </div>
+        </div>
+      );
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+}
+
+class Option extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    try {
+      return (
+        <div className="cart__article-option">
+          {
+            (() => {
+              switch (this.props.type) {
+                case 'slider':
+                  return <Slider label={this.props.label}
+                                 name={this.props.name}
+                                 min={this.props.min}
+                                 max={this.props.max}
+                                 defaultValue={this.props.defaultValue}
+                                 interval={this.props.interval}
+                                 left={16.75}
+                                 onChange={this.props.onChange}/>
+                default:
+                  return null;
+              }
+            })()
+          }
+        </div>
+      );
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+}
+
 class Article extends React.Component {
   constructor(props) {
     super(props);
@@ -12,8 +113,13 @@ class Article extends React.Component {
       priceTotal: 'Gesamtpreis',
       tax: 'inkl. %s% MwSt.',
       moreOptions: 'Weitere Optionen',
-      remove: 'Entfernen'
+      remove: 'Entfernen',
+      options : {
+        pricePerUnit: 'Guthaben'
+      }
     };
+
+    this.configOption = this.configOption.bind(this);
   }
 
   numberFormat(value) {
@@ -30,27 +136,32 @@ class Article extends React.Component {
     return text.replace(/%s/g, value);
   }
 
+  configOption(optionName, value) {
+    console.log(optionName);
+    console.log(value);
+  }
+
   render() {
     try {
       return (
         <div key={this.props.index} className={"cart__article-row mb-3"}>
           <div className="card">
             <div className="card-body">
-              <div className="cart__product-row--one">
-                <div className="cart__product-info">
-                  <div className="cart__product-image">
+              <div className="cart__article-row--one">
+                <div className="cart__article-info">
+                  <div className="cart__article-image">
                     <img src={this.props.article.image.src}
                          alt={this.props.article.image.alt}
                          height={80}/>
                   </div>
-                  <div className="cart__product-detail">
-                    <div className="cart__product-name">
+                  <div className="cart__article-detail">
+                    <div className="cart__article-name">
                       <a href={this.props.article.href}
                          target={"_blank"}>
                         {this.props.article.name}
                       </a>
                     </div>
-                    <div className="cart__product-amount">
+                    <div className="cart__article-amount">
                       <label>
                     <span>
                       {this.int.amount}
@@ -64,14 +175,18 @@ class Article extends React.Component {
                     </span>
                       </label>
                     </div>
-                    <div className="cart__product-action">
-                      <button className="btn btn-sm btn-outline-dark"
-                              data-toggle="collapse"
-                              data-target={"#article" + this.props.article.articleId}
-                              aria-expanded="false"
-                              aria-controls={"article" + this.props.article.articleId}>
-                        {this.int.moreOptions}
-                      </button>
+                    <div className="cart__article-action">
+                      {
+                        this.props.article.options &&
+                        this.props.article.options.length > 0 &&
+                        <button className="btn btn-sm btn-outline-dark"
+                                data-toggle="collapse"
+                                data-target={"#article" + this.props.article.articleId}
+                                aria-expanded="false"
+                                aria-controls={"article" + this.props.article.articleId}>
+                          {this.int.moreOptions}
+                        </button>
+                      }
                       <button className="btn btn-sm btn-danger"
                               onClick={() => {
                                 this.props.removeArticle(this.props.article, this.props.index, this.props.vIndex)
@@ -81,23 +196,42 @@ class Article extends React.Component {
                     </div>
                   </div>
                 </div>
-                <div className="cart__product-price">
-                  <div className="product-price__one-piece">
+                <div className="cart__article-price">
+                  <div className="article-price__one-piece">
                     {this.int.priceSingle + ' ' + this.numberFormat(this.props.article.pricePerUnit)}
                     <br/>
                     <small className="text-muted">
                       {this.textFormat(this.int.tax, this.props.article.tax)}
                     </small>
                   </div>
-                  <div className="product-price__sum">
+                  <div className="article-price__sum">
                     {this.int.priceTotal + ' ' + this.numberFormat(this.props.article.pricePerUnit * (this.props.article.amount || 0))}
                   </div>
                 </div>
               </div>
-              <div className="cart__product-row--two">
-                <div id={"article" + this.props.article.articleId} className={'cart__product-more collapse mt-3'}>
+              {
+                this.props.article.options &&
+                this.props.article.options.length > 0 &&
+                <div className="cart__article-row--two">
+                  <div id={"article" + this.props.article.articleId} className={'cart__article-more collapse mt-3'}>
+                    {
+                      (() => {
+                        let options = [];
+                        this.props.article.options.forEach(function(element, index) {
+                          options.push(
+                            <Option key={index}
+                                    label={this.int.options[element.name]}
+                                    onChange={this.configOption}
+                                    defaultValue={this.props.article[element.name]}
+                                    {...element}/>
+                          );
+                        }, this);
+                        return options;
+                      })()
+                    }
+                  </div>
                 </div>
-              </div>
+              }
             </div>
           </div>
         </div>);
@@ -278,7 +412,7 @@ class Cart extends React.Component {
 
             </div>
             <div className={"card-body"}>
-              <div className={"cart__product-row mb-3"}>
+              <div className={"cart__article-row mb-3"}>
                 <div className="card">
                   <div className="card-body">
                     {articles}

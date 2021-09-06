@@ -5,12 +5,6 @@ class Article extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      collapsed: true
-    };
-
-    this.toggleCollapse = this.toggleCollapse.bind(this);
-
     // Wie Internationalisierung?
     this.int = {
       amount: 'Anzahl:',
@@ -34,10 +28,6 @@ class Article extends React.Component {
 
   textFormat(text, value) {
     return text.replace(/%s/g, value);
-  }
-
-  toggleCollapse() {
-    this.setState({collapsed: !this.state.collapsed});
   }
 
   render() {
@@ -75,7 +65,11 @@ class Article extends React.Component {
                       </label>
                     </div>
                     <div className="cart__product-action">
-                      <button className="btn btn-sm btn-outline-dark" onClick={this.toggleCollapse}>
+                      <button className="btn btn-sm btn-outline-dark"
+                              data-toggle="collapse"
+                              data-target={"#article" + this.props.article.articleId}
+                              aria-expanded="false"
+                              aria-controls={"article" + this.props.article.articleId}>
                         {this.int.moreOptions}
                       </button>
                       <button className="btn btn-sm btn-danger"
@@ -101,7 +95,7 @@ class Article extends React.Component {
                 </div>
               </div>
               <div className="cart__product-row--two">
-                <div className={'cart__product-more ' + (this.state.collapsed ? 'collapse' : '') + ' mt-3'}>
+                <div id={"article" + this.props.article.articleId} className={'cart__product-more collapse mt-3'}>
                 </div>
               </div>
             </div>

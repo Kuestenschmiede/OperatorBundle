@@ -119,7 +119,8 @@ class Cart extends React.Component {
     super(props);
 
     this.state = {
-      vendors: this.props.vendors
+      vendors: this.props.vendors,
+      modalOpen: this.props.modalOpen
     };
 
     this.getCartUrl = this.props.getCartUrl;
@@ -131,12 +132,17 @@ class Cart extends React.Component {
 
     this.updateAmount = this.updateAmount.bind(this);
     this.removeArticle = this.removeArticle.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
     this.removeAllArticles = this.removeAllArticles.bind(this);
 
     // Wie Internationalisierung?
     this.int = {
       clearCart: 'Warenkorb leeren',
-      toPayment: 'Zum Bezahlprozess'
+      toPayment: 'Zum Bezahlprozess',
+      cancel: 'Abbrechen',
+      confirm: 'Bestätigen',
+      removeAllSanityCheckTitle: 'Warenkorb leeren?',
+      removeAllSanityCheckText: 'Wenn Sie bestätigen, wird Ihre Liste im Warenkorb unwiderruflich gelöscht.'
     };
   }
 
@@ -210,6 +216,11 @@ class Cart extends React.Component {
     });
   }
 
+  toggleModal() {
+    console.log(this.state.modalOpen);
+    this.setState({modalOpen: !this.state.modalOpen});
+  }
+
   removeAllArticles() {
     fetch(this.props.removeAllCartUrl, {
       method: 'POST',
@@ -223,7 +234,7 @@ class Cart extends React.Component {
       referrerPolicy: 'no-referrer'
     }).then(response => {
       if (response.ok) {
-        this.setState({vendors: []});
+        this.setState({vendors: [], modalOpen: false});
       }
     });
   }
@@ -296,13 +307,40 @@ class Cart extends React.Component {
           <div className={"card"}>
             <div className={"card-body"}>
               <div className={"text-right"}>
-                <button type={"button"} className={"btn btn-danger"} onClick={this.removeAllArticles}>
+                <button type={"button"} className={"btn btn-danger"} onClick={this.toggleModal} data-toggle="modal" data-target="#cleanListModal">
                   {this.int.clearCart}
                 </button>
                 <a className={"btn btn-primary"} href={this.props.cartPaymentUrl}>
                   {this.int.toPayment}
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className={this.state.modalOpen ? 'modal' : 'modal fade'}
+           id={'cleanListModal'}
+           tabIndex='-1'
+           aria-labelledby='cleanListModalLabel'
+           aria-hidden={this.state.modalOpen}>
+        <div className={'modal-dialog modal-dialog-centered'}>
+          <div className={'modal-content'}>
+            <div className={'modal-header'}>
+              <h5 className={'modal-title'} id={'cleanListModalLabel'}>{this.state.removeAllSanityCheckTitle}</h5>
+              <button type={'button'} className={'close'} aria-label={this.int.cancel} onClick={this.toggleModal} data-dismiss="modal">
+                <span aria-hidden={this.state.modalOpen}>&times;</span>
+              </button>
+            </div>
+            <div className={'modal-body'}>
+              {this.int.removeAllSanityCheckText}
+            </div>
+            <div className='modal-footer'>
+              <button type={'button'} className={'btn btn-secondary'} data-dismiss="modal">
+                {this.int.cancel}
+              </button>
+              <button type={'button'} className={'btn btn-danger'} onClick={this.removeAllArticles} data-dismiss="modal">
+                {this.int.confirm}
+              </button>
             </div>
           </div>
         </div>

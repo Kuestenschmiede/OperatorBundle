@@ -206,8 +206,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         $params = $request->query->all();
         $mode = intval($moduleModel->gutesio_data_mode);
-        if ($mode === 1 || $mode === 2) {
+        if ($mode === 1 || $mode === 2 || $mode === 4) {
             $typeIds = $this->getTypeConstraintForModule($moduleModel);
+            $typeIds = array_merge($requestTypeIds, $typeIds);
         } else {
             $typeIds = $requestTypeIds;
         }
@@ -225,6 +226,23 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds);
+        if ($mode === 4) {
+            $tmpData = [];
+            foreach ($data as $key => $value) {
+                $exit = false;
+                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
+                foreach ($value['types'] as $type) {
+                    if (in_array($type['uuid'], $blockedTypeIds)) {
+                        $exit = true;
+                        break;
+                    }
+                }
+                if (!$exit) {
+                    $tmpData[] = $value;
+                }
+            }
+            $data = $tmpData;
+        }
         if (is_array($data) && count($data) > 0 && !$data[0]) {
             // single data entry
             // but array is required by the client
@@ -295,6 +313,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 foreach ($resultTypes as $type) {
                     if (!in_array($type['typeId'], $typeIds)) {
                         $typeIds[] = $type['typeId'];
+                    }
+                }
+                break;
+            case 4:
+                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
+                $allTypeIds = $db->prepare("SELECT * FROM tl_gutesio_data_type")->execute()->fetchEach('uuid');
+                $typeIds = [];
+                foreach ($allTypeIds as $typeId) {
+                    if (!in_array($typeId, $blockedTypeIds)) {
+                        $typeIds[] = $typeId;
                     }
                 }
                 break;

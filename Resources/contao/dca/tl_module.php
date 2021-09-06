@@ -27,6 +27,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_0'] = '';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_1'] = 'gutesio_data_type';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_2'] = 'gutesio_data_directory';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_3'] = 'gutesio_data_tags';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_4'] = 'gutesio_data_blocked_types';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_enable_tag_filter';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_tag_filter'] = 'gutesio_tag_filter_selection';
@@ -73,7 +74,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
     'exclude'                 => true,
     'default'                 => "0",
     'inputType'               => 'radio',
-    'options'                 => ['0', '1', '2', '3'],
+    'options'                 => ['0', '1', '2', '3', '4'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option'],
     'sql'                     => "char(1) NOT NULL default '0'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
@@ -103,6 +104,15 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_tags'] = [
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
+    'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
+    'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_blocked_types'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_blocked_types'],
+    'exclude'                 => true,
+    'inputType'               => 'select',
+    'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTypeOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
 ];

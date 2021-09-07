@@ -141,12 +141,19 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $tmpLimit = 500;
         $typeIds = $this->getTypeConstraintForModule();
         $tagIds = $this->getTagConstraintForModule();
+        $postals = $this->model->gutesio_data_restrict_postals;
+        if ($postals === "") {
+            $arrPostals = [];
+        } else {
+            $arrPostals = explode(",", $postals);
+        }
         $data = $this->showcaseService->loadDataChunk(
             ['sorting' => 'random', 'randKey' => $this->showcaseService->createRandomKey()],
             0,
             $tmpLimit,
             $typeIds,
-            $tagIds
+            $tagIds,
+            $arrPostals
         );
         $isSingleEntry = (count($data) > 1) && (!$data[0]);
         if ($isSingleEntry) {

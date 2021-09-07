@@ -19,7 +19,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
-    'gutesio_data_max_data,gutesio_data_mode;' .
+    'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals;' .
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
@@ -63,7 +63,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_carousel_template;';
+    '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_carousel_template;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;';
 
@@ -105,6 +105,13 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_tags'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_restrict_postals'] = [
+    'exclude'                 => true,
+    'inputType'               => 'text',
+    'eval'                    => ['tl_class' => 'clr'],
+    'sql'                     => "varchar(255) NOT NULL default ''"
 ];
 
 

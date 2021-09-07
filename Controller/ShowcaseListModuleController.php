@@ -223,8 +223,21 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tmpOffset = $offset;
         }
-
-        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds);
+        try {
+            if ($moduleModel->gutesio_data_restrict_postals === "") {
+                $restrictedPostals = [];
+            } else {
+                $restrictedPostals = explode(",", $moduleModel->gutesio_data_restrict_postals);
+                if ($restrictedPostals === false) {
+                    $restrictedPostals = [];
+                }
+            }
+            
+        } catch(\Throwable $error) {
+            $restrictedPostals = [];
+        }
+        
+        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
         if (is_array($data) && count($data) > 0 && !$data[0]) {
             // single data entry
             // but array is required by the client

@@ -165,7 +165,8 @@ class ShowcaseService
         $offset,
         $limit = 30,
         $typeIds = [],
-        $tagIds = []
+        $tagIds = [],
+        $restrictedPostals = []
     ) {
         $searchString = $params['filter'] ?: '';
         $sorting = $params['sorting'] ?: '';
@@ -191,7 +192,7 @@ class ShowcaseService
             if ($sorting) {
                 switch ($sorting) {
                     case 'random':
-                        $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds);
+                        $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds, $restrictedPostals);
                         $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIds);
                         $arrIds = array_slice($arrIds, $offset, $limit);
                         if (count($arrIds) > 0) {
@@ -407,9 +408,10 @@ class ShowcaseService
     private function generateRandomSortingMap(
         $searchString,
         $typeIds = [],
-        $tagIds = []
+        $tagIds = [],
+        $restrictedPostals = []
     ) : array {
-        $arrIds = $this->loadByTypes($typeIds, $searchString, $tagIds);
+        $arrIds = $this->loadByTypes($typeIds, $searchString, $tagIds, $restrictedPostals);
         if (!$searchString) {
             shuffle($arrIds);
         }
@@ -417,7 +419,7 @@ class ShowcaseService
         return $arrIds;
     }
 
-    private function loadByTypes($typeIds, $searchString = '', $tagIds = [])
+    private function loadByTypes($typeIds, $searchString = '', $tagIds = [], $restrictedPostals = [])
     {
         $db = Database::getInstance();
         $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
@@ -447,22 +449,45 @@ class ShowcaseService
             // connect with OR here since the other condition is already considering the filter
             $whereClause = self::FILTER_SQL_STRING;
             $sql .= ' ' . $whereClause;
-            $sql .= ' ORDER BY weight DESC';
-            $arrResult = Database::getInstance()->prepare($sql)
-                ->execute(
-                    $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
-            // search for type name matches
-            $typeResult = Database::getInstance()->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
-                'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
-                'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
-                'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ?'
-            )->execute($searchString, $searchString)->fetchAllAssoc();
-
-            $arrResult = array_merge($arrResult, $typeResult);
+            if ($restrictedPostals) {
+                $sql .= " AND locationZip " . C4GUtils::buildInString($restrictedPostals);
+                $sql .= ' ORDER BY weight DESC';
+                $arrResult = $db->prepare($sql)
+                    ->execute(
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
+                // search for type name matches
+                $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
+                    'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
+                    'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
+                    'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ? AND locationZip ' . C4GUtils::buildInString($restrictedPostals)
+                )->execute($searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
+    
+                $arrResult = array_merge($arrResult, $typeResult);
+            } else {
+                $sql .= ' ORDER BY weight DESC';
+                $arrResult = $db->prepare($sql)
+                    ->execute(
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+                // search for type name matches
+                $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
+                    'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
+                    'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
+                    'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ?'
+                )->execute($searchString, $searchString)->fetchAllAssoc();
+    
+                $arrResult = array_merge($arrResult, $typeResult);
+            }
         } else {
-            $arrResult = Database::getInstance()->execute($sql)->fetchAllAssoc();
+            if ($restrictedPostals) {
+                $sql .= " AND locationZip " . C4GUtils::buildInString($restrictedPostals);
+                $arrResult = $db->prepare($sql)->execute(...$restrictedPostals)->fetchAllAssoc();
+            } else {
+                $arrResult = $db->execute($sql)->fetchAllAssoc();
+            }
         }
         $returnIds = [];
         foreach ($arrResult as $result) {

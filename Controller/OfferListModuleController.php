@@ -521,6 +521,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         if ($this->model->gutesio_data_change_layout_filter) {
             $this->tileList->setClassAfterFilter("c4g-" . $this->model->gutesio_data_layout_filter . "-outer");
         }
+        $this->tileList->setOnlySearchWithParam("moduleId");
 
         return $this->tileList;
     }

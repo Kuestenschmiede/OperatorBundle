@@ -9,15 +9,18 @@ class Slider extends React.Component {
       value: this.props.defaultValue
     };
 
-    this.onChange = this.onChange.bind(this);
+    this.timeout = null;
 
+    this.onChange = this.onChange.bind(this);
     Slider.instances = (Slider.instances || 0) + 1;
   }
 
   onChange(event) {
-    let value = event.target.value;
-    this.setState({value: value});
-    this.props.onChange(this.props.name, value);
+    this.setState({value: event.target.value});
+    clearTimeout(this.timeout);
+    this.timeout = setTimeout(() => {
+      this.props.updateValue(event);
+    }, 500);
   }
 
   textFormat(value) {
@@ -87,7 +90,7 @@ class Option extends React.Component {
                                  defaultValue={this.props.defaultValue}
                                  interval={this.props.interval}
                                  left={16.75}
-                                 onChange={this.props.onChange}/>
+                                 updateValue={this.props.updateValue}/>
                 default:
                   return null;
               }
@@ -118,8 +121,6 @@ class Article extends React.Component {
         pricePerUnit: 'Guthaben'
       }
     };
-
-    this.configOption = this.configOption.bind(this);
   }
 
   numberFormat(value) {
@@ -134,11 +135,6 @@ class Article extends React.Component {
 
   textFormat(text, value) {
     return text.replace(/%s/g, value);
-  }
-
-  configOption(optionName, value) {
-    console.log(optionName);
-    console.log(value);
   }
 
   render() {
@@ -168,9 +164,10 @@ class Article extends React.Component {
                     </span>
                         <span>
                       <input type={"number"}
+                             name={"amount"}
                              step={1}
                              min={1}
-                             onInput={this.props.updateAmount.bind(this, this.props.vendorKey, this.props.articleKey)}
+                             onInput={this.props.updateValue.bind(this, this.props.vendorKey, this.props.articleKey)}
                              defaultValue={this.props.article.amount}/>
                     </span>
                       </label>
@@ -221,7 +218,13 @@ class Article extends React.Component {
                           options.push(
                             <Option key={index}
                                     label={this.int.options[element.name]}
-                                    onChange={this.configOption}
+                                    updateValue={
+                                      this.props.updateValue.bind(
+                                        this,
+                                        this.props.vendorKey,
+                                        this.props.articleKey
+                                      )
+                                    }
                                     defaultValue={this.props.article[element.name]}
                                     {...element}/>
                           );
@@ -258,7 +261,7 @@ class Cart extends React.Component {
     this.toggleClass = this.props.toggleClass;
     this.toggleButtonText = this.props.toggleButtonText;
 
-    this.updateAmount = this.updateAmount.bind(this);
+    this.updateValue = this.updateValue.bind(this);
     this.removeArticle = this.removeArticle.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
     this.removeAllArticles = this.removeAllArticles.bind(this);
@@ -274,14 +277,14 @@ class Cart extends React.Component {
     };
   }
 
-  updateAmount(vendorKey, articleKey, event) {
+  updateValue(vendorKey, articleKey, event) {
     let value = event.target.value;
     let vendors = this.state.vendors;
-    vendors[vendorKey].articles[articleKey].amount = value;
+    vendors[vendorKey].articles[articleKey][event.target.name] = value;
     this.setState({vendors: vendors});
     if (Number.isInteger(parseInt(value))) {
       let data = new FormData();
-      data.set('amount', value);
+      data.set(event.target.name, value);
       data.set('childId', vendors[vendorKey].articles[articleKey].childId);
       data.set('articleId', vendors[vendorKey].articles[articleKey].articleId);
       fetch(this.configCartUrl, {
@@ -387,7 +390,7 @@ class Cart extends React.Component {
                            article={article}
                            articleKey={articles.length}
                            vendorKey={vendors.length}
-                           updateAmount={this.updateAmount}
+                           updateValue={this.updateValue}
                            removeArticle={this.removeArticle}>
                   </Article>
                 )

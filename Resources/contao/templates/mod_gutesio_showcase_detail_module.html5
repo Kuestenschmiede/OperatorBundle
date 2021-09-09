@@ -521,7 +521,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 ?>
 
 
-<?php if (!empty($imprintData)): ?>
+<?php if (isset($this->imprintData) && !empty($this->imprintData)): ?>
     <hr>
     <div id="showcase-imprint" class="detail-view__imprint-container">
 

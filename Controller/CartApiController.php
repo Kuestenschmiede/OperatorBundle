@@ -28,7 +28,6 @@ class CartApiController extends AbstractController
 
     public const GET_CART_URL = 'getCart.php';
     public const ADD_CART_URL = 'addToCart.php';
-    public const REMOVE_CART_URL = 'removeFromCart.php';
     public const REMOVE_ALL_CART_URL = 'removeAllFromCart.php';
     public const CONFIG_CART_URL = 'configCart.php';
 
@@ -120,30 +119,6 @@ class CartApiController extends AbstractController
         }
         $curlRequest = new CurlPostRequest();
         $curlRequest->setUrl($this->proxyUrl . '/' . self::ADD_CART_URL);
-        $curlRequest->setPostData(array_merge($request->request->all(), ['cartId' => $member->cartId]));
-        $curlResponse = $curlRequest->send();
-        $response->setStatusCode((int) $curlResponse->getStatusCode());
-        return $response;
-    }
-
-    /**
-     * @Route(
-     *     "/gutesio/operator/cart/remove",
-     *     name="gutesio_operator_cart_remove",
-     *     methods={"POST"}
-     * )
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function removeCartItem(Request $request) : JsonResponse {
-        $response = new JsonResponse();
-        $member = FrontendUser::getInstance();
-        if ($member->id < 1 || (string) $member->cartId === '') {
-            $response->setStatusCode(Response::HTTP_FORBIDDEN);
-            return $response;
-        }
-        $curlRequest = new CurlPostRequest();
-        $curlRequest->setUrl($this->proxyUrl . '/' . self::REMOVE_CART_URL);
         $curlRequest->setPostData(array_merge($request->request->all(), ['cartId' => $member->cartId]));
         $curlResponse = $curlRequest->send();
         $response->setStatusCode((int) $curlResponse->getStatusCode());

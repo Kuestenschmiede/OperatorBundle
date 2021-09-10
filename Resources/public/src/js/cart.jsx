@@ -186,8 +186,19 @@ class Article extends React.Component {
                       }
                       <button className="btn btn-sm btn-danger"
                               onClick={() => {
-                                this.props.removeArticle(this.props.article, this.props.index, this.props.vIndex)
-                              }}>
+                                  this.props.removeArticle(
+                                    this.props.vendorKey,
+                                    this.props.articleKey,
+                                    {
+                                      target: {
+                                        value : 0,
+                                        name: 'amount'
+                                      },
+                                      article: this.props.article
+                                    }
+                                  );
+                                }
+                              }>
                         {this.int.remove}
                       </button>
                     </div>
@@ -287,7 +298,7 @@ class Cart extends React.Component {
       data.set(event.target.name, value);
       data.set('childId', vendors[vendorKey].articles[articleKey].childId);
       data.set('articleId', vendors[vendorKey].articles[articleKey].articleId);
-      fetch(this.configCartUrl, {
+      return fetch(this.configCartUrl, {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
@@ -298,41 +309,27 @@ class Cart extends React.Component {
         redirect: 'follow',
         referrerPolicy: 'no-referrer',
         body: data
-      }).then(response => response.json()).then((responseData) => {
-
       });
     }
+    return null;
   }
 
-  removeArticle(articleData, articleIndex, vendorIndex) {
-    let data = new FormData();
-    for (let key in articleData ) {
-      data.append(key, articleData[key]);
-    }
-    fetch(this.removeCartUrl, {
-      method: 'POST',
-      mode: 'cors',
-      cache: 'no-cache',
-      credentials: 'same-origin',
-      headers: {
-        'X-Requested-With' : 'XMLHttpRequest'
-      },
-      redirect: 'follow',
-      referrerPolicy: 'no-referrer',
-      body: data
-    }).then(response => response.json())
-      .then((data) => {
-        if (data.success) {
+  removeArticle(vendorKey, articleKey, event) {
+    let promise = this.updateValue(vendorKey, articleKey, event);
+    console.log(typeof promise);
+    if (promise !== null) {
+      promise.then((response) => {
+        if (response.ok) {
           const vendors = this.state.vendors;
           const newVendors = [];
           vendors.forEach((vendor, index) => {
-            if (index !== vendorIndex) {
+            if (index !== vendorKey) {
               newVendors.push(vendor);
             } else {
               const articles = vendor.articles;
               const newArticles = [];
               articles.forEach((article, aIndex) => {
-                if (article.articleId !== articleData.articleId) {
+                if (article.articleId !== event.article.articleId) {
                   newArticles.push(article);
                 }
               });
@@ -344,7 +341,8 @@ class Cart extends React.Component {
         } else {
           // todo fehlermeldung
         }
-    });
+      });
+    }
   }
 
   toggleModal() {

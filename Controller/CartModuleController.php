@@ -63,8 +63,6 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CartModuleController extends AbstractFrontendModuleController
 {
-    const COOKIE_CART = "cart";
-    
     /**
      * @var TokenChecker $tokenChecker
      */

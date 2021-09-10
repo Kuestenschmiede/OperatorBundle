@@ -450,7 +450,7 @@ class ShowcaseService
             $whereClause = self::FILTER_SQL_STRING;
             $sql .= ' ' . $whereClause;
             if ($restrictedPostals) {
-                $sql .= " AND locationZip " . C4GUtils::buildInString($restrictedPostals);
+                $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                 $sql .= ' ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
                     ->execute(
@@ -463,7 +463,7 @@ class ShowcaseService
                     'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
                     'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ? AND locationZip ' . C4GUtils::buildInString($restrictedPostals)
                 )->execute($searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
-    
+
                 $arrResult = array_merge($arrResult, $typeResult);
             } else {
                 $sql .= ' ORDER BY weight DESC';
@@ -478,12 +478,12 @@ class ShowcaseService
                     'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
                     'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ?'
                 )->execute($searchString, $searchString)->fetchAllAssoc();
-    
+
                 $arrResult = array_merge($arrResult, $typeResult);
             }
         } else {
             if ($restrictedPostals) {
-                $sql .= " AND locationZip " . C4GUtils::buildInString($restrictedPostals);
+                $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                 $arrResult = $db->prepare($sql)->execute(...$restrictedPostals)->fetchAllAssoc();
             } else {
                 $arrResult = $db->execute($sql)->fetchAllAssoc();

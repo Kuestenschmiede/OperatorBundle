@@ -88,8 +88,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->alias !== "") {
             throw new RedirectResponseException($this->pageUrl);
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js", ResourceLoader::JAVASCRIPT, "c4g-all");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
@@ -125,7 +125,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
 
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;

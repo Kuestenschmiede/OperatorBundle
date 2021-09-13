@@ -110,19 +110,19 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $this->offerService->setPageUrl($pageUrl);
         $this->offerService->setRequest($request);
         $this->request = $request;
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js?v=" . time(), ResourceLoader::BODY, "c4g-maps");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "openinghours");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-util");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-modal");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async", ResourceLoader::JAVASCRIPT, "boostrap-modal");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static", ResourceLoader::JAVASCRIPT, "c4g-all");
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async|static");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async");
         }
 
         if ($this->alias !== "") {

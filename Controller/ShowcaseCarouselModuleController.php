@@ -58,7 +58,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         if ($model->gutesio_carousel_template) {
             $template = new FrontendTemplate($model->gutesio_carousel_template);
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         $tileList = $this->getTileList();
         $fields = $this->getFields();
         $data = $this->getData();
@@ -78,7 +78,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/owl/owl.theme.default.min.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_carousel.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/owl/owl.carousel.min.js");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
 
         return $template->getResponse();
     }

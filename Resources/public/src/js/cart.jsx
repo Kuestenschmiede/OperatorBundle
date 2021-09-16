@@ -274,7 +274,6 @@ class Cart extends React.Component {
 
     this.updateValue = this.updateValue.bind(this);
     this.removeArticle = this.removeArticle.bind(this);
-    this.toggleModal = this.toggleModal.bind(this);
     this.removeAllArticles = this.removeAllArticles.bind(this);
 
     // Wie Internationalisierung?
@@ -347,11 +346,6 @@ class Cart extends React.Component {
     }
   }
 
-  toggleModal() {
-    console.log(this.state.modalOpen);
-    this.setState({modalOpen: !this.state.modalOpen});
-  }
-
   removeAllArticles() {
     fetch(this.props.removeAllCartUrl, {
       method: 'POST',
@@ -365,7 +359,7 @@ class Cart extends React.Component {
       referrerPolicy: 'no-referrer'
     }).then(response => {
       if (response.ok) {
-        this.setState({vendors: [], modalOpen: false});
+        this.setState({vendors: []});
       }
     });
   }
@@ -438,7 +432,7 @@ class Cart extends React.Component {
           <div className={"card"}>
             <div className={"card-body"}>
               <div className={"text-right"}>
-                <button type={"button"} className={"btn btn-danger"} onClick={this.toggleModal} data-toggle="modal" data-target="#cleanListModal">
+                <button type={"button"} className={"btn btn-danger"} data-toggle="modal" data-target="#cleanListModal">
                   {this.int.clearCart}
                 </button>
                 <a className={"btn btn-primary"} href={this.props.cartPaymentUrl}>
@@ -449,17 +443,17 @@ class Cart extends React.Component {
           </div>
         </div>
       </div>
-      <div className={this.state.modalOpen ? 'modal' : 'modal fade'}
+      <div className={'modal fade'}
            id={'cleanListModal'}
            tabIndex='-1'
            aria-labelledby='cleanListModalLabel'
-           aria-hidden={this.state.modalOpen}>
+           aria-hidden={true}>
         <div className={'modal-dialog modal-dialog-centered'}>
           <div className={'modal-content'}>
             <div className={'modal-header'}>
               <h5 className={'modal-title'} id={'cleanListModalLabel'}>{this.state.removeAllSanityCheckTitle}</h5>
-              <button type={'button'} className={'close'} aria-label={this.int.cancel} onClick={this.toggleModal} data-dismiss="modal">
-                <span aria-hidden={this.state.modalOpen}>&times;</span>
+              <button type={'button'} className={'close'} aria-label={this.int.cancel} data-dismiss="modal">
+                <span aria-hidden={true}>&times;</span>
               </button>
             </div>
             <div className={'modal-body'}>

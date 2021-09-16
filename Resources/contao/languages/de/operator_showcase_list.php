@@ -36,7 +36,22 @@ $GLOBALS['TL_LANG'][$strName]['sections']['tags'] = "Besonderheiten";
 $GLOBALS['TL_LANG'][$strName]['sections']['contact_map'] = "Kontakt & Anfahrt";
 $GLOBALS['TL_LANG'][$strName]['sections']['relatedShowcaseLogos'] = "Partnerlogos";
 $GLOBALS['TL_LANG'][$strName]['contact'] = "Kontakt";
+
+/*
+ * IMPRINT
+ */
 $GLOBALS['TL_LANG'][$strName]['imprint'] = "Impressum";
+$GLOBALS['TL_LANG'][$strName]['imprint_title'] = "Schaufenster Impressum";
+$GLOBALS['TL_LANG'][$strName]['imprint_owner'] = "Inhaber";
+$GLOBALS['TL_LANG'][$strName]['imprint_email'] = "E-Mail";
+$GLOBALS['TL_LANG'][$strName]['imprint_phone'] = "Tel.";
+$GLOBALS['TL_LANG'][$strName]['imprint_tradeId'] = "Umsatzsteuer-Identifikationsnummer";
+$GLOBALS['TL_LANG'][$strName]['imprint_inspectorate'] = "Aufsichtsbehörde";
+$GLOBALS['TL_LANG'][$strName]['imprint_fundStatement'] = "Angaben zum Kapital";
+$GLOBALS['TL_LANG'][$strName]['imprint_standeskammer'] = "Standeskammer";
+$GLOBALS['TL_LANG'][$strName]['imprint_liquidation'] = "Liquidation/Auflösung";
+$GLOBALS['TL_LANG'][$strName]['imprint_responsible_title'] = "Verantwortlich für den Inhalt dieses Schaufensters ist";
+
 
 $GLOBALS['TL_LANG'][$strName]['types'] = ['Kategorie(n)', 'Die Schaufensterkategorie(n).'];
 

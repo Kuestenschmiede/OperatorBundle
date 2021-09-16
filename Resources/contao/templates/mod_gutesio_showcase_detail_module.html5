@@ -486,7 +486,8 @@ $newConfiguration = json_encode($newArr);
 //      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
 
 $imprintData = $this->imprintData;
-
+$imprintType = $imprintData["imprintType"];
+$imprintLink = $imprintData["imprintLink"];
 $addressName = $imprintData["addressName"];
 $addressStreet = $imprintData["addressStreet"];
 $addressStreetNumber = $imprintData["addressStreetNumber"];
@@ -527,98 +528,116 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
         <div class="detail-view__imprint-row">
             <div class="detail-view__imprint-col">
+                <?php if ($imprintType === "external"): ?>
+                    <div class="detail-view__imprint-inner external-imprint">
+                        <p>
+                            <a href="<?= $imprintLink ?>" class="btn btn-light c4g-btn__external-imprint"
+                               target="_blank"
+                               rel="nofollow noopener"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint'] ?></a>
+                        </p>
+                    </div>
+                <?php else: ?>
 
-                <div class="detail-view__imprint-inner">
+                    <div class="detail-view__imprint-inner">
 
-                    <h3 class="mt-4 mb-4">Schaufenster Impressum</h3>
+                        <h3 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_title'] ?></h3>
 
+                        <p>
+                            <strong><?= $addressName ?></strong>
+                            <br><?= $addressStreetAll ?>
+                            <br><?= $addressCityAll ?>
+                            <br><?= $addressCountry ?>
+                        </p>
+
+                        <?php if (key_exists("owner", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_owner'] ?>: <?= $owner ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
+                            <p>
+                                <?php if (key_exists("contactEmail", $imprintData)): ?>
+                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_email'] ?>: <?= $contactEmail ?></span>
+                                <?php endif; ?>
+
+                                <?php if (key_exists("contactPhone", $imprintData)): ?>
+                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_phone'] ?>: <?= $contactPhone ?></span>
+                                <?php endif; ?>
+
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("tradeID", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_tradeId'] ?>: <?= $tradeID ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("inspectorate", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_inspectorate'] ?>
+                                : <?= $inspectorate ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("fundStatement", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_fundStatement'] ?>
+                                : <?= $fundStatement ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("standeskammer", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_standeskammer'] ?>
+                                : <?= $standeskammer ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("liquidation", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_liquidation'] ?>
+                                : <?= $liquidation ?>
+                            </p>
+                        <?php endif; ?>
+
+
+                        <?php if (key_exists("responsibleName", $imprintData)): ?>
+                            <p>
+                                <span style="display: block;">
+                                    <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
+                                    <strong><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_responsible_title'] ?>:</strong>
+                                </span>
+                                <?= $responsibleName ?>
+                                <br><?= $responsibleStreetAll ?>
+                                <br><?= $responsibleCityAll ?>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <?php if ($imprintType !== "external"): ?>
+            <div class="detail-view__imprint-row">
+                <div class="detail-view__imprint-col">
                     <p>
-                        <strong><?= $addressName ?></strong>
-                        <br><?= $addressStreetAll ?>
-                        <br><?= $addressCityAll ?>
-                        <br><?= $addressCountry ?>
+                        <span style="display: block;"><strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong></span>
+                        Küstenschmiede GmbH
+                        <br>Software & Design
+                        <br>Alter Markt 10
+                        <br>26441 Jever
+                        <br>Deutschland
                     </p>
-
-                    <?php if (key_exists("owner", $imprintData)): ?>
-                        <p>
-                            Inhaber: <?= $owner ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
-                        <p>
-                            <?php if (key_exists("contactEmail", $imprintData)): ?>
-                                <span style="display: block;">E-Mail: <?= $contactEmail ?></span>
-                            <?php endif; ?>
-
-                            <?php if (key_exists("contactPhone", $imprintData)): ?>
-                                <span style="display: block;">Tel.: <?= $contactPhone ?></span>
-                            <?php endif; ?>
-
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (key_exists("tradeID", $imprintData)): ?>
-                        <p>
-                            Umsatzsteuer-Identifikationsnummer: <?= $tradeID ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (key_exists("inspectorate", $imprintData)): ?>
-                        <p>
-                            Aufsichtsbehörde: <?= $inspectorate ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (key_exists("fundStatement", $imprintData)): ?>
-                        <p>
-                            Angaben zum Kapital: <?= $fundStatement ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (key_exists("standeskammer", $imprintData)): ?>
-                        <p>
-                            Standeskammer: <?= $standeskammer ?>
-                        </p>
-                    <?php endif; ?>
-
-                    <?php if (key_exists("liquidation", $imprintData)): ?>
-                        <p>
-                            Liquidation/Auflösung: <?= $liquidation ?>
-                        </p>
-                    <?php endif; ?>
-
-
-                    <?php if (key_exists("responsibleName", $imprintData)): ?>
-                        <p>
-                            <span style="display: block;">
-                                <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
-                            </span>
-                            <?= $responsibleName ?>
-                            <br><?= $responsibleStreetAll ?>
-                            <br><?= $responsibleCityAll ?>
-                        </p>
-                    <?php endif; ?>
+                    <p>
+                        E-Mail: ahoi@kuestenschmiede.de
+                        <br>Telefon: +49 4461 8 999 70
+                    </p>
                 </div>
             </div>
-        </div>
-
-        <div class="detail-view__imprint-row">
-            <div class="detail-view__imprint-col">
-                <p>
-                    <span style="display: block;"><strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong></span>
-                    Küstenschmiede GmbH
-                    <br>Software & Design
-                    <br>Alter Markt 10
-                    <br>26441 Jever
-                    <br>Deutschland
-                </p>
-                <p>
-                    E-Mail: ahoi@kuestenschmiede.de
-                    <br>Telefon: +49 4461 8 999 70
-                </p>
-            </div>
-        </div>
+        <?php endif; ?>
     </div>
 <?php endif; ?>
 

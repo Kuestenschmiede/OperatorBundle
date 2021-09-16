@@ -533,14 +533,14 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                         <p>
                             <a href="<?= $imprintLink ?>" class="btn btn-light c4g-btn__external-imprint"
                                target="_blank"
-                               rel="nofollow noopener"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint'] ?></a>
+                               rel="nofollow noopener"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint'] ?></a>
                         </p>
                     </div>
                 <?php else: ?>
 
                     <div class="detail-view__imprint-inner">
 
-                        <h3 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_title'] ?></h3>
+                        <h3 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_title'] ?></h3>
 
                         <p>
                             <strong><?= $addressName ?></strong>
@@ -551,18 +551,18 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
                         <?php if (key_exists("owner", $imprintData)): ?>
                             <p>
-                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_owner'] ?>: <?= $owner ?>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_owner'] ?>: <?= $owner ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
                             <p>
                                 <?php if (key_exists("contactEmail", $imprintData)): ?>
-                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_email'] ?>: <?= $contactEmail ?></span>
+                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_email'] ?>: <?= $contactEmail ?></span>
                                 <?php endif; ?>
 
                                 <?php if (key_exists("contactPhone", $imprintData)): ?>
-                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_phone'] ?>: <?= $contactPhone ?></span>
+                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_phone'] ?>: <?= $contactPhone ?></span>
                                 <?php endif; ?>
 
                             </p>
@@ -570,34 +570,34 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
                         <?php if (key_exists("tradeID", $imprintData)): ?>
                             <p>
-                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_tradeId'] ?>: <?= $tradeID ?>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_tradeId'] ?>: <?= $tradeID ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if (key_exists("inspectorate", $imprintData)): ?>
                             <p>
-                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_inspectorate'] ?>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_inspectorate'] ?>
                                 : <?= $inspectorate ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if (key_exists("fundStatement", $imprintData)): ?>
                             <p>
-                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_fundStatement'] ?>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_fundStatement'] ?>
                                 : <?= $fundStatement ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if (key_exists("standeskammer", $imprintData)): ?>
                             <p>
-                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_standeskammer'] ?>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_standeskammer'] ?>
                                 : <?= $standeskammer ?>
                             </p>
                         <?php endif; ?>
 
                         <?php if (key_exists("liquidation", $imprintData)): ?>
                             <p>
-                                <?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_liquidation'] ?>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_liquidation'] ?>
                                 : <?= $liquidation ?>
                             </p>
                         <?php endif; ?>
@@ -607,7 +607,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                             <p>
                                 <span style="display: block;">
                                     <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
-                                    <strong><?= $GLOBALS['TL_LANG']['showcase_preview']['imprint_responsible_title'] ?>:</strong>
+                                    <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_responsible_title'] ?>:</strong>
                                 </span>
                                 <?= $responsibleName ?>
                                 <br><?= $responsibleStreetAll ?>

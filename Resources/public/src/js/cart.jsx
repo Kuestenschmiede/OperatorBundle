@@ -333,8 +333,10 @@ class Cart extends React.Component {
                   newArticles.push(article);
                 }
               });
-              vendor.articles = newArticles;
-              newVendors.push(vendor);
+              vendor.articles = newArticles || [];
+              if (vendor.articles.length) {
+                newVendors.push(vendor);
+              }
             }
           });
           this.setState({vendors: newVendors});

@@ -30480,8 +30480,11 @@ var Cart = /*#__PURE__*/function (_React$Component4) {
                     newArticles.push(article);
                   }
                 });
-                vendor.articles = newArticles;
-                newVendors.push(vendor);
+                vendor.articles = newArticles || [];
+
+                if (vendor.articles.length) {
+                  newVendors.push(vendor);
+                }
               }
             });
 

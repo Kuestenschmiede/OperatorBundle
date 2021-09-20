@@ -2,6 +2,7 @@
 
 <?php
 $data = json_decode(json_encode($this->detailData));
+
 ?>
 
 <script>
@@ -112,6 +113,8 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         <?php endif; ?>
 
+
+
         <div class="detail-view__section-detaildata" id="detail-section-4">
             <div class="c4g-container">
                 <div class="c4g-container">
@@ -140,6 +143,7 @@ $data = json_decode(json_encode($this->detailData));
                                 <div class="detail-field-text__text"><?= $data->size ?></div>
                             </div>
                         <?php endif; ?>
+
                     </div>
                 </div>
             </div>
@@ -148,6 +152,14 @@ $data = json_decode(json_encode($this->detailData));
         <div class="detail-view__section-tags" id="detail-section-5">
             <div class="c4g-container">
                 <div class="c4g-row">
+
+                    <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
+                        <div class="detail-field-text detail-view__location-element-name">
+                            <div class="detail-field-text__label">Veranstaltungsort: </div>
+                            <div class="detail-field-text__text"><?= $data->locationElementName ?></div>
+                        </div>
+                    <?php endif; ?>
+
                     <div class="detail-field-text displayType detail-view__display-type">
                         <div class="detail-field-text__label">Kategorie:</div>
                         <div class="detail-field-text__text"><?= $data->typeName ?></div>

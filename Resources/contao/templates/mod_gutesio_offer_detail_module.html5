@@ -298,20 +298,24 @@ $data = json_decode(json_encode($this->detailData));
                 $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
                 $shareTwitterUrl = "http://www.twitter.com/share?url=" . $shareEnvUrl . $shareEnvRequest;
                 $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;
-                $shareEmailUrl = "mailto:?subject=&body=" . $shareEnvUrl . $shareEnvRequest;
+                $shareEmailUrl = "mailto:?subject=&body=Schau Dir die Seite an: " . $shareEnvUrl . $shareEnvRequest;
 
                 ?>
                 <nav class="nav flex-column">
                     <a rel="noopener" href="<?= $shareFacebookUrl ?>"
+                       title="<?= $data->name ?>"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
                     <a rel="noopener" href="<?= $shareTwitterUrl ?>"
+                       title="<?= $data->name ?>"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
                     <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
+                       title="<?= $data->name ?>"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
                     <a rel="noopener" href="<?= $shareEmailUrl ?>"
+                       title="<?= $data->name ?>"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>

@@ -103,16 +103,18 @@ $data = json_decode(json_encode($this->detailData));
                         <div class="col-12">
                             <strong>Uhrzeit: </strong>
                             <span><?php echo $data->beginTime; ?></span>
+                        </div>
+                    <?php endif; ?>
 
-                            <?php if (isset($data->endTime) && !empty($data->endTime)): ?>
-                                <span> - <?php echo $data->endTime; ?> Uhr</span>
-                            <?php endif; ?>
+                    <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
+                        <div class="col-12">
+                            <strong>Veranstaltungsort: </strong>
+                            <span><?= $data->locationElementName ?></span>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>
-
 
 
         <div class="detail-view__section-detaildata" id="detail-section-4">
@@ -153,18 +155,10 @@ $data = json_decode(json_encode($this->detailData));
             <div class="c4g-container">
                 <div class="c4g-row">
 
-                    <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
-                        <div class="detail-field-text detail-view__location-element-name">
-                            <div class="detail-field-text__label">Veranstaltungsort: </div>
-                            <div class="detail-field-text__text"><?= $data->locationElementName ?></div>
-                        </div>
-                    <?php endif; ?>
-
                     <div class="detail-field-text displayType detail-view__display-type">
                         <div class="detail-field-text__label">Kategorie:</div>
                         <div class="detail-field-text__text"><?= $data->typeName ?></div>
                     </div>
-
 
                     <div class="detail-field-wrapper">
 

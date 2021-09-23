@@ -146,7 +146,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
      * @param $offset
      * @return JsonResponse
      */
-    public function getFilteredListDataAjax(Request $request, $offset)
+    public function getFilteredListDataAjax(Request $request, $offset, CartApiController $apiController)
     {
         $this->setAlias();
         $this->initializeContaoFramework();
@@ -191,6 +191,8 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $this->get('contao.framework')->initialize(true);
         $results = $this->offerService->getListData($search, $offset, $type, $filterData);
         $clientUuid = $this->checkCookieForClientUuid($request);
+        $interimResponse = $apiController->getCartItems($request);
+        $results = $this->checkCartContent($results, $interimResponse);
         foreach ($results as $key => $row) {
             $types = [];
             if ($clientUuid !== null) {
@@ -212,6 +214,29 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
 
 
         return new JsonResponse($results);
+    }
+    
+    private function checkCartContent(array $arrOffers, JsonResponse $response)
+    {
+        $arrContent = json_decode($response->getContent(), true);
+        $childIdsInCart = [];
+        foreach ($arrContent as $vendor) {
+            foreach ($vendor['articles'] as $article) {
+                $childIdsInCart[] = $article['childId'];
+            }
+        }
+        
+        foreach ($arrOffers as $key => $offer) {
+            if (in_array($offer['uuid'], $childIdsInCart)) {
+                $arrOffers[$key]['in_cart'] = "1";
+                $arrOffers[$key]['not_in_cart'] = "";
+            } else {
+                $arrOffers[$key]['in_cart'] = "";
+                $arrOffers[$key]['not_in_cart'] = "1";
+            }
+        }
+        
+        return $arrOffers;
     }
 
     private function checkCookieForClientUuid(Request $request)
@@ -664,6 +689,40 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
+        $fields[] = $field;
+    
+        /*
+         *  Cart buttons
+         */
+        // TODO button für "kein eingeloggter user" muss noch
+        
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link put-in-cart");
+        $field->setHref("/gutesio/operator/cart/add/uuid");
+        $field->setLinkText($this->languageRefs['frontend']['putInCart']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("in_cart", "in-cart");
+        $field->setAsyncCall(true);
+        $field->setConditionField("not_in_cart");
+        $field->setConditionValue('1');
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToCart");
+        $fields[] = $field;
+    
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link remove-from-cart");
+        $field->setLinkText($this->languageRefs['frontend']['removeFromCart']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("in_cart", "in-cart");
+        $field->setConditionField("in_cart");
+        $field->setConditionValue('1');
+        $field->setAddDataAttributes(true);
         $fields[] = $field;
 
         $detailLinks = $this->getOfferDetailLinks();

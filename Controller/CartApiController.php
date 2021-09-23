@@ -124,6 +124,43 @@ class CartApiController extends AbstractController
         $response->setStatusCode((int) $curlResponse->getStatusCode());
         return $response;
     }
+    
+    /**
+     * @Route(
+     *     "/gutesio/operator/cart/add/{uuid}",
+     *     name="gutesio_operator_cart_add_uuid",
+     *     methods={"POST"}
+     * )
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function addCartItemWithUuid(Request $request, string $uuid) : JsonResponse {
+        $response = new JsonResponse();
+        $member = FrontendUser::getInstance();
+        if ($member->id < 1 || (string) $member->cartId === '') {
+            $response->setStatusCode(Response::HTTP_FORBIDDEN);
+            return $response;
+        }
+        $curlRequest = new CurlPostRequest();
+        $curlRequest->setUrl($this->proxyUrl . '/' . self::ADD_CART_URL);
+        $db = Database::getInstance();
+        $arrConnections = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ?")
+            ->execute($uuid)->fetchAllAssoc();
+        if ($arrConnections && count($arrConnections) === 1) {
+            $elementId = $arrConnections[0]['elementId'];
+            $postData = [
+                'cartId' => $member->cartId,
+                'childId' => $uuid,
+                'elementId' => $elementId
+            ];
+            $curlRequest->setPostData($postData);
+            $curlResponse = $curlRequest->send();
+            $response->setStatusCode((int) $curlResponse->getStatusCode());
+            return $response;
+        } else {
+            return new JsonResponse([], 400);
+        }
+    }
 
     /**
      * @Route(

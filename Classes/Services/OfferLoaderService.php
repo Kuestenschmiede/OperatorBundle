@@ -481,6 +481,8 @@ class OfferLoaderService
                     'height' => $height,
                     'width' => $width,
                 ];
+            } else {
+                unset($childRows[$key]['image']);
             }
             unset($childRows[$key]['imageOffer']);
 

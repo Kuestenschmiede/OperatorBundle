@@ -136,12 +136,14 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                         $elementUuid = $components['elements'][2][0]['uuid'];
                         if ($elementUuid !== $data['locationElementId']) {
                             $locationElementData = $this->getLocationElementData($data['locationElementId']);
-                            $locationList = $this->getLocationList();
-                            $conf->addTileList(
-                                $locationList,
-                                $this->tileItems,
-                                [$locationElementData]
-                            );
+                            if ($locationElementData) {
+                                $locationList = $this->getLocationList();
+                                $conf->addTileList(
+                                    $locationList,
+                                    $this->tileItems,
+                                    [$locationElementData]
+                                );
+                            }
                         }
                     }
                 }

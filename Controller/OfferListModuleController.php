@@ -41,6 +41,7 @@ use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Config;
 use Contao\Controller;
+use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
@@ -57,7 +58,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
+class OfferListModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 

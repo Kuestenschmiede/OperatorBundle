@@ -46,11 +46,11 @@ class ShowcaseService
     private $visitCounter = null;
 
     const FILTER_SQL_STRING = '(`name` LIKE ? OR `description` LIKE ? OR `contactName` LIKE ? OR ' .
-                                '`contactStreet` LIKE ? OR `contactCity` LIKE ? OR `locationStreet` LIKE ? OR `locationCity` LIKE ?)';
+                                '`contactStreet` LIKE ? OR `contactCity` LIKE ? OR `locationStreet` LIKE ? OR `locationCity` LIKE ? OR `locationZip` LIKE ?)';
 
     const FILTER_SQL_STRING_WEIGHT = 'IF (`name` LIKE ?, 50, 0) + IF (`description` LIKE ?, 20, 0) + ' .
                                         'IF (`contactName` LIKE ?, 20, 0) + IF (`contactStreet` LIKE ?, 5,0) + IF (`contactCity` LIKE ?,5, 0) + ' .
-                                            'IF (`locationStreet` LIKE ?, 5, 0) + IF (`locationCity` LIKE ?, 5, 0) AS weight';
+                                            'IF (`locationStreet` LIKE ?, 5, 0) + IF (`locationCity` LIKE ?, 5, 0) + IF (`locationZip` LIKE ?, 5, 0) AS weight';
 
     private $filterConnector = 'AND';
 
@@ -261,7 +261,7 @@ class ShowcaseService
                     $arrResult = $stm->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString,
                         $limit, $offset)->fetchAllAssoc();
                 } else {
                     $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
@@ -456,7 +456,7 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
+                        $searchString, $searchString, $searchString, $searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -471,7 +471,7 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -699,7 +699,7 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString)
+                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString)
                     ->fetchAllAssoc();
             } else {
                 $sql = "SELECT id, geox, geoy, releaseType FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
@@ -718,7 +718,7 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString)
+                        $searchString, $searchString, $searchString, $searchString, $searchString)
                     ->fetchAllAssoc();
             } else {
                 $sql = "SELECT id, geox, geoy FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
@@ -799,7 +799,7 @@ class ShowcaseService
                 ->execute(
                     $searchString, $searchString, $searchString, $searchString, $searchString,
                     $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString)
+                    $searchString, $searchString, $searchString, $searchString, $searchString)
                 ->fetchAllAssoc();
         } else {
             $sql = "SELECT id FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";

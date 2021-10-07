@@ -1,7 +1,31 @@
+<?php
+$json = json_decode($this->configuration, true);
+$data = $json["components"]["full-text-tiles"]["data"];
+?>
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "url": "{{env::url}}/{{env::request}}",
+        "itemListElement": [
+            <?php foreach ($data as $v): ?>
+            {
+                "@type": "Offer",
+                "name": "<?= $v['elementName'] ?>",
+                "url": "{{env::url}}/<?= $v['elementLink'] ?>",
+                "image": "{{env::url}}/<?= $v['image']['src'] ?>"
+            },
+            <?php endforeach; ?>
+        ]
+    }
+
+</script>
+
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
     <script>
-      window.frameworkData = window.frameworkData || [];
-      window.frameworkData.push(<?php echo $this->configuration; ?>);
+        window.frameworkData = window.frameworkData || [];
+        window.frameworkData.push(<?php echo $this->configuration; ?>);
     </script>
     <div style="display: none">
         <?php echo $this->searchHTML; ?>

@@ -14,6 +14,8 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
 use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\DateRangeField;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
@@ -618,6 +620,17 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setFormat($GLOBALS['TL_LANG']['offer_list']['maxCredit_format']);
         $field->setWrapperClass("c4g-list-element__maxcredit-wrapper");
         $field->setClass("c4g-list-element__maxCredit");
+        $field->addCondition(new FieldNotValueCondition('maxCredit', '0'));
+        $field->addCondition(new FieldValueCondition('customizableCredit', '1'));
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName('credit');
+        $field->setFormat($GLOBALS['TL_LANG']['offer_list']['credit_format']);
+        $field->setWrapperClass("c4g-list-element__credit-wrapper");
+        $field->setClass("c4g-list-element__credit");
+        $field->addCondition(new FieldNotValueCondition('credit', '0'));
+        $field->addCondition(new FieldNotValueCondition('customizableCredit', '1'));
         $fields[] = $field;
 
         $field = new TagTileField();

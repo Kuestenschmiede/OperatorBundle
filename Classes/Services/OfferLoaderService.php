@@ -1209,7 +1209,7 @@ class OfferLoaderService
 
                     break;
                 case 'voucher':
-                    $voucherData = $database->prepare('SELECT minCredit, maxCredit ' .
+                    $voucherData = $database->prepare('SELECT minCredit, maxCredit, credit, customizableCredit ' .
                         'FROM tl_gutesio_data_child_voucher ' .
                         'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_voucher.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')

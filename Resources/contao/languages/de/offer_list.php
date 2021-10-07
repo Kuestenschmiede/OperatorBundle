@@ -27,6 +27,8 @@ $GLOBALS['TL_LANG'][$strName]['endTime'] = ['Endzeit', ''];
 $GLOBALS['TL_LANG'][$strName]['minCredit'] = 'Mindestguthaben';
 $GLOBALS['TL_LANG'][$strName]['maxCredit'] = 'Höchstguthaben';
 $GLOBALS['TL_LANG'][$strName]['maxCredit_format'] = 'bis zu %s € Guthaben';
+$GLOBALS['TL_LANG'][$strName]['credit'] = 'Guthaben';
+$GLOBALS['TL_LANG'][$strName]['credit_format'] = '%s € Guthaben';
 $GLOBALS['TL_LANG'][$strName]['locationElementId'] = ['Ort der Veranstaltung', 'Der Ort der Veranstaltung.'];
 
 $GLOBALS['TL_LANG'][$strName]['frontend']['list']['taxInfo'] = '*Preise inkl. MwSt.';

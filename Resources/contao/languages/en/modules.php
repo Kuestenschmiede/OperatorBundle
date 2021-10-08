@@ -12,17 +12,17 @@
  *
  */
 
-$GLOBALS['TL_LANG']['MOD']['gutesio'] = ['Gutes.io', 'Gutes.io'];
-$GLOBALS['TL_LANG']['MOD']['gutesio_operator_settings'] = ['gutes.io settings', 'Edit gutes.io settings'];
+$GLOBALS['TL_LANG']['MOD']['gutesio'] = ['Gutes.digital', 'Gutes.digital'];
+$GLOBALS['TL_LANG']['MOD']['gutesio_operator_settings'] = ['gutes.digital settings', 'Edit gutes.digital settings'];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_list_module'] = [
     'Showcase list',
-    'Lists the gutes.io showcases.',
+    'Lists the gutes.digital showcases.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_detail_module'] = [
     'Showcase details',
-    'Detail view of the gutes.io showcases.',
+    'Detail view of the gutes.digital showcases.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_carousel_module'] = [
@@ -32,12 +32,12 @@ $GLOBALS['TL_LANG']['FMD']['showcase_carousel_module'] = [
 
 $GLOBALS['TL_LANG']['FMD']['offer_list_module'] = [
     'Offer list',
-    'Lists the gutes.io offers.',
+    'Lists the gutes.digital offers.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['offer_detail_module'] = [
     'Offer details',
-    'Detail view of the gutes.io offers.',
+    'Detail view of the gutes.digital offers.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['wishlist_module'] = [

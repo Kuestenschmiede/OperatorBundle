@@ -4,4 +4,4 @@ $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references']['filterType'][0]  = 'No
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references']['filterType'][1]  = 'Generate filter via tags';
 $GLOBALS['TL_LANG']['tl_c4g_map_profiles']['references']['filterType'][2]  = 'Generate filter via directories and types';
 
-$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['filterType'] = ['Automatic Gutes.io filters', 'Selection of automatically generated filters.'];
+$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['filterType'] = ['Automatic Gutes.digital filters', 'Selection of automatically generated filters.'];

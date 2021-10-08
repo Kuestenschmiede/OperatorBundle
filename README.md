@@ -1,6 +1,6 @@
-# gutes.io Operator
-## For gutes.io portal operators
-You want to build a gutes.io operator site? Want to display showcases or offers in your Contao website?
+# gutes.digital Operator
+## For gutes.digital portal operators
+You want to build a gutes.digital operator site? Want to display showcases or offers in your Contao website?
 Then this Contao Bundle is made for you.
 
 ## Installation
@@ -18,4 +18,4 @@ Alternatively, you can use the Contao Manager to install the gutesio-Operator.
 - [gutesio/data-model](https://github.com/Kuestenschmiede/DataModelBundle/releases) (*latest stable release*)
 
 ## Documentation
-Visit [gutes.io](https://gutes.io) for a user documentation. You can also contact us via the support forum there.
+Visit [gutes.digital](https://gutes.digital) for a user documentation. You can also contact us via the support forum there.

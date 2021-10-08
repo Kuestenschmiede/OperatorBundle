@@ -1,9 +1,9 @@
 {
   "name": "gutesio/operator",
   "type": "contao-bundle",
-  "description": "The bundle for the gutes.io operator instances.",
-  "keywords": ["gutes.io"],
-  "homepage": "https://gutes.io",
+  "description": "The bundle for the gutes.digital operator instances.",
+  "keywords": ["gutes.digital"],
+  "homepage": "https://gutes.digital",
   "license": "LGPL-3.0-or-later",
   "authors": [
     {

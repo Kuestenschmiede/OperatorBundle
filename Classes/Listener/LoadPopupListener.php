@@ -102,8 +102,41 @@ class LoadPopupListener
                         </div>";
             }
         }
-        $href = $url . '/' . $element['alias'];
+        if (true) {
+            $contacts = '';
+            if ($element['email']) {
+                $mail = $element['email'];
+                $contacts .= "<a class='entry-content contact-mail' title='$name eine Mail schreiben' href='mailto:$mail'>
+                                <i class='fas fa-envelope'></i>
+                            </a>";
+            }
+            if ($element['phone']) {
+                $phone = $element['phone'];
+                $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:$phone'>
+                                <i class='fas fa-phone'></i>
+                            </a>";
+            }
+            if ($element['facebook']) {
+                $fb = $element['facebook'];
+                $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb'>
+                                <i class='fab fa-facebook-square'></i>
+                            </a>";
+            }
+            if ($element['instagram']) {
+                $ig = $element['instagram'];
+                $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig'>
+                                <i class='fab fa-instagram-square'></i>
+                            </a>";
+            }
+            if ($element['twitter']) {
+                $tw = $element['twitter'];
+                $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw'>
+                                <i class='fab fa-twitter-square'></i>
+                            </a>";
+            }
 
+        }
+        $href = $url . '/' . $element['alias'];
         $clientUuid = $this->requestStack->getCurrentRequest()->cookies->get('clientUuid');
         if ($clientUuid) {
             $selectWishlistEntry = 'SELECT * FROM tl_gutesio_data_wishlist WHERE clientUuid = ? AND dataUuid = ?';
@@ -139,6 +172,9 @@ class LoadPopupListener
                         </div>
                         <div class='tags'>
                             $tags
+                        </div>
+                        <div class='item contacts'>
+                            $contacts
                         </div>
                     </div>   
                     <div class='c4g-tile-footer'>

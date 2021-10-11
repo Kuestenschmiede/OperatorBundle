@@ -145,11 +145,16 @@ class Article extends React.Component {
             <div className="card-body">
               <div className="cart__article-row--one">
                 <div className="cart__article-info">
-                  <div className="cart__article-image">
-                    <img src={this.props.article.image.src}
-                         alt={this.props.article.image.alt}
-                         height={80}/>
-                  </div>
+                  {
+                    this.props.article.image &&
+                    this.props.article.image.src &&
+                    this.props.article.image.alt &&
+                    <div className="cart__article-image">
+                      <img src={this.props.article.image.src}
+                           alt={this.props.article.image.alt}
+                           height={80}/>
+                    </div>
+                  }
                   <div className="cart__article-detail">
                     <div className="cart__article-name">
                       <a href={this.props.article.href}

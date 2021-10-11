@@ -102,40 +102,44 @@ class LoadPopupListener
                         </div>";
             }
         }
-        if (true) {
-            $contacts = '';
-            if ($element['email']) {
-                $mail = $element['email'];
-                $contacts .= "<a class='entry-content contact-mail' title='$name eine Mail schreiben' href='mailto:$mail'>
-                                <i class='fas fa-envelope'></i>
-                            </a>";
-            }
-            if ($element['phone']) {
-                $phone = $element['phone'];
-                $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:$phone'>
-                                <i class='fas fa-phone'></i>
-                            </a>";
-            }
-            if ($element['facebook']) {
-                $fb = $element['facebook'];
-                $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb'>
-                                <i class='fab fa-facebook-square'></i>
-                            </a>";
-            }
-            if ($element['instagram']) {
-                $ig = $element['instagram'];
-                $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig'>
-                                <i class='fab fa-instagram-square'></i>
-                            </a>";
-            }
-            if ($element['twitter']) {
-                $tw = $element['twitter'];
-                $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw'>
-                                <i class='fab fa-twitter-square'></i>
-                            </a>";
-            }
-
+        $contacts = '';
+        if ($element['phone'] || $element['mobile']) {
+            $phone = $element['phone'] ?: $element['mobile'];
+            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:$phone'>
+                            <i class='fas fa-phone'></i>
+                        </a>";
         }
+        if ($element['email']) {
+            $mail = $element['email'];
+            $contacts .= "<a class='entry-content contact-mail' title='$name eine Mail schreiben' href='mailto:$mail'>
+                            <i class='fas fa-envelope'></i>
+                        </a>";
+        }
+        if ($element['website']) {
+            $website = $element['website'];
+            $contacts .= "<a class='entry-content contact-phone' title='Website von $name' href='$website'>
+                            <i class='fas fa-external-link-square-alt'></i>
+                        </a>";
+        }
+        if ($element['facebook']) {
+            $fb = $element['facebook'];
+            $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb'>
+                            <i class='fab fa-facebook-square'></i>
+                        </a>";
+        }
+        if ($element['instagram']) {
+            $ig = $element['instagram'];
+            $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig'>
+                            <i class='fab fa-instagram-square'></i>
+                        </a>";
+        }
+        if ($element['twitter']) {
+            $tw = $element['twitter'];
+            $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw'>
+                            <i class='fab fa-twitter-square'></i>
+                        </a>";
+        }
+
         $href = $url . '/' . $element['alias'];
         $clientUuid = $this->requestStack->getCurrentRequest()->cookies->get('clientUuid');
         if ($clientUuid) {

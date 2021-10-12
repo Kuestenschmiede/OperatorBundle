@@ -967,6 +967,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     
     private function getLocationElementData($locationElementUuid)
     {
-        return $this->showcaseService->loadByUuid($locationElementUuid);
+        $showcaseData = $this->showcaseService->loadByUuid($locationElementUuid);
+        $showcaseData['name'] = html_entity_decode($showcaseData['name']);
+        
+        return $showcaseData;
     }
 }

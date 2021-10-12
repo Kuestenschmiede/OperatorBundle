@@ -104,6 +104,14 @@ services:
       arguments:
         - "@request_stack"
 
+    gutesio.onPerformSearchDoIt:
+      class: gutesio\OperatorBundle\Classes\Listener\PerformSearchListener
+      tags:
+        - { name: kernel.event_listener, event: maps.search.perform, method: onPerformSearchDoIt, priority: 422 }
+      arguments:
+        - "@request_stack"
+
+
     gutesio.onLoadFeatureFilterCreateTagFilter:
       class: gutesio\OperatorBundle\Classes\Listener\LoadFeatureFilterListener
       tags:

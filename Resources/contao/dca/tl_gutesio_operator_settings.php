@@ -35,7 +35,7 @@ $GLOBALS['TL_DCA'][$strName] = [
         'default' => '{key_legend},gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
-            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,voucherDetailPage;'
+            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,voucherDetailPage,cartPage;'
     ],
     
     'fields' => [
@@ -113,6 +113,12 @@ $GLOBALS['TL_DCA'][$strName] = [
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'voucherDetailPage' => [
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ],
+        'cartPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
             'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],

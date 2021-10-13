@@ -47,6 +47,7 @@ use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
+use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -222,19 +223,26 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
     {
         $arrContent = json_decode($response->getContent(), true);
         $childIdsInCart = [];
-        foreach ($arrContent as $vendor) {
+        foreach ($arrContent['vendors'] as $vendor) {
             foreach ($vendor['articles'] as $article) {
                 $childIdsInCart[] = $article['childId'];
             }
         }
-        
-        foreach ($arrOffers as $key => $offer) {
-            if (in_array($offer['uuid'], $childIdsInCart)) {
-                $arrOffers[$key]['in_cart'] = "1";
-                $arrOffers[$key]['not_in_cart'] = "";
-            } else {
+
+        if (!empty($childIdsInCart)) {
+            foreach ($arrOffers as $key => $offer) {
+                if (in_array($offer['uuid'], $childIdsInCart)) {
+                    $arrOffers[$key]['in_cart'] = "1";
+                    $arrOffers[$key]['not_in_cart'] = "";
+                } else {
+                    $arrOffers[$key]['in_cart'] = "";
+                    $arrOffers[$key]['not_in_cart'] = "1";
+                }
+            }
+        } else {
+            foreach ($arrOffers as $key => $offer) {
                 $arrOffers[$key]['in_cart'] = "";
-                $arrOffers[$key]['not_in_cart'] = "1";
+                $arrOffers[$key]['not_in_cart'] = "";
             }
         }
         
@@ -666,7 +674,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $fields[] = $field;
     
         $field = new WrapperTileField();
-        $field->setWrappedFields(['uuid', 'href']);
+        $field->setWrappedFields(['uuid', 'href', 'cart-link']);
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
         
@@ -703,40 +711,53 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
-    
-        /*
-         *  Cart buttons
-         */
-        // TODO button für "kein eingeloggter user" muss noch
-        
-        $field = new LinkButtonTileField();
-        $field->setName("uuid");
-        $field->setHrefField("uuid");
-        $field->setWrapperClass("c4g-list-element__cart-wrapper");
-        $field->setClass("c4g-list-element__cart-link put-in-cart");
-        $field->setHref("/gutesio/operator/cart/add/uuid");
-        $field->setLinkText($this->languageRefs['frontend']['putInCart']);
-        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-        $field->addConditionalClass("in_cart", "in-cart");
-        $field->setAsyncCall(true);
-        $field->setConditionField("not_in_cart");
-        $field->setConditionValue('1');
-        $field->setAddDataAttributes(true);
-        $field->setHookAfterClick(true);
-        $field->setHookName("addToCart");
-        $fields[] = $field;
-    
-        $field = new LinkButtonTileField();
-        $field->setName("uuid");
-        $field->setWrapperClass("c4g-list-element__cart-wrapper");
-        $field->setClass("c4g-list-element__cart-link remove-from-cart");
-        $field->setLinkText($this->languageRefs['frontend']['removeFromCart']);
-        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-        $field->addConditionalClass("in_cart", "in-cart");
-        $field->setConditionField("in_cart");
-        $field->setConditionValue('1');
-        $field->setAddDataAttributes(true);
-        $fields[] = $field;
+
+        $user = FrontendUser::getInstance();
+        if ($user->id < 1) {
+            $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
+            $cartPage = PageModel::findByPk($cartPage);
+            if ($cartPage !== null) {
+                $field = new LinkButtonTileField();
+                $field->setName("cart-link");
+                $field->setWrapperClass("c4g-list-element__cart-link-wrapper");
+                $field->setClass("c4g-list-element__cart-link");
+                $field->setHref($cartPage->getFrontendUrl());
+                $field->setLinkText($this->languageRefs['frontend']['putInCart']);
+                $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+                $field->setConditionField('offerForSale');
+                $field->setConditionValue('1');
+                $fields[] = $field;
+            }
+        } else {
+            $field = new LinkButtonTileField();
+            $field->setName("uuid");
+            $field->setHrefField("uuid");
+            $field->setWrapperClass("c4g-list-element__cart-wrapper");
+            $field->setClass("c4g-list-element__cart-link put-in-cart");
+            $field->setHref("/gutesio/operator/cart/add/uuid");
+            $field->setLinkText($this->languageRefs['frontend']['putInCart']);
+            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+            $field->addConditionalClass("in_cart", "in-cart");
+            $field->setAsyncCall(true);
+            $field->setConditionField("not_in_cart");
+            $field->setConditionValue('1');
+            $field->setConditionField('offerForSale');
+            $field->setConditionValue('1');
+            $field->setAddDataAttributes(true);
+            $field->setHookAfterClick(true);
+            $field->setHookName("addToCart");
+            $fields[] = $field;
+
+            $field = new TextTileField();
+            $field->setName("uuid");
+            $field->setWrapperClass("c4g-list-element__cart-wrapper");
+            $field->setClass("c4g-list-element__cart-link in-cart");
+            $field->setFormat('Bereits im Warenkorb');
+            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+            $field->addCondition(new FieldValueCondition('in_cart', '1'));
+            $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+            $fields[] = $field;
+        }
 
         $detailLinks = $this->getOfferDetailLinks();
         $urlSuffix = Config::get('urlSuffix');

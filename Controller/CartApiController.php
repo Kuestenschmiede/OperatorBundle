@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Controller;
 
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
+use con4gis\FrameworkBundle\Classes\FormButtons\SetDataButton;
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
@@ -17,6 +18,7 @@ use Contao\FilesModel;
 use Contao\FrontendUser;
 use gutesio\OperatorBundle\Classes\Curl\CurlGetRequest;
 use gutesio\OperatorBundle\Classes\Curl\CurlPostRequest;
+use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,6 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CartApiController extends AbstractController
 {
     private $proxyUrl;
+    private $offerService;
 
     public const GET_CART_URL = 'getCart.php';
     public const ADD_CART_URL = 'addToCart.php';
@@ -32,11 +35,13 @@ class CartApiController extends AbstractController
     public const CONFIG_CART_URL = 'configCart.php';
 
     public function __construct(
-        ContaoFramework $framework
+        ContaoFramework $framework,
+        OfferLoaderService $offerService
     ) {
         $framework->initialize();
         $settings = C4gSettingsModel::findSettings();
         $this->proxyUrl = $settings->con4gisIoUrl;
+        $this->offerService = $offerService;
     }
 
     /**
@@ -146,6 +151,7 @@ class CartApiController extends AbstractController
         $db = Database::getInstance();
         $arrConnections = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ?")
             ->execute($uuid)->fetchAllAssoc();
+        $data = [];
         if ($arrConnections && count($arrConnections) === 1) {
             $elementId = $arrConnections[0]['elementId'];
             $postData = [
@@ -156,6 +162,22 @@ class CartApiController extends AbstractController
             $curlRequest->setPostData($postData);
             $curlResponse = $curlRequest->send();
             $response->setStatusCode((int) $curlResponse->getStatusCode());
+
+            if ((int) $curlResponse->getStatusCode() === 200) {
+                $this->offerService->setRequest($request);
+                $row = $this->offerService->getSingleDataset(
+                    strtolower(str_replace(['{', '}'], '', $uuid)),
+                    true
+                );
+                $data = array_merge($row, [
+                    'updatedData' => [
+                        'in_cart' => '1',
+                        'not_in_cart' => ''
+                    ],
+                    'updateType' => 'single'
+                ]);
+            }
+            $response->setData($data);
             return $response;
         } else {
             return new JsonResponse([], 400);

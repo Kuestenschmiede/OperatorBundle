@@ -43,6 +43,7 @@ class PerformSearchListener
                 ['name' => "locationCity", 'weight' => 5],
                 ['name' => "locationZip", 'weight' => 5],
             ];
+            $whereClause = "(releaseType = 'internal' OR releaseType = 'interregional' OR releaseType = '')";
             $arrDBResult = SearchApi::searchDatabase($arrParams['q'], $arrColums, "tl_gutesio_data_element", $this->Database);
             $arrResults = [];
             foreach ($arrDBResult as $dBResult) {

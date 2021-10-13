@@ -55,10 +55,10 @@ class WishlistModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_wishlist.min.css");
 //        ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/modal.min.css");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
         System::loadLanguageFile('offer_list');
         System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $list = $this->getList();

@@ -24,6 +24,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_render_searchHtml'] = ['HTML für
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_limit'] = ['Ladeschritte', 'Bestimmt, wieviele Datensätze jeweils in einer Anfrage geladen werden (Standard: 30).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_max_data'] = ['Maximale Anzahl Datensätze', 'Bestimmt, wieviele Datensätze maximal in der Liste angezeigt werden (0 bedeutet keine Begrenzung).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode'] = ['Lademodus', 'Bestimmt, wie die Daten geladen werden.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_restrict_postals'] = ['Postleitzahlgebiete', 'Hier kann eine kommagetrennte Liste von Postleitzahlen angegeben werden. Nur Schaufenster mit einer dieser Postleitzahlen werden dann dargestellt. Wenn keine Angabe gemacht wird, werden alle Postleitzahlen geladen.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_load_klaro_consent'] = ['Klaro Consent-Tool aktivieren', 'Lädt das Klaro Consent-Tool für die Anzeige von YouTube- und Vimeo-Videos.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_carousel_template'] = ['Eigenes Template verwenden', 'Wenn gewünscht, kann hier ein eigenes Template ausgewählt werden, welches vom Carousel-Modul verwendet wird (der Name der Template-Datei muss dann "mit mod_gutesio_showcase_carousel_module_" beginnen).'];
 
@@ -32,6 +33,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_change_layout_filter'] = ['Layout
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layout_filter'] = ['Layout der Liste nach Filtern', 'Bestimmt, in welchem Layout die Liste nach Filtereingabe dargestellt wird.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_type'] = ['Kategorie', 'Nur Schaufenster dieser Kategorie(n) werden angezeigt.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_blocked_types'] = ['Kategorien (Negativauswahl)', 'Schaufenster dieser Kategorie(n) werden nicht angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_directory'] = ['Verzeichnis', 'Nur Schaufenster in Kategorien aus diesem Verzeichnis bzw. diesen Verzeichnissen werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_tags'] = ['Tags', 'Nur Schaufenster, die eines dieser Tags zugeordnet haben, werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_tag_filter'] = ['Tag-Filter', 'Aktiviert die Tag-Auswahl über dieser Schaufensterliste.'];
@@ -64,6 +66,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['0'] = 'Alle Schauf
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['1'] = 'Schaufenster nach Kategorien laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['2'] = 'Schaufenster nach Verzeichnissen laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['3'] = 'Schaufenster nach Tags laden';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['4'] = 'Schaufensterkategorien ausschließen';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Alle Angebote laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Angebote nach Typ laden';

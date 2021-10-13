@@ -518,6 +518,13 @@
 
 }
 
+.detail-view__logos-wrapper {
+  display: flex;
+  align-items: center;
+  grid-gap: 1rem;
+  flex-wrap: wrap;
+}
+
 .c4g-tile {
   &-headline-wrapper {
     @include make-container();

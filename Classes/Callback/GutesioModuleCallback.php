@@ -129,7 +129,7 @@ class GutesioModuleCallback
             }
         }
     }
-    
+
     public function getCarouselTemplateOptions()
     {
         return Controller::getTemplateGroup('mod_gutesio_showcase_carousel_module_');

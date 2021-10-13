@@ -43,6 +43,7 @@ use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Config;
 use Contao\Controller;
+use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
@@ -60,7 +61,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
+class OfferListModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
@@ -109,8 +110,8 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         }
         $this->offerService->setLimit($limit);
         $this->request = $request;
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
 
@@ -556,6 +557,7 @@ class OfferListModuleController extends \Contao\CoreBundle\Controller\FrontendMo
         if ($this->model->gutesio_data_change_layout_filter) {
             $this->tileList->setClassAfterFilter("c4g-" . $this->model->gutesio_data_layout_filter . "-outer");
         }
+        $this->tileList->setOnlySearchWithParam("moduleId");
 
         return $this->tileList;
     }

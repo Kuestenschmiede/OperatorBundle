@@ -58,7 +58,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         if ($model->gutesio_carousel_template) {
             $template = new FrontendTemplate($model->gutesio_carousel_template);
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         $tileList = $this->getTileList();
         $fields = $this->getFields();
         $data = $this->getData();
@@ -78,7 +78,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/owl/owl.theme.default.min.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_carousel.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/owl/owl.carousel.min.js");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
 
         return $template->getResponse();
     }
@@ -141,12 +141,19 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $tmpLimit = 500;
         $typeIds = $this->getTypeConstraintForModule();
         $tagIds = $this->getTagConstraintForModule();
+        $postals = $this->model->gutesio_data_restrict_postals;
+        if ($postals === "") {
+            $arrPostals = [];
+        } else {
+            $arrPostals = explode(",", $postals);
+        }
         $data = $this->showcaseService->loadDataChunk(
             ['sorting' => 'random', 'randKey' => $this->showcaseService->createRandomKey()],
             0,
             $tmpLimit,
             $typeIds,
-            $tagIds
+            $tagIds,
+            $arrPostals
         );
         $isSingleEntry = (count($data) > 1) && (!$data[0]);
         if ($isSingleEntry) {

@@ -88,8 +88,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->alias !== "") {
             throw new RedirectResponseException($this->pageUrl);
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js", ResourceLoader::JAVASCRIPT, "c4g-all");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
@@ -125,7 +125,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
 
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
@@ -206,8 +205,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         $params = $request->query->all();
         $mode = intval($moduleModel->gutesio_data_mode);
-        if ($mode === 1 || $mode === 2) {
+        if ($mode === 1 || $mode === 2 || $mode === 4) {
             $typeIds = $this->getTypeConstraintForModule($moduleModel);
+            $typeIds = array_merge($requestTypeIds, $typeIds);
         } else {
             $typeIds = $requestTypeIds;
         }
@@ -223,8 +223,38 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tmpOffset = $offset;
         }
-
-        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds);
+        try {
+            if ($moduleModel->gutesio_data_restrict_postals === "") {
+                $restrictedPostals = [];
+            } else {
+                $restrictedPostals = explode(",", $moduleModel->gutesio_data_restrict_postals);
+                if ($restrictedPostals === false) {
+                    $restrictedPostals = [];
+                }
+            }
+            
+        } catch(\Throwable $error) {
+            $restrictedPostals = [];
+        }
+        
+        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+        if ($mode === 4) {
+            $tmpData = [];
+            foreach ($data as $key => $value) {
+                $exit = false;
+                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
+                foreach ($value['types'] as $type) {
+                    if (in_array($type['uuid'], $blockedTypeIds)) {
+                        $exit = true;
+                        break;
+                    }
+                }
+                if (!$exit) {
+                    $tmpData[] = $value;
+                }
+            }
+            $data = $tmpData;
+        }
         if (is_array($data) && count($data) > 0 && !$data[0]) {
             // single data entry
             // but array is required by the client
@@ -295,6 +325,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 foreach ($resultTypes as $type) {
                     if (!in_array($type['typeId'], $typeIds)) {
                         $typeIds[] = $type['typeId'];
+                    }
+                }
+                break;
+            case 4:
+                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
+                $allTypeIds = $db->prepare("SELECT * FROM tl_gutesio_data_type")->execute()->fetchEach('uuid');
+                $typeIds = [];
+                foreach ($allTypeIds as $typeId) {
+                    if (!in_array($typeId, $blockedTypeIds)) {
+                        $typeIds[] = $typeId;
                     }
                 }
                 break;

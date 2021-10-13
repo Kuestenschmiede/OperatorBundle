@@ -50,10 +50,9 @@ class LoadLayersListener
         $strC = substr_count($alias, '/');
         $arrUrl = explode('/', $alias);
 
-        if (strpos($arrUrl[$strC], ".html")) {
-            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], ".html"));
-        }
-        else {
+        if (strpos($arrUrl[$strC], '.html')) {
+            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
+        } else {
             $alias = $arrUrl[$strC];
         }
 
@@ -115,6 +114,7 @@ class LoadLayersListener
             'order' => "$t.name ASC",
         ];
         $configuredDirectories = unserialize($objDataLayer->directories);
+        $configuredTypes = $objDataLayer->types;
         if ($configuredDirectories) {
             $objDirectories = [];
             foreach ($configuredDirectories as $configuredDirectory) {
@@ -132,6 +132,9 @@ class LoadLayersListener
             $arrTypes = $this->Database->prepare($strQueryTypes)->execute($directory->uuid)->fetchAllAssoc();
             $types = [];
             foreach ($arrTypes as $type) {
+                if ($configuredTypes && !strpos($configuredTypes, $type['uuid'])) {
+                    continue;
+                }
                 $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
                 $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
                 INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
@@ -162,6 +165,9 @@ class LoadLayersListener
                 if ($elements) {
                     $types[] = array_merge($dataLayer, $singleType);
                 }
+            }
+            if (count($types) < 1) {
+                continue;
             }
             $singleDir = [
                 'pid' => $dataLayer['id'],

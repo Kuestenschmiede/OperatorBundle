@@ -110,18 +110,19 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $this->offerService->setPageUrl($pageUrl);
         $this->offerService->setRequest($request);
         $this->request = $request;
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js?v=" . time(), ResourceLoader::BODY, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
 
         if ($this->model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
-//            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/jquery/jquery-3.5.1.slim.min.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-jquery");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-util");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-modal");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "c4g-all");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async", ResourceLoader::JAVASCRIPT, "boostrap-modal");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static", ResourceLoader::JAVASCRIPT, "c4g-all");
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async|static");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async");
         }
 
         if ($this->alias !== "") {
@@ -130,22 +131,19 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
                 $components = $this->getDetailComponents($data, $request);
-                $conf->addDetailPage(
-                    $components['details'][0],
-                    $components['details'][1],
-                    $components['details'][2]
-                );
                 if ($data['type'] === "event") {
                     if ($data['locationElementId']) {
                         $elementUuid = $components['elements'][2][0]['uuid'];
                         if ($elementUuid !== $data['locationElementId']) {
                             $locationElementData = $this->getLocationElementData($data['locationElementId']);
-                            $locationList = $this->getLocationList();
-                            $conf->addTileList(
-                                $locationList,
-                                $this->tileItems,
-                                [$locationElementData]
-                            );
+                            if ($locationElementData) {
+                                $locationList = $this->getLocationList();
+                                $conf->addTileList(
+                                    $locationList,
+                                    $this->tileItems,
+                                    [$locationElementData]
+                                );
+                            }
                         }
                     }
                 }
@@ -161,6 +159,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                         $this->getChildTileFields(),
                         $otherChildData
                     );
+                    $template->hasOtherChilds = true;
                 }
                 $conf->setLanguage($objPage->language);
                 if (!empty($data)) {
@@ -187,8 +186,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         } else {
             throw new RedirectResponseException($pageUrl);
         }
-
-
+        $template->detailData = $data;
+        $template->mapData = $this->getMapData();
+        
         return $template->getResponse();
     }
 
@@ -203,11 +203,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private function getDetailComponents(array $data, Request $request)
     {
         $components = [];
-        $components['details'] = [
-            $this->getDetailPage(),
-            $this->getDetailFields($data),
-            $data
-        ];
+//        $components['details'] = [
+//            $this->getDetailPage(),
+//            $this->getDetailFields($data),
+//            $data
+//        ];
         $components['elements'] = [
             $this->getElementTileList(),
             $this->getElementFields(),
@@ -222,6 +222,15 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     {
         $page = new DetailPage();
         $page->setHeadline($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['headline']);
+        
+        $page->setSections($this->getSections());
+        $page->setShowAnchorMenu(true);
+        $page->setMenuSectionIndex(2);
+        return $page;
+    }
+    
+    protected function getMapData()
+    {
         $settings = GutesioOperatorSettingsModel::findSettings();
         $mapData = MapDataConfigurator::prepareMapData(
             ContentModel::findById($settings->detail_map),
@@ -230,14 +239,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             false
         );
         MapsResourceLoader::loadResources(["router" => true], $mapData);
-
+    
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
-        $page->setMapData($mapData);
-        $page->setSections($this->getSections());
-        $page->setShowAnchorMenu(true);
-        $page->setMenuSectionIndex(2);
-        return $page;
+        $mapData['addIdToDiv'] = false;
+        
+        return $mapData;
     }
 
     private function getSections()
@@ -960,6 +967,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     
     private function getLocationElementData($locationElementUuid)
     {
-        return $this->showcaseService->loadByUuid($locationElementUuid);
+        $showcaseData = $this->showcaseService->loadByUuid($locationElementUuid);
+        $showcaseData['name'] = html_entity_decode($showcaseData['name']);
+        
+        return $showcaseData;
     }
 }

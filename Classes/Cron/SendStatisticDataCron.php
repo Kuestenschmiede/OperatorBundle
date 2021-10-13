@@ -51,7 +51,7 @@ class SendStatisticDataCron
     {
         $db = Database::getInstance();
 
-        $today = strtotime("today midnight");
+        $today = strtotime('today midnight');
         $offerStatistic = $db->prepare('SELECT * FROM tl_gutesio_offer_statistic WHERE `transferred` = 0 AND `date` <= ?')
             ->execute($today)->fetchAllAssoc();
         $showcaseStatistic = $db->prepare('SELECT * FROM tl_gutesio_showcase_statistic WHERE `transferred` = 0 AND `date` <= ?')

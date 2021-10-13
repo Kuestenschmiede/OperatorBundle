@@ -14,13 +14,6 @@ jQuery(function () {
     window.setTimeout(function () {
         jQuery(window).trigger('resize');
     }, 500);
-
-    // if (owl) {
-    //     owl();
-    // }
-    // }
-    // ============== end - owl carousel ==============
-
 });
 
 window.c4gHooks = window.c4gHooks || {};
@@ -166,14 +159,13 @@ function reactRenderReady() {
         // Share Button on Detail Page
         const buildShareBtn = '<button type="button" class="c4g-btn c4g-btn-primary c4g-btn-sharedetail js-modalShare" data-toggle="modal" data-target="#shareModal" title="Teilen"><i class="fas fa-share-alt"></i></button>';
 
-        if (window.frameworkData[0].components.detail
-            && window.frameworkData[0].components.detail.data) {
-            const onList = window.frameworkData[0].components.detail.data['on_wishlist'];
+        if (window.detailData) {
+            const onList = window.detailData['on_wishlist'];
             // jQuery('#anchor-menu .share').prepend(buildPutOnWishlistBtn);
             // jQuery('#anchor-menu .share').prepend(buildRemoveFromWishlistBtn);
-            jQuery('.anchor-menu__share').prepend(buildShareBtn);
-            jQuery('.anchor-menu__share').prepend(buildPutOnWishlistBtn);
-            jQuery('.anchor-menu__share').prepend(buildRemoveFromWishlistBtn);
+            // jQuery('.anchor-menu__share').prepend(buildShareBtn);
+            // jQuery('.anchor-menu__share').prepend(buildPutOnWishlistBtn);
+            // jQuery('.anchor-menu__share').prepend(buildRemoveFromWishlistBtn);
 
             if (onList) {
                 jQuery(".js-putDetailOnWishlist").css("display", "none");
@@ -184,8 +176,9 @@ function reactRenderReady() {
             var handlePutOnWishlist = function (event) {
                 jQuery(".js-putDetailOnWishlist").css("display", "none");
                 jQuery(".js-removeDetailFromWishlist").css("display", "block");
-                const detailType = window.frameworkData[0].components.detail.data['internal_type'];
-                const detailUuid = window.frameworkData[0].components.detail.data['uuid'];
+                console.log(window.detailData);
+                const detailType = window.detailData['internal_type'];
+                const detailUuid = window.detailData['uuid'];
                 const postUrl = '/gutesio/operator/wishlist/add/' + detailType + '/' + detailUuid;
                 $.post(postUrl).done(() => {
                     // addToBadge();
@@ -196,7 +189,7 @@ function reactRenderReady() {
             var handleRemoveFromWishlist = function (event) {
                 jQuery(".js-putDetailOnWishlist").css("display", "block");
                 jQuery(".js-removeDetailFromWishlist").css("display", "none");
-                const detailUuid = window.frameworkData[0].components.detail.data['uuid'];
+                const detailUuid = window.detailData['uuid'];
                 const postUrl = '/gutesio/operator/wishlist/remove/' + detailUuid;
 
                 $.post(postUrl).done(() => {

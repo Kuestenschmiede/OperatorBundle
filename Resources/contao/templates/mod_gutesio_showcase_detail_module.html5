@@ -13,7 +13,6 @@
     $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
     $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
 
-
     /**
      * For Contao Users:
      * You can use srcset image url by adding the id of image-size configured in contao backend
@@ -22,10 +21,8 @@
     ?>
 
     <style>
-        @media screen and (max-width: 900px) {
-            .detail-hero2 {
-                background-image: url("<?= $imageXS?>");
-            }
+        .detail-hero2 {
+            background-image: url("<?= $imageXS?>");
         }
 
         @media screen and (min-width: 901px) {
@@ -63,10 +60,414 @@
     </div>
 </div>
 
+<?php
+$data = json_decode(json_encode($this->detailData));
+?>
+
+<script>
+    window.detailData = window.detailData || {};
+    window.detailData.uuid = "<?= $data->uuid ?>";
+    window.detailData.internal_type = '<?= $data->internal_type?>';
+    window.detailData.openingHours = '<?= $data->opening_hours;?>';
+</script>
+
+<div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">
+    <div class="detail-view" style="">
+        <div id="anchor-menu">
+            <div class="anchor-menu__inner">
+                <ul class="anchor-menu__list">
+                    <?php if ($data->imageGallery_0): ?>
+                        <li>
+                            <a href="{{env::request}}#section-id-gallery">Bildergalerie</a>
+                        </li>
+                    <?php endif; ?>
+                    <li>
+                        <a href="{{env::request}}#section-id-contact">Kontakt
+                            &amp; Anfahrt</a>
+                    </li>
+
+                    <?php if ($this->hasOffers): ?>
+                        <li>
+                            <a href="{{env::request}}#offer-tiles">Unsere
+                                Angebote</a>
+                        </li>
+                    <?php endif; ?>
+
+                    <?php if ($this->hasImprint): ?>
+                        <li>
+                            <a href="{{env::request}}#showcase-imprint">Impressum</a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+                <div class="anchor-menu__share">
+                    <button class="c4g-btn c4g-btn-warning c4g-btn-removefromwishlist js-removeDetailFromWishlist"
+                            title="Vom Merkzettel entfernen." style="display: none;"><i class="fas fa-heart"></i>
+                    </button>
+                    <button class="c4g-btn c4g-btn-primary c4g-btn-putonwishlist js-putDetailOnWishlist"
+                            title="Auf den Merkzettel setzen."><i class="fas fa-heart"></i></button>
+                    <button type="button" class="c4g-btn c4g-btn-primary c4g-btn-sharedetail js-modalShare"
+                            data-toggle="modal" data-target="#shareModal" title="Teilen"><i
+                                class="fas fa-share-alt"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="detail-view__section-gallery" id="detail-section-description-and-gallery">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="item description detail-view__description">
+                        <span class="entry-content">
+                        <?= $data->description ?>
+                        </span>
+                    </div>
+                    <div id="section-id-gallery" class="detail-view__image-gallery">
+                        <div class="detail-view__image-gallery-inner">
+                            <?php if ($data->imageGallery_0): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_0->path ?>"
+                                   class="imageGallery-item first"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_0->src ?>"
+                                            alt="<?= $data->imageGallery_0->alt ?>"
+                                            width="<?= $data->imageGallery_0->width ?>"
+                                            height="<?= $data->imageGallery_0->height ?>"></a>
+                            <?php endif; ?>
+
+                            <?php if ($data->imageGallery_1): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_1->path ?>"
+                                   class="imageGallery-item"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_1->src ?>"
+                                            alt="<?= $data->imageGallery_1->alt ?>"
+                                            width="<?= $data->imageGallery_1->width ?>"
+                                            height="<?= $data->imageGallery_1->height ?>"></a>
+                            <?php endif; ?>
+
+                            <?php if ($data->imageGallery_2): ?>
+                                <a data-fancybox="gallery_imageGallery"
+                                   href="<?= $data->imageGallery_2->path ?>"
+                                   class="imageGallery-item"><img
+                                            class="img-fluid"
+                                            src="<?= $data->imageGallery_2->src ?>"
+                                            alt="<?= $data->imageGallery_2->alt ?>"
+                                            width="<?= $data->imageGallery_2->width ?>"
+                                            height="<?= $data->imageGallery_2->height ?>"></a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php if (isset($data->videoPreview) && !empty($data->videoPreview) && (isset($data->videoPreview->video) && !empty($data->videoPreview->video))): ?>
+            <div class="detail-view__section-detaildata" id="detail-section-5">
+                <div class="c4g-container">
+                    <div class="c4g-container">
+                        <div class="c4g-row">
+                            <div class="detail-view__video-preview">
+                                <div class="embed-responsive embed-responsive-16by9">
+
+                                    <?php if ($data->videoPreview->videoType == "youtube"): ?>
+
+                                        <?php
+                                        function get_youtube_id_from_url($url)
+                                        {
+                                            preg_match('/(http(s|):|)\/\/(www\.|)yout(.*?)\/(embed\/|watch.*?v=|)([a-z_A-Z0-9\-]{11})/i', $url, $results);
+                                            return $results[6];
+                                        }
+
+                                        $youtubeSrc = $data->videoPreview->video;
+                                        $youtubeId = get_youtube_id_from_url($youtubeSrc);
+                                        ?>
+                                        <div class="">
+                                            <iframe class="video-preview-youtube"
+                                                    width="100%" height="100%"
+                                                    src="https://www.youtube-nocookie.com/embed/<?= $youtubeId ?>"
+                                                    title="YouTube video player" frameborder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    allowfullscreen></iframe>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if ($data->videoPreview->videoType == "vimeo"): ?>
+                                        <?php
+                                        $vimeoURL = $data->videoPreview->video;
+                                        $pos = strrpos($vimeoURL, '/');
+                                        $vimeoId = $pos === false ? $vimeoURL : substr($vimeoURL, $pos + 1);
+                                        ?>
+                                        <div data-vimeo-initialized="true">
+                                            <iframe src="https://player.vimeo.com/video/<?= $vimeoId ?>?h=d753e034aa&portrait=0"
+                                                    width="480" height="270" frameborder="0"
+                                                    allow="autoplay; fullscreen; picture-in-picture"
+                                                    allowfullscreen data-vimeoId="<?= $vimeoId ?>"></iframe>
+                                        </div>
+                                    <?php endif; ?>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <div class="detail-view__section-tags" id="detail-section-6">
+            <div class="c4g-container">
+                <div class="c4g-row">
+
+                    <?php if (isset($data->relatedShowcaseLogos) && !empty($data->relatedShowcaseLogos)): ?>
+                        <div class="detail-field-text__label">Verknüpfte Schaufenster:</div>
+                        <div class="detail-view__logos-wrapper">
+                            <?php foreach ($data->relatedShowcaseLogos as $logo): ?>
+                                <a href="<?= $logo->href ?>"
+                                   class="relatedShowcaseLogos detail-view__logos"><img
+                                            src="<?= $logo->src ?>"
+                                            alt="<?= $logo->alt ?>"
+                                            class="detail-view__logos-image"></a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($data->types): ?>
+                        <div class="detail-field-text displayType detail-view__display-type">
+                            <div class="detail-field-text__label">Kategorien:</div>
+                            <?php foreach ($data->types as $type): ?>
+                                <span class="detail-field-text__text"><?= $type->label ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+
+
+                    <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
+                        <div class="menuLink">
+                            <a href="<?= $data->menuLink ?>" target="_blank" rel="nofollow noopener"
+                               title="Speisekarte aufrufen">Speisekarte</a>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (isset($data->menuUpload) && !empty($data->menuUpload)): ?>
+                        <div class="detail-field-pdf menuUpload">
+                            <a class="btn btn-primary"
+                               href="<?= $data->menuUpload->path ?>"
+                               title="Speisekarte öffnen" target="_blank" rel="nofollow noopener">Speisekarte [pdf]</a>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($data->diet)): ?>
+                        <div class="detail-field-text diet">
+                            <div class="detail-field-text__label">Kost</div>
+                            <span class="detail-field-text__text"><?= $data->diet ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($data->cuisine)): ?>
+                        <div class="detail-field-text cuisine">
+                            <div class="detail-field-text__label">Küche</div>
+                            <span class="detail-field-text__text"><?= $data->cuisine ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if ($data->tags): ?>
+                        <div class="detail-field-wrapper">
+                            <div class="detail-field-wrapper__tags">
+                                <?php foreach ($data->tags as $k => $v): ?>
+                                    <div class="tag-entry <?= $v->technicalKey ?>">
+                                        <div class="detail-field-image"><img class="img-fluid"
+                                                                             src="<?= $v->image->src ?>"
+                                                                             alt="<?= $v->image->name ?>"
+                                                                             data-toggle="tooltip"
+                                                                             width="100" height="100"
+                                                                             data-content="<?= $v->name ?>"
+                                                                             title="<?= $v->name ?>"></div>
+                                        <div class="detail-field-text"><span
+                                                    class="detail-field-text__text"><?= $v->name ?></span></div>
+                                    </div>
+                                <?php endforeach; ?>
+                            </div>
+
+                            <div class="detail-field-wrapper__tag-fields">
+                                <?php if (isset($data->coronaNotes) && !empty($data->coronaNotes)): ?>
+                                    <div class="item coronaNotes tag_corona">
+                                        <div class="entry-label">Hinweise zur Corona Situation</div>
+                                        <div class="entry-content">
+                                            <?= $data->coronaNotes ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->deliveryServiceLink) && !empty($data->deliveryServiceLink)): ?>
+                                    <div class="tag_delivery tag_delivery">
+                                        <a href="<?= $data->deliveryServiceLink ?>"
+                                           target="_blank" rel="nofollow noopener"
+                                           title="Lieferservice">Lieferservice</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->onlineReservationLink) && !empty($data->onlineReservationLink)): ?>
+                                    <div class="tag_online_reservation tag_online_reservation">
+                                        <a href="<?= $data->onlineReservationLink ?>" target="_blank"
+                                           rel="nofollow noopener"
+                                           title="Onlinereservierung">Onlinereservierung</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php
+                                $onlineshopLink = "";
+                                foreach ($data->tags as $tag) {
+                                    if ($tag->technicalKey == "tag_onlineshop") {
+                                        $onlineshopLink = $tag->linkHref;
+                                    }
+                                }
+                                ?>
+                                <?php if (!empty($onlineshopLink)): ?>
+                                    <div class="tag_onlineshop tag_onlineshop">
+                                        <a href="<?= $onlineshopLink ?>" target="_blank" rel="nofollow noopener">Onlineshop</a>
+                                    </div>
+                                <?php endif; ?>
+
+
+
+                                <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
+                                    <div class="item wheelchairNotes tag_wheelchair">
+                                        <div class="entry-label">Hinweise zur Rollstuhleignung</div>
+
+                                        <div class="entry-content">
+                                            <?= $data->wheelchairNotes ?>
+                                        </div>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+        <div class="detail-view__section-contact-map" id="section-id-contact">
+            <div class="c4g-container">
+                <div class="c4g-row">
+                    <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
+                        <div>
+                            <?php if ($data->contactable && !empty($data->contactName)): ?>
+                                <h3 class="entry-content name"><?= $data->contactName ?></h3>
+                            <?php else: ?>
+                                <h3 class="entry-content name"><?= $data->name ?></h3>
+                            <?php endif; ?>
+
+                            <?php if ($data->contactable && !empty($data->contactAdditionalName)): ?>
+                                <span class="entry-content additionalName"><?= $data->contactAdditionalName ?></span>
+                            <?php endif; ?>
+
+                            <?php if ($data->contactable && !empty($data->contactStreet)): ?>
+                                <div class="contact-info streetname"><?= $data->contactStreet ?> <?= $data->contactStreetNumber ?></div>
+                            <?php else: ?>
+                                <div class="contact-info streetname"><?= $data->locationStreet ?> <?= $data->locationStreetNumber ?></div>
+                            <?php endif; ?>
+
+
+                            <?php if ($data->contactable && !empty($data->contactZip)): ?>
+                                <div class="contact-info zip-city"><?= $data->contactZip ?> <?= $data->contactCity ?></div>
+                            <?php else: ?>
+                                <div class="contact-info zip-city"><?= $data->locationZip ?> <?= $data->locationCity ?></div>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if (isset($data->phone) && !empty($data->phone)): ?>
+                            <span class="entry-content phone phone-stationary" itemprop="phone">
+                                <a href="tel:<?= str_replace(" ", "", $data->phone) ?>"
+                                   title="Festnetz-Telefonnummer"><?= $data->phone ?></a>
+                            </span>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->mobile) && !empty($data->mobile)): ?>
+                            <span class="entry-content phone phone-mobile" itemprop="phone">
+                                <a href="tel:<?= str_replace(" ", "", $data->mobile) ?>"
+                                   title="Mobile Telefonnummer"><?= $data->mobile ?></a>
+                            </span>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->email) && !empty($data->email)): ?>
+                            <span class="entry-content email" itemprop="email">
+                                <a href="mailto:{{email_url::<?= $data->email ?>}}"
+                                   title="E-Mail Adresse"><?= $data->email ?></a>
+                            </span>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->website) && !empty($data->website)): ?>
+                            <div class="entry-content website">
+                                <a href="<?= $data->website ?>" target="_blank"
+                                   rel="nofollow noopener" title="<?= $data->website ?>">Website</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
+                            <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
+                            <div id="react__opening-hours" class="opening-hours">
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->facebook) && !empty($data->facebook)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-facebook">
+                                <a href="<?= $data->facebook ?>" target="_blank" rel="nofollow noopener"
+                                   title="Facebook">Facebook</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->instagram) && !empty($data->instagram)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-instagram">
+                                <a href="<?= $data->instagram ?>" target="_blank" rel="nofollow noopener"
+                                   title="Instagram">Instagram</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-twitter">
+                                <a href="<?= $data->twitter ?>" target="_blank" rel="nofollow noopener" title="Twitter">Twitter</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
+                                        href="<?= $data->whatsapp ?>" target="_blank" rel="nofollow noopener"
+                                        title="Whatsapp">Whatsapp</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
+                            <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
+                                        href="<?= $data->youtubeChannelLink ?>" target="_blank" rel="nofollow noopener"
+                                        title="YouTube">YouTube-Kanal</a>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
+                            <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
+                                        href="<?= $data->wikipediaLink ?>" target="_blank" rel="nofollow noopener"
+                                        title="Wikipedia">Wikipedia</a>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+
+                    <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php
+$newArr = json_decode($this->configuration, true);
+$newArr["detailData"]["openingHours"] = $newArr["components"]["detail"]["data"]["opening_hours"];
+unset($newArr["components"]["detail"]);
+$newConfiguration = json_encode($newArr);
+?>
+
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
     <script>
         window.frameworkData = window.frameworkData || [];
-        window.frameworkData.push(<?php echo $this->configuration; ?>);
+        window.frameworkData.push(<?php echo $newConfiguration; ?>);
+        //window.frameworkData.push(<?php //echo $this->configuration; ?>//);
     </script>
     <div style="display: none">
         <?php echo $this->searchHTML; ?>
@@ -85,7 +486,8 @@
 //      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
 
 $imprintData = $this->imprintData;
-
+$imprintType = $imprintData["imprintType"];
+$imprintLink = $imprintData["imprintLink"];
 $addressName = $imprintData["addressName"];
 $addressStreet = $imprintData["addressStreet"];
 $addressStreetNumber = $imprintData["addressStreetNumber"];
@@ -119,115 +521,134 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
 ?>
 
-<hr>
-<div id="showcase-imprint" class="detail-view__imprint-container">
-    <?php if (!empty($imprintData)): ?>
+
+<?php if (isset($this->imprintData) && !empty($this->imprintData)): ?>
+    <hr>
+    <div id="showcase-imprint" class="detail-view__imprint-container">
+
         <div class="detail-view__imprint-row">
             <div class="detail-view__imprint-col">
-
-                <div class="detail-view__imprint-inner">
-
-                    <h3 class="mt-4 mb-4">Schaufenster Impressum</h3>
-
-                    <p>
-                        <strong><?= $addressName ?></strong>
-                        <br><?= $addressStreetAll ?>
-                        <br><?= $addressCityAll ?>
-                        <br><?= $addressCountry ?>
-                    </p>
-
-                    <?php if (key_exists("owner", $imprintData)): ?>
+                <?php if ($imprintType === "external"): ?>
+                    <div class="detail-view__imprint-inner external-imprint">
                         <p>
-                            Inhaber: <?= $owner ?>
+                            <a href="<?= $imprintLink ?>" class="btn btn-light c4g-btn__external-imprint"
+                               target="_blank"
+                               rel="nofollow noopener"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint'] ?></a>
                         </p>
-                    <?php endif; ?>
+                    </div>
+                <?php else: ?>
 
-                    <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
+                    <div class="detail-view__imprint-inner">
+
+                        <h3 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_title'] ?></h3>
+
                         <p>
-                            <?php if (key_exists("contactEmail", $imprintData)): ?>
-                                <span style="display: block;">E-Mail: <?= $contactEmail ?></span>
-                            <?php endif; ?>
-
-                            <?php if (key_exists("contactPhone", $imprintData)): ?>
-                                <span style="display: block;">Tel.: <?= $contactPhone ?></span>
-                            <?php endif; ?>
-
+                            <strong><?= $addressName ?></strong>
+                            <br><?= $addressStreetAll ?>
+                            <br><?= $addressCityAll ?>
+                            <br><?= $addressCountry ?>
                         </p>
-                    <?php endif; ?>
 
-                    <?php if (key_exists("tradeID", $imprintData)): ?>
-                        <p>
-                            Umsatzsteuer-Identifikationsnummer: <?= $tradeID ?>
-                        </p>
-                    <?php endif; ?>
+                        <?php if (key_exists("owner", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_owner'] ?>: <?= $owner ?>
+                            </p>
+                        <?php endif; ?>
 
-                    <?php if (key_exists("inspectorate", $imprintData)): ?>
-                        <p>
-                            Aufsichtsbehörde: <?= $inspectorate ?>
-                        </p>
-                    <?php endif; ?>
+                        <?php if (key_exists("contactEmail", $imprintData) || key_exists("contactPhone", $imprintData)): ?>
+                            <p>
+                                <?php if (key_exists("contactEmail", $imprintData)): ?>
+                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_email'] ?>: <?= $contactEmail ?></span>
+                                <?php endif; ?>
 
-                    <?php if (key_exists("fundStatement", $imprintData)): ?>
-                        <p>
-                            Angaben zum Kapital: <?= $fundStatement ?>
-                        </p>
-                    <?php endif; ?>
+                                <?php if (key_exists("contactPhone", $imprintData)): ?>
+                                    <span style="display: block;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_phone'] ?>: <?= $contactPhone ?></span>
+                                <?php endif; ?>
 
-                    <?php if (key_exists("standeskammer", $imprintData)): ?>
-                        <p>
-                            Standeskammer: <?= $standeskammer ?>
-                        </p>
-                    <?php endif; ?>
+                            </p>
+                        <?php endif; ?>
 
-                    <?php if (key_exists("liquidation", $imprintData)): ?>
-                        <p>
-                            Liquidation/Auflösung: <?= $liquidation ?>
-                        </p>
-                    <?php endif; ?>
+                        <?php if (key_exists("tradeID", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_tradeId'] ?>: <?= $tradeID ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("inspectorate", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_inspectorate'] ?>
+                                : <?= $inspectorate ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("fundStatement", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_fundStatement'] ?>
+                                : <?= $fundStatement ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("standeskammer", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_standeskammer'] ?>
+                                : <?= $standeskammer ?>
+                            </p>
+                        <?php endif; ?>
+
+                        <?php if (key_exists("liquidation", $imprintData)): ?>
+                            <p>
+                                <?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_liquidation'] ?>
+                                : <?= $liquidation ?>
+                            </p>
+                        <?php endif; ?>
 
 
-                    <?php if (key_exists("responsibleName", $imprintData)): ?>
-                        <p>
-                            <span style="display: block;">
-                                <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
-                            </span>
-                            <?= $responsibleName ?>
-                            <br><?= $responsibleStreetAll ?>
-                            <br><?= $responsibleCityAll ?>
-                        </p>
-                    <?php endif; ?>
-                </div>
+                        <?php if (key_exists("responsibleName", $imprintData)): ?>
+                            <p>
+                                <span style="display: block;">
+                                    <strong>Verantwortlich für den Inhalt dieses Schaufensters ist:</strong>
+                                    <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_responsible_title'] ?>:</strong>
+                                </span>
+                                <?= $responsibleName ?>
+                                <br><?= $responsibleStreetAll ?>
+                                <br><?= $responsibleCityAll ?>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+
+                <?php endif; ?>
             </div>
         </div>
-    <?php endif; ?>
 
-    <div class="detail-view__imprint-row">
-        <div class="detail-view__imprint-col">
-            <p>
-                <span style="display: block;">
-                <strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong>
-            </span>
-                Küstenschmiede GmbH
-                <br>Software & Design
-                <br>Alter Markt 10
-                <br>26441 Jever
-                <br>Deutschland
-            </p>
-            <p>
-                E-Mail: ahoi@kuestenschmiede.de
-                <br>Telefon: +49 4461 8 999 777
-            </p>
-        </div>
+        <?php if ($imprintType !== "external"): ?>
+            <div class="detail-view__imprint-row">
+                <div class="detail-view__imprint-col">
+                    <p>
+                        <span style="display: block;"><strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong></span>
+                        Küstenschmiede GmbH
+                        <br>Software & Design
+                        <br>Alter Markt 10
+                        <br>26441 Jever
+                        <br>Deutschland
+                    </p>
+                    <p>
+                        E-Mail: ahoi@kuestenschmiede.de
+                        <br>Telefon: +49 4461 8 999 70
+                    </p>
+                </div>
+            </div>
+        <?php endif; ?>
     </div>
-
-</div>
+<?php endif; ?>
 
 <!-- Modal Shade Detail Page-->
-<div class="modal fade share-modal" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+<div class="modal fade share-modal" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="shareModalLabel"><i class="fas fa-share-alt"></i> Teilen mit Freunden</h5>
+                <h5 class="modal-title" id="shareModalLabel"><i class="fas fa-share-alt"></i> Teilen mit Freunden
+                </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -244,20 +665,23 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                 $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
                 $shareTwitterUrl = "http://www.twitter.com/share?url=" . $shareEnvUrl . $shareEnvRequest;
                 $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;
-                $shareEmailUrl = "mailto:?subject=&body=" . $shareEnvUrl . $shareEnvRequest;
+                $shareEmailUrl = "mailto:?subject=&body=Schau Dir das folgende Schaufenster an: " . $shareEnvUrl . $shareEnvRequest;
 
                 ?>
                 <nav class="nav flex-column">
                     <a rel="noopener" href="<?= $shareFacebookUrl ?>"
+                       title="{{showcase::name}}"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
                     <a rel="noopener" href="<?= $shareTwitterUrl ?>"
+                       title="{{showcase::name}}"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
                     <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
                     <a rel="noopener" href="<?= $shareEmailUrl ?>"
+                       title="{{showcase::name}}"
                        class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
                 </nav>

@@ -131,7 +131,7 @@ class OfferLoaderService
             $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
             if ($result['foreignLink']) {
                 // search for http to avoid prepending https to insecure links
-                if (strpos($result['foreignLink'], "http") === false) {
+                if (strpos($result['foreignLink'], 'http') === false) {
                     $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
                 }
             }
@@ -481,6 +481,8 @@ class OfferLoaderService
                     'height' => $height,
                     'width' => $width,
                 ];
+            } else {
+                unset($childRows[$key]['image']);
             }
             unset($childRows[$key]['imageOffer']);
 
@@ -683,8 +685,8 @@ class OfferLoaderService
             } else {
                 $rows[$key]['on_wishlist'] = 0;
             }
-            
-            $typeValues = $database->prepare("SELECT * FROM tl_gutesio_data_type_child_values WHERE `childId` = ?")
+
+            $typeValues = $database->prepare('SELECT * FROM tl_gutesio_data_type_child_values WHERE `childId` = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($typeValues as $typeValue) {
                 $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
@@ -1034,7 +1036,7 @@ class OfferLoaderService
                     );
                     $endDateTime = new \DateTime();
                     $endDateTime->setTimestamp($eventData['endDate']);
-                    
+
                     if ($beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
@@ -1060,7 +1062,7 @@ class OfferLoaderService
                                                 ((int) $nextDateTime->format('d')) + ($value * 7)
                                             );
                                         }
-                        
+
                                         break;
                                     case 'months':
                                         $beginDateTime->setDate(
@@ -1076,7 +1078,7 @@ class OfferLoaderService
                                                 $nextDateTime->format('d')
                                             );
                                         }
-                        
+
                                         break;
                                     case 'years':
                                         $beginDateTime->setDate(
@@ -1092,7 +1094,7 @@ class OfferLoaderService
                                                 $nextDateTime->format('d')
                                             );
                                         }
-                        
+
                                         break;
                                     default:
                                         $beginDateTime->setDate(
@@ -1108,14 +1110,14 @@ class OfferLoaderService
                                                 ((int) $nextDateTime->format('d')) + $value
                                             );
                                         }
-                        
+
                                         break;
                                 }
                                 if ($beginDateTime->getTimestamp() >= time()) {
                                     break;
                                 } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
                                     $tooOld = true;
-                    
+
                                     break;
                                 }
                             }
@@ -1123,7 +1125,7 @@ class OfferLoaderService
                             $tooOld = true;
                         }
                     }
-                    
+
                     // remove the extra day added previously
                     $beginDateTime->setDate(
                         $beginDateTime->format('Y'),
@@ -1191,6 +1193,7 @@ class OfferLoaderService
                         // date filter will be applied later on
                         $tooOld = false;
                     }
+
                     break;
                 case 'job':
                     $jobData = $database->prepare('SELECT beginDate AS beginDate ' .

@@ -36,6 +36,7 @@ $GLOBALS['TL_LANG'][$strName]['sections']['tags'] = "Besonderheiten";
 $GLOBALS['TL_LANG'][$strName]['sections']['contact_map'] = "Kontakt & Anfahrt";
 $GLOBALS['TL_LANG'][$strName]['sections']['relatedShowcaseLogos'] = "Partnerlogos";
 $GLOBALS['TL_LANG'][$strName]['contact'] = "Kontakt";
+$GLOBALS['TL_LANG'][$strName]['contact_fax'] = "Faxnummer";
 
 /*
  * IMPRINT

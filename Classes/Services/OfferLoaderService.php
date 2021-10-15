@@ -662,7 +662,6 @@ class OfferLoaderService
                     )->execute($rows[$key]['uuid'])->fetchAllAssoc();
                     foreach ($tagValues as $tagValue) {
 
-                        //hotfix
                         if (strpos(strtoupper($tagValue['tagFieldKey']), 'LINK')) {
                             $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
                         }

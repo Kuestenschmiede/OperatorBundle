@@ -383,12 +383,20 @@ class ShowcaseService
         return $returnData;
     }
 
-    public function loadByUuid(string $uuid)
+    public function loadByUuid(string $uuid,bool $withExternal = false)
     {
-        $arrResult = Database::getInstance()
-            ->prepare('SELECT * FROM tl_gutesio_data_element ' .
-                "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND uuid = ? LIMIT 1")
-            ->execute($uuid)->fetchAllAssoc();
+        if ($withExternal) {
+            $arrResult = Database::getInstance()
+                ->prepare('SELECT * FROM tl_gutesio_data_element ' .
+                    "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '" . self::EXTERNAL . "' OR releaseType = '') AND uuid = ? LIMIT 1")
+                ->execute($uuid)->fetchAllAssoc();
+        } else {
+            $arrResult = Database::getInstance()
+                ->prepare('SELECT * FROM tl_gutesio_data_element ' .
+                    "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND uuid = ? LIMIT 1")
+                ->execute($uuid)->fetchAllAssoc();
+        }
+
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
         $typeString = '';
         foreach ($returnData['types'] as $key => $type) {

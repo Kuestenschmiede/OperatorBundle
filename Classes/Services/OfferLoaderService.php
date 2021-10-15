@@ -107,11 +107,11 @@ class OfferLoaderService
 
         return $results;
     }
-    
+
     private function sortOfferData(string $sortFilter, array $filterData, array $offers)
     {
         if ($sortFilter && $sortFilter !== 'random') {
-            if ($sortFilter === "date") {
+            if ($sortFilter === 'date') {
                 $dateOffers = [];
                 $noDateOffers = [];
                 foreach ($offers as $offer) {
@@ -135,7 +135,7 @@ class OfferLoaderService
                     } elseif ($aDate < $bDate) {
                         return -1;
                     }
-            
+
                     return 0;
                 });
                 foreach ($noDateOffers as $noDateOffer) {
@@ -164,7 +164,7 @@ class OfferLoaderService
                         } elseif ($aPrice < $bPrice) {
                             return -1;
                         }
-            
+
                         return 0;
                     }
                     if ($aPrice > $bPrice) {
@@ -172,12 +172,12 @@ class OfferLoaderService
                     } elseif ($aPrice < $bPrice) {
                         return 1;
                     }
-        
+
                     return 0;
                 });
             }
         }
-        
+
         return $offers;
     }
 

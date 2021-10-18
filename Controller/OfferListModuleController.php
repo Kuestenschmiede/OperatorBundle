@@ -243,7 +243,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         } else {
             foreach ($arrOffers as $key => $offer) {
                 $arrOffers[$key]['in_cart'] = "";
-                $arrOffers[$key]['not_in_cart'] = "";
+                $arrOffers[$key]['not_in_cart'] = "1";
             }
         }
         

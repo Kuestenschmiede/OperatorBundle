@@ -335,6 +335,29 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     private function getListFrontendConfiguration(string $search, $type)
     {
+        $filterData = [
+            'search' => $search,
+            'moduleId' => $this->model->id,
+            'filterFrom' => null,
+            'filterUntil' => null,
+            'sorting' => "random"
+        ];
+        if ($this->model->gutesio_child_sort_by_date) {
+            if ($this->model->gutesio_child_data_mode === "1") {
+                $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
+                if (count($types) === 1 && $types[0] === "event") {
+                    $filterData = [
+                        'search' => $search,
+                        'moduleId' => $this->model->id,
+                        'filterFrom' => null,
+                        'filterUntil' => null,
+                        'sorting' => "date"
+                    ];
+                    $this->initialDateSort = true;
+                }
+            }
+        }
+        
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->addForm(
             $this->getForm(),
@@ -345,10 +368,11 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 'moduleId' => $this->model->id,
                 'filterFrom' => null,
                 'filterUntil' => null,
-                'sorting' => "random"
+                'sorting' => $filterData['sorting']
             ]
         );
-        $fullTextData = $this->offerService->getListData($search, 0, $type, []);
+        
+        $fullTextData = $this->offerService->getListData($search, 0, $type, $filterData);
         $conf->addTileList(
             $this->getFullTextTileList($search !== ''),
             $this->getFullTextTileFields(),
@@ -423,13 +447,24 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $sortFilter = new RadioGroupFormField();
             $sortFilter->setName("sorting");
             $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
-            $sortFilter->setOptions([
-                'random' => $this->languageRefs['filter']['sorting']['random'],
-                'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
-                'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
-            ]);
+            if ($this->initialDateSort) {
+                $sortFilter->setOptions([
+                    'random' => $this->languageRefs['filter']['sorting']['random'],
+                    'date' => "Nach Datum",
+                    'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
+                    'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
+                ]);
+                $sortFilter->setChecked("date");
+            } else {
+                $sortFilter->setOptions([
+                    'random' => $this->languageRefs['filter']['sorting']['random'],
+                    'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
+                    'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
+                ]);
+                $sortFilter->setChecked("random");
+            }
+            
             $sortFilter->setClassName("offer-filter__ascend-descend form-view__ascend-descend");
-            $sortFilter->setChecked("random");
             $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
             $fields[] = $sortFilter;
         }

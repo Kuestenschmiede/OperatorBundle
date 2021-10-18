@@ -53,6 +53,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_showcase_link'] = ['Link zu den 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Anzuzeigende Typen', 'Nur der gewählte Typ wird angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Anzuzeigende Kategorien', 'Nur der gewählte Kategorien werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'Nur Angebote, denen mindestens eines dieser Tags zugeordnet wurde, werden angezeigt.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach Datum sortieren', 'Sortiert die Angebote initial nach ihrem Beginndatum. Achtung: Wird nur beachtet, wenn nur Veranstaltungen in der Liste dargestellt werden.'];
 
 $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Lade-Einstellungen';

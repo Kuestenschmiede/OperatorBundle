@@ -326,8 +326,6 @@ $data = json_decode(json_encode($this->detailData));
                                     </div>
                                 <?php endif; ?>
 
-
-
                                 <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
                                     <div class="item wheelchairNotes tag_wheelchair">
                                         <div class="entry-label">Hinweise zur Rollstuhleignung</div>
@@ -345,6 +343,7 @@ $data = json_decode(json_encode($this->detailData));
         </div>
         <div class="detail-view__section-contact-map" id="section-id-contact">
             <div class="c4g-container">
+
                 <div class="c4g-row">
                     <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
                         <div>
@@ -372,24 +371,68 @@ $data = json_decode(json_encode($this->detailData));
                             <?php endif; ?>
                         </div>
 
-                        <?php if (isset($data->phone) && !empty($data->phone)): ?>
+                        <?php // Output phone number
+                        $outputPhone = '';
+                        if ($data->phone && !empty($data->phone))
+                            $outputPhone = $data->phone;
+
+                        if ($data->contactPhone && !empty($data->contactPhone))
+                            $outputPhone = $data->contactPhone;
+                        ?>
+
+                        <?php if (isset($outputPhone) && !empty($outputPhone)): ?>
                             <span class="entry-content phone phone-stationary" itemprop="phone">
-                                <a href="tel:<?= str_replace(" ", "", $data->phone) ?>"
-                                   title="Festnetz-Telefonnummer"><?= $data->phone ?></a>
+                                <a href="tel:<?= str_replace(" ", "", $outputPhone) ?>"
+                                   title="Festnetz-Telefonnummer"><?= $outputPhone ?></a>
                             </span>
                         <?php endif; ?>
 
-                        <?php if (isset($data->mobile) && !empty($data->mobile)): ?>
+                        <?php // Output mobile phone number
+                        $outputMobilePhone = '';
+                        if ($data->mobile && !empty($data->mobile))
+                            $outputMobilePhone = $data->mobile;
+
+                        if ($data->contactMobile && !empty($data->contactMobile))
+                            $outputMobilePhone = $data->contactMobile;
+                        ?>
+
+                        <?php if (isset($outputMobilePhone) && !empty($outputMobilePhone)): ?>
                             <span class="entry-content phone phone-mobile" itemprop="phone">
-                                <a href="tel:<?= str_replace(" ", "", $data->mobile) ?>"
-                                   title="Mobile Telefonnummer"><?= $data->mobile ?></a>
+                                <a href="tel:<?= str_replace(" ", "", $outputMobilePhone) ?>"
+                                   title="Mobile Telefonnummer"><?= $outputMobilePhone ?></a>
                             </span>
                         <?php endif; ?>
 
-                        <?php if (isset($data->email) && !empty($data->email)): ?>
+
+                        <?php // Output fax number
+                        $outputFax = '';
+                        if ($data->fax && !empty($data->fax))
+                            $outputFax = $data->fax;
+
+                        if ($data->contactFax && !empty($data->contactFax))
+                            $outputFax = $data->contactFax;
+                        ?>
+
+                        <?php if (isset($outputFax) && !empty($outputFax)): ?>
+                            <span class="entry-content fax" itemprop="fax">
+                                <span class="entry-content__fax-text"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['contact_fax'] ?>: </span>
+                                <span class="entry-content__fax-number"><?= $outputFax ?></span>
+                            </span>
+                        <?php endif; ?>
+
+                        <?php // Output email
+                        $outputEmail = '';
+                        if ($data->email && !empty($data->email))
+                            $outputEmail = $data->email;
+
+                        if ($data->contactEmail && !empty($data->contactEmail))
+                            $outputEmail = $data->contactEmail;
+                        ?>
+
+                        <?php if (isset($outputEmail) && !empty($outputEmail)): ?>
                             <span class="entry-content email" itemprop="email">
-                                <a href="mailto:{{email_url::<?= $data->email ?>}}"
-                                   title="E-Mail Adresse"><?= $data->email ?></a>
+                                <a href="mailto:{{email_url::<?= $outputEmail ?>}}"
+                                   title="E-Mail Adresse"><?= $outputEmail ?></a>
                             </span>
                         <?php endif; ?>
 

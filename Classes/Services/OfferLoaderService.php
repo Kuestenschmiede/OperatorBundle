@@ -324,12 +324,6 @@ class OfferLoaderService
             }
             unset($childRows[$key]['imageOffer']);
 
-            if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $row['uuid'])) . '.html', $this->pageUrl);
-            } else {
-                $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
-            }
-
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
             $childRows = $this->getTagData($row['uuid'], $childRows, $key);
@@ -485,12 +479,6 @@ class OfferLoaderService
                 unset($childRows[$key]['image']);
             }
             unset($childRows[$key]['imageOffer']);
-
-            if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $row['uuid'])) . '.html', $this->pageUrl);
-            } else {
-                $href = $this->pageUrl . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
-            }
 
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 

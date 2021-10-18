@@ -173,7 +173,7 @@ class LoadLayersListener
                 'pid' => $dataLayer['id'],
                 'id' => $directory->uuid,
                 'name' => $directory->name,
-                'hideInStarboard' => false,
+                'hideInStarboard' => !!$configuredTypes,
                 'childs' => $types,
             ];
             if ($types) {

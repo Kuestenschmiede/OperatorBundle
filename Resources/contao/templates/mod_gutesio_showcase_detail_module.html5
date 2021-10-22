@@ -239,6 +239,7 @@ $data = json_decode(json_encode($this->detailData));
                     <?php endif; ?>
 
 
+
                     <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
                         <div class="menuLink">
                             <a href="<?= $data->menuLink ?>" target="_blank" rel="nofollow noopener"
@@ -272,17 +273,32 @@ $data = json_decode(json_encode($this->detailData));
                         <div class="detail-field-wrapper">
                             <div class="detail-field-wrapper__tags">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <div class="tag-entry <?= $v->technicalKey ?>">
-                                        <div class="detail-field-image"><img class="img-fluid"
-                                                                             src="<?= $v->image->src ?>"
-                                                                             alt="<?= $v->image->name ?>"
-                                                                             data-toggle="tooltip"
-                                                                             width="100" height="100"
-                                                                             data-content="<?= $v->name ?>"
-                                                                             title="<?= $v->name ?>"></div>
+                                    <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
+
+                                        <?php if ($v->linkHref): ?>
+
+                                        <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener"
+                                           title="<?= $v->name ?>"
+                                           class="detail-field-image<?php if ($v->linkHref): ?> detail-field-image__link-item<?php endif; ?>">
+                                            <?php else: ?>
+                                            <div class="detail-field-image">
+                                                <?php endif; ?>
+                                                <img class="img-fluid"
+                                                     src="<?= $v->image->src ?>"
+                                                     alt="<?= $v->image->name ?>"
+                                                     data-toggle="tooltip"
+                                                     width="100" height="100"
+                                                     data-content="<?= $v->name ?>"
+                                                     title="<?= $v->name ?>">
+                                                <?php if (!$v->linkHref): ?>
+                                            </div>
+                                            <?php else: ?>
+                                        </a>
+                                    <?php endif; ?>
                                         <div class="detail-field-text"><span
                                                     class="detail-field-text__text"><?= $v->name ?></span></div>
                                     </div>
+
                                 <?php endforeach; ?>
                             </div>
 
@@ -339,6 +355,8 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
                 </div>
+
+
             </div>
         </div>
         <div class="detail-view__section-contact-map" id="section-id-contact">

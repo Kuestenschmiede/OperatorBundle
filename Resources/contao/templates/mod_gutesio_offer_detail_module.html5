@@ -96,18 +96,25 @@ $data = json_decode(json_encode($this->detailData));
             <div class="c4g-container">
                 <div class="c4g-row">
                     <div class="col-12">
-                        <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginoffer'] ?></strong>
-                        <span> <?php echo $data->beginDate; ?></span>
-                        <?php if (isset($data->beginTime) && !empty($data->beginTime)): ?>
-                            <span>, <?= $data->beginTime ?></span>
-                        <?php endif; ?>
+                        <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginoffer'] ?> </strong>
+
+                        <?php
+                        $beginString = $data->beginDate;
+                        if (isset($data->beginTime) && !empty($data->beginTime)) $beginString .= ', ' . $data->beginTime;
+                        ?>
+                        <span><?= $beginString ?></span>
                     </div>
+
 
                     <?php if ((isset($data->endDate) && !empty($data->endDate)) && (isset($data->endTime) && !empty($data->endTime))): ?>
                         <div class="col-12">
                             <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
-                            <span><?= $data->endDate ?></span>
-                            <span>, <?= $data->endTime ?> <?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'] ?></span>
+
+                            <?php
+                            $endString = $data->endDate;
+                            if (isset($data->endTime) && !empty($data->endTime)) $endString .= ', ' . $data->endTime . ' ' . $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'];
+                            ?>
+                            <span><?= $endString ?></span>
                         </div>
 
                     <?php elseif (isset($data->endDate) && !empty($data->endDate)): ?>
@@ -134,9 +141,6 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
         <?php endif; ?>
-
-        <?php dump($data) ?>
-
 
         <div class="detail-view__section-detaildata" id="detail-section-4">
             <div class="c4g-container">

@@ -96,25 +96,46 @@ $data = json_decode(json_encode($this->detailData));
             <div class="c4g-container">
                 <div class="c4g-row">
                     <div class="col-12">
-                        <strong>Wann: </strong><?php echo $data->beginDate; ?>
+                        <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginoffer'] ?></strong>
+                        <span> <?php echo $data->beginDate; ?></span>
+                        <?php if (isset($data->beginTime) && !empty($data->beginTime)): ?>
+                            <span>, <?= $data->beginTime ?></span>
+                        <?php endif; ?>
                     </div>
 
-                    <?php if (isset($data->beginTime) && !empty($data->beginTime)): ?>
+                    <?php if ((isset($data->endDate) && !empty($data->endDate)) && (isset($data->endTime) && !empty($data->endTime))): ?>
                         <div class="col-12">
-                            <strong>Uhrzeit: </strong>
-                            <span><?php echo $data->beginTime; ?></span>
+                            <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
+                            <span><?= $data->endDate ?></span>
+                            <span>, <?= $data->endTime ?> <?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'] ?></span>
                         </div>
+
+                    <?php elseif (isset($data->endDate) && !empty($data->endDate)): ?>
+                        <div class="col-12">
+                            <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
+                            <span> <?= $data->endDate ?></span>
+                        </div>
+
+                    <?php elseif (isset($data->endTime) && !empty($data->endTime)): ?>
+                        <div class="col-12">
+                            <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
+                            <span><?= $data->endTime ?> <?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'] ?></span>
+                        </div>
+
+                    <?php else: ?>
                     <?php endif; ?>
 
                     <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
                         <div class="col-12">
-                            <strong>Veranstaltungsort: </strong>
-                            <span><?= $data->locationElementName ?></span>
+                            <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['location'] ?></strong>
+                            <span> <?= $data->locationElementName ?></span>
                         </div>
                     <?php endif; ?>
                 </div>
             </div>
         <?php endif; ?>
+
+        <?php dump($data) ?>
 
 
         <div class="detail-view__section-detaildata" id="detail-section-4">

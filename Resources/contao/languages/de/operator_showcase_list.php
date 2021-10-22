@@ -28,6 +28,11 @@ $GLOBALS['TL_LANG'][$strName]['filter_placeholder'] = "Suchbegriff";
  * Detail page
  */
 $GLOBALS['TL_LANG'][$strName]['details']['headline'] = "Kachel";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['beginoffer'] = "Beginn:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['endoffer'] = "Ende:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['begintime'] = "Uhrzeit:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['location'] = "Veranstaltungsort:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['timesuffix'] = "Uhr";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name und Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";
 $GLOBALS['TL_LANG'][$strName]['sections']['menu'] = "Menü";

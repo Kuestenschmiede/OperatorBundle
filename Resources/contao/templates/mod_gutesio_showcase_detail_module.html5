@@ -289,8 +289,6 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
 
-                    <?php dump($data) ?>
-
                     <?php if ($data->tags): ?>
                         <div class="detail-field-wrapper">
                             <div class="detail-field-wrapper__tags">
@@ -488,6 +486,11 @@ $data = json_decode(json_encode($this->detailData));
                                 <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
                                 <div id="react__opening-hours" class="opening-hours">
                                 </div>
+                            <?php endif; ?>
+
+                            <?php if ($data->deviatingPhoneHours && !empty($data->phoneHours)): ?>
+                                <h3 class="phone-hours-headline"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phonehours_title'] ?></h3>
+                                <div id="react__phone-hours" class="phone-hours"></div>
                             <?php endif; ?>
 
                             <?php if (isset($data->facebook) && !empty($data->facebook)): ?>

@@ -410,12 +410,12 @@
   }
 
   &__contact-wrapper {
-    @include make-col-ready();
-    @include make-col(12);
-
-    @include media-breakpoint-up(lg) {
-      @include make-col(5);
-    }
+    //@include make-col-ready();
+    //@include make-col(12);
+    //
+    //@include media-breakpoint-up(lg) {
+    //  @include make-col(5);
+    //}
 
     > span,
     > div {
@@ -435,13 +435,13 @@
   }
 
   &__map-wrapper {
-    @include make-col-ready();
-    @include make-col(12);
-    max-height: 500px;
-
-    @include media-breakpoint-up(lg) {
-      @include make-col(7);
-    }
+    //@include make-col-ready();
+    //@include make-col(12);
+    //max-height: 500px;
+    //
+    //@include media-breakpoint-up(lg) {
+    //  @include make-col(7);
+    //}
 
   }
 
@@ -533,5 +533,28 @@
 
   &-headline {
     text-align: center;
+  }
+}
+
+.c4g-card {
+  padding: 1rem;
+  border: 1.5px solid var(--gutes-base-font-color);
+  border-radius: var(--gutes-base-border-radius);
+  background-color: #FFFFFF;
+  margin-bottom: 1rem;
+
+  .c4g-card-label {
+    font-weight: bold;
+    margin-bottom: 1em;
+  }
+
+  .c4g-card-text {
+
+    p {
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
   }
 }

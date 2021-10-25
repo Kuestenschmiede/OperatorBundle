@@ -7342,39 +7342,10 @@ html {
 .show > .detail-view .detail-field-wrapper__tag-fields .tag_delivery a.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
 }
-.detail-view__contact-wrapper {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
-}
-@media (min-width:992px) {
-  .detail-view__contact-wrapper {
-    flex: 0 0 41.66667%;
-    max-width: 41.66667%
-  }
-}
 .detail-view__contact-wrapper > div,
 .detail-view__contact-wrapper > span {
   margin-bottom: 1rem;
   display: block
-}
-.detail-view__map-wrapper {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%;
-  max-height: 500px
-}
-@media (min-width:992px) {
-  .detail-view__map-wrapper {
-    flex: 0 0 58.33333%;
-    max-width: 58.33333%
-  }
 }
 .detail-view .opening-hours > div {
   margin-bottom: 1rem
@@ -7442,6 +7413,20 @@ html {
 }
 .c4g-tile-headline {
   text-align: center
+}
+.c4g-card {
+  padding: 1rem;
+  border: 1.5px solid var(--gutes-base-font-color);
+  border-radius: var(--gutes-base-border-radius);
+  background-color: #fff;
+  margin-bottom: 1rem
+}
+.c4g-card .c4g-card-label {
+  font-weight: 700;
+  margin-bottom: 1em
+}
+.c4g-card .c4g-card-text p:last-child {
+  margin-bottom: 0
 }
 .detail-hero2 {
   position: relative;

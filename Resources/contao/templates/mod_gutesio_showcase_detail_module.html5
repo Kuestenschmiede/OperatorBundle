@@ -490,51 +490,55 @@ $data = json_decode(json_encode($this->detailData));
 
                             <?php if ($data->deviatingPhoneHours && !empty($data->phoneHours)): ?>
                                 <h3 class="phone-hours-headline"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phonehours_title'] ?></h3>
-                                <div id="react__phone-hours" class="phone-hours"></div>
+                                <div id="react__phone-hours" class="phone-hours">csdcsdcsdcsdcsdc</div>
                             <?php endif; ?>
 
-                            <?php if (isset($data->facebook) && !empty($data->facebook)): ?>
-                                <div class="social-media-link c4g-icon-wrapper icon-facebook">
-                                    <a href="<?= $data->facebook ?>" target="_blank" rel="nofollow noopener"
-                                       title="Facebook">Facebook</a>
-                                </div>
-                            <?php endif; ?>
+                            <section class="entry-content entry-content__social-links">
 
-                            <?php if (isset($data->instagram) && !empty($data->instagram)): ?>
-                                <div class="social-media-link c4g-icon-wrapper icon-instagram">
-                                    <a href="<?= $data->instagram ?>" target="_blank" rel="nofollow noopener"
-                                       title="Instagram">Instagram</a>
-                                </div>
-                            <?php endif; ?>
+                                <?php if (isset($data->facebook) && !empty($data->facebook)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-facebook">
+                                        <a href="<?= $data->facebook ?>" target="_blank" rel="nofollow noopener"
+                                           title="Facebook">Facebook</a>
+                                    </div>
+                                <?php endif; ?>
 
-                            <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
-                                <div class="social-media-link c4g-icon-wrapper icon-twitter">
-                                    <a href="<?= $data->twitter ?>" target="_blank" rel="nofollow noopener"
-                                       title="Twitter">Twitter</a>
-                                </div>
-                            <?php endif; ?>
+                                <?php if (isset($data->instagram) && !empty($data->instagram)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-instagram">
+                                        <a href="<?= $data->instagram ?>" target="_blank" rel="nofollow noopener"
+                                           title="Instagram">Instagram</a>
+                                    </div>
+                                <?php endif; ?>
 
-                            <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
-                                <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
-                                            href="<?= $data->whatsapp ?>" target="_blank" rel="nofollow noopener"
-                                            title="Whatsapp">Whatsapp</a>
-                                </div>
-                            <?php endif; ?>
+                                <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-twitter">
+                                        <a href="<?= $data->twitter ?>" target="_blank" rel="nofollow noopener"
+                                           title="Twitter">Twitter</a>
+                                    </div>
+                                <?php endif; ?>
 
-                            <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
-                                <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
-                                            href="<?= $data->youtubeChannelLink ?>" target="_blank"
-                                            rel="nofollow noopener"
-                                            title="YouTube">YouTube-Kanal</a>
-                                </div>
-                            <?php endif; ?>
+                                <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
+                                                href="<?= $data->whatsapp ?>" target="_blank" rel="nofollow noopener"
+                                                title="Whatsapp">Whatsapp</a>
+                                    </div>
+                                <?php endif; ?>
 
-                            <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
-                                <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
-                                            href="<?= $data->wikipediaLink ?>" target="_blank" rel="nofollow noopener"
-                                            title="Wikipedia">Wikipedia</a>
-                                </div>
-                            <?php endif; ?>
+                                <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
+                                                href="<?= $data->youtubeChannelLink ?>" target="_blank"
+                                                rel="nofollow noopener"
+                                                title="YouTube">YouTube-Kanal</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
+                                    <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
+                                                href="<?= $data->wikipediaLink ?>" target="_blank"
+                                                rel="nofollow noopener"
+                                                title="Wikipedia">Wikipedia</a>
+                                    </div>
+                                <?php endif; ?>
+                            </section>
                         </div>
                     </div>
                     <div class="col-xs-12 col-lg-6">

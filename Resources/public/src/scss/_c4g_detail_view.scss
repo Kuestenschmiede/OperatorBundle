@@ -536,6 +536,12 @@
   }
 }
 
+.entry-content__social-links {
+  display: flex;
+  grid-gap: .5em;
+  flex-wrap: wrap;
+}
+
 .c4g-card {
   padding: 1rem;
   border: 1.5px solid var(--gutes-base-font-color);

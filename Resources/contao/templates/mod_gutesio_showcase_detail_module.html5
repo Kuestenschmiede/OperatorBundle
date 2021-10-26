@@ -310,7 +310,7 @@ $data = json_decode(json_encode($this->detailData));
                                 <?php foreach ($data->tags as $k => $v): ?>
                                     <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
 
-                                        <?php if ($v->linkHref): ?>
+                                    <?php if ($v->linkHref): ?>
 
                                         <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener"
                                            title="<?= $v->name ?>"
@@ -361,78 +361,6 @@ $data = json_decode(json_encode($this->detailData));
                                            rel="nofollow noopener"
                                            title="Onlinereservierung">Onlinereservierung</a>
                                     </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->helpSupport) && !empty($data->helpSupport)): ?>
-                                    <div class="tag_help_support">
-                                        <a href="<?= $data->helpSupport ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Hilfe / Support">Hilfe / Support</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->discussionForum) && !empty($data->discussionForum)): ?>
-                                    <div class="tag_discussion_forum">
-                                        <a href="<?= $data->discussionForum ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Diskussionsforum">Diskussionsforum</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->iosApp) && !empty($data->iosApp)): ?>
-                                    <div class="tag_ios_app">
-                                        <a href="<?= $data->iosApp ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="iOS-App">iOS-App</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->androidApp) && !empty($data->androidApp)): ?>
-                                    <div class="tag_android_app">
-                                        <a href="<?= $data->androidApp ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Android-App">Android-App</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->onlineCounseling) && !empty($data->onlineCounseling)): ?>
-                                    <div class="tag_online_counseling">
-                                        <a href="<?= $data->onlineCounseling ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Online-Beratung">Online-Beratung</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->onlineChat) && !empty($data->onlineChat)): ?>
-                                    <div class="tag_online_chat">
-                                        <a href="<?= $data->onlineChat ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Online-Chat">Online-Chat</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->onlineVideoForum) && !empty($data->onlineVideoForum)): ?>
-                                    <div class="tag_online_video_forum">
-                                        <a href="<?= $data->onlineVideoForum ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Online-Videoforum">Online-Videoforum</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->onlineTherapyProgram) && !empty($data->onlineTherapyProgram)): ?>
-                                    <div class="tag_online_therapy_program">
-                                        <a href="<?= $data->onlineTherapyProgram ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Online-Therapieprogramm">Online-Therapieprogramm</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->tariffCalculator) && !empty($data->tariffCalculator)): ?>
-                                <div class="tag_tariff_calculator">
-                                    <a href="<?= $data->tariffCalculator ?>" target="_blank"
-                                       rel="nofollow noopener"
-                                       title="Tarifrechner">Tarifrechner</a>
-                                </div>
                                 <?php endif; ?>
 
                                 <?php

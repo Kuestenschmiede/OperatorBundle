@@ -490,7 +490,7 @@ $data = json_decode(json_encode($this->detailData));
 
                             <?php if ($data->deviatingPhoneHours && !empty($data->phoneHours)): ?>
                                 <h3 class="phone-hours-headline"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phonehours_title'] ?></h3>
-                                <div id="react__phone-hours" class="phone-hours">csdcsdcsdcsdcsdc</div>
+                                <div id="react__phone-hours" class="phone-hours"></div>
                             <?php endif; ?>
 
                             <section class="entry-content entry-content__social-links">
@@ -549,12 +549,11 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         </div>
 
-
                         <?php if (isset($data->directions) && !empty($data->directions)): ?>
                             <div class="row routedesc-row">
                                 <div class="col-12 routedesc-col">
                                     <div class="routedesc-inner">
-                                        <h3 class="routedesc-title">Wegbeschreibung</h3>
+                                        <h3 class="routedesc-title"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['routedesc_title'] ?></h3>
 
                                         <div class="routedesc-text">
                                             <?= $data->directions ?>

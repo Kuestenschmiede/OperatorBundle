@@ -310,7 +310,7 @@ $data = json_decode(json_encode($this->detailData));
                                 <?php foreach ($data->tags as $k => $v): ?>
                                     <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
 
-                                    <?php if ($v->linkHref): ?>
+                                        <?php if ($v->linkHref): ?>
 
                                         <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener"
                                            title="<?= $v->name ?>"
@@ -347,36 +347,6 @@ $data = json_decode(json_encode($this->detailData));
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if (isset($data->deliveryServiceLink) && !empty($data->deliveryServiceLink)): ?>
-                                    <div class="tag_delivery">
-                                        <a href="<?= $data->deliveryServiceLink ?>"
-                                           target="_blank" rel="nofollow noopener"
-                                           title="Lieferservice">Lieferservice</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->onlineReservationLink) && !empty($data->onlineReservationLink)): ?>
-                                    <div class="tag_online_reservation">
-                                        <a href="<?= $data->onlineReservationLink ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Onlinereservierung">Onlinereservierung</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php
-                                $onlineshopLink = "";
-                                foreach ($data->tags as $tag) {
-                                    if ($tag->technicalKey == "tag_onlineshop") {
-                                        $onlineshopLink = $tag->linkHref;
-                                    }
-                                }
-                                ?>
-                                <?php if (!empty($onlineshopLink)): ?>
-                                    <div class="tag_onlineshop tag_onlineshop">
-                                        <a href="<?= $onlineshopLink ?>" target="_blank" rel="nofollow noopener">Onlineshop</a>
-                                    </div>
-                                <?php endif; ?>
-
                                 <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
                                     <div class="item wheelchairNotes tag_wheelchair">
                                         <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['accessibility_title'] ?></div>
@@ -390,7 +360,6 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
                 </div>
-
 
             </div>
         </div>

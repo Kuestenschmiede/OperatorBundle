@@ -7177,6 +7177,13 @@ html {
 .detail-view .detail-field-wrapper__tags .tag-entry > .detail-field-image > img {
   max-height: 100%
 }
+.detail-view .detail-field-wrapper__tags .tag-entry__linked > a {
+  box-shadow: 4px 4px 8px rgba(0,0,0,.6);
+  transition: ease-in-out .3s
+}
+.detail-view .detail-field-wrapper__tags .tag-entry__linked > a:hover {
+  box-shadow: none
+}
 .detail-view .detail-field-wrapper__tags .detail-field-text {
   display: none
 }

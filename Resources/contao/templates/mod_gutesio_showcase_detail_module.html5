@@ -402,6 +402,9 @@ $data = json_decode(json_encode($this->detailData));
                                     <div class="contact-info streetname"><?= $data->locationStreet ?> <?= $data->locationStreetNumber ?></div>
                                 <?php endif; ?>
 
+                                <?php if ($data->locationStreetSuffix && !empty($data->locationStreetSuffix)): ?>
+                                    <div class="contact-info street-suffix"><?= $data->locationStreetSuffix ?></div>
+                                <?php endif; ?>
 
                                 <?php if ($data->contactable && !empty($data->contactZip)): ?>
                                     <div class="contact-info zip-city"><?= $data->contactZip ?> <?= $data->contactCity ?></div>

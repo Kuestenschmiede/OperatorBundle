@@ -69,6 +69,7 @@ $data = json_decode(json_encode($this->detailData));
     window.detailData.uuid = "<?= $data->uuid ?>";
     window.detailData.internal_type = '<?= $data->internal_type?>';
     window.detailData.openingHours = '<?= $data->opening_hours;?>';
+    window.detailData.phoneHours = '<?= $data->phoneHours;?>';
 </script>
 
 <div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">

@@ -7347,25 +7347,31 @@ html {
   margin-bottom: 1rem;
   display: block
 }
-.detail-view .opening-hours > div {
+.detail-view .opening-hours > div,
+.detail-view .phone-hours > div {
   margin-bottom: 1rem
 }
-.detail-view .opening-hours > div:last-child {
+.detail-view .opening-hours > div:last-child,
+.detail-view .phone-hours > div:last-child {
   margin-bottom: 0
 }
-.detail-view .opening-hours-day-entry {
+.detail-view .opening-hours-day-entry,
+.detail-view .phone-hours-day-entry {
   display: flex;
   align-items: flex-start;
   justify-content: flex-start;
   flex-wrap: wrap
 }
-.detail-view .opening-hours-day {
+.detail-view .opening-hours-day,
+.detail-view .phone-hours-day {
   min-width: 115px
 }
-.detail-view .opening-hours-days > div {
+.detail-view .opening-hours-days > div,
+.detail-view .phone-hours-days > div {
   margin-bottom: 1rem
 }
-.detail-view .opening-hours-opened {
+.detail-view .opening-hours-opened,
+.detail-view .phone-hours-opened {
   border: 1px solid var(--gutes-base-font-color);
   border-radius: var(--gutes-base-border-radius);
   padding: .5rem;

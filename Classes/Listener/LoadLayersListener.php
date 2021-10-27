@@ -55,6 +55,9 @@ class LoadLayersListener
         } else {
             $alias = $arrUrl[$strC];
         }
+        if (strpos($alias, '?')) {
+            $alias = explode('?', $alias)[0];
+        }
 
         if (C4GUtils::isValidGUID($alias)) {
             $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')

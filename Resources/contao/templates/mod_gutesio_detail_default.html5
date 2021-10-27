@@ -666,13 +666,16 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         </div>
                         <div class="col-xs-12 col-lg-6">
+                            <?php $this->block('detailpage_map'); ?>
                             <div class="row">
                                 <div class="col-12">
                                     <div id="react__detail-view__map"
                                          class="detail-field-map detail-view__map-wrapper"></div>
                                 </div>
                             </div>
+                            <?php $this->endblock(); ?>
 
+                            <?php $this->block('detailpage_routedescription'); ?>
                             <?php if (isset($data->directions) && !empty($data->directions)): ?>
                                 <div class="row routedesc-row">
                                     <div class="col-12 routedesc-col">
@@ -686,6 +689,7 @@ $data = json_decode(json_encode($this->detailData));
                                     </div>
                                 </div>
                             <?php endif; ?>
+                            <?php $this->endblock(); ?>
                         </div>
                     </div>
 

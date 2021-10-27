@@ -69,6 +69,7 @@ $data = json_decode(json_encode($this->detailData));
     window.detailData.uuid = "<?= $data->uuid ?>";
     window.detailData.internal_type = '<?= $data->internal_type?>';
     window.detailData.openingHours = '<?= $data->opening_hours;?>';
+    window.detailData.phoneHours = '<?= $data->phoneHours;?>';
 </script>
 
 <div id="<?= $this->entrypoint ?>__mod" class="projects-tile-list-module__mod">
@@ -160,6 +161,26 @@ $data = json_decode(json_encode($this->detailData));
             </div>
         </div>
 
+        <?php if (isset($data->importantNotes) && !empty($data->importantNotes)): ?>
+            <section class="detail-view__section section__important-notes">
+                <div class="c4g-container">
+                    <div class="c4g-row">
+                        <div class="col-12">
+                            <div class="c4g-card">
+                                <div class="c4g-card-body">
+                                    <div class="c4g-card-label"><i class="fas fa-exclamation-circle"></i> <span
+                                                class="c4g-card-labeltext">Wichtige Hinweise</span></div>
+                                    <div class="c4g-card-text">
+                                        <?= $data->importantNotes ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        <?php endif; ?>
+
         <?php if (isset($data->videoPreview) && !empty($data->videoPreview) && (isset($data->videoPreview->video) && !empty($data->videoPreview->video))): ?>
             <div class="detail-view__section-detaildata" id="detail-section-5">
                 <div class="c4g-container">
@@ -239,6 +260,7 @@ $data = json_decode(json_encode($this->detailData));
                     <?php endif; ?>
 
 
+
                     <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
                         <div class="menuLink">
                             <a href="<?= $data->menuLink ?>" target="_blank" rel="nofollow noopener"
@@ -268,67 +290,66 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
 
+                    <?php if (!empty($data->selfHelpFocus)): ?>
+                        <div class="detail-field-text self-help-focus">
+                            <div class="detail-field-text__label">Schwerpunkte</div>
+                            <span class="detail-field-text__text"><?= $data->selfHelpFocus ?></span>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($data->contactInfoAdviceFocus)): ?>
+                        <div class="detail-field-text contact-info-advice-focus">
+                            <div class="detail-field-text__label">Schwerpunkte</div>
+                            <span class="detail-field-text__text"><?= $data->contactInfoAdviceFocus ?></span>
+                        </div>
+                    <?php endif; ?>
+
                     <?php if ($data->tags): ?>
                         <div class="detail-field-wrapper">
                             <div class="detail-field-wrapper__tags">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <div class="tag-entry <?= $v->technicalKey ?>">
-                                        <div class="detail-field-image"><img class="img-fluid"
-                                                                             src="<?= $v->image->src ?>"
-                                                                             alt="<?= $v->image->name ?>"
-                                                                             data-toggle="tooltip"
-                                                                             width="100" height="100"
-                                                                             data-content="<?= $v->name ?>"
-                                                                             title="<?= $v->name ?>"></div>
+                                    <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
+
+                                        <?php if ($v->linkHref): ?>
+
+                                        <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener"
+                                           title="<?= $v->name ?>"
+                                           class="detail-field-image<?php if ($v->linkHref): ?> detail-field-image__link-item<?php endif; ?>">
+                                            <?php else: ?>
+                                            <div class="detail-field-image">
+                                                <?php endif; ?>
+                                                <img class="img-fluid"
+                                                     src="<?= $v->image->src ?>"
+                                                     alt="<?= $v->image->name ?>"
+                                                     data-toggle="tooltip"
+                                                     width="100" height="100"
+                                                     data-content="<?= $v->name ?>"
+                                                     title="<?= $v->name ?>">
+                                                <?php if (!$v->linkHref): ?>
+                                            </div>
+                                            <?php else: ?>
+                                        </a>
+                                    <?php endif; ?>
                                         <div class="detail-field-text"><span
                                                     class="detail-field-text__text"><?= $v->name ?></span></div>
                                     </div>
+
                                 <?php endforeach; ?>
                             </div>
 
                             <div class="detail-field-wrapper__tag-fields">
                                 <?php if (isset($data->coronaNotes) && !empty($data->coronaNotes)): ?>
                                     <div class="item coronaNotes tag_corona">
-                                        <div class="entry-label">Hinweise zur Corona Situation</div>
+                                        <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['coronanote_title'] ?></div>
                                         <div class="entry-content">
                                             <?= $data->coronaNotes ?>
                                         </div>
                                     </div>
                                 <?php endif; ?>
 
-                                <?php if (isset($data->deliveryServiceLink) && !empty($data->deliveryServiceLink)): ?>
-                                    <div class="tag_delivery tag_delivery">
-                                        <a href="<?= $data->deliveryServiceLink ?>"
-                                           target="_blank" rel="nofollow noopener"
-                                           title="Lieferservice">Lieferservice</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php if (isset($data->onlineReservationLink) && !empty($data->onlineReservationLink)): ?>
-                                    <div class="tag_online_reservation tag_online_reservation">
-                                        <a href="<?= $data->onlineReservationLink ?>" target="_blank"
-                                           rel="nofollow noopener"
-                                           title="Onlinereservierung">Onlinereservierung</a>
-                                    </div>
-                                <?php endif; ?>
-
-                                <?php
-                                $onlineshopLink = "";
-                                foreach ($data->tags as $tag) {
-                                    if ($tag->technicalKey == "tag_onlineshop") {
-                                        $onlineshopLink = $tag->linkHref;
-                                    }
-                                }
-                                ?>
-                                <?php if (!empty($onlineshopLink)): ?>
-                                    <div class="tag_onlineshop tag_onlineshop">
-                                        <a href="<?= $onlineshopLink ?>" target="_blank" rel="nofollow noopener">Onlineshop</a>
-                                    </div>
-                                <?php endif; ?>
-
                                 <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
                                     <div class="item wheelchairNotes tag_wheelchair">
-                                        <div class="entry-label">Hinweise zur Rollstuhleignung</div>
+                                        <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['accessibility_title'] ?></div>
 
                                         <div class="entry-content">
                                             <?= $data->wheelchairNotes ?>
@@ -339,159 +360,196 @@ $data = json_decode(json_encode($this->detailData));
                         </div>
                     <?php endif; ?>
                 </div>
+
             </div>
         </div>
         <div class="detail-view__section-contact-map" id="section-id-contact">
             <div class="c4g-container">
 
                 <div class="c4g-row">
-                    <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
-                        <div>
-                            <?php if ($data->contactable && !empty($data->contactName)): ?>
-                                <h3 class="entry-content name"><?= $data->contactName ?></h3>
-                            <?php else: ?>
-                                <h3 class="entry-content name"><?= $data->name ?></h3>
-                            <?php endif; ?>
+                    <div class="col-xs-12 col-lg-6">
+                        <div class="detail-field-contact detail-view__contact-wrapper"><h2>Kontakt</h2>
+                            <div>
+                                <?php if ($data->contactable && !empty($data->contactName)): ?>
+                                    <h3 class="entry-content name"><?= $data->contactName ?></h3>
+                                <?php else: ?>
+                                    <h3 class="entry-content name"><?= $data->name ?></h3>
+                                <?php endif; ?>
 
-                            <?php if ($data->contactable && !empty($data->contactAdditionalName)): ?>
-                                <span class="entry-content additionalName"><?= $data->contactAdditionalName ?></span>
-                            <?php endif; ?>
+                                <?php if ($data->contactable && !empty($data->contactAdditionalName)): ?>
+                                    <span class="entry-content additionalName"><?= $data->contactAdditionalName ?></span>
+                                <?php endif; ?>
 
-                            <?php if ($data->contactable && !empty($data->contactStreet)): ?>
-                                <div class="contact-info streetname"><?= $data->contactStreet ?> <?= $data->contactStreetNumber ?></div>
-                            <?php else: ?>
-                                <div class="contact-info streetname"><?= $data->locationStreet ?> <?= $data->locationStreetNumber ?></div>
-                            <?php endif; ?>
+                                <?php if ($data->contactable && !empty($data->contactStreet)): ?>
+                                    <div class="contact-info streetname"><?= $data->contactStreet ?> <?= $data->contactStreetNumber ?></div>
+                                <?php else: ?>
+                                    <div class="contact-info streetname"><?= $data->locationStreet ?> <?= $data->locationStreetNumber ?></div>
+                                <?php endif; ?>
 
+                                <?php if ($data->locationStreetSuffix && !empty($data->locationStreetSuffix)): ?>
+                                    <div class="contact-info street-suffix"><?= $data->locationStreetSuffix ?></div>
+                                <?php endif; ?>
 
-                            <?php if ($data->contactable && !empty($data->contactZip)): ?>
-                                <div class="contact-info zip-city"><?= $data->contactZip ?> <?= $data->contactCity ?></div>
-                            <?php else: ?>
-                                <div class="contact-info zip-city"><?= $data->locationZip ?> <?= $data->locationCity ?></div>
-                            <?php endif; ?>
-                        </div>
+                                <?php if ($data->contactable && !empty($data->contactZip)): ?>
+                                    <div class="contact-info zip-city"><?= $data->contactZip ?> <?= $data->contactCity ?></div>
+                                <?php else: ?>
+                                    <div class="contact-info zip-city"><?= $data->locationZip ?> <?= $data->locationCity ?></div>
+                                <?php endif; ?>
+                            </div>
 
-                        <?php // Output phone number
-                        $outputPhone = '';
-                        if ($data->phone && !empty($data->phone))
-                            $outputPhone = $data->phone;
+                            <?php // Output phone number
+                            $outputPhone = '';
+                            if ($data->phone && !empty($data->phone))
+                                $outputPhone = $data->phone;
 
-                        if ($data->contactPhone && !empty($data->contactPhone))
-                            $outputPhone = $data->contactPhone;
-                        ?>
+                            if ($data->contactPhone && !empty($data->contactPhone))
+                                $outputPhone = $data->contactPhone;
+                            ?>
 
-                        <?php if (isset($outputPhone) && !empty($outputPhone)): ?>
-                            <span class="entry-content phone phone-stationary" itemprop="phone">
+                            <?php if (isset($outputPhone) && !empty($outputPhone)): ?>
+                                <span class="entry-content phone phone-stationary" itemprop="phone">
                                 <a href="tel:<?= str_replace(" ", "", $outputPhone) ?>"
                                    title="Festnetz-Telefonnummer"><?= $outputPhone ?></a>
                             </span>
-                        <?php endif; ?>
+                            <?php endif; ?>
 
-                        <?php // Output mobile phone number
-                        $outputMobilePhone = '';
-                        if ($data->mobile && !empty($data->mobile))
-                            $outputMobilePhone = $data->mobile;
+                            <?php // Output mobile phone number
+                            $outputMobilePhone = '';
+                            if ($data->mobile && !empty($data->mobile))
+                                $outputMobilePhone = $data->mobile;
 
-                        if ($data->contactMobile && !empty($data->contactMobile))
-                            $outputMobilePhone = $data->contactMobile;
-                        ?>
+                            if ($data->contactMobile && !empty($data->contactMobile))
+                                $outputMobilePhone = $data->contactMobile;
+                            ?>
 
-                        <?php if (isset($outputMobilePhone) && !empty($outputMobilePhone)): ?>
-                            <span class="entry-content phone phone-mobile" itemprop="phone">
+                            <?php if (isset($outputMobilePhone) && !empty($outputMobilePhone)): ?>
+                                <span class="entry-content phone phone-mobile" itemprop="phone">
                                 <a href="tel:<?= str_replace(" ", "", $outputMobilePhone) ?>"
                                    title="Mobile Telefonnummer"><?= $outputMobilePhone ?></a>
                             </span>
-                        <?php endif; ?>
+                            <?php endif; ?>
 
 
-                        <?php // Output fax number
-                        $outputFax = '';
-                        if ($data->fax && !empty($data->fax))
-                            $outputFax = $data->fax;
+                            <?php // Output fax number
+                            $outputFax = '';
+                            if ($data->fax && !empty($data->fax))
+                                $outputFax = $data->fax;
 
-                        if ($data->contactFax && !empty($data->contactFax))
-                            $outputFax = $data->contactFax;
-                        ?>
+                            if ($data->contactFax && !empty($data->contactFax))
+                                $outputFax = $data->contactFax;
+                            ?>
 
-                        <?php if (isset($outputFax) && !empty($outputFax)): ?>
-                            <span class="entry-content fax" itemprop="fax">
+                            <?php if (isset($outputFax) && !empty($outputFax)): ?>
+                                <span class="entry-content fax" itemprop="fax">
                                 <span class="entry-content__fax-text"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['contact_fax'] ?>: </span>
                                 <span class="entry-content__fax-number"><?= $outputFax ?></span>
                             </span>
-                        <?php endif; ?>
+                            <?php endif; ?>
 
-                        <?php // Output email
-                        $outputEmail = '';
-                        if ($data->email && !empty($data->email))
-                            $outputEmail = $data->email;
+                            <?php // Output email
+                            $outputEmail = '';
+                            if ($data->email && !empty($data->email))
+                                $outputEmail = $data->email;
 
-                        if ($data->contactEmail && !empty($data->contactEmail))
-                            $outputEmail = $data->contactEmail;
-                        ?>
+                            if ($data->contactEmail && !empty($data->contactEmail))
+                                $outputEmail = $data->contactEmail;
+                            ?>
 
-                        <?php if (isset($outputEmail) && !empty($outputEmail)): ?>
-                            <span class="entry-content email" itemprop="email">
+                            <?php if (isset($outputEmail) && !empty($outputEmail)): ?>
+                                <span class="entry-content email" itemprop="email">
                                 <a href="mailto:{{email_url::<?= $outputEmail ?>}}"
                                    title="E-Mail Adresse"><?= $outputEmail ?></a>
                             </span>
-                        <?php endif; ?>
+                            <?php endif; ?>
 
-                        <?php if (isset($data->website) && !empty($data->website)): ?>
-                            <div class="entry-content website">
-                                <a href="<?= $data->website ?>" target="_blank"
-                                   rel="nofollow noopener" title="<?= $data->website ?>">Website</a>
+                            <?php if (isset($data->website) && !empty($data->website)): ?>
+                                <div class="entry-content website">
+                                    <a href="<?= $data->website ?>" target="_blank"
+                                       rel="nofollow noopener" title="<?= $data->website ?>">Website</a>
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
+                                <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
+                                <div id="react__opening-hours" class="opening-hours">
+                                </div>
+                            <?php endif; ?>
+
+                            <?php if ($data->deviatingPhoneHours && !empty($data->phoneHours)): ?>
+                                <h3 class="phone-hours-headline"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phonehours_title'] ?></h3>
+                                <div id="react__phone-hours" class="phone-hours"></div>
+                            <?php endif; ?>
+
+                            <section class="entry-content entry-content__social-links">
+
+                                <?php if (isset($data->facebook) && !empty($data->facebook)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-facebook">
+                                        <a href="<?= $data->facebook ?>" target="_blank" rel="nofollow noopener"
+                                           title="Facebook">Facebook</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->instagram) && !empty($data->instagram)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-instagram">
+                                        <a href="<?= $data->instagram ?>" target="_blank" rel="nofollow noopener"
+                                           title="Instagram">Instagram</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-twitter">
+                                        <a href="<?= $data->twitter ?>" target="_blank" rel="nofollow noopener"
+                                           title="Twitter">Twitter</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
+                                                href="<?= $data->whatsapp ?>" target="_blank" rel="nofollow noopener"
+                                                title="Whatsapp">Whatsapp</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
+                                    <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
+                                                href="<?= $data->youtubeChannelLink ?>" target="_blank"
+                                                rel="nofollow noopener"
+                                                title="YouTube">YouTube-Kanal</a>
+                                    </div>
+                                <?php endif; ?>
+
+                                <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
+                                    <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
+                                                href="<?= $data->wikipediaLink ?>" target="_blank"
+                                                rel="nofollow noopener"
+                                                title="Wikipedia">Wikipedia</a>
+                                    </div>
+                                <?php endif; ?>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-lg-6">
+                        <div class="row">
+                            <div class="col-12">
+                                <div id="react__detail-view__map"
+                                     class="detail-field-map detail-view__map-wrapper"></div>
                             </div>
-                        <?php endif; ?>
+                        </div>
 
-                        <?php if (isset($data->opening_hours) && !empty($data->opening_hours)): ?>
-                            <h3 class="opening-hours-headline">Öffnungszeiten:</h3>
-                            <div id="react__opening-hours" class="opening-hours">
-                            </div>
-                        <?php endif; ?>
+                        <?php if (isset($data->directions) && !empty($data->directions)): ?>
+                            <div class="row routedesc-row">
+                                <div class="col-12 routedesc-col">
+                                    <div class="routedesc-inner">
+                                        <h3 class="routedesc-title"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['routedesc_title'] ?></h3>
 
-                        <?php if (isset($data->facebook) && !empty($data->facebook)): ?>
-                            <div class="social-media-link c4g-icon-wrapper icon-facebook">
-                                <a href="<?= $data->facebook ?>" target="_blank" rel="nofollow noopener"
-                                   title="Facebook">Facebook</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($data->instagram) && !empty($data->instagram)): ?>
-                            <div class="social-media-link c4g-icon-wrapper icon-instagram">
-                                <a href="<?= $data->instagram ?>" target="_blank" rel="nofollow noopener"
-                                   title="Instagram">Instagram</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
-                            <div class="social-media-link c4g-icon-wrapper icon-twitter">
-                                <a href="<?= $data->twitter ?>" target="_blank" rel="nofollow noopener" title="Twitter">Twitter</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
-                            <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
-                                        href="<?= $data->whatsapp ?>" target="_blank" rel="nofollow noopener"
-                                        title="Whatsapp">Whatsapp</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($data->youtubeChannelLink) && !empty($data->youtubeChannelLink)): ?>
-                            <div class="social-media-link c4g-icon-wrapper icon-youtube"><a
-                                        href="<?= $data->youtubeChannelLink ?>" target="_blank" rel="nofollow noopener"
-                                        title="YouTube">YouTube-Kanal</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <?php if (isset($data->wikipediaLink) && !empty($data->wikipediaLink)): ?>
-                            <div class="wikipedia-link c4g-icon-wrapper icon-wikipedia"><a
-                                        href="<?= $data->wikipediaLink ?>" target="_blank" rel="nofollow noopener"
-                                        title="Wikipedia">Wikipedia</a>
+                                        <div class="routedesc-text">
+                                            <?= $data->directions ?>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         <?php endif; ?>
                     </div>
-
-                    <div id="react__detail-view__map" class="detail-field-map detail-view__map-wrapper"></div>
                 </div>
 
             </div>

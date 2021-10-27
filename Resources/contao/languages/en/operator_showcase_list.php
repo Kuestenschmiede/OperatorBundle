@@ -28,6 +28,15 @@ $GLOBALS['TL_LANG'][$strName]['filter_placeholder'] = "Placeholder";
  * Detail page
  */
 $GLOBALS['TL_LANG'][$strName]['details']['headline'] = "Tile";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['beginoffer'] = "Start:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['endoffer'] = "End:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['begintime'] = "Time:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['location'] = "Location:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['coronanote_title'] = "Corona Info";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['accessibility_title'] = "Accessibility Info ";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['importantnotes_title'] = "Important Notes";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['phonehours_title'] = "Phone Hours:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['routedesc_title'] = "Route Description:";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name and Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";
 $GLOBALS['TL_LANG'][$strName]['sections']['menu'] = "Menu";

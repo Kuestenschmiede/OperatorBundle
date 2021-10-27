@@ -939,14 +939,17 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
 <?php if ($data->isOperator): ?>
     <div class="detail-footer-field-wrapper">
+        <div class="text-center detail-footer-inner-info">
+            <p class="mb-2 mt-2">Sie befinden sich auf der Vorschau-Seite.</p>
+        </div>
         <div class="text-center detail-footer-buttons">
-            <a class="btn back-to-list" href="<?= $data->redirectBackLinkMember ?>">Zurück zur Liste</a>
+            <a class="btn back-to-list" href="<?= $data->redirectBackLink ?>">Zurück zur Liste</a>
         </div>
     </div>
 <?php else: ?>
     <div class="detail-footer-field-wrapper">
         <div class="text-center detail-footer-inner-info">
-            <p class="mb-2 mt-2">Sie befinden sich auf der Vorschau-Seite eines Angebots.</p>
+            <p class="mb-2 mt-2">Sie befinden sich auf der Vorschau-Seite.</p>
         </div>
         <div class="text-center detail-footer-buttons">
             <a class="btn back-to-form" href="<?= $data->redirectBackLink ?>">Zurück

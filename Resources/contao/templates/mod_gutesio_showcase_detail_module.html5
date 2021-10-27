@@ -5,3 +5,6 @@
 
 <?php $this->block('detailpage_section_headline'); ?>
 <?php $this->endblock(); //detailpage_section_headline; ?>
+
+<?php $this->block('detailpage_previewpage_actionbar'); ?>
+<?php $this->endblock(); //detailpage_previewpage_actionbar ?>

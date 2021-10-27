@@ -935,4 +935,26 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
         </div>
     </div>
 
+<?php $this->block('detailpage_previewpage_actionbar'); ?>
+
+<?php if ($data->isOperator): ?>
+    <div class="detail-footer-field-wrapper">
+        <div class="text-center detail-footer-buttons">
+            <a class="btn back-to-list" href="<?= $data->redirectBackLinkMember ?>">Zurück zur Liste</a>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="detail-footer-field-wrapper">
+        <div class="text-center detail-footer-inner-info">
+            <p class="mb-2 mt-2">Sie befinden sich auf der Vorschau-Seite eines Angebots.</p>
+        </div>
+        <div class="text-center detail-footer-buttons">
+            <a class="btn back-to-form" href="<?= $data->redirectBackLink ?>">Zurück
+                zum Formular</a><a class="btn back-to-list" href="<?= $data->redirectBackLinkMember ?>">Zurück zur
+                Liste</a>
+        </div>
+    </div>
+<?php endif; ?>
+<?php $this->endblock(); //detailpage_previewpage_actionbar ?>
+
 <?php $this->endblock();//detailpage_default ?>

@@ -742,7 +742,7 @@ class OfferLoaderService
             foreach ($typeValues as $typeValue) {
                 $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
             }
-    
+
             $rows = $this->getTagData($row['uuid'], $rows, $key);
         }
 
@@ -784,7 +784,7 @@ class OfferLoaderService
                             'deliveryServiceLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        
+
                         break;
                     case 'tag_online_reservation':
                         $stmt = $database->prepare(
@@ -795,7 +795,7 @@ class OfferLoaderService
                             'onlineReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        
+
                         break;
                     case 'tag_clicknmeet':
                         $stmt = $database->prepare(
@@ -806,7 +806,7 @@ class OfferLoaderService
                             'clicknmeetLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        
+
                         break;
                     case 'tag_table_reservation':
                         $stmt = $database->prepare(
@@ -817,7 +817,7 @@ class OfferLoaderService
                             'tableReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        
+
                         break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
@@ -828,7 +828,7 @@ class OfferLoaderService
                             'onlineShopLink'
                         )->fetchAssoc()['tagFieldValue'];
                         $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        
+
                         break;
                     default:
                         break;

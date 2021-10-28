@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
@@ -704,8 +705,16 @@ class OfferLoaderService
                     foreach ($tagValues as $tagValue) {
 
                         //hotfix
-                        if (strpos(strtoupper($tagValue['tagFieldKey']), 'LINK')) {
-                            $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                        $isLink = strpos(strtoupper($tagValue['tagFieldKey']), 'LINK');
+                        $isLink = $isLink || preg_match(RegularExpression::EMAIL, $tagValue['tagFieldValue']);
+                        if ($isLink) {
+                            if (preg_match('/'.RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
+                                if (strpos($tagValue['tagFieldValue'], 'mailto:') !== 0) {
+                                    $tagValue['tagFieldValue'] = 'mailto:' . $tagValue['tagFieldValue'];
+                                }
+                            } else {
+                                $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                            }
                             $rows[$key]['tags'][$tagKey]['linkHref'] = $tagValue['tagFieldValue'];
                         }
 

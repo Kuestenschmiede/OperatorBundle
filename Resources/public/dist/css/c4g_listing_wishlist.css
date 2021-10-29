@@ -301,11 +301,6 @@ template {
   background-color: transparent;
   border: 0
 }
-.c4g-modal-content input:-moz-focusring,
-.form-control:-moz-focusring {
-  color: transparent;
-  text-shadow: 0 0 0 #495057
-}
 .c4g-modal-content input:focus,
 .form-control:focus {
   color: #495057;
@@ -347,6 +342,10 @@ input[type=time].form-control {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none
+}
+select.form-control:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #495057
 }
 select.form-control:focus::-ms-value {
   color: #495057;
@@ -499,7 +498,7 @@ textarea.form-control {
 .was-validated .c4g-modal-content input:valid,
 .was-validated .form-control:valid {
   border-color: #28a745;
-  padding-right: calc(1.5em + .75rem);
+  padding-right: calc(1.5em + .75rem)!important;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right calc(.375em + .1875rem) center;
@@ -513,6 +512,11 @@ textarea.form-control {
   border-color: #28a745;
   box-shadow: 0 0 0 .2rem rgba(40,167,69,.25)
 }
+.was-validated select.form-control:valid,
+select.form-control.is-valid {
+  padding-right: 3rem!important;
+  background-position: right 1.5rem center
+}
 .was-validated textarea.form-control:valid,
 textarea.form-control.is-valid {
   padding-right: calc(1.5em + .75rem);
@@ -521,7 +525,7 @@ textarea.form-control.is-valid {
 .custom-select.is-valid,
 .was-validated .custom-select:valid {
   border-color: #28a745;
-  padding-right: calc(.75em + 2.3125rem);
+  padding-right: calc(.75em + 2.3125rem)!important;
   background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") right .75rem center/8px 10px no-repeat,#fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") center right 1.75rem/calc(.75em + .375rem) calc(.75em + .375rem) no-repeat
 }
 .custom-select.is-valid:focus,
@@ -607,7 +611,7 @@ textarea.form-control.is-valid {
 .was-validated .c4g-modal-content input:invalid,
 .was-validated .form-control:invalid {
   border-color: #dc3545;
-  padding-right: calc(1.5em + .75rem);
+  padding-right: calc(1.5em + .75rem)!important;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right calc(.375em + .1875rem) center;
@@ -621,6 +625,11 @@ textarea.form-control.is-valid {
   border-color: #dc3545;
   box-shadow: 0 0 0 .2rem rgba(220,53,69,.25)
 }
+.was-validated select.form-control:invalid,
+select.form-control.is-invalid {
+  padding-right: 3rem!important;
+  background-position: right 1.5rem center
+}
 .was-validated textarea.form-control:invalid,
 textarea.form-control.is-invalid {
   padding-right: calc(1.5em + .75rem);
@@ -629,7 +638,7 @@ textarea.form-control.is-invalid {
 .custom-select.is-invalid,
 .was-validated .custom-select:invalid {
   border-color: #dc3545;
-  padding-right: calc(.75em + 2.3125rem);
+  padding-right: calc(.75em + 2.3125rem)!important;
   background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") right .75rem center/8px 10px no-repeat,#fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") center right 1.75rem/calc(.75em + .375rem) calc(.75em + .375rem) no-repeat
 }
 .custom-select.is-invalid:focus,

@@ -708,7 +708,7 @@ class OfferLoaderService
                         $isLink = strpos(strtoupper($tagValue['tagFieldKey']), 'LINK');
                         $isLink = $isLink || preg_match(RegularExpression::EMAIL, $tagValue['tagFieldValue']);
                         if ($isLink) {
-                            if (preg_match('/'.RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
+                            if (preg_match('/' . RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
                                 if (strpos($tagValue['tagFieldValue'], 'mailto:') !== 0) {
                                     $tagValue['tagFieldValue'] = 'mailto:' . $tagValue['tagFieldValue'];
                                 }

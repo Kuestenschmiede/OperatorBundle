@@ -418,6 +418,13 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($data->administration) && !empty($data->administration)): ?>
+                            <div class="detail-field-text contact-info-administration">
+                                <div class="detail-field-text__label">Leitung</div>
+                                <span class="detail-field-text__text"><?= $data->administration ?></span>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <div class="detail-field-wrapper__tags">

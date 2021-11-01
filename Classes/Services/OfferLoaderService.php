@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
@@ -704,8 +705,17 @@ class OfferLoaderService
                     foreach ($tagValues as $tagValue) {
 
                         //hotfix
-                        if (strpos(strtoupper($tagValue['tagFieldKey']), 'LINK')) {
-                            $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                        $isLink = strpos(strtoupper($tagValue['tagFieldKey']), 'LINK');
+                        $isLink = $isLink || preg_match(RegularExpression::EMAIL, $tagValue['tagFieldValue']);
+                        if ($isLink) {
+                            if (preg_match('/' . RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
+                                if (strpos($tagValue['tagFieldValue'], 'mailto:') !== 0) {
+                                    $tagValue['tagFieldValue'] = 'mailto:' . $tagValue['tagFieldValue'];
+                                }
+                            } else {
+                                $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                            }
+                            $rows[$key]['tags'][$tagKey]['linkHref'] = $tagValue['tagFieldValue'];
                         }
 
                         $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
@@ -732,6 +742,8 @@ class OfferLoaderService
             foreach ($typeValues as $typeValue) {
                 $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
             }
+
+            $rows = $this->getTagData($row['uuid'], $rows, $key);
         }
 
         $rows = $this->getAdditionalData($rows, false, !$isPreview);
@@ -767,66 +779,55 @@ class OfferLoaderService
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'deliveryServiceLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     case 'tag_online_reservation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'onlineReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        //$icon['linkLabel'] = 'Onlinereservierung';
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+
                         break;
                     case 'tag_clicknmeet':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'clicknmeetLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     case 'tag_table_reservation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'tableReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'onlineShopLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        //$icon['linkLabel'] = 'Onlineshop';
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     default:

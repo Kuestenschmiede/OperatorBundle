@@ -142,7 +142,7 @@ function reactRenderReady() {
         };
 
         var deleteItemOnGlobalList = function (event) {
-            subWishlistItemBadge();
+            lsSubOneFromBadgeAndStore();
         };
 
 

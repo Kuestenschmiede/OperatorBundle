@@ -579,7 +579,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     
     private function getTypeOptions()
     {
-        $sql = "SELECT * FROM tl_gutesio_data_type";
+        $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
+        . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
+        . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external'"
+        ;
         $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
         $options = [];
         foreach ($typeResult as $result) {

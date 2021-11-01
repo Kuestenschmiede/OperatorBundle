@@ -245,11 +245,17 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         }
         $detailData['displayType'] = $strTypes;
         if ($detailData['relatedShowcaseLogos'] && is_array($detailData['relatedShowcaseLogos'])) {
+            $relatedShowcases = $detailData['relatedShowcases'];
             foreach ($detailData['relatedShowcaseLogos'] as $key => $relatedShowcaseLogo) {
-                $url = $this->pageUrl;
-                $detailData['relatedShowcaseLogos'][$key]['href'] = $url . "/" . $relatedShowcaseLogo['href'];
+                if ($relatedShowcases[$key]['releaseType'] === "external") {
+                    $detailData['relatedShowcaseLogos'][$key]['href'] = C4GUtils::addProtocolToLink($relatedShowcases[$key]['foreignLink']);
+                } else {
+                    $url = $this->pageUrl;
+                    $detailData['relatedShowcaseLogos'][$key]['href'] = $url . "/" . $relatedShowcaseLogo['href'];
+                }
             }
         }
+        unset($detailData['relatedShowcases']);
 
         foreach ($detailData as $key => $detailDatum) {
             if (strpos(strtoupper($key), 'LINK')) {

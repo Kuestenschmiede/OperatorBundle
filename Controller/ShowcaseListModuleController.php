@@ -237,7 +237,50 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $restrictedPostals = [];
         }
         
-        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+        // special handling for umlauts
+        $searchString = $params['filter'];
+        if ($searchString !== null && $searchString !== "") {
+            $arrSearchStrings = [];
+            $arrSearchStrings[] = $searchString;
+            if (strpos($searchString, "ß") !== false) {
+                $arrSearchStrings[] = str_replace("ß", "ss", $searchString);
+            }
+            if (strpos($searchString, "ss") !== false) {
+                $arrSearchStrings[] = str_replace("ss", "ß", $searchString);
+            }
+            if (strpos($searchString, "ä") !== false) {
+                $arrSearchStrings[] = str_replace("ä", "ae", $searchString);
+            }
+            if (strpos($searchString, "ae") !== false) {
+                $arrSearchStrings[] = str_replace("ae", "ä", $searchString);
+            }
+            if (strpos($searchString, "ö") !== false) {
+                $arrSearchStrings[] = str_replace("ö", "oe", $searchString);
+            }
+            if (strpos($searchString, "oe") !== false) {
+                $arrSearchStrings[] = str_replace("oe", "ö", $searchString);
+            }
+            if (strpos($searchString, "ü") !== false) {
+                $arrSearchStrings[] = str_replace("ü", "ue", $searchString);
+            }
+            if (strpos($searchString, "ue") !== false) {
+                $arrSearchStrings[] = str_replace("ue", "ü", $searchString);
+            }
+            $arrResult = [];
+            foreach ($arrSearchStrings as $arrSearchString) {
+                $params['filter'] = $arrSearchString;
+                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+                if (count($partialResult) > 0 && !$partialResult[0]) {
+                    // only one element
+                    $partialResult = [$partialResult];
+                }
+                $arrResult = array_merge($arrResult, $partialResult);
+            }
+            $data = $arrResult;
+        } else {
+            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+        }
+        
         if ($mode === 4) {
             $tmpData = [];
             foreach ($data as $key => $value) {

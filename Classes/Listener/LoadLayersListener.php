@@ -231,6 +231,7 @@ class LoadLayersListener
             $properties = array_merge([
                 'projection' => 'EPSG:4326',
                 'opening_hours' => $objElement['opening_hours'],
+                'phoneHours' => $objElement['phoneHours'],
                 'popup' => $popup,
                 'graphicTitle' => $objElement['name'],
             ], $tagUuids);

@@ -1,5 +1,6 @@
 <?php
 $carouselClass = "carousel-item-" . $this->id;
+$data = json_decode(json_encode($this->data));
 ?>
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module <?= $carouselClass ?>">
 <script>

@@ -58,74 +58,15 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         if ($model->gutesio_carousel_template) {
             $template = new FrontendTemplate($model->gutesio_carousel_template);
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
-        $tileList = $this->getTileList();
-        $fields = $this->getFields();
         $data = $this->getData();
-        $fc = new FrontendConfiguration('entrypoint_' . $this->model->id);
-        $fc->addTileList($tileList, $fields, $data);
-        $jsonConf = json_encode($fc);
-        if ($jsonConf === false) {
-            // error encoding
-            C4gLogModel::addLogEntry("operator", json_last_error_msg());
-            $template->configuration = [];
-        } else {
-            $template->configuration = $jsonConf;
-        }
-        $template->entrypoint = 'entrypoint_' . $this->model->id;
-
+        $template->data = $data;
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/owl/owl.carousel.min.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/owl/owl.theme.default.min.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_carousel.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/owl/owl.carousel.min.js");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
-
+    
         return $template->getResponse();
-    }
-
-    protected function getTileList(): TileList
-    {
-        $tileList = new TileList();
-        $tileList->setClassName("showcase-tiles c4g-carousel");
-        $tileList->setTileClassName("showcase-tile item c4g-item-link");
-        $tileList->setLayoutType("carousel");
-        $arrHeadline = StringUtil::deserialize($this->model->headline);
-        if ($arrHeadline['value']) {
-            $tileList->setHeadline($arrHeadline['value']);
-            $tileList->setHeadlineLevel(intval(str_replace("h", "", $arrHeadline['unit'])));
-        }
-
-        return $tileList;
-    }
-
-    protected function getFields(): array
-    {
-        $arrHeadline = StringUtil::deserialize($this->model->headline);
-
-        $tileItems = [];
-        $field = new ImageTileField();
-        $field->setName("imageList");
-        $field->setWrapperClass("c4g-carousel__image-wrapper");
-        $field->setClass("c4g-carousel__image");
-//        $field->setInnerClass("c4g-item-image");
-        $field->setRenderSection(TileField::RENDERSECTION_HEADER);
-        $tileItems[] = $field;
-
-        $field = new HeadlineTileField();
-        $field->setName("name");
-        $field->setWrapperClass("c4g-carousel__title-wrapper");
-        $field->setClass("c4g-carousel__title");
-//        $field->setInnerClass("c4g-item-title");
-        $field->setLevel(intval(str_replace("h", "", $arrHeadline['unit'])) + 1);
-        $tileItems[] = $field;
-
-        if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-            $href = str_replace('.html', '/alias.html', $this->pageUrl);
-        } else {
-            $href = $this->pageUrl . '/alias';
-        }
-
-        return $tileItems;
     }
 
     private function getData()

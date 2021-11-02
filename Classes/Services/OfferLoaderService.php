@@ -794,7 +794,15 @@ class OfferLoaderService
                             $uuid,
                             'onlineReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
+                            if (strpos($tagLink, 'mailto:') !== 0) {
+                                $tagLink = 'mailto:' . $tagLink;
+                            }
+                        } else {
+                            $tagLink = C4GUtils::addProtocolToLink($tagLink);
+                        }
+                        
+                        $icon['linkHref'] = $tagLink;
 
                         break;
                     case 'tag_clicknmeet':
@@ -833,7 +841,6 @@ class OfferLoaderService
                     default:
                         break;
                 }
-                $icon['linkHref'] = C4GUtils::addProtocolToLink($icon['linkHref']);
                 $icon['class'] .= $r['technicalKey'];
                 $childRows[$key]['tagLinks'][] = $icon;
             }

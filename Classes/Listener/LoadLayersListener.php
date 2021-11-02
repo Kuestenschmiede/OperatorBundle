@@ -176,7 +176,7 @@ class LoadLayersListener
                 'pid' => $dataLayer['id'],
                 'id' => $directory->uuid,
                 'name' => $directory->name,
-                'hideInStarboard' => !!$configuredTypes,
+                'hideInStarboard' => count($types) === 0,
                 'childs' => $types,
             ];
             if ($types) {

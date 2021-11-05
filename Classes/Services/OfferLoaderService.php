@@ -669,7 +669,9 @@ class OfferLoaderService
                 'SELECT tl_gutesio_data_tag.* FROM tl_gutesio_data_tag JOIN tl_gutesio_data_child_tag ON ' .
                 'tl_gutesio_data_child_tag.tagId = tl_gutesio_data_tag.uuid WHERE tl_gutesio_data_tag.published = 1' .
                 ' AND tl_gutesio_data_child_tag.childId = ? AND (tl_gutesio_data_tag.validFrom = 0' .
+                ' OR tl_gutesio_data_tag.validFrom IS NULL' .
                 ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
+                ' OR tl_gutesio_data_tag.validUntil IS NULL' .
                 ' OR tl_gutesio_data_tag.validUntil <= UNIX_TIMESTAMP()))'
             );
             $rows[$key]['tags'] = $tagStmt->execute($rows[$key]['uuid'])->fetchAllAssoc();
@@ -758,7 +760,9 @@ class OfferLoaderService
         $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
             'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
             'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
+            ' OR tl_gutesio_data_tag.validFrom IS NULL' .
             ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
+            ' OR tl_gutesio_data_tag.validUntil IS NULL' .
             ' OR tl_gutesio_data_tag.validUntil <= UNIX_TIMESTAMP())) AND tl_gutesio_data_child_tag.childId = ?')
             ->execute($uuid)->fetchAllAssoc();
 

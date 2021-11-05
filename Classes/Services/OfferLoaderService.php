@@ -794,6 +794,7 @@ class OfferLoaderService
                             $uuid,
                             'onlineReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
+
                         if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
                             if (strpos($tagLink, 'mailto:') !== 0) {
                                 $tagLink = 'mailto:' . $tagLink;

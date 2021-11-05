@@ -644,10 +644,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
 
         foreach ($arrTagIds as $arrTagId) {
-            $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom = 0 OR validFrom >= UNIX_TIMESTAMP() AND (validUntil = 0 OR validUntil <= UNIX_TIMESTAMP())) ";
+            $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom >= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil <= UNIX_TIMESTAMP())) ";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
             if ($tag) {
                 if ($tag["technicalKey"] === "tag_opening_hours") {
+                    // TODO temporarily remove opening_hours tag since it needs to be handled differently
+                    // TODO until then, it would break the filter if it exists as option
+                    continue;
+                }
+                if ($tag["technicalKey"] === "tag_phone_hours") {
                     // TODO temporarily remove opening_hours tag since it needs to be handled differently
                     // TODO until then, it would break the filter if it exists as option
                     continue;

@@ -600,7 +600,11 @@ class OfferLoaderService
             $rows[$key]['phone'] = html_entity_decode($result['phone']);
             $rows[$key]['website'] = $result['website'];
             $rows[$key]['websiteLabel'] = $result['websiteLabel'];
-            $rows[$key]['opening_hours'] = $result['opening_hours'];
+            $rows[$key]['opening_hours'] =  html_entity_decode($result['opening_hours']);
+            $rows[$key]['deviatingPhoneHours'] = $result['deviatingPhoneHours'];
+            $rows[$key]['phoneHours'] = html_entity_decode($result['phoneHours']);
+            $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
+            $rows[$key]['opening_hours_additional'] = html_entity_decode($result['opening_hours_additional']);
             $rows[$key]['contactName'] = html_entity_decode($result['contactName']);
             $rows[$key]['contactAdditionalName'] = html_entity_decode($result['contactAdditionalName']);
             $rows[$key]['contactStreet'] = $result['contactStreet'];

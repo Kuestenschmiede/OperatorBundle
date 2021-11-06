@@ -511,7 +511,7 @@ $data = json_decode(json_encode($this->detailData));
                                     <?php if ($data->contactable && !empty($data->contactName)): ?>
                                         <h3 class="entry-content name"><?= $data->contactName ?></h3>
                                     <?php else: ?>
-                                        <h3 class="entry-content name"><?= $data->name ?></h3>
+                                        <h3 class="entry-content name"><?= $data->contactName ?></h3>
                                     <?php endif; ?>
 
                                     <?php if ($data->contactable && !empty($data->contactAdditionalName)): ?>

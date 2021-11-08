@@ -874,6 +874,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     $row['not_on_wishlist'] = "1";
                 }
             }
+
+            if (!$row['tagLinks']) {
+                $row['tagLinks'] = [];
+            }
             
             $row['tagLinks'] = $childRows[$key]['tagLinks'];
             

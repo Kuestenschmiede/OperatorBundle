@@ -851,6 +851,11 @@ class OfferLoaderService
                         break;
                 }
                 $icon['class'] .= $r['technicalKey'];
+
+                if (!$childRows[$key]['tagLinks']) {
+                    $childRows[$key]['tagLinks'] = [];
+                }
+
                 $childRows[$key]['tagLinks'][] = $icon;
             }
         }

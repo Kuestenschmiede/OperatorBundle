@@ -709,22 +709,31 @@ class OfferLoaderService
                         'SELECT tagFieldKey, tagFieldValue FROM tl_gutesio_data_child_tag_values WHERE childId = ?'
                     )->execute($rows[$key]['uuid'])->fetchAllAssoc();
                     foreach ($tagValues as $tagValue) {
-
-                        //hotfix
-                        $isLink = strpos(strtoupper($tagValue['tagFieldKey']), 'LINK');
-                        $isLink = $isLink || preg_match(RegularExpression::EMAIL, $tagValue['tagFieldValue']);
-                        if ($isLink) {
-                            if (preg_match('/' . RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
-                                if (strpos($tagValue['tagFieldValue'], 'mailto:') !== 0) {
-                                    $tagValue['tagFieldValue'] = 'mailto:' . $tagValue['tagFieldValue'];
-                                }
-                            } else {
-                                $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                        // check if $tagValue is relevant for current tag
+                        $found = false;
+                        foreach ($fields as $field) {
+                            if ($field->getName() === $tagValue['tagFieldKey']) {
+                                $found = true;
+                                break;
                             }
-                            $rows[$key]['tags'][$tagKey]['linkHref'] = $tagValue['tagFieldValue'];
                         }
-
-                        $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
+                        if ($found) {
+                            //hotfix
+                            $isLink = strpos(strtoupper($tagValue['tagFieldKey']), 'LINK');
+                            $isLink = $isLink || preg_match(RegularExpression::EMAIL, $tagValue['tagFieldValue']);
+                            if ($isLink) {
+                                if (preg_match('/' . RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
+                                    if (strpos($tagValue['tagFieldValue'], 'mailto:') !== 0) {
+                                        $tagValue['tagFieldValue'] = 'mailto:' . $tagValue['tagFieldValue'];
+                                    }
+                                } else {
+                                    $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                                }
+                                $rows[$key]['tags'][$tagKey]['linkHref'] = $tagValue['tagFieldValue'];
+                            }
+    
+                            $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
+                        }
                     }
                 }
             }

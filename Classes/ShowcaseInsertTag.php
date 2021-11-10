@@ -91,7 +91,7 @@ class ShowcaseInsertTag
             if ($arrShowcase) {
                 switch ($arrTags[1]) {
                     case 'name':
-                        return $arrShowcase['name'];
+                        return htmlspecialchars($arrShowcase['name']);
                     case 'image':
                         $uuid = $arrShowcase['imageShowcase'];
                         if ($this->isBinary($uuid)) {

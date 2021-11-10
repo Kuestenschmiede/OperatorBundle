@@ -83,7 +83,7 @@ class OfferInsertTag
                 $arrOffer = $arrOffer[0];
                 switch ($arrTags[1]) {
                     case 'name':
-                        return $arrOffer['name'];
+                        return htmlspecialchars($arrOffer['name']);
                     case 'description':
                         return $this->truncate($arrOffer['description'], 150);
                     case 'firstGalleryImage':

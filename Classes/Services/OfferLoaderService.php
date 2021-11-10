@@ -600,7 +600,7 @@ class OfferLoaderService
             $rows[$key]['phone'] = html_entity_decode($result['phone']);
             $rows[$key]['website'] = $result['website'];
             $rows[$key]['websiteLabel'] = $result['websiteLabel'];
-            $rows[$key]['opening_hours'] =  html_entity_decode($result['opening_hours']);
+            $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
             $rows[$key]['deviatingPhoneHours'] = $result['deviatingPhoneHours'];
             $rows[$key]['phoneHours'] = html_entity_decode($result['phoneHours']);
             $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
@@ -714,6 +714,7 @@ class OfferLoaderService
                         foreach ($fields as $field) {
                             if ($field->getName() === $tagValue['tagFieldKey']) {
                                 $found = true;
+
                                 break;
                             }
                         }
@@ -731,7 +732,7 @@ class OfferLoaderService
                                 }
                                 $rows[$key]['tags'][$tagKey]['linkHref'] = $tagValue['tagFieldValue'];
                             }
-    
+
                             $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
                         }
                     }
@@ -819,7 +820,7 @@ class OfferLoaderService
                         } else {
                             $tagLink = C4GUtils::addProtocolToLink($tagLink);
                         }
-                        
+
                         $icon['linkHref'] = $tagLink;
 
                         break;

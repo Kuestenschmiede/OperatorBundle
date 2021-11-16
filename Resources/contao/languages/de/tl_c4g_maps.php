@@ -9,3 +9,4 @@ $GLOBALS['TL_LANG']['tl_c4g_maps']['aliasSite'] = ['Weiterleitungsseite','Seite 
 
 $GLOBALS['TL_LANG']['tl_c4g_maps']['directories'] = ['Nach Verzeichnissen einschränken', 'Es werden nur die hier eingestellten Verzeichisse ausgeliefert. Sind keine eingestellt, werden alles ausgeliefert.'];
 $GLOBALS['TL_LANG']['tl_c4g_maps']['types'] = ['Nach Kategorien einschränken', 'Es werden nur die hier eingestellten Kategorien ausgeliefert. Sind keine eingestellt, werden alles ausgeliefert.'];
+$GLOBALS['TL_LANG']['tl_c4g_maps']['areaLocstyle'] = ['Lokationsstil umliegendes Gebiet', 'Lokationsstil für das umgebende Gebiet'];

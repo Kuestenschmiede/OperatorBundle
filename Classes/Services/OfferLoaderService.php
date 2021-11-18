@@ -1253,12 +1253,16 @@ class OfferLoaderService
 
                     $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
                     if ($elementModel !== null) {
-                        $eventData['locationElementName'] = $elementModel->name;
+                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
                     } else {
                         $elementId = $row['elementId'];
                         $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
-                        $eventData['locationElementName'] = $elementModel->name;
+                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
                     }
+
+                    //hotfix special char
+                    $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
+
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);
                     }
@@ -1308,7 +1312,10 @@ class OfferLoaderService
                 $vendor = $database->prepare(
                     'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
                 )->execute($vendorUuid['elementId'])->fetchAssoc();
-                $childRows[$key]['elementName'] = $vendor['name'] ?: '';
+                $childRows[$key]['elementName'] = $vendor['name'] ? html_entity_decode($vendor['name']) : '';
+
+                //hotfix special char
+                $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
 
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
                 $url = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');

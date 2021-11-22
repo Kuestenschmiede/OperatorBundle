@@ -363,15 +363,27 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         <?php endif; ?>
 
-                        <?php if ($data->types): ?>
+                        <?php // check if types exist - it's a difference between previewpage and detailpage
+                        $onlyTypes = [];
+                        if (isset($data->types) && !empty($data->types)) {
+                            foreach ($data->types as $type) {
+                                $onlyTypes[] = $type->label;
+                            }
+                        }
+
+                        if (isset($data->rawTypes) && !empty($data->rawTypes)) {
+                            foreach ($data->rawTypes as $rawType) {
+                                $onlyTypes[] = $rawType->label;
+                            }
+                        }
+                        ?>
+
+                        <?php if (!empty($onlyTypes)): ?>
                             <div class="detail-field-text displayType detail-view__display-type">
                                 <div class="detail-field-text__label">Kategorien:</div>
-                                <?php foreach ($data->types as $type): ?>
-                                    <span class="detail-field-text__text"><?= $type->label ?></span>
-                                <?php endforeach; ?>
+                                <span class="detail-field-text__text"><?= implode(', ', $onlyTypes) ?></span>
                             </div>
                         <?php endif; ?>
-
 
 
                         <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>

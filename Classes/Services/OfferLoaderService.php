@@ -1135,7 +1135,7 @@ class OfferLoaderService
                                                 ((int) $nextDateTime->format('d')) + ($value * 7)
                                             );
                                         }
-
+                                        $endDateTime = $beginDateTime;
                                         break;
                                     case 'months':
                                         $beginDateTime->setDate(
@@ -1151,7 +1151,7 @@ class OfferLoaderService
                                                 $nextDateTime->format('d')
                                             );
                                         }
-
+                                        $endDateTime = $beginDateTime;
                                         break;
                                     case 'years':
                                         $beginDateTime->setDate(
@@ -1167,7 +1167,7 @@ class OfferLoaderService
                                                 $nextDateTime->format('d')
                                             );
                                         }
-
+                                        $endDateTime = $beginDateTime;
                                         break;
                                     default:
                                         $beginDateTime->setDate(

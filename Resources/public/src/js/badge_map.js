@@ -1,5 +1,7 @@
-jQuery(document).ready(function () {
 
+
+jQuery(document).ready(function () {
+    'use strict';
 // show badge at first pageload
     updateWishlistBadgeAtRefresh();
 

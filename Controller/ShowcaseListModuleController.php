@@ -237,7 +237,50 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $restrictedPostals = [];
         }
         
-        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+        // special handling for umlauts
+        $searchString = $params['filter'];
+        if ($searchString !== null && $searchString !== "") {
+            $arrSearchStrings = [];
+            $arrSearchStrings[] = $searchString;
+            if (strpos($searchString, "ß") !== false) {
+                $arrSearchStrings[] = str_replace("ß", "ss", $searchString);
+            }
+            if (strpos($searchString, "ss") !== false) {
+                $arrSearchStrings[] = str_replace("ss", "ß", $searchString);
+            }
+            if (strpos($searchString, "ä") !== false) {
+                $arrSearchStrings[] = str_replace("ä", "ae", $searchString);
+            }
+            if (strpos($searchString, "ae") !== false) {
+                $arrSearchStrings[] = str_replace("ae", "ä", $searchString);
+            }
+            if (strpos($searchString, "ö") !== false) {
+                $arrSearchStrings[] = str_replace("ö", "oe", $searchString);
+            }
+            if (strpos($searchString, "oe") !== false) {
+                $arrSearchStrings[] = str_replace("oe", "ö", $searchString);
+            }
+            if (strpos($searchString, "ü") !== false) {
+                $arrSearchStrings[] = str_replace("ü", "ue", $searchString);
+            }
+            if (strpos($searchString, "ue") !== false) {
+                $arrSearchStrings[] = str_replace("ue", "ü", $searchString);
+            }
+            $arrResult = [];
+            foreach ($arrSearchStrings as $arrSearchString) {
+                $params['filter'] = $arrSearchString;
+                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+                if (count($partialResult) > 0 && !$partialResult[0]) {
+                    // only one element
+                    $partialResult = [$partialResult];
+                }
+                $arrResult = array_merge($arrResult, $partialResult);
+            }
+            $data = $arrResult;
+        } else {
+            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+        }
+        
         if ($mode === 4) {
             $tmpData = [];
             foreach ($data as $key => $value) {
@@ -579,7 +622,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     
     private function getTypeOptions()
     {
-        $sql = "SELECT * FROM tl_gutesio_data_type";
+        $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
+        . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
+        . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external'"
+        ;
         $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
         $options = [];
         foreach ($typeResult as $result) {
@@ -598,10 +644,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
 
         foreach ($arrTagIds as $arrTagId) {
-            $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom = 0 OR validFrom >= UNIX_TIMESTAMP() AND (validUntil = 0 OR validUntil <= UNIX_TIMESTAMP())) ";
+            $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom >= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil <= UNIX_TIMESTAMP())) ";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
             if ($tag) {
                 if ($tag["technicalKey"] === "tag_opening_hours") {
+                    // TODO temporarily remove opening_hours tag since it needs to be handled differently
+                    // TODO until then, it would break the filter if it exists as option
+                    continue;
+                }
+                if ($tag["technicalKey"] === "tag_phone_hours") {
                     // TODO temporarily remove opening_hours tag since it needs to be handled differently
                     // TODO until then, it would break the filter if it exists as option
                     continue;

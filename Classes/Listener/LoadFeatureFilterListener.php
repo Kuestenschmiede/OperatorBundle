@@ -55,11 +55,12 @@ class LoadFeatureFilterListener
                 if ($file && $file->path) {
                     $filterObject->setImage($file->path);
                 }
-                if ($tag['technicalKey'] === 'tag_opening_hours') {
+                if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                     $filterObject->addFilterValue([
                         'identifier' => $tag['uuid'],
                         'translation' => $tag['name'],
                         'value' => 'opening_hours',
+                        'field' => $tag['technicalKey'] === 'tag_opening_hours' ? 'opening_hours': 'phoneHours',
                     ]);
                 } else {
                     $filterObject->addFilterValue([

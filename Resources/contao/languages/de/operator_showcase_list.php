@@ -28,6 +28,16 @@ $GLOBALS['TL_LANG'][$strName]['filter_placeholder'] = "Suchbegriff";
  * Detail page
  */
 $GLOBALS['TL_LANG'][$strName]['details']['headline'] = "Kachel";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['beginoffer'] = "Beginn:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['endoffer'] = "Ende:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['begintime'] = "Uhrzeit:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['location'] = "Veranstaltungsort:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['coronanote_title'] = "Hinweise zur Corona Situation";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['accessibility_title'] = "Hinweise zur Rollstuhleignung";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['importantnotes_title'] = "Wichtige Hinweise";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['phonehours_title'] = "Abweichende Telefonzeiten:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['routedesc_title'] = "Wegbeschreibung:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['timesuffix'] = "Uhr";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name und Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";
 $GLOBALS['TL_LANG'][$strName]['sections']['menu'] = "Menü";

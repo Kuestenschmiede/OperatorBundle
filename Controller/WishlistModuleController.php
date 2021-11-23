@@ -320,6 +320,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__types');
         $fields[] = $field;
     
+        $field = new TagTileField();
+        $field->setName("tags");
+        $field->setWrapperClass("c4g-list-element__tags-wrapper");
+        $field->setClass("c4g-list-element__tag");
+        $field->setInnerClass("c4g-list-element__tag-image");
+        $field->setLinkField("linkHref");
+        $fields[] = $field;
+    
         $field = new TextTileField();
         $field->setName("vendor");
         $field->setWrapperClass('c4g-list-element__elementname-wrapper');

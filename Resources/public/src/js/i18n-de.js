@@ -22,6 +22,10 @@ let langConstantsGerman = {
   WE_ARE_AT: ' und sind um ',
   WE_ARE_TOMORROW_AT: ' und sind morgen um ',
   WE_ARE_ON: ' und sind am ',
+  ALWAYS_REACHABLE: 'Wir sind rund um die Uhr für Sie erreichbar.',
+  CURRENTLY_REACHABLE: 'Wir sind zurzeit erreichbar',
+  CURRENTLY_UNREACHABLE: 'Wir sind zurzeit nicht erreichbar',
+  MAYBE_REACHABLE: ' Wir sind vielleicht erreichbar,',
   WEEKDAYS: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
 
 }

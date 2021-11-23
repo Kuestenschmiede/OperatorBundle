@@ -1,0 +1,25 @@
+.c4g-list-element {
+
+  &__tags-wrapper,
+  &__taglinks-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -5px;
+
+    .c4g-list-element__tag,
+    .c4g-list-element__taglinks {
+      @extend .c4g-badge-tagfilter;
+      width: 40px;
+      height: 40px;
+      margin: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      > img {
+        @include img-fluid;
+      }
+
+    }
+  }
+}

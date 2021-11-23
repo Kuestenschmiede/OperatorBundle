@@ -120,6 +120,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/detailmap.js|async", ResourceLoader::JAVASCRIPT, "detailmap");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/phonehours.js|async", ResourceLoader::JAVASCRIPT, "phonehours");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async");
         System::loadLanguageFile("operator_showcase_list");
@@ -244,11 +245,17 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         }
         $detailData['displayType'] = $strTypes;
         if ($detailData['relatedShowcaseLogos'] && is_array($detailData['relatedShowcaseLogos'])) {
+            $relatedShowcases = $detailData['relatedShowcases'];
             foreach ($detailData['relatedShowcaseLogos'] as $key => $relatedShowcaseLogo) {
-                $url = $this->pageUrl;
-                $detailData['relatedShowcaseLogos'][$key]['href'] = $url . "/" . $relatedShowcaseLogo['href'];
+                if ($relatedShowcases[$key]['releaseType'] === "external") {
+                    $detailData['relatedShowcaseLogos'][$key]['href'] = C4GUtils::addProtocolToLink($relatedShowcases[$key]['foreignLink']);
+                } else {
+                    $url = $this->pageUrl;
+                    $detailData['relatedShowcaseLogos'][$key]['href'] = $url . "/" . $relatedShowcaseLogo['href'];
+                }
             }
         }
+        unset($detailData['relatedShowcases']);
 
         foreach ($detailData as $key => $detailDatum) {
             if (strpos(strtoupper($key), 'LINK')) {

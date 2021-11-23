@@ -22,7 +22,7 @@ $GLOBALS['c4g_locationtypes'][] = 'gutesElem';
 
 
 $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutes'] = "{general_legend},name,location_type,directories,types;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
-$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesElem'] = "{general_legend},name,location_type;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,locstyle,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
+$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesElem'] = "{general_legend},name,location_type;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,locstyle,areaLocstyle,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
 
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['aliasSite'] =
     [
@@ -55,4 +55,12 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['types'] =
             'chosen' => true,
         ],
         'sql' => "blob NULL",
+    ];
+$GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['areaLocstyle'] =
+    [
+        'exclude'                 => true,
+        'inputType'               => 'select',
+        'options_callback'        => [$cbClass,'getLocStyles'],
+        'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
+        'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ];

@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
@@ -587,7 +588,11 @@ class OfferLoaderService
             $rows[$key]['phone'] = html_entity_decode($result['phone']);
             $rows[$key]['website'] = $result['website'];
             $rows[$key]['websiteLabel'] = $result['websiteLabel'];
-            $rows[$key]['opening_hours'] = $result['opening_hours'];
+            $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
+            $rows[$key]['deviatingPhoneHours'] = $result['deviatingPhoneHours'];
+            $rows[$key]['phoneHours'] = html_entity_decode($result['phoneHours']);
+            $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
+            $rows[$key]['opening_hours_additional'] = html_entity_decode($result['opening_hours_additional']);
             $rows[$key]['contactName'] = html_entity_decode($result['contactName']);
             $rows[$key]['contactAdditionalName'] = html_entity_decode($result['contactAdditionalName']);
             $rows[$key]['contactStreet'] = $result['contactStreet'];
@@ -656,7 +661,9 @@ class OfferLoaderService
                 'SELECT tl_gutesio_data_tag.* FROM tl_gutesio_data_tag JOIN tl_gutesio_data_child_tag ON ' .
                 'tl_gutesio_data_child_tag.tagId = tl_gutesio_data_tag.uuid WHERE tl_gutesio_data_tag.published = 1' .
                 ' AND tl_gutesio_data_child_tag.childId = ? AND (tl_gutesio_data_tag.validFrom = 0' .
+                ' OR tl_gutesio_data_tag.validFrom IS NULL' .
                 ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
+                ' OR tl_gutesio_data_tag.validUntil IS NULL' .
                 ' OR tl_gutesio_data_tag.validUntil <= UNIX_TIMESTAMP()))'
             );
             $rows[$key]['tags'] = $tagStmt->execute($rows[$key]['uuid'])->fetchAllAssoc();
@@ -690,12 +697,32 @@ class OfferLoaderService
                         'SELECT tagFieldKey, tagFieldValue FROM tl_gutesio_data_child_tag_values WHERE childId = ?'
                     )->execute($rows[$key]['uuid'])->fetchAllAssoc();
                     foreach ($tagValues as $tagValue) {
+                        // check if $tagValue is relevant for current tag
+                        $found = false;
+                        foreach ($fields as $field) {
+                            if ($field->getName() === $tagValue['tagFieldKey']) {
+                                $found = true;
 
-                        if (strpos(strtoupper($tagValue['tagFieldKey']), 'LINK')) {
-                            $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                                break;
+                            }
                         }
+                        if ($found) {
+                            //hotfix
+                            $isLink = strpos(strtoupper($tagValue['tagFieldKey']), 'LINK');
+                            $isLink = $isLink || preg_match(RegularExpression::EMAIL, $tagValue['tagFieldValue']);
+                            if ($isLink) {
+                                if (preg_match('/' . RegularExpression::EMAIL . '/', $tagValue['tagFieldValue'])) {
+                                    if (strpos($tagValue['tagFieldValue'], 'mailto:') !== 0) {
+                                        $tagValue['tagFieldValue'] = 'mailto:' . $tagValue['tagFieldValue'];
+                                    }
+                                } else {
+                                    $tagValue['tagFieldValue'] = C4GUtils::addProtocolToLink($tagValue['tagFieldValue']);
+                                }
+                                $rows[$key]['tags'][$tagKey]['linkHref'] = $tagValue['tagFieldValue'];
+                            }
 
-                        $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
+                            $rows[$key][$tagValue['tagFieldKey']] = $tagValue['tagFieldValue'];
+                        }
                     }
                 }
             }
@@ -719,6 +746,8 @@ class OfferLoaderService
             foreach ($typeValues as $typeValue) {
                 $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
             }
+
+            $rows = $this->getTagData($row['uuid'], $rows, $key);
         }
 
         $rows = $this->getAdditionalData($rows, false, !$isPreview);
@@ -733,7 +762,9 @@ class OfferLoaderService
         $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
             'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
             'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
+            ' OR tl_gutesio_data_tag.validFrom IS NULL' .
             ' OR tl_gutesio_data_tag.validFrom >= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
+            ' OR tl_gutesio_data_tag.validUntil IS NULL' .
             ' OR tl_gutesio_data_tag.validUntil <= UNIX_TIMESTAMP())) AND tl_gutesio_data_child_tag.childId = ?')
             ->execute($uuid)->fetchAllAssoc();
 
@@ -754,73 +785,75 @@ class OfferLoaderService
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'deliveryServiceLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     case 'tag_online_reservation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'onlineReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        //$icon['linkLabel'] = 'Onlinereservierung';
+
+                        if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
+                            if (strpos($tagLink, 'mailto:') !== 0) {
+                                $tagLink = 'mailto:' . $tagLink;
+                            }
+                        } else {
+                            $tagLink = C4GUtils::addProtocolToLink($tagLink);
+                        }
+
+                        $icon['linkHref'] = $tagLink;
+
                         break;
                     case 'tag_clicknmeet':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'clicknmeetLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     case 'tag_table_reservation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'tableReservationLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $icon['linkHref'] = $stmt->execute(
+                        $tagLink = $stmt->execute(
                             $uuid,
                             'onlineShopLink'
                         )->fetchAssoc()['tagFieldValue'];
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        //$icon['linkLabel'] = 'Onlineshop';
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
                     default:
                         break;
                 }
-                $icon['linkHref'] = C4GUtils::addProtocolToLink($icon['linkHref']);
                 $icon['class'] .= $r['technicalKey'];
+
+                if (!$childRows[$key]['tagLinks']) {
+                    $childRows[$key]['tagLinks'] = [];
+                }
+
                 $childRows[$key]['tagLinks'][] = $icon;
             }
         }
@@ -1020,22 +1053,22 @@ class OfferLoaderService
                             WHEN d.locationElementId IS NOT NULL THEN d.locationElementId ' . '
                         ELSE NULL END) AS locationElementId, ' . '
                         (CASE ' . '
-                            WHEN a.locationElementId IS NOT NULL THEN a.recurring ' . '
-                            WHEN b.locationElementId IS NOT NULL THEN b.recurring ' . '
-                            WHEN c.locationElementId IS NOT NULL THEN c.recurring ' . '
-                            WHEN d.locationElementId IS NOT NULL THEN d.recurring ' . '
+                            WHEN a.recurring IS NOT NULL THEN a.recurring ' . '
+                            WHEN b.recurring IS NOT NULL THEN b.recurring ' . '
+                            WHEN c.recurring IS NOT NULL THEN c.recurring ' . '
+                            WHEN d.recurring IS NOT NULL THEN d.recurring ' . '
                         ELSE NULL END) AS recurring, ' . '
                         (CASE ' . '
-                            WHEN a.locationElementId IS NOT NULL THEN a.recurrences ' . '
-                            WHEN b.locationElementId IS NOT NULL THEN b.recurrences ' . '
-                            WHEN c.locationElementId IS NOT NULL THEN c.recurrences ' . '
-                            WHEN d.locationElementId IS NOT NULL THEN d.recurrences ' . '
+                            WHEN a.recurrences IS NOT NULL THEN a.recurrences ' . '
+                            WHEN b.recurrences IS NOT NULL THEN b.recurrences ' . '
+                            WHEN c.recurrences IS NOT NULL THEN c.recurrences ' . '
+                            WHEN d.recurrences IS NOT NULL THEN d.recurrences ' . '
                         ELSE NULL END) AS recurrences, ' . '
                         (CASE ' . '
-                            WHEN a.locationElementId IS NOT NULL THEN a.repeatEach ' . '
-                            WHEN b.locationElementId IS NOT NULL THEN b.repeatEach ' . '
-                            WHEN c.locationElementId IS NOT NULL THEN c.repeatEach ' . '
-                            WHEN d.locationElementId IS NOT NULL THEN d.repeatEach ' . '
+                            WHEN a.repeatEach IS NOT NULL THEN a.repeatEach ' . '
+                            WHEN b.repeatEach IS NOT NULL THEN b.repeatEach ' . '
+                            WHEN c.repeatEach IS NOT NULL THEN c.repeatEach ' . '
+                            WHEN d.repeatEach IS NOT NULL THEN d.repeatEach ' . '
                         ELSE NULL END) AS repeatEach, ' . '
                         (CASE ' . '
                             WHEN a.appointmentUponAgreement IS NOT NULL THEN a.appointmentUponAgreement ' . '
@@ -1090,7 +1123,7 @@ class OfferLoaderService
                                                 ((int) $nextDateTime->format('d')) + ($value * 7)
                                             );
                                         }
-
+                                        $endDateTime = $beginDateTime;
                                         break;
                                     case 'months':
                                         $beginDateTime->setDate(
@@ -1106,7 +1139,7 @@ class OfferLoaderService
                                                 $nextDateTime->format('d')
                                             );
                                         }
-
+                                        $endDateTime = $beginDateTime;
                                         break;
                                     case 'years':
                                         $beginDateTime->setDate(
@@ -1122,7 +1155,7 @@ class OfferLoaderService
                                                 $nextDateTime->format('d')
                                             );
                                         }
-
+                                        $endDateTime = $beginDateTime;
                                         break;
                                     default:
                                         $beginDateTime->setDate(
@@ -1208,12 +1241,16 @@ class OfferLoaderService
 
                     $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
                     if ($elementModel !== null) {
-                        $eventData['locationElementName'] = $elementModel->name;
+                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
                     } else {
                         $elementId = $row['elementId'];
                         $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
-                        $eventData['locationElementName'] = $elementModel->name;
+                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
                     }
+
+                    //hotfix special char
+                    $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
+
                     if (!empty($eventData)) {
                         $childRows[$key] = array_merge($row, $eventData);
                     }
@@ -1263,7 +1300,10 @@ class OfferLoaderService
                 $vendor = $database->prepare(
                     'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
                 )->execute($vendorUuid['elementId'])->fetchAssoc();
-                $childRows[$key]['elementName'] = $vendor['name'] ?: '';
+                $childRows[$key]['elementName'] = $vendor['name'] ? html_entity_decode($vendor['name']) : '';
+
+                //hotfix special char
+                $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
 
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
                 $url = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');

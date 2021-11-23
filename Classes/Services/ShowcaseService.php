@@ -383,7 +383,7 @@ class ShowcaseService
         return $returnData;
     }
 
-    public function loadByUuid(string $uuid,bool $withExternal = false)
+    public function loadByUuid(string $uuid, bool $withExternal = false)
     {
         if ($withExternal) {
             $arrResult = Database::getInstance()

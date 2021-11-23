@@ -70,4 +70,12 @@ class MapsCallback extends Backend
 
         return $return;
     }
+    public function getLocStyles()
+    {
+        $locStyles = $this->Database->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();
+        while ($locStyles->next()) {
+            $return[$locStyles->id] = $locStyles->name;
+        }
+        return $return;
+    }
 }

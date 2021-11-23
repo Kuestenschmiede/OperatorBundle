@@ -121,6 +121,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async", ResourceLoader::JAVASCRIPT, "boostrap-modal");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static", ResourceLoader::JAVASCRIPT, "c4g-all");
+            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/detailmap.js|async", ResourceLoader::JAVASCRIPT, "detailmap");
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async");
         }
@@ -872,6 +873,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 } else {
                     $row['not_on_wishlist'] = "1";
                 }
+            }
+
+            if (!$row['tagLinks']) {
+                $row['tagLinks'] = [];
             }
             
             $row['tagLinks'] = $childRows[$key]['tagLinks'];

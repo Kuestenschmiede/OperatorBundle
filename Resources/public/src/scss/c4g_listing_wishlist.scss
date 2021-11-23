@@ -7,6 +7,8 @@
 @import "node_modules/bootstrap/scss/reboot";
 @import "node_modules/bootstrap/scss/forms";
 
+@import "print";
+
 @import "gutes_vars";
 @import "gutes_mixins";
 
@@ -16,6 +18,8 @@
 @import "node_modules/bootstrap/scss/grid";
 
 @import "gutes-buttons";
+@import "gutes-badges";
 @import "gutes-general";
 @import "c4g_list_wishlist";
+@import "gutes_default/list_element";
 @import "c4g_detail_modal";

@@ -12,6 +12,8 @@ namespace gutesio\OperatorBundle\Classes\Listener;
 //use con4gis\DataBundle\Classes\Event\LoadPropertiesEvent;
 //use con4gis\DataBundle\Classes\Popup\Popup;
 use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
+use Contao\Request;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use con4gis\MapsBundle\Classes\Events\LoadLayersEvent;
 use con4gis\MapsBundle\Classes\Services\LayerService;
@@ -55,6 +57,9 @@ class LoadLayersListener
         } else {
             $alias = $arrUrl[$strC];
         }
+        if (strpos($alias, '?')) {
+            $alias = explode('?', $alias)[0];
+        }
 
         if (C4GUtils::isValidGUID($alias)) {
             $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
@@ -85,6 +90,7 @@ class LoadLayersListener
             }
         }
 
+
         if ($childElements && (count($childElements) > 1) && $type['showLinkedElements']) {
             $dataLayer['childs'] = $childElements;
         } else {
@@ -92,7 +98,7 @@ class LoadLayersListener
             $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, false, true);
             $dataLayer['childs'] = $elements;
         }
-
+        $dataLayer['childs'][] = $this->addArea($elem, $dataLayer);
         $event->setLayerData($dataLayer);
     }
     public function onLoadLayersLoadDirectories(
@@ -173,7 +179,7 @@ class LoadLayersListener
                 'pid' => $dataLayer['id'],
                 'id' => $directory->uuid,
                 'name' => $directory->name,
-                'hideInStarboard' => false,
+                'hideInStarboard' => count($types) === 0,
                 'childs' => $types,
             ];
             if ($types) {
@@ -218,8 +224,9 @@ class LoadLayersListener
             'type' => 'GeoJSON',
             'tags' => $tags,
             'childs' => $childElements,
-            'name' => $objElement['name'],
-            'layername' => $objElement['name'],
+            'name' => html_entity_decode($objElement['name']),
+            'zIndex' => 2000,
+            'layername' => html_entity_decode($objElement['name']),
             'locstyle' => $layerStyle ? $dataLayer['locstyle'] : $objLocstyle['locstyle'],
             'hideInStarboard' => false,
             'addZoomTo' => true,
@@ -228,6 +235,7 @@ class LoadLayersListener
             $properties = array_merge([
                 'projection' => 'EPSG:4326',
                 'opening_hours' => $objElement['opening_hours'],
+                'phoneHours' => $objElement['phoneHours'],
                 'popup' => $popup,
                 'graphicTitle' => $objElement['name'],
             ], $tagUuids);
@@ -271,5 +279,61 @@ class LoadLayersListener
         $element = array_merge($dataLayer, $element);
 
         return $element;
+    }
+    private function addArea ($objElement, $layer) {
+        $settings = C4gMapSettingsModel::findOnly();
+        $url = $settings->con4gisIoUrl;
+//        $url = "https://osm.kartenkueste.de/api/interpreter";
+        $key = $settings->con4gisIoKey;
+        $strSurroundingPostals = 'SELECT typeFieldValue as zip FROM tl_gutesio_data_type_element_values
+                                                WHERE elementId = ? AND typeFieldKey="surrZip"';
+        $zipElem = $this->Database->prepare($strSurroundingPostals)->execute($objElement['uuid'])->fetchAssoc();
+        $strLocstyle = 'SELECT areaLocstyle as locci FROM tl_c4g_maps WHERE id=?';
+        $locstyle = $this->Database->prepare($strLocstyle)->execute($layer['id'])->fetchAssoc()['locci'];
+        if (!$zipElem && !$zipElem['zip']) {
+            return false;
+        }
+        $arrPostalCodes = explode(',', $zipElem['zip']);
+        $strOvp = "[out:geojson][timeout:25];(";
+        foreach ($arrPostalCodes as $postalCode) {
+            $strOvp .= 'relation[postal_code=' . $postalCode . '];';
+        }
+        $strOvp .= ')->.a;relation.a[boundary=postal_code]->._;out body;>;out skel qt;';
+        
+        /*
+            [out:json][timeout:25];
+
+            (relation[postal_code=26121];
+            relation[postal_code=26122];)->.a;
+            relation.a["boundary"="postal_code"]->._;
+            out body;
+            >;
+            out skel qt;
+        */
+        $REQUEST = new \Request();
+        if ($_SERVER['HTTP_REFERER']) {
+            $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+        }
+        if ($_SERVER['HTTP_USER_AGENT']) {
+            $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+        }
+//        $sendUrl = $url . "?key=" . $key . "&data=" . urlencode($strOvp);
+        $sendUrl = $url . "osm.php?key=" . $key . "&data=" . rawurlencode($strOvp);
+        $REQUEST->send($sendUrl);
+        $response = $REQUEST->response;
+        $return = ["content" => [[
+            "data" => json_decode($response),
+            "locationStyle" => $locstyle ?: $layer['locstyle'],
+            "type" => "GeoJSON",
+        ]],
+            "id" => 999999999,
+            "pid" => $layer['id'],
+            "childs" => [],
+            "zIndex" => 0,
+            "format" => "GeoJSON",
+            "locstyle" => $locstyle ?: $layer['locstyle'],
+            "excludeFromSingleLayer" => true
+        ];
+        return $return;
     }
 }

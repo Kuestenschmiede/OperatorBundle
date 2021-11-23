@@ -13,7 +13,8 @@ const TerserPlugin = require('terser-webpack-plugin');
 var path = require('path');
 var config = {
   entry: {
-    'openinghours': './Resources/public/src/js/openinghours.jsx'
+    'openinghours': './Resources/public/src/js/openinghours.jsx',
+    'phonehours': './Resources/public/src/js/phonehours.jsx',
   },
   mode: "production",
   output: {

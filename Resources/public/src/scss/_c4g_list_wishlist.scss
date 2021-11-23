@@ -101,6 +101,30 @@ html {
           }
         }
 
+        //&.c4g-list-element__tags-wrapper,
+        //&.c4g-list-element__taglinks-wrapper {
+        //  display: flex;
+        //  flex-wrap: wrap;
+        //  align-items: center;
+        //  justify-content: flex-start;
+        //  margin: 10px 0;
+        //
+        //  .c4g-list-element__tag,
+        //  .c4g-list-element__taglinks {
+        //    width: 40px;
+        //    height: 40px;
+        //    margin: 0 5px 5px 0;
+        //    display: flex;
+        //    align-items: center;
+        //    justify-content: center;
+        //
+        //     //> img {
+        //     //  max-width: 100%;
+        //     //  height: auto;
+        //     //}
+        //  }
+        //}
+
         &.c4g-list-element__delete-wrapper,
         &.c4g-list-element__more-wrapper {
           width: auto;

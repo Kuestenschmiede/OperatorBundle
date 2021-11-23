@@ -33,7 +33,7 @@ class LoadLayersListener
     {
         $this->layerService = $layerService;
         $this->Database = Database::getInstance();
-        $this->strPublished = ' AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
+        $this->strPublished = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
     }
     public function onLoadLayersLoadElement(
         LoadLayersEvent $event,

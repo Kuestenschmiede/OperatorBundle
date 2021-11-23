@@ -40,7 +40,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
-    '{load_legend},gutesio_child_data_mode,gutesio_data_limit,gutesio_data_max_data;'.
+    '{load_legend},gutesio_child_data_mode,gutesio_data_limit,gutesio_data_max_data,gutesio_child_sort_by_date;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
     'gutesio_child_filter,gutesio_data_change_layout_filter;'.
@@ -343,6 +343,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_tag'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_sort_by_date'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class' => 'clr'],
+    'sql'                     => "char(1) NOT NULL default '0'"
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_load_klaro_consent'] = [

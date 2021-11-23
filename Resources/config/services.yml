@@ -150,3 +150,8 @@ services:
       class: gutesio\OperatorBundle\Classes\Listener\LoadMapResourcesListener
       tags:
         - { name: kernel.event_listener, event: maps.resources.load, method: onLoadMapResourcesLoadOperatorFiles, priority: 6900 }
+
+    gutesio.onLoadMapDataDoIt:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadMapDataListener
+      tags:
+        - { name: kernel.event_listener, event: maps.mapdata.load, method: onLoadMapDataDoIt, priority: 6900 }

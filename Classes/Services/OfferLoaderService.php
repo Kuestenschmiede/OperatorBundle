@@ -89,39 +89,7 @@ class OfferLoaderService
         if ($dateFilter) {
             $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
         }
-        if ($sortFilter && $sortFilter !== 'random') {
-            if ($filterData['sorting'] === 'price_asc') {
-                $sort = 'asc';
-            } else {
-                $sort = 'desc';
-            }
-            usort($results, function ($a, $b) use ($sort) {
-                $aPrice = $a['rawPrice'];
-                $bPrice = $b['rawPrice'];
-                if ($aPrice === null) {
-                    return 1;
-                }
-                if ($bPrice === null) {
-                    return -1;
-                }
-                if ($sort === 'asc') {
-                    if ($aPrice > $bPrice) {
-                        return 1;
-                    } elseif ($aPrice < $bPrice) {
-                        return -1;
-                    }
-
-                    return 0;
-                }
-                if ($aPrice > $bPrice) {
-                    return -1;
-                } elseif ($aPrice < $bPrice) {
-                    return 1;
-                }
-
-                return 0;
-            });
-        }
+        $results = $this->sortOfferData($sortFilter, $filterData, $results);
         if ($hasFilter) {
             $results = array_slice($results, $tmpOffset, $this->limit);
         }
@@ -138,6 +106,79 @@ class OfferLoaderService
         }
 
         return $results;
+    }
+
+    private function sortOfferData(string $sortFilter, array $filterData, array $offers)
+    {
+        if ($sortFilter && $sortFilter !== 'random') {
+            if ($sortFilter === 'date') {
+                $dateOffers = [];
+                $noDateOffers = [];
+                foreach ($offers as $offer) {
+                    if ($offer['beginDate']) {
+                        $dateOffers[] = $offer;
+                    } else {
+                        $noDateOffers[] = $offer;
+                    }
+                }
+                usort($dateOffers, function ($a, $b) use ($sort) {
+                    $aDate = strtotime($a['beginDate']);
+                    $bDate = strtotime($b['beginDate']);
+                    if ($aDate === null) {
+                        return 1;
+                    }
+                    if ($bDate === null) {
+                        return -1;
+                    }
+                    if ($aDate > $bDate) {
+                        return 1;
+                    } elseif ($aDate < $bDate) {
+                        return -1;
+                    }
+
+                    return 0;
+                });
+                foreach ($noDateOffers as $noDateOffer) {
+                    $index = rand(0, count($dateOffers));
+                    array_splice($dateOffers, $index, 0, [$noDateOffer]);
+                }
+                $offers = $dateOffers;
+            } else {
+                if ($filterData['sorting'] === 'price_asc') {
+                    $sort = 'asc';
+                } else {
+                    $sort = 'desc';
+                }
+                usort($offers, function ($a, $b) use ($sort) {
+                    $aPrice = $a['rawPrice'];
+                    $bPrice = $b['rawPrice'];
+                    if ($aPrice === null) {
+                        return 1;
+                    }
+                    if ($bPrice === null) {
+                        return -1;
+                    }
+                    if ($sort === 'asc') {
+                        if ($aPrice > $bPrice) {
+                            return 1;
+                        } elseif ($aPrice < $bPrice) {
+                            return -1;
+                        }
+
+                        return 0;
+                    }
+                    if ($aPrice > $bPrice) {
+                        return -1;
+                    } elseif ($aPrice < $bPrice) {
+                        return 1;
+                    }
+
+                    return 0;
+                });
+            }
+        }
+
+        return $offers;
     }
 
     public function getFullTextData(
@@ -433,7 +474,7 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                WHERE a.published = 1 AND type ' . C4GUtils::buildInString($types) .
+                WHERE a.published = 1 AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
             )->execute($parameters)->fetchAllAssoc();

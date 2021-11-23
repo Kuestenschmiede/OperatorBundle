@@ -224,7 +224,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $tmpOffset = $offset;
         }
         try {
-            if ($moduleModel->gutesio_data_restrict_postals === "") {
+            if (!$moduleModel->gutesio_data_restrict_postals || empty($moduleModel->gutesio_data_restrict_postals)) {
                 $restrictedPostals = [];
             } else {
                 $restrictedPostals = explode(",", $moduleModel->gutesio_data_restrict_postals);

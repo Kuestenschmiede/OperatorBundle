@@ -135,7 +135,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     if ($data['locationElementId']) {
                         $elementUuid = $components['elements'][2][0]['uuid'];
                         if ($elementUuid !== $data['locationElementId']) {
-                            $locationElementData = $this->getLocationElementData($data['locationElementId']);
+                            $locationElementData = $this->getLocationElementData($data['locationElementId'], true);
                             if ($locationElementData) {
                                 $locationList = $this->getLocationList();
                                 $conf->addTileList(
@@ -965,9 +965,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         return $childRows;
     }
     
-    private function getLocationElementData($locationElementUuid)
+    private function getLocationElementData($locationElementUuid,$withExternal=false)
     {
-        $showcaseData = $this->showcaseService->loadByUuid($locationElementUuid);
+        $showcaseData = $this->showcaseService->loadByUuid($locationElementUuid,$withExternal);
+
         $showcaseData['name'] = html_entity_decode($showcaseData['name']);
         
         return $showcaseData;

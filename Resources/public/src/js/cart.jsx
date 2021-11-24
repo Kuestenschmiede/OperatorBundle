@@ -172,6 +172,7 @@ class Article extends React.Component {
                              name={"amount"}
                              step={1}
                              min={1}
+                             max={10}
                              onInput={this.props.updateValue.bind(this, this.props.vendorKey, this.props.articleKey)}
                              defaultValue={this.props.article.amount}/>
                     </span>

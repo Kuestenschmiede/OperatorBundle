@@ -83,18 +83,12 @@ class CartModuleController extends AbstractFrontendModuleController
             ResourceLoader::HEAD
         );
         
-        // TODO markup für warenkorb bauen
-        // TODO markup für Info registrierung bauen
-        // TODO "in den warenkorb"-buttons an produkten
-
         if ($this->tokenChecker->hasFrontendUser()) {
-            // TODO prüfen, ob warenkorb leer oder gefüllt
             $template->getCartUrl = '/gutesio/operator/cart/items';
             $template->cart_payment_url = $model->cart_payment_url;
             $template->cart_no_items_text = nl2br($model->cart_no_items_text);
         }
 
-        
         return $template->getResponse();
     }
 }

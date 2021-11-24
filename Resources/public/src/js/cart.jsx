@@ -148,7 +148,6 @@ class Article extends React.Component {
                   {
                     this.props.article.image &&
                     this.props.article.image.src &&
-                    this.props.article.image.alt &&
                     <div className="cart__article-image">
                       <img src={this.props.article.image.src}
                            alt={this.props.article.image.alt}

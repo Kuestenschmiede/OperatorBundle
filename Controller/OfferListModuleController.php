@@ -917,7 +917,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                     continue 2;
             }
             $parents = PageModel::findParentsById($page);
-            if (sizeof($parents) < 2 || (int)$parents[sizeof($parents) - 1]->id !== (int)$rootId) {
+            if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
                 continue;
             }
             $url = Controller::replaceInsertTags("{{link_url::" . $page . "}}");

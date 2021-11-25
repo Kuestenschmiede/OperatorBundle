@@ -371,7 +371,7 @@ class Cart extends React.Component {
       data.set(event.target.name, value);
       data.set('childId', vendors[vendorKey].articles[articleKey].childId);
       data.set('articleId', vendors[vendorKey].articles[articleKey].articleId);
-      return fetch(this.configCartUrl, {
+      let promise = fetch(this.configCartUrl, {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
@@ -383,13 +383,18 @@ class Cart extends React.Component {
         referrerPolicy: 'no-referrer',
         body: data
       });
+      promise.then((response) => {
+        if (!response.ok) {
+          location.reload();
+        }
+      });
+      return promise;
     }
     return null;
   }
 
   removeArticle(vendorKey, articleKey, event) {
     let promise = this.updateValue(vendorKey, articleKey, event);
-    console.log(typeof promise);
     if (promise !== null) {
       promise.then((response) => {
         if (response.ok) {

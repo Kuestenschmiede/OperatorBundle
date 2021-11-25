@@ -70,6 +70,67 @@ class Slider extends React.Component {
   }
 }
 
+class Select extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: this.props.defaultValue
+    };
+
+    this.timeout = null;
+
+    this.onChange = this.onChange.bind(this);
+    Select.instances = (Select.instances || 0) + 1;
+  }
+
+  onChange(event) {
+    this.setState({value: event.target.value});
+    clearTimeout(this.timeout);
+    this.props.updateValue(event);
+  }
+
+  textFormat(value) {
+    if (this.props.text && typeof this.props.text.replace === 'function') {
+      return this.props.text.replace(/%s/g, value);
+    } else {
+      return value;
+    }
+  }
+
+  render() {
+    try {
+      let id = 'cart__article-option-select-' + Select.instances;
+
+      return (
+        <div className={"cart__article-option-select"}>
+          <label htmlFor={id}>
+            {this.props.label}
+          </label>
+          <select id={id}
+                  value={this.state.value}
+                  onChange={this.onChange}
+                  className={'cart__article-option-select'}
+                  name={this.props.name}>
+            {
+              (() => {
+                let options = [];
+                this.props.options.forEach((opt) => {
+                  options.push(<option value={opt.value}>{this.textFormat(opt.label)}</option>);
+                }, this);
+                return options;
+              })()
+            }
+          </select>
+        </div>
+      );
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+}
+
 class Option extends React.Component {
   constructor(props) {
     super(props);
@@ -90,6 +151,14 @@ class Option extends React.Component {
                                  defaultValue={this.props.defaultValue}
                                  interval={this.props.interval}
                                  left={16.75}
+                                 updateValue={this.props.updateValue}/>
+
+                case 'select':
+                  return <Select label={this.props.label}
+                                 text={'%s,00 EUR'}
+                                 name={this.props.name}
+                                 options={this.props.options}
+                                 defaultValue={this.props.defaultValue}
                                  updateValue={this.props.updateValue}/>
                 default:
                   return null;

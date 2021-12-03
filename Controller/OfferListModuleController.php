@@ -69,8 +69,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
     protected $request = null;
 
     protected $tileList = null;
-    
-    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
+
     const COOKIE_WISHLIST = "clientUuid";
 
     /**
@@ -262,102 +261,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $search = str_replace("+", "", $search);
 
         return $search;
-    }
-
-    /**
-     * @Route(
-     *     "/gutesio/operator/showcase_child_cc_form/{lang}/{alias}",
-     *     name="showcase_child_cc_form",
-     *     methods={"GET"}
-     *     )
-     * @param Request $request
-     * @param string $lang
-     * @param string $alias
-     * @return JsonResponse
-     */
-    public function getClickCollectForm(Request $request, string $lang, string $alias): JsonResponse
-    {
-        System::loadLanguageFile('offer_list', $lang);
-        $formFields = [];
-
-        $comkey = C4GUtils::getKey(
-            C4gSettingsModel::findSettings(),
-            9
-        );
-        
-        $uuid = $alias;
-        if (C4GUtils::startsWith($uuid, '{') !== true) {
-            $uuid = '{' . $uuid;
-        }
-        if (C4GUtils::endsWith($uuid, '}') !== true) {
-            $uuid .= '}';
-        }
-
-        $field = new HiddenFormField();
-        $field->setName('uuid');
-        $field->setValue($uuid);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new HiddenFormField();
-        $field->setName('key');
-        $field->setValue((string) $comkey);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new HiddenFormField();
-        $field->setName('lang');
-        $field->setValue($lang);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextFormField();
-        $field->setName('email');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['email'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['email'][1]);
-        $field->setRequired();
-        $field->setPattern(RegularExpression::EMAIL);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextFormField();
-        $field->setName('name');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['name'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['name'][1]);
-        $field->setRequired();
-        $formFields[] = $field->getConfiguration();
-
-        $field = new SelectFormField();
-        $field->setName('earliest');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['earliest'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['earliest'][1]);
-        $field->setRequired();
-        $field->setOptions($this->getEarliestOptions());
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextAreaFormField();
-        $field->setName('notes');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['notes'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['notes'][1]);
-        $field->setMaxLength(10000);
-        $formFields[] = $field->getConfiguration();
-
-
-        return new JsonResponse([
-            'formFields' => $formFields
-        ]);
-    }
-
-    private function getEarliestOptions(): array
-    {
-        System::loadLanguageFile('gutesio_frontend', 'de');
-        $options = [];
-        foreach ($GLOBALS['TL_LANG']['gutesio_frontend']['cc']['earliest'] as $key => $value) {
-            if ($key === 'afternoon' && (int)date('H') >= 12) {
-                continue;
-            }
-            $options[] = [
-                'value' => $key,
-                'label' => $value
-            ];
-        }
-        return $options;
     }
 
     private function setupLanguage()
@@ -684,30 +587,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setClass("c4g-list-element__taglinks");
         $field->setInnerClass("c4g-list-element__taglinks-image");
         $field->setLinkField("linkHref");
-        $fields[] = $field;
-
-        global $objPage;
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
-        $field->setClass("c4g-list-element__clickcollect-link");
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('type', 'product');
-        $field->setInnerFields([
-            'image',
-            'name',
-            'typeName',
-            'strikePrice',
-            'price',
-            'beginDate',
-            'beginTime',
-        ]);
         $fields[] = $field;
     
         $field = new WrapperTileField();

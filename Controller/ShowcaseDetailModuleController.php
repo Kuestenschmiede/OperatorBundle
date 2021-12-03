@@ -69,7 +69,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 
     const TYPE = 'showcase_detail_module';
     const COOKIE_WISHLIST = "clientUuid";
-    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
 
     protected $model = null;
 
@@ -374,28 +373,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
 
-        global $objPage;
-        $settings = C4gSettingsModel::findSettings();
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
-        $field->setClass('c4g-list-element__clickcollect');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('type', 'product');
-        $field->setCondition('type', 'showcase', true);
-        $field->setInnerFields([
-            'imageList',
-            'name',
-            'types'
-        ]);
-        $fields[] = $field;
-
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
@@ -483,7 +460,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.clickCollect '.
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName '.
             'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '

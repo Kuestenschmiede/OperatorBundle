@@ -228,8 +228,7 @@ class OfferLoaderService
                 $parameters[] = $limit;
                 $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                    tl_gutesio_data_element.clickCollect, ' . '
+                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -261,8 +260,7 @@ class OfferLoaderService
                 $parameters[] = $limit;
                 $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                    tl_gutesio_data_element.clickCollect, ' . '
+                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -295,8 +293,7 @@ class OfferLoaderService
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                tl_gutesio_data_element.clickCollect, ' . '
+                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -327,8 +324,7 @@ class OfferLoaderService
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                tl_gutesio_data_element.clickCollect, ' . '
+                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -401,8 +397,7 @@ class OfferLoaderService
                 $parameters[] = $limit;
                 $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                    tl_gutesio_data_element.clickCollect, ' . '
+                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -429,8 +424,7 @@ class OfferLoaderService
                 $parameters[] = $limit;
                 $parameters[] = (int) $offset;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                    tl_gutesio_data_element.clickCollect, ' . '
+                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -458,8 +452,7 @@ class OfferLoaderService
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                tl_gutesio_data_element.clickCollect, ' . '
+                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -484,8 +477,7 @@ class OfferLoaderService
             $parameters[] = $limit;
             $parameters[] = (int) $offset;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale,
-                tl_gutesio_data_element.clickCollect, ' . '
+                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -607,7 +599,6 @@ class OfferLoaderService
             $rows[$key]['locationCity'] = $result['locationCity'];
             $rows[$key]['geox'] = $result['geox'];
             $rows[$key]['geoy'] = $result['geoy'];
-            $rows[$key]['clickCollect'] = $result['clickCollect'];
             $rows[$key]['elementId'] = $result['uuid'];
 
             if ($row['infoFile']) {

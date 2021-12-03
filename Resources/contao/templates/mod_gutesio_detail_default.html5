@@ -383,6 +383,13 @@ $data = json_decode(json_encode($this->detailData));
                                 <div class="detail-field-text__label">Kategorien:</div>
                                 <span class="detail-field-text__text"><?= implode(', ', $onlyTypes) ?></span>
                             </div>
+                        <?php else: ?>
+                            <?php if (isset($data->displayType) && !empty($data->displayType)): ?>
+                                <div class="detail-field-text displayType detail-view__display-type">
+                                    <div class="detail-field-text__label">Kategorie:</div>
+                                    <span class="detail-field-text__text"><?= $data->displayType ?></span>
+                                </div>
+                            <?php endif; ?>
                         <?php endif; ?>
 
 

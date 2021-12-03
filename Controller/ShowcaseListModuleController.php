@@ -701,7 +701,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         foreach ($result as $res) {
             $objSettings = GutesioOperatorSettingsModel::findSettings();
             $parents = PageModel::findParentsById($objSettings->showcaseDetailPage);
-            if (sizeof($parents) < 2 || (int)$parents[sizeof($parents) - 1]->id !== (int)$rootId) {
+            if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
                 continue;
             }
             $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");

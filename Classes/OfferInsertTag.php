@@ -85,7 +85,7 @@ class OfferInsertTag
                     case 'name':
                         return html_entity_decode($arrOffer['name']);
                     case 'description':
-                        return addslashes($this->truncate($arrOffer['description'], 150));
+                        return $this->truncate($arrOffer['description'], 150);
                     case 'firstGalleryImage':
                         $arrBin = StringUtil::deserialize($arrOffer['imageGallery']);
 
@@ -168,7 +168,7 @@ class OfferInsertTag
                                 }
                             }
 
-                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
+                            return html_entity_decode($metaDescription);
                         }
 
                         break;

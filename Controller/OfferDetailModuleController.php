@@ -203,11 +203,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private function getDetailComponents(array $data, Request $request)
     {
         $components = [];
-//        $components['details'] = [
-//            $this->getDetailPage(),
-//            $this->getDetailFields($data),
-//            $data
-//        ];
         $components['elements'] = [
             $this->getElementTileList(),
             $this->getElementFields(),

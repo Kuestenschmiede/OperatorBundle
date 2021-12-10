@@ -274,6 +274,14 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
 
+            <?php $this->block('cart-button'); ?>
+            <div class="cart-btn__wrapper">
+                <button class="btn btn--primary no-account">Warenkorb</button>
+                <button class="btn btn--primary logged-in">In den Warenkorb</button>
+                <button class="btn btn--primary already-set">Bereits im Warenkorb</button>
+            </div>
+            <?php $this->endblock()?>
+
             <?php if (isset($data->importantNotes) && !empty($data->importantNotes)): ?>
                 <section class="detail-view__section section__important-notes">
                     <div class="c4g-container">

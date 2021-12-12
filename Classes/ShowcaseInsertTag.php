@@ -163,7 +163,7 @@ class ShowcaseInsertTag
                             $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             $metaDescription = str_replace('IO_SHOWCASE_URL', $url, $metaDescription);
 
-                            return html_entity_decode($metaDescription);
+                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
                         }
 
                         break;

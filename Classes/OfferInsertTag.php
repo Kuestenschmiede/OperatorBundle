@@ -168,7 +168,7 @@ class OfferInsertTag
                                 }
                             }
 
-                            return html_entity_decode($metaDescription);
+                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
                         }
 
                         break;

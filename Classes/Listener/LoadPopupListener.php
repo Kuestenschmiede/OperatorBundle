@@ -105,7 +105,7 @@ class LoadPopupListener
         $contacts = '';
         if ($element['phone'] || $element['mobile']) {
             $phone = $element['phone'] ?: $element['mobile'];
-            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:$phone'>
+            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:".str_replace(" ", "", str_replace("/", "", $outputMobilePhone))."'>
                             <i class='fas fa-phone'></i>
                         </a>";
         }

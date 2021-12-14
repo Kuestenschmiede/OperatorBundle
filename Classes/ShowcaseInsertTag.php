@@ -91,7 +91,7 @@ class ShowcaseInsertTag
             if ($arrShowcase) {
                 switch ($arrTags[1]) {
                     case 'name':
-                        return htmlspecialchars($arrShowcase['name']);
+                        return html_entity_decode($arrShowcase['name']);
                     case 'image':
                         $uuid = $arrShowcase['imageShowcase'];
                         if ($this->isBinary($uuid)) {
@@ -163,7 +163,7 @@ class ShowcaseInsertTag
                             $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             $metaDescription = str_replace('IO_SHOWCASE_URL', $url, $metaDescription);
 
-                            return $metaDescription;
+                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
                         }
 
                         break;

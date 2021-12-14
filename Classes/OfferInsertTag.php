@@ -40,7 +40,7 @@ class OfferInsertTag
     {
         $text = str_replace('><', '> <', $text);
         $text = strip_tags($text);
-        $text = htmlspecialchars($$text, ENT_QUOTES, 'utf-8');
+        $text = htmlspecialchars($text, ENT_QUOTES, 'utf-8');
         $length = abs((int) $length);
         $firstFullstop = strpos($text, '.');
         if ($firstFullstop && $firstFullstop <= ($length - 1)) {
@@ -83,7 +83,7 @@ class OfferInsertTag
                 $arrOffer = $arrOffer[0];
                 switch ($arrTags[1]) {
                     case 'name':
-                        return htmlspecialchars($arrOffer['name']);
+                        return html_entity_decode($arrOffer['name']);
                     case 'description':
                         return $this->truncate($arrOffer['description'], 150);
                     case 'firstGalleryImage':
@@ -168,7 +168,7 @@ class OfferInsertTag
                                 }
                             }
 
-                            return $metaDescription;
+                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
                         }
 
                         break;

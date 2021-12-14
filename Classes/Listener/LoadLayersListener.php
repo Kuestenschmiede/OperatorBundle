@@ -166,7 +166,7 @@ class LoadLayersListener
                     'name' => $type['name'],
                     'hideInStarboard' => false,
                     'childs' => $elements,
-                    'addZoomTo' => true,
+                    'zoomTo' => true,
                 ];
                 if ($elements) {
                     $types[] = array_merge($dataLayer, $singleType);
@@ -175,13 +175,18 @@ class LoadLayersListener
             if (count($types) < 1) {
                 continue;
             }
-            $singleDir = [
-                'pid' => $dataLayer['id'],
-                'id' => $directory->uuid,
-                'name' => $directory->name,
-                'hideInStarboard' => count($types) === 0,
-                'childs' => $types,
-            ];
+            else if (count($types) === 1 && $configuredTypes) {
+                $singleDir = $types[0];
+            }
+            else {
+                $singleDir = [
+                    'pid' => $dataLayer['id'],
+                    'id' => $directory->uuid,
+                    'name' => $directory->name,
+                    'hideInStarboard' => count($types) === 0,
+                    'childs' => $types,
+                ];
+            }
             if ($types) {
                 $directories[] = array_merge($dataLayer, $singleDir);
             }
@@ -229,7 +234,7 @@ class LoadLayersListener
             'layername' => html_entity_decode($objElement['name']),
             'locstyle' => $layerStyle ? $dataLayer['locstyle'] : $objLocstyle['locstyle'],
             'hideInStarboard' => false,
-            'addZoomTo' => true,
+            'zoomTo' => true,
         ];
         if (($objElement['geox'] && $objElement['geoy']) || $objElement['geojson']) {
             $properties = array_merge([

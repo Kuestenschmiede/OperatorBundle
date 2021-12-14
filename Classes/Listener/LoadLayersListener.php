@@ -296,7 +296,9 @@ class LoadLayersListener
         $arrPostalCodes = explode(',', $zipElem['zip']);
         $strOvp = "[out:geojson][timeout:25];(";
         foreach ($arrPostalCodes as $postalCode) {
-            $strOvp .= 'relation[postal_code=' . $postalCode . '][boundary=postal_code];';
+            if (preg_match("/^[0-9]{5}$/", $postalCode)) {
+                $strOvp .= 'relation[postal_code=' . $postalCode . '][boundary=postal_code];';
+            }
         }
         $strOvp .= ');out body;>;out skel qt;';
         $REQUEST = new \Request();

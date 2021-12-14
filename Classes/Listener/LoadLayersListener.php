@@ -296,20 +296,9 @@ class LoadLayersListener
         $arrPostalCodes = explode(',', $zipElem['zip']);
         $strOvp = "[out:geojson][timeout:25];(";
         foreach ($arrPostalCodes as $postalCode) {
-            $strOvp .= 'relation[postal_code=' . $postalCode . '];';
+            $strOvp .= 'relation[postal_code=' . $postalCode . '][boundary=postal_code];';
         }
-        $strOvp .= ')->.a;relation.a[boundary=postal_code]->._;out body;>;out skel qt;';
-        
-        /*
-            [out:json][timeout:25];
-
-            (relation[postal_code=26121];
-            relation[postal_code=26122];)->.a;
-            relation.a["boundary"="postal_code"]->._;
-            out body;
-            >;
-            out skel qt;
-        */
+        $strOvp .= ');out body;>;out skel qt;';
         $REQUEST = new \Request();
         if ($_SERVER['HTTP_REFERER']) {
             $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
@@ -330,6 +319,7 @@ class LoadLayersListener
             "pid" => $layer['id'],
             "childs" => [],
             "zIndex" => 0,
+            "hideInStarboard" => "1",
             "format" => "GeoJSON",
             "locstyle" => $locstyle ?: $layer['locstyle'],
             "excludeFromSingleLayer" => true

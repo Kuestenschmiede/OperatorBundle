@@ -48,6 +48,7 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
 use Contao\FilesModel;
+use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -78,6 +79,8 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
      */
     private $showcaseService;
 
+    private $cartApiController;
+
     private $languageRefs = [];
 
     const COOKIE_WISHLIST = "clientUuid";
@@ -89,10 +92,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
      */
     public function __construct(
         ?OfferLoaderService $offerService,
-        ShowcaseService $showcaseService
+        ShowcaseService $showcaseService,
+        CartApiController $cartApiController
     ) {
         $this->offerService = $offerService;
         $this->showcaseService = $showcaseService;
+        $this->cartApiController = $cartApiController;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -127,7 +132,28 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
+            $cartApiResponse = $this->cartApiController->getCartItems($request);
+            $template->loggedIn = FrontendUser::getInstance()->id > 0;
+            $template->offerForSale = $data['offerForSale'];
+            $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
+            $cartPage = PageModel::findByPk($cartPage);
+            $template->cartPageUrl = $cartPage->getFrontendUrl();
+            $template->addToCartUrl = '/gutesio/operator/cart/add/'.$data['uuid'];
             if ($data) {
+                if ($cartApiResponse->getStatusCode() === 200) {
+                    $template->not_in_cart = 1;
+                    $cartApiData = json_decode($cartApiResponse->getContent(), true);
+                    foreach ($cartApiData['vendors'] as $vendor) {
+                        if ($vendor['uuid'] === $data['elementId']) {
+                            foreach ($vendor['articles'] as $article) {
+                                if ($article['childId'] === $data['uuid']) {
+                                    $template->not_in_cart = 0;
+                                    break 2;
+                                }
+                            }
+                        }
+                    }
+                }
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
                 $components = $this->getDetailComponents($data, $request);

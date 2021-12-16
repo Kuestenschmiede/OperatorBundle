@@ -275,12 +275,34 @@ $data = json_decode(json_encode($this->detailData));
             </div>
 
             <?php $this->block('cart-button'); ?>
+            <?php if ($this->offerForSale) {?>
             <div class="cart-btn__wrapper">
-                <button class="btn btn--primary no-account">Warenkorb</button>
-                <button class="btn btn--primary logged-in">In den Warenkorb</button>
-                <button class="btn btn--primary already-set">Bereits im Warenkorb</button>
+            <?php if ($this->loggedIn) {?>
+            <?php if ($this->not_in_cart === 0) {?>
+                <span class="btn btn--primary already-set">Bereits im Warenkorb</span>
+            <?php } else {?>
+                <button class="btn btn--primary logged-in" onclick="let button = this;let promise = fetch('<?php echo $this->addToCartUrl;?>', {
+                        method: 'POST',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                        credentials: 'same-origin',
+                        redirect: 'follow',
+                        referrerPolicy: 'no-referrer'
+                        });promise.then((response) => {if (response.ok) {
+                          let span = document.createElement('span');
+                          span.classList.add('btn');
+                          span.classList.add('btn--primary');
+                          span.classList.add('already-set');
+                          span.innerHTML = 'Bereits im Warenkorb';
+                          button.replaceWith(span);
+                        }});">In den Warenkorb</button>
+            <?php }?>
+            <?php } else {?>
+                <a class="btn btn--primary no-account" href="<?php echo $this->cartPageUrl; ?>">In den Warenkorb</a>
+            <?php }?>
             </div>
-            <?php $this->endblock()?>
+            <?php }?>
+            <?php $this->endblock();?>
 
             <?php if (isset($data->importantNotes) && !empty($data->importantNotes)): ?>
                 <section class="detail-view__section section__important-notes">

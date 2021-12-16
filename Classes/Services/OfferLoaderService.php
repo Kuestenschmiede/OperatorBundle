@@ -545,7 +545,7 @@ class OfferLoaderService
         $alias = $this->cleanAlias($alias);
 
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile,' . '
+            a.name, a.image, a.imageOffer, a.imageGallery, a.memberId, a.infoFile, a.offerForSale,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '

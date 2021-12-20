@@ -166,7 +166,7 @@ class LoadLayersListener
                     'name' => $type['name'],
                     'hideInStarboard' => false,
                     'childs' => $elements,
-                    'addZoomTo' => true,
+                    'zoomTo' => true,
                 ];
                 if ($elements) {
                     $types[] = array_merge($dataLayer, $singleType);
@@ -175,13 +175,18 @@ class LoadLayersListener
             if (count($types) < 1) {
                 continue;
             }
-            $singleDir = [
-                'pid' => $dataLayer['id'],
-                'id' => $directory->uuid,
-                'name' => $directory->name,
-                'hideInStarboard' => count($types) === 0,
-                'childs' => $types,
-            ];
+            else if (count($types) === 1 && $configuredTypes) {
+                $singleDir = $types[0];
+            }
+            else {
+                $singleDir = [
+                    'pid' => $dataLayer['id'],
+                    'id' => $directory->uuid,
+                    'name' => $directory->name,
+                    'hideInStarboard' => count($types) === 0,
+                    'childs' => $types,
+                ];
+            }
             if ($types) {
                 $directories[] = array_merge($dataLayer, $singleDir);
             }
@@ -229,7 +234,7 @@ class LoadLayersListener
             'layername' => html_entity_decode($objElement['name']),
             'locstyle' => $layerStyle ? $dataLayer['locstyle'] : $objLocstyle['locstyle'],
             'hideInStarboard' => false,
-            'addZoomTo' => true,
+            'zoomTo' => true,
         ];
         if (($objElement['geox'] && $objElement['geoy']) || $objElement['geojson']) {
             $properties = array_merge([
@@ -296,20 +301,11 @@ class LoadLayersListener
         $arrPostalCodes = explode(',', $zipElem['zip']);
         $strOvp = "[out:geojson][timeout:25];(";
         foreach ($arrPostalCodes as $postalCode) {
-            $strOvp .= 'relation[postal_code=' . $postalCode . '];';
+            if (preg_match("/^[0-9]{5}$/", $postalCode)) {
+                $strOvp .= 'relation[postal_code=' . $postalCode . '][boundary=postal_code];';
+            }
         }
-        $strOvp .= ')->.a;relation.a[boundary=postal_code]->._;out body;>;out skel qt;';
-        
-        /*
-            [out:json][timeout:25];
-
-            (relation[postal_code=26121];
-            relation[postal_code=26122];)->.a;
-            relation.a["boundary"="postal_code"]->._;
-            out body;
-            >;
-            out skel qt;
-        */
+        $strOvp .= ');out body;>;out skel qt;';
         $REQUEST = new \Request();
         if ($_SERVER['HTTP_REFERER']) {
             $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
@@ -330,6 +326,7 @@ class LoadLayersListener
             "pid" => $layer['id'],
             "childs" => [],
             "zIndex" => 0,
+            "hideInStarboard" => "1",
             "format" => "GeoJSON",
             "locstyle" => $locstyle ?: $layer['locstyle'],
             "excludeFromSingleLayer" => true

@@ -19,6 +19,7 @@ use con4gis\MapsBundle\Classes\Events\LoadLayersEvent;
 use con4gis\MapsBundle\Classes\Services\LayerService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use Contao\Database;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LoadLayersListener
@@ -101,6 +102,70 @@ class LoadLayersListener
         $dataLayer['childs'][] = $this->addArea($elem, $dataLayer);
         $event->setLayerData($dataLayer);
     }
+    public function onLoadLayersLoadPart(
+        LoadLayersEvent $event,
+        $eventName,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $dataLayer = $event->getLayerData();
+        if (!($dataLayer['type'] === 'gutesPart')) {
+            return;
+        }
+        $objDataLayer = C4gMapsModel::findByPk($dataLayer['id']);
+        if (!$objDataLayer) {
+            return;
+        }
+        $configuredTypes = unserialize($objDataLayer->types);
+        $objTypes = [];
+        if ($configuredTypes) {
+            foreach($configuredTypes as $type) {
+                $objTypes[] = GutesioDataTypeModel::findOneBy('uuid', $type);
+            }
+        }
+        else {
+            $arrOptions = [
+                'order' => "tl_gutesio_data_type.name ASC"
+            ];
+            $objTypes = GutesioDataTypeModel::findAll($arrOptions);
+        }
+        $types = [];
+        foreach ($objTypes as $objType) {
+            $type = $objType->row();
+            $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
+            $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
+                INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
+                WHERE typeElem.typeId = ?' . $strPublishedElem .
+                ' ORDER BY elem.name ASC';
+            $arrElems = $this->Database->prepare($strQueryElems)->execute($type['uuid'])->fetchAllAssoc();
+            $elements = [];
+            foreach ($arrElems as $elem) {
+                $childElements = [];
+                if ($elem['showcaseIds'] && $type['showLinkedElements']) {
+                    foreach (unserialize($elem['showcaseIds']) as $showcaseId) {
+                        $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
+                                                WHERE elem.uuid = ?' . $strPublishedElem;
+                        $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
+                        $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true);
+                    }
+                }
+                $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true);
+            }
+            $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
+            $singleType = [
+                'pid' => $objDataLayer->id,
+                'id' => $type['uuid'],
+                'name' => $type['name'],
+                'hideInStarboard' => $hideInStarboard,
+                'childs' => $elements,
+                'zoomTo' => true,
+            ];
+            if ($elements) {
+                $types[] = array_merge($dataLayer, $singleType);
+            }
+        }
+        $dataLayer['childs'] = $types;
+        $event->setLayerData($dataLayer);
+    }
     public function onLoadLayersLoadDirectories(
         LoadLayersEvent $event,
         $eventName,
@@ -160,11 +225,12 @@ class LoadLayersListener
                     }
                     $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true);
                 }
+                $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
                 $singleType = [
                     'pid' => $directory->uuid,
                     'id' => $type['uuid'],
                     'name' => $type['name'],
-                    'hideInStarboard' => false,
+                    'hideInStarboard' => $hideInStarboard,
                     'childs' => $elements,
                     'zoomTo' => true,
                 ];
@@ -191,9 +257,11 @@ class LoadLayersListener
                 $directories[] = array_merge($dataLayer, $singleDir);
             }
         }
+        $directories = array_unique($directories);
         $dataLayer['childs'] = $directories;
         $event->setLayerData($dataLayer);
     }
+
     private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false)
     {
         $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type 

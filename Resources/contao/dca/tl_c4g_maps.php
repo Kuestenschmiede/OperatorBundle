@@ -19,10 +19,12 @@ $cbClass = MapsCallback::class;
 //ToDo map implementation
 $GLOBALS['c4g_locationtypes'][] = 'gutes';
 $GLOBALS['c4g_locationtypes'][] = 'gutesElem';
+$GLOBALS['c4g_locationtypes'][] = 'gutesPart';
 
 
-$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutes'] = "{general_legend},name,location_type,directories,types;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
+$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutes'] = "{general_legend},name,location_type,types;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
 $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesElem'] = "{general_legend},name,location_type;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,locstyle,areaLocstyle,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
+$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesPart'] = "{general_legend},name,location_type;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,locstyle,areaLocstyle,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
 
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['aliasSite'] =
     [
@@ -56,6 +58,14 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['types'] =
         ],
         'sql' => "blob NULL",
     ];
+$GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['skipTypes'] =
+    [
+        'exclude'                 => true,
+        'default'                 => '',
+        'inputType'               => 'checkbox',
+        'sql'                     => "char(1) NOT NULL default ''"
+    ];
+
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['areaLocstyle'] =
     [
         'exclude'                 => true,

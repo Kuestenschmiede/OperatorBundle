@@ -20,7 +20,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
     'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals;' .
-    '{showcase_filter_legend},gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter;';
+    '{showcase_filter_legend},gutesio_initial_sorting,gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_0'] = '';
@@ -162,6 +162,17 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_details'] = [
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr'],
     'sql'                     => "char(1) NOT NULL default '1'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_initial_sorting'] = [
+    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'],
+    'exclude'                 => true,
+    'default'                 => "random",
+    'inputType'               => 'radio',
+    'options'                 => ['random', 'name_asc', 'name_desc', 'tstamp_desc', 'distance'],
+    'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option'],
+    'sql'                     => "char(15) NOT NULL default 'random'",
+    'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_enable_filter'] = [

@@ -24,6 +24,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_render_searchHtml'] = ['Create HT
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_limit'] = ['Loading steps', 'Determines how many records are loaded in each request (default: 30).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_max_data'] = ['Maximum number of records', 'Determines the maximum number of records displayed in the list (0 means no limit).'];
 
+$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initial sort', 'Changes the initial sort (default: random).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Activate filter', 'Activates the filter above the list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_change_layout_filter'] = ['Change layout of the list after filtering', 'Set this checkbox if you want the list to change its layout after a filter input has been made.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layout_filter'] = ['Layout of the list after filtering', 'Determines in which layout the list is displayed after filter input.'];
@@ -51,6 +52,12 @@ $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Generic settings';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Load settings';
 $GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter settings';
 $GLOBALS['TL_LANG']['tl_module']['showcase_tag_filter_legend'] = 'Tag filter settings';
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'random';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_asc'] = 'ascending';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_desc'] = 'descending';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['tstamp_desc'] = 'newest';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['distance'] = 'disctance';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['0'] = 'Load all showcases';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['1'] = 'Load by categories';

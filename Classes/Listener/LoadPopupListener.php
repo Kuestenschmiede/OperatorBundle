@@ -117,7 +117,7 @@ class LoadPopupListener
         }
         if ($element['website']) {
             $website = $element['website'];
-            $contacts .= "<a class='entry-content contact-phone' title='Website von $name' href='$website'>
+            $contacts .= "<a class='entry-content contact-website' title='Website von $name' href='$website'>
                             <i class='fas fa-external-link-square-alt'></i>
                         </a>";
         }

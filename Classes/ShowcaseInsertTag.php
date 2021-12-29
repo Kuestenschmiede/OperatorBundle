@@ -12,6 +12,7 @@ namespace gutesio\OperatorBundle\Classes;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
+use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 /**
  * Class ShowcaseInsertTag
@@ -21,7 +22,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'image','imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'link', 'image', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     //ToDO -> Core
     private function isBinary($str)
@@ -71,12 +72,19 @@ class ShowcaseInsertTag
     public function replaceShowcaseTags(string $insertTag)
     {
         $arrTags = explode('::', $insertTag);
-        if (count($arrTags) === 2 &&
-            $arrTags[0] === self::TAG &&
-            in_array($arrTags[1], self::TAG_PAYLOAD)
+        if (
+            (count($arrTags) === 2 && ($arrTags[0] === self::TAG) && (in_array($arrTags[1], self::TAG_PAYLOAD)) ) ||
+            (count($arrTags) === 3 && ($arrTags[0] === self::TAG) && (in_array($arrTags[2], self::TAG_PAYLOAD)) )
         ) {
             // get alias
-            $alias = $this->getAlias();
+            if (count($arrTags) === 3) {
+                $alias = $arrTags[1];
+                $field = $arrTags[2];
+            } else {
+                $alias = $this->getAlias();
+                $field = $arrTags[1];
+            }
+
             $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ?')
                 ->execute($alias);
             $arrShowcase = $objShowcase->fetchAssoc();
@@ -89,9 +97,15 @@ class ShowcaseInsertTag
                 )->execute('{' . $alias . '}')->fetchAssoc();
             }
             if ($arrShowcase) {
-                switch ($arrTags[1]) {
+                switch ($field) {
                     case 'name':
                         return html_entity_decode($arrShowcase['name']);
+                    case 'link':
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $showcaseUrl = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
+                        $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $alias;
+
+                        return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';
                     case 'image':
                         $uuid = $arrShowcase['imageShowcase'];
                         if ($this->isBinary($uuid)) {

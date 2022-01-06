@@ -54,7 +54,7 @@ $GLOBALS['TL_DCA'][$strName] = [
         ],
         'gutesIoKey' => [
             'exclude'                 => true,
-            'inputType'               => 'password',
+            'inputType'               => 'text',
             'eval'                    => ['mandatory' => true, 'maxlength' => 32, 'doNotSaveEmpty' => true],
             'load_callback'           => [[$cbClass, 'loadIoKey']],
             'save_callback'           => [[$cbClass, 'saveIoKey']]

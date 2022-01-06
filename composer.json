@@ -25,7 +25,7 @@
   "require": {
     "contao/core-bundle": "^4.9",
     "gutesio/data-model": "^1.0.25",
-    "con4gis/maps": "^v8.0.37"
+    "con4gis/maps": "^v8.0.38"
   },
   "conflict": {
     "contao/core": "*",

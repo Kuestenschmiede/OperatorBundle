@@ -257,7 +257,8 @@ class LoadLayersListener
                 $directories[] = array_merge($dataLayer, $singleDir);
             }
         }
-        $directories = array_unique($directories);
+        //ToDO doesn't work with default settings
+        //$directories = array_unique($directories);
         $dataLayer['childs'] = $directories;
         $event->setLayerData($dataLayer);
     }

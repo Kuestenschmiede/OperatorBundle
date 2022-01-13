@@ -18,7 +18,7 @@ $cbClass = \gutesio\OperatorBundle\Classes\Callback\GutesioOperatorSettingCallba
 
 $GLOBALS['TL_DCA'][$strName] = [
     'config' => [
-        'label' => $GLOBALS['TL_LANG']['MOD'][$strName][0],
+        'label' => &$GLOBALS['TL_LANG']['MOD'][$strName][0],
         'dataContainer' => 'Table',
         'enableVersioning' => false,
         'notDeletable' => true,

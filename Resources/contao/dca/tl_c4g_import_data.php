@@ -12,7 +12,6 @@ if ($packages['gutesio/operator']) {
     $GLOBALS['TL_DCA']['tl_c4g_import_data']['fields']['type'] = array
     (
         'sql'                     => "varchar(255) NOT NULL",
-        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_import_data']['type'],
         'inputType'               => 'select',
         'options'                 => array(
             'demo'                  => &$GLOBALS['TL_LANG']['tl_c4g_import_data']['type_demo'],
@@ -27,7 +26,6 @@ if ($packages['gutesio/operator']) {
     $GLOBALS['TL_DCA']['tl_c4g_import_data']['fields']['source'] = array
     (
         'sql'                     => "varchar(255) NOT NULL",
-        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_import_data']['source'],
         'inputType'               => 'select',
         'options'                 => array(
             'locale'                => &$GLOBALS['TL_LANG']['tl_c4g_import_data']['source_locale'],

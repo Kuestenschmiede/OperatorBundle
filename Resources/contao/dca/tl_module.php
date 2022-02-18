@@ -74,7 +74,6 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend}
 
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
-    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode'],
     'exclude'                 => true,
     'default'                 => "0",
     'inputType'               => 'radio',
@@ -85,7 +84,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_type'] = [
-    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_type'],
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTypeOptions"],
@@ -94,7 +92,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_type'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_directory'] = [
-    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_directory'],
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getDirectoryOptions"],
@@ -104,7 +101,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_directory'] = [
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_tags'] = [
     'default'                 => null,
-    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_tags'],
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
@@ -120,7 +116,6 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_restrict_postals'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_blocked_types'] = [
-    'label'                   => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_blocked_types'],
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTypeOptions"],

@@ -12,7 +12,6 @@ if ($packages['gutesio/operator']) {
 
     $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['syncDataAutomaticly'] = array
     (
-        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_settings']['syncDataAutomaticly'],
         'exclude'                 => true,
         'default'                 => true,
         'inputType'               => 'checkbox',
@@ -22,7 +21,6 @@ if ($packages['gutesio/operator']) {
 
     $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['updateSearchIndex'] = array
     (
-        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_settings']['updateSearchIndex'],
         'exclude'                 => true,
         'default'                 => true,
         'inputType'               => 'checkbox',
@@ -32,7 +30,6 @@ if ($packages['gutesio/operator']) {
 
     $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['deleteSearchIndex'] = array
     (
-        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_settings']['deleteSearchIndex'],
         'exclude'                 => true,
         'default'                 => true,
         'inputType'               => 'checkbox',

@@ -155,3 +155,8 @@ services:
       class: gutesio\OperatorBundle\Classes\Listener\LoadMapDataListener
       tags:
         - { name: kernel.event_listener, event: maps.mapdata.load, method: onLoadMapDataDoIt, priority: 6900 }
+
+    gutesio.sitemaplistener:
+      class: gutesio\OperatorBundle\Classes\Listener\SitemapListener
+      tags:
+        - { name: kernel.event_listener, event: contao.sitemap, method: onCreateSitemap, priority: 1024 }

@@ -1,8 +1,5 @@
 <?php
 
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\gutesio\OperatorBundle\Controller\ShowcaseListModuleController::class, 'onGetSearchablePages'];
-$GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\gutesio\OperatorBundle\Controller\OfferListModuleController::class, 'onGetSearchablePages'];
-
 $GLOBALS['gutesio']['api-caching'] = ["showcaseList"];
 
 $modules = [

@@ -20,8 +20,6 @@ use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\MultiCheckboxWithImageLabelFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RadioGroupFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RequestTokenFormField;
-use con4gis\FrameworkBundle\Classes\FormFields\SelectFormField;
-use con4gis\FrameworkBundle\Classes\FormFields\TextAreaFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\TextFormField;
 use con4gis\FrameworkBundle\Classes\Forms\Form;
 use con4gis\FrameworkBundle\Classes\Forms\ToggleableForm;
@@ -31,13 +29,11 @@ use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
-use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Config;
 use Contao\Controller;
@@ -789,54 +785,5 @@ class OfferListModuleController extends AbstractFrontendModuleController
             ];
         }
         return $links;
-    }
-
-    public function onGetSearchablePages(array $pages, int $rootId = null, bool $isSitemap = false, string $language = null): array
-    {
-        $db = Database::getInstance();
-        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
-            'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
-            'where c.published = 1')->execute()->fetchAllAssoc();
-
-        foreach ($result as $row) {
-            switch ($row['type']) {
-                case 'product':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $page = $objSettings->productDetailPage;
-                    break;
-                case 'event':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $page = $objSettings->eventDetailPage;
-                    break;
-                case 'job':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $page = $objSettings->jobDetailPage;
-                    break;
-                case 'arrangement':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $page = $objSettings->arrangementDetailPage;
-                    break;
-                case 'service':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $page = $objSettings->serviceDetailPage;
-                    break;
-                default:
-                    continue 2;
-            }
-            $parents = PageModel::findParentsById($page);
-            if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
-                continue;
-            }
-            $url = Controller::replaceInsertTags("{{link_url::" . $page . "}}");
-            $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
-            if (C4GUtils::endsWith($url, '.html')) {
-                $url = str_replace('.html', '/' . $alias . '.html', $url);
-            } else {
-                $url = $url . '/' . $alias;
-            }
-            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
-        }
-
-        return $pages;
     }
 }

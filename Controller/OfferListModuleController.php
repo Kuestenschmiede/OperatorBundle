@@ -498,7 +498,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     protected function getFullTextTileFields(): array
     {
-        $settings = C4gSettingsModel::findSettings();
         $fields = [];
 
         $field = new ImageTileField();

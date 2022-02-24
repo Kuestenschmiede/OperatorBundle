@@ -591,7 +591,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             'distance' => $this->languageRefs['filter']['sorting']['distance']
         ]);
         $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
-        $sortFilter->setChecked("random");
+        $sortFilter->setChecked($this->model->gutesio_initial_sorting);
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
         $fields[] = $sortFilter;
         

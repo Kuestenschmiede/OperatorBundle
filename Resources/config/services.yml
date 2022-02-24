@@ -106,6 +106,12 @@ services:
         - { name: kernel.event_listener, event: maps.layers.load, method: onLoadLayersLoadElement, priority: 42070 }
       arguments:
         - "@con4gis.layer_service"
+    gutesio.onLoadLayersLoadPart:
+      class: gutesio\OperatorBundle\Classes\Listener\LoadLayersListener
+      tags:
+        - { name: kernel.event_listener, event: maps.layers.load, method: onLoadLayersLoadPart, priority: 42071 }
+      arguments:
+        - "@con4gis.layer_service"
     gutesio.onLoadPopupDoIt:
       class: gutesio\OperatorBundle\Classes\Listener\LoadPopupListener
       tags:

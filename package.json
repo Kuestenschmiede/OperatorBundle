@@ -9,17 +9,17 @@
     "build-dev": "webpack --config webpack.development.config.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/plugin-proposal-class-properties": "^7.16.0",
+    "@babel/core": "^7.16.7",
+    "@babel/plugin-proposal-class-properties": "^7.16.7",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
-    "@babel/plugin-syntax-jsx": "^7.16.0",
-    "@babel/plugin-transform-modules-commonjs": "^7.16.0",
-    "@babel/plugin-transform-react-jsx": "^7.16.0",
-    "@babel/plugin-transform-runtime": "^7.16.0",
+    "@babel/plugin-syntax-jsx": "^7.16.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.16.7",
+    "@babel/plugin-transform-react-jsx": "^7.16.7",
+    "@babel/plugin-transform-runtime": "^7.16.7",
     "@babel/polyfill": "^7.12.1",
-    "@babel/preset-env": "^7.16.0",
-    "@babel/preset-react": "^7.16.0",
-    "@babel/runtime": "^7.16.0",
+    "@babel/preset-env": "^7.16.7",
+    "@babel/preset-react": "^7.16.7",
+    "@babel/runtime": "^7.16.7",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "babel-loader": "^8.2.3",
     "bootstrap": "^4.6.1",
@@ -47,7 +47,7 @@
     "clean-webpack-plugin": "^4.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
-    "terser-webpack-plugin": "^5.2.5",
-    "webpack": "^5.62.2"
+    "terser-webpack-plugin": "^5.3.0",
+    "webpack": "^5.65.0"
   }
 }

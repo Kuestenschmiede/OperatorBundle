@@ -589,6 +589,8 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
             if ($row['foreignLink']) {
                 $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
             }
+
+            $row['name'] = html_entity_decode($row['name']);
             $childRows[$key] = $row;
         }
 

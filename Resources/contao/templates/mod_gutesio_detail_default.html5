@@ -595,7 +595,7 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php if (isset($outputPhone) && !empty($outputPhone)): ?>
                                     <span class="entry-content phone phone-stationary" itemprop="phone">
-                                <a href="tel:<?= str_replace(" ", "", $outputPhone) ?>"
+                                <a href="tel:<?= str_replace(" ", "", str_replace("/", "", $outputPhone)) ?>"
                                    title="Festnetz-Telefonnummer"><?= $outputPhone ?></a>
                             </span>
                                 <?php endif; ?>
@@ -611,7 +611,7 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php if (isset($outputMobilePhone) && !empty($outputMobilePhone)): ?>
                                     <span class="entry-content phone phone-mobile" itemprop="phone">
-                                <a href="tel:<?= str_replace(" ", "", $outputMobilePhone) ?>"
+                                <a href="tel:<?= str_replace(" ", "", str_replace("/", "", $outputMobilePhone)) ?>"
                                    title="Mobile Telefonnummer"><?= $outputMobilePhone ?></a>
                             </span>
                                 <?php endif; ?>

@@ -37,7 +37,8 @@ class GutesioModuleCallback
 
     public function getDirectoryOptions()
     {
-        $arrDirectories = GutesioDataDirectoryModel::findAll()->fetchAll();
+        $arrDirectories = GutesioDataDirectoryModel::findAll();
+        $arrDirectories = $arrDirectories ? $arrDirectories->fetchAll() : [];
         $options = [];
         foreach ($arrDirectories as $directory) {
             $options[$directory['uuid']] = $directory['name'];
@@ -48,7 +49,8 @@ class GutesioModuleCallback
 
     public function getTypeOptions()
     {
-        $arrTypes = GutesioDataTypeModel::findAll()->fetchAll();
+        $arrTypes = GutesioDataTypeModel::findAll();
+        $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];
         $options = [];
         foreach ($arrTypes as $type) {
             $options[$type['uuid']] = $type['name'];
@@ -99,7 +101,8 @@ class GutesioModuleCallback
 
     public function getCategoryOptions()
     {
-        $arrTypes = GutesioDataChildTypeModel::findAll()->fetchAll();
+        $arrTypes = GutesioDataChildTypeModel::findAll();
+        $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];
         $options = [];
         foreach ($arrTypes as $type) {
             $options[$type['uuid']] = $type['name'];

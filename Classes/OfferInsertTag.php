@@ -69,19 +69,27 @@ class OfferInsertTag
     public function replaceShowcaseTags(string $insertTag)
     {
         $arrTags = explode('::', $insertTag);
-        if (count($arrTags) === 2 &&
-            $arrTags[0] === self::TAG &&
-            in_array($arrTags[1], self::TAG_PAYLOAD)
+
+        if (
+            (count($arrTags) === 2 && ($arrTags[0] === self::TAG) && (in_array($arrTags[1], self::TAG_PAYLOAD)) ) ||
+            (count($arrTags) === 3 && ($arrTags[0] === self::TAG) && (in_array($arrTags[2], self::TAG_PAYLOAD)) )
         ) {
             // get alias
-            $alias = $this->getAlias();
+            if (count($arrTags) === 3) {
+                $alias = $arrTags[1];
+                $field = $arrTags[2];
+            } else {
+                $alias = $this->getAlias();
+                $field = $arrTags[1];
+            }
+
             $alias = '{' . strtoupper($alias) . '}';
             $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ?')
                 ->execute($alias);
             $arrOffer = $objOffer->fetchAllAssoc();
             if ($arrOffer) {
                 $arrOffer = $arrOffer[0];
-                switch ($arrTags[1]) {
+                switch ($field) {
                     case 'name':
                         return html_entity_decode($arrOffer['name']);
                     case 'description':
@@ -168,7 +176,7 @@ class OfferInsertTag
                                 }
                             }
 
-                            return html_entity_decode($metaDescription);
+                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
                         }
 
                         break;

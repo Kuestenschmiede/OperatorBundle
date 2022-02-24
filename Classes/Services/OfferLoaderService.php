@@ -98,6 +98,8 @@ class OfferLoaderService
         // data cleaning
         foreach ($results as $key => $result) {
             $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
+            $results[$key]['name'] = html_entity_decode($result['name']);
+
             if ($result['foreignLink']) {
                 // search for http to avoid prepending https to insecure links
                 if (strpos($result['foreignLink'], 'http') === false) {

@@ -634,9 +634,11 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $field->setClass("c4g-list-element__cart-link");
                 $field->setHref($cartPage->getFrontendUrl());
                 $field->setLinkText($this->languageRefs['frontend']['putInCart']);
-                $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-                $field->setConditionField('offerForSale');
-                $field->setConditionValue('1');
+                $field->setRenderSection(TileField::RENDERSECTION_FOOTER);;
+                $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+                $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+                $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+                $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
                 $fields[] = $field;
             }
         } else {
@@ -650,10 +652,11 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
             $field->addConditionalClass("in_cart", "in-cart");
             $field->setAsyncCall(true);
-            $field->setConditionField("not_in_cart");
-            $field->setConditionValue('1');
-            $field->setConditionField('offerForSale');
-            $field->setConditionValue('1');
+            $field->addCondition(new FieldValueCondition('not_in_cart', '1'));
+            $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+            $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+            $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+            $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
             $field->setAddDataAttributes(true);
             $field->setHookAfterClick(true);
             $field->setHookName("addToCart");
@@ -667,6 +670,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
             $field->addCondition(new FieldValueCondition('in_cart', '1'));
             $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+            $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+            $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+            $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
             $fields[] = $field;
         }
 

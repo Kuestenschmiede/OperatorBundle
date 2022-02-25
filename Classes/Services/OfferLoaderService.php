@@ -419,7 +419,7 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
+                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset
                 )->execute($parameters)->fetchAllAssoc();
             } else {
                 $parameters = [];
@@ -444,7 +444,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
-                ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?')
+                ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset)
                     ->execute(
                         $parameters
                     )->fetchAllAssoc();
@@ -472,7 +472,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
+                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset
             )->execute($parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
@@ -497,7 +497,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 WHERE a.published = 1 AND a.typeId ' . C4GUtils::buildInString($categories) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ? OFFSET ?'
+                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset
             )->execute($parameters)->fetchAllAssoc();
         }
 

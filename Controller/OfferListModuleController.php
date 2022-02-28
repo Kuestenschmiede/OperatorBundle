@@ -639,6 +639,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
                 $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
                 $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+                $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
                 $fields[] = $field;
             }
         } else {
@@ -657,6 +658,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
             $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
             $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+            $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
             $field->setAddDataAttributes(true);
             $field->setHookAfterClick(true);
             $field->setHookName("addToCart");
@@ -673,6 +675,20 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
             $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
             $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+            $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+            $fields[] = $field;
+
+            $field = new TextTileField();
+            $field->setName("uuid");
+            $field->setWrapperClass("c4g-list-element__cart-wrapper");
+            $field->setClass("c4g-list-element__cart-link not-available");
+            $field->setFormat('Zurzeit nicht verfügbar');
+            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+            $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+            $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+            $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+            $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+            $field->addCondition(new FieldValueCondition('availableAmount', '0'));
             $fields[] = $field;
         }
 

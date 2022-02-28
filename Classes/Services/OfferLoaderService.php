@@ -879,8 +879,9 @@ class OfferLoaderService
             switch ($row['type']) {
                 case 'product':
                     $productData = $database->prepare(
-                        'SELECT p.price, p.strikePrice, p.priceStartingAt, p.priceReplacer, p.tax as taxNote, ' .
-                        'p.discount, p.color, p.size FROM tl_gutesio_data_child_product p WHERE p.childId = ?'
+                        'SELECT p.price, p.strikePrice, p.priceStartingAt, p.priceReplacer, '.
+                        'p.tax as taxNote, p.discount, p.color, p.size, p.availableAmount '.
+                        'FROM tl_gutesio_data_child_product p WHERE p.childId = ?'
                     )->execute($row['uuid'])->fetchAssoc();
                     if (!empty($productData)) {
                         $productData['rawPrice'] = $productData['price'];

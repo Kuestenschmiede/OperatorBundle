@@ -11,23 +11,24 @@ namespace gutesio\OperatorBundle\Classes\Curl;
 
 class CurlPostRequest
 {
-    private $url = '';
-    private $postData = [];
-    private $headers = [];
+    private string $url = '';
+    private string|array $postData = [];
+    private array $headers = [];
+    private CurlResponse $response;
+    private string $user = '';
+    private string $password = '';
 
-    /**
-     * @var CurlResponse
-     */
-    private $response;
-
-    public function send()
+    public function send(): CurlResponse
     {
         $this->response = new CurlResponse();
         $curl = curl_init($this->url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER ,true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $this->postData);
+        if ($this->postData) {
+            curl_setopt($curl, CURLOPT_POSTFIELDS, $this->postData);
+        }
         curl_setopt($curl, CURLOPT_HEADERFUNCTION, [$this, 'setResponseHeader']);
+        curl_setopt($curl, CURLOPT_USERPWD, $this->user.':'.$this->password);
         if (!empty($this->headers)) {
             $headers = [];
             foreach($this->headers as $k => $v) {
@@ -43,32 +44,30 @@ class CurlPostRequest
         return $this->response;
     }
 
-    private function setResponseHeader($curl, $header)
+    private function setResponseHeader($curl, $header): int
     {
         $this->response->setHeader($header);
         return strlen($header);
     }
 
-    /**
-     * @param string $url
-     */
-    public function setUrl($url)
+    public function setUrl(string $url)
     {
         $this->url = $url;
     }
 
-    /**
-     * @param array $postData
-     */
-    public function setPostData($postData)
+    public function setPostData(string|array $postData)
     {
         $this->postData = $postData;
     }
-    /**
-     * @param array $headers
-     */
-    public function setHeaders($headers)
+
+    public function setHeaders(array $headers)
     {
         $this->headers = $headers;
+    }
+
+    public function setUser(string $user, string $password)
+    {
+        $this->user = $user;
+        $this->password = $password;
     }
 }

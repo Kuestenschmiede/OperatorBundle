@@ -17,9 +17,9 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['filterType'] = [
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['filterElements'] = [
         'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['filterElements'],
         'exclude'                 => true,
-        'inputType'               => 'checkbox',
+        'inputType'               => 'checkboxWizard',
         'options_callback'        => [$cbClass,'getFilterOptions'],
-        'eval'                    => ['mandatory'=>false, 'multiple'=>true],
+        'eval'                    => ['mandatory'=>false, 'multiple'=>true, 'helpwizard'=>false],
         'sql'                     => "blob NULL",
 ];
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['ownGeosearch'] = [

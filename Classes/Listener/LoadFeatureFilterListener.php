@@ -40,35 +40,63 @@ class LoadFeatureFilterListener
         $currentFilters = $event->getFilters();
 
         if ($filterHandling == 1) { //Filters with tags
-            $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1';
-            $tags = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
+            if ($filterElements) {
+                $arrFilterElems = unserialize($filterElements);
+                foreach ($arrFilterElems as $filterElem) {
+                    $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published=1 AND uuid=?';
+                    $tag = $this->Database->prepare($strSelect)->execute($filterElem)->fetchAssoc();
+                    $filterObject = new FeatureFilter();
+                    $filterObject->setFieldName($tag['name']);
 
-            foreach ($tags as $tag) {
-                if ($filterElements && !str_contains($filterElements, $tag['uuid'])) {
-                    continue;
+                    $imageUuid = StringUtil::binToUuid($tag['image']);
+                    $file = FilesModel::findByUuid($imageUuid);
+                    if ($file && $file->path) {
+                        $filterObject->setImage($file->path);
+                    }
+                    if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
+                        $filterObject->addFilterValue([
+                            'identifier' => $tag['uuid'],
+                            'translation' => $tag['name'],
+                            'value' => 'opening_hours',
+                            'field' => $tag['technicalKey'] === 'tag_opening_hours' ? 'opening_hours' : 'phoneHours',
+                        ]);
+                    } else {
+                        $filterObject->addFilterValue([
+                            'identifier' => $tag['uuid'],
+                            'translation' => $tag['name'],
+                        ]);
+                    }
+                    $currentFilters = array_merge($currentFilters, [$filterObject]);
                 }
-                $filterObject = new FeatureFilter();
-                $filterObject->setFieldName($tag['name']);
+            }
+            else {
+                $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1';
+                $tags = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
 
-                $imageUuid = StringUtil::binToUuid($tag['image']);
-                $file = FilesModel::findByUuid($imageUuid);
-                if ($file && $file->path) {
-                    $filterObject->setImage($file->path);
+                foreach ($tags as $tag) {
+                    $filterObject = new FeatureFilter();
+                    $filterObject->setFieldName($tag['name']);
+
+                    $imageUuid = StringUtil::binToUuid($tag['image']);
+                    $file = FilesModel::findByUuid($imageUuid);
+                    if ($file && $file->path) {
+                        $filterObject->setImage($file->path);
+                    }
+                    if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
+                        $filterObject->addFilterValue([
+                            'identifier' => $tag['uuid'],
+                            'translation' => $tag['name'],
+                            'value' => 'opening_hours',
+                            'field' => $tag['technicalKey'] === 'tag_opening_hours' ? 'opening_hours' : 'phoneHours',
+                        ]);
+                    } else {
+                        $filterObject->addFilterValue([
+                            'identifier' => $tag['uuid'],
+                            'translation' => $tag['name'],
+                        ]);
+                    }
+                    $currentFilters = array_merge($currentFilters, [$filterObject]);
                 }
-                if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
-                    $filterObject->addFilterValue([
-                        'identifier' => $tag['uuid'],
-                        'translation' => $tag['name'],
-                        'value' => 'opening_hours',
-                        'field' => $tag['technicalKey'] === 'tag_opening_hours' ? 'opening_hours': 'phoneHours',
-                    ]);
-                } else {
-                    $filterObject->addFilterValue([
-                        'identifier' => $tag['uuid'],
-                        'translation' => $tag['name'],
-                    ]);
-                }
-                $currentFilters = array_merge($currentFilters, [$filterObject]);
             }
         } elseif ($filterHandling == 2) { // filter with diretories and categories
             $modelMaps = C4gMapsModel::findOneBy('pid', $modelMaps->id); //ToDo

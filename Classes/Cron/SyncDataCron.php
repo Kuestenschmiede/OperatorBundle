@@ -19,9 +19,8 @@ class SyncDataCron
     public function onMinutely()
     {
         $db = Database::getInstance();
-        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
 
-        $c4gSettings = $memberData = $db->prepare('SELECT * FROM tl_c4g_settings')->execute()->fetchAssoc();
+        $c4gSettings = $db->prepare('SELECT * FROM tl_c4g_settings')->execute()->fetchAssoc();
         if ($c4gSettings['syncDataAutomaticly'] == 1) {
             $importData = $db->prepare('SELECT * FROM tl_c4g_import_data WHERE importRunning=1')->execute()->fetchAllAssoc();
             foreach ($importData as $import) {

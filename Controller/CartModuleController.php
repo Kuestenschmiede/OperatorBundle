@@ -82,10 +82,12 @@ class CartModuleController extends AbstractFrontendModuleController
             'bundles/gutesiooperator/dist/js/cart.js',
             ResourceLoader::HEAD
         );
+
+        $con4gisSettings = C4gSettingsModel::findSettings();
         
         if ($this->tokenChecker->hasFrontendUser()) {
             $template->getCartUrl = '/gutesio/operator/cart/items';
-            $template->cart_payment_url = $model->cart_payment_url;
+            $template->cart_payment_url = $con4gisSettings->con4gisIoUrl . '/cart.php';
             $template->cart_no_items_text = nl2br($model->cart_no_items_text);
         }
 

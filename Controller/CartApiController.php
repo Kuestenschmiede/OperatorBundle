@@ -9,15 +9,20 @@
  */
 namespace gutesio\OperatorBundle\Controller;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
-use con4gis\FrameworkBundle\Classes\FormButtons\SetDataButton;
 use Contao\CoreBundle\Controller\AbstractController;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\FrontendUser;
+use Contao\PageModel;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildModel;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
 use gutesio\OperatorBundle\Classes\Curl\CurlGetRequest;
 use gutesio\OperatorBundle\Classes\Curl\CurlPostRequest;
+use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -122,9 +127,34 @@ class CartApiController extends AbstractController
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             return $response;
         }
+        $settings = GutesioOperatorSettingsModel::findSettings();
+        $elementAlias = $request->request->get('elementId', '');
+        $elementAlias = strtolower(str_replace(['{', '}'], '', $elementAlias));
+        $showcaseLink = $this->findUrlFromPage($settings->showcaseDetailPage, $elementAlias);
+        $childId = $request->request->get('childId', '');
+        $childModel = GutesioDataChildModel::findByUuid($childId);
+        $childTypeModel = GutesioDataChildTypeModel::findBy('uuid', $childModel->typeId, ['return' => 'Model']);
+        $childLink = match ($childTypeModel->type) {
+            'product' => $settings->productDetailPage,
+            'voucher' => $settings->voucherDetailPage,
+            default => '',
+        };
+        $childAlias = $request->request->get('childId', '');
+        $childAlias = strtolower(str_replace(['{', '}'], '', $childAlias));
+        $childLink = $this->findUrlFromPage($childLink, $childAlias);
+
         $curlRequest = new CurlPostRequest();
         $curlRequest->setUrl($this->proxyUrl . '/' . self::ADD_CART_URL);
-        $curlRequest->setPostData(array_merge($request->request->all(), ['cartId' => $member->cartId]));
+        $curlRequest->setPostData(
+            array_merge(
+                $request->request->all(),
+                [
+                    'cartId' => $member->cartId,
+                    'showcaseLink' => $showcaseLink,
+                    'childLink' => $childLink
+                ]
+            )
+        );
         $curlResponse = $curlRequest->send();
         $response->setStatusCode((int) $curlResponse->getStatusCode());
         return $response;
@@ -146,6 +176,22 @@ class CartApiController extends AbstractController
             $response->setStatusCode(Response::HTTP_FORBIDDEN);
             return $response;
         }
+
+        $settings = GutesioOperatorSettingsModel::findSettings();
+        $childModel = GutesioDataChildModel::findByUuid($uuid);
+        $childTypeModel = GutesioDataChildTypeModel::findBy('uuid', $childModel->typeId, ['return' => 'Model']);
+        $childLink = match ($childTypeModel->type) {
+            'product' => $settings->productDetailPage,
+            'voucher' => $settings->voucherDetailPage,
+            default => '',
+        };
+        $childAlias = strtolower(str_replace(['{', '}'], '', $uuid));
+        $childLink = $this->findUrlFromPage((int) $childLink, $childAlias);
+
+        $elementModel = GutesioDataElementModel::findByChildModel($childModel);
+        $elementAlias = strtolower(str_replace(['{', '}'], '', $elementModel->uuid));
+        $showcaseLink = $this->findUrlFromPage((int) $settings->showcaseDetailPage, $elementAlias);
+
         $curlRequest = new CurlPostRequest();
         $curlRequest->setUrl($this->proxyUrl . '/' . self::ADD_CART_URL);
         $db = Database::getInstance();
@@ -157,7 +203,9 @@ class CartApiController extends AbstractController
             $postData = [
                 'cartId' => $member->cartId,
                 'childId' => $uuid,
-                'elementId' => $elementId
+                'elementId' => $elementId,
+                'elementLink' => $showcaseLink,
+                'childLink' => $childLink
             ];
             $curlRequest->setPostData($postData);
             $curlResponse = $curlRequest->send();
@@ -230,5 +278,16 @@ class CartApiController extends AbstractController
         $curlResponse = $curlRequest->send();
         $response->setStatusCode((int) $curlResponse->getStatusCode());
         return $response;
+    }
+
+    private function findUrlFromPage(int $pageId, string $alias) : string
+    {
+        $pageModel = PageModel::findByPk($pageId);
+        $url = $pageModel->getAbsoluteUrl();
+        if (C4GUtils::stringContains($url, '.html')) {
+            return str_replace('.html', "/$alias.html", $url);
+        } else {
+            return $url.'/'.$alias;
+        }
     }
 }

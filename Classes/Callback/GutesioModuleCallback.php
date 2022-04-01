@@ -121,7 +121,7 @@ class GutesioModuleCallback
 
         if ($dc->id) {
             $objDc = ModuleModel::findByPk($dc->id);
-            $type = $objDc->type;
+            $type = $objDc ? $objDc->type : [];
             if (in_array($type, $listModuleTypes)) {
                 $message = '';
                 if ($type !== 'showcase_carousel_module') {

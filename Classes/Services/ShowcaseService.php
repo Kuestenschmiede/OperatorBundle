@@ -168,10 +168,12 @@ class ShowcaseService
         $tagIds = [],
         $restrictedPostals = []
     ) {
-        $searchString = $params['filter'] ?: '';
-        $sorting = $params['sorting'] ?: '';
-        $randKey = $params['randKey'];
-        $position = explode(',', $params['pos']);
+        if ($params && is_array($params)) {
+            $searchString = key_exists('filter',$params) ? $params['filter'] : '';
+            $sorting = key_exists('sorting',$params) ? $params['sorting'] : '';
+            $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
+            $position = key_exists('pos',$params) ? explode(',', $params['pos']) : '';
+        }
         $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
         if ($this->checkForCacheFile($key)) {
             $arrIds = $this->getDataFromCache($key);

@@ -226,7 +226,8 @@ class Article extends React.Component {
                   <div className="cart__article-detail">
                     <div className="cart__article-name">
                       <a href={this.props.article.href}
-                         target={"_blank"}>
+                         target={"_blank"}
+                         rel={"noopener norefferer"}>
                         {this.props.article.name}
                       </a>
                     </div>
@@ -477,7 +478,9 @@ class Cart extends React.Component {
           <div key={vIndex} className={"card vendor-card mb-4"}>
             <div className={"card-header"}>
               <div className={"card-header__title"}>
-                {vendor.name}
+                <a href={vendor.elementLink} target={"_blank"} rel={'noopener noreferrer'}>
+                  {vendor.name}
+                </a>
               </div>
 
               <div className="card-header__image">

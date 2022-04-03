@@ -134,6 +134,8 @@ class CartApiController extends AbstractController
         $childId = $request->request->get('childId', '');
         $childModel = GutesioDataChildModel::findByUuid($childId);
         $childTypeModel = GutesioDataChildTypeModel::findBy('uuid', $childModel->typeId, ['return' => 'Model']);
+
+        //php >=8.0 stuff
         $childLink = match ($childTypeModel->type) {
             'product' => $settings->productDetailPage,
             'voucher' => $settings->voucherDetailPage,

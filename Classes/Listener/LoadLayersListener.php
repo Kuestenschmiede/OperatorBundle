@@ -119,7 +119,10 @@ class LoadLayersListener
         $objTypes = [];
         if ($configuredTypes) {
             foreach($configuredTypes as $type) {
-                $objTypes[] = GutesioDataTypeModel::findOneBy('uuid', $type);
+                $tempType = GutesioDataTypeModel::findOneBy('uuid', $type);
+                if ($tempType) {
+                    $objTypes[] = $tempType;
+                }
             }
         }
         else {
@@ -189,7 +192,10 @@ class LoadLayersListener
         if ($configuredDirectories) {
             $objDirectories = [];
             foreach ($configuredDirectories as $configuredDirectory) {
-                $objDirectories[] = GutesioDataDirectoryModel::findOneBy('uuid', $configuredDirectory);
+                $tempDirs = GutesioDataDirectoryModel::findOneBy('uuid', $configuredDirectory);
+                if ($tempDirs) {
+                    $objDirectories[] = $tempDirs;
+                }
             }
         } else {
             $objDirectories = GutesioDataDirectoryModel::findAll($arrOptions);

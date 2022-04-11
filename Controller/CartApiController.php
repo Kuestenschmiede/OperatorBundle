@@ -130,6 +130,10 @@ class CartApiController extends AbstractController
         $settings = GutesioOperatorSettingsModel::findSettings();
         $elementId = $request->request->get('elementId', '');
         $elementModel = GutesioDataElementModel::findByUuid($elementId);
+        if ($elementModel === null) {
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return $response;
+        }
         $elementAlias = $elementModel->alias;
         $showcaseLink = $this->findUrlFromPage($settings->showcaseDetailPage, $elementAlias);
         $childId = $request->request->get('childId', '');
@@ -162,7 +166,7 @@ class CartApiController extends AbstractController
         $response->setStatusCode((int) $curlResponse->getStatusCode());
         return $response;
     }
-    
+
     /**
      * @Route(
      *     "/gutesio/operator/cart/add/{uuid}",
@@ -193,6 +197,10 @@ class CartApiController extends AbstractController
         $childLink = $this->findUrlFromPage((int) $childLink, $childAlias);
 
         $elementModel = GutesioDataElementModel::findByChildModel($childModel);
+        if ($elementModel === null) {
+            $response->setStatusCode(Response::HTTP_BAD_REQUEST);
+            return $response;
+        }
         $elementAlias = $elementModel->alias;
         $showcaseLink = $this->findUrlFromPage((int) $settings->showcaseDetailPage, $elementAlias);
 

@@ -128,8 +128,9 @@ class CartApiController extends AbstractController
             return $response;
         }
         $settings = GutesioOperatorSettingsModel::findSettings();
-        $elementAlias = $request->request->get('elementId', '');
-        $elementAlias = strtolower(str_replace(['{', '}'], '', $elementAlias));
+        $elementId = $request->request->get('elementId', '');
+        $elementModel = GutesioDataElementModel::findByUuid($elementId);
+        $elementAlias = $elementModel->alias;
         $showcaseLink = $this->findUrlFromPage($settings->showcaseDetailPage, $elementAlias);
         $childId = $request->request->get('childId', '');
         $childModel = GutesioDataChildModel::findByUuid($childId);
@@ -192,7 +193,7 @@ class CartApiController extends AbstractController
         $childLink = $this->findUrlFromPage((int) $childLink, $childAlias);
 
         $elementModel = GutesioDataElementModel::findByChildModel($childModel);
-        $elementAlias = strtolower(str_replace(['{', '}'], '', $elementModel->uuid));
+        $elementAlias = $elementModel->alias;
         $showcaseLink = $this->findUrlFromPage((int) $settings->showcaseDetailPage, $elementAlias);
 
         $curlRequest = new CurlPostRequest();

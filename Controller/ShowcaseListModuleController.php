@@ -84,7 +84,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
         }
         if ($this->alias !== "") {
-            throw new RedirectResponseException($this->pageUrl);
+            return new Response();
         }
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js", ResourceLoader::JAVASCRIPT, "c4g-all");

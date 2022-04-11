@@ -169,6 +169,7 @@ class CartApiController extends AbstractController
      *     methods={"POST"}
      * )
      * @param Request $request
+     * @param string $uuid
      * @return JsonResponse
      */
     public function addCartItemWithUuid(Request $request, string $uuid) : JsonResponse {

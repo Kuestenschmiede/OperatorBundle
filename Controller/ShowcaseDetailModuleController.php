@@ -152,6 +152,9 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             }
         } else {
+            if (C4GUtils::endsWith($this->pageUrl, $redirectUrl)) {
+                return new Response();
+            }
             throw new RedirectResponseException($redirectUrl);
         }
         

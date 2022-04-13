@@ -1137,10 +1137,10 @@ class OfferLoaderService
                     if ($nextDateTime) {
                         $eventData['nextDate'] = $nextDateTime->format('d.m.Y');
                     }
-                    if ($eventData['beginTime'] !== null) {
+                    if ($eventData['beginTime']) {
                         $eventData['beginTime'] = gmdate('H:i', $eventData['beginTime']) . ' Uhr'; //ToDo
                     }
-                    if ($eventData['endTime'] !== null) {
+                    if ($eventData['endTime']) {
                         $eventData['endTime'] = gmdate('H:i', $eventData['endTime']);
                     }
                     if ($eventData['beginDate'] === '01.01.1970') {

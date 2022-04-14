@@ -463,9 +463,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $arrOffers = [];
         foreach ($arrOfferElements as $element) {
             $offer = [];
-            $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
-            if ($model) {
-                $offer['imageList'] = $converter->createFileDataFromModel($model);
+            if (is_string($element['imageOffer'])) {
+                $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
+                if ($model) {
+                    $offer['imageList'] = $converter->createFileDataFromModel($model);
+                }
             }
             $vendorUuid = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ? LIMIT 1")
                 ->execute($element['uuid'])->fetchAssoc();

@@ -18,14 +18,10 @@ use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ListTypeTileFields\ListTypeModalButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
-use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
@@ -38,7 +34,6 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -348,6 +343,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $fields[] = $field;
         
         $showcaseUrl = str_replace($urlSuffix, "", $showcaseUrl);
+
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
@@ -364,12 +360,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$productUrl/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($productUrl."/uuid" . $urlSuffix);
+        $field->setHrefFields(["uuid"]);
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("product");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
     
         $eventUrl = str_replace($urlSuffix, "", $eventUrl);
@@ -377,12 +373,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$eventUrl/uuid" . $urlSuffix);
+        $field->setHref($eventUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("event");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
     
         $jobUrl = str_replace($urlSuffix, "", $jobUrl);
@@ -390,12 +386,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$jobUrl/uuid" . $urlSuffix);
+        $field->setHref($jobUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("job");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
     
         $arrangementUrl = str_replace($urlSuffix, "", $arrangementUrl);
@@ -403,12 +399,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$arrangementUrl/uuid" . $urlSuffix);
+        $field->setHref($arrangementUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("arrangement");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
         
         $field = new LinkButtonTileField();
@@ -484,7 +480,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
 
             $offer['internal_type'] = $element['internal_type'];
-            $offer['uuid'] = $element['uuid'];
+            //$offer['uuid'] = $element['uuid'];
+            $offer['uuid'] = strtolower(str_replace(['{', '}'], '', $element['uuid']));
             $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
             $offer['types'] = $type['name'];
             $offer['alias'] = $element['alias'];

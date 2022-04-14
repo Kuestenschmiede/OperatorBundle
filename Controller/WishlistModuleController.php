@@ -476,10 +476,15 @@ class WishlistModuleController extends AbstractFrontendModuleController
             
             $vendor = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?")
                 ->execute($vendorUuid['elementId'])->fetchAssoc();
-            $offer['vendor'] = $vendor['name'];
-            $offer['name'] = $element['name'];
+            $offer['vendor'] = html_entity_decode($vendor['name']);
+            $offer['name'] = html_entity_decode($element['name']);
+
+            //hotfix special char
+            $offer['vendor'] = str_replace('&#39;', "'", $offer["vendor"]);
+            $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
+
             $offer['internal_type'] = $element['internal_type'];
-            $offer['uuid'] = str_replace(["{", "}"], ["", ""], $element['uuid']);
+            $offer['uuid'] = $element['uuid'];
             $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
             $offer['types'] = $type['name'];
             $offer['alias'] = $element['alias'];

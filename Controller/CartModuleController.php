@@ -63,10 +63,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class CartModuleController extends AbstractFrontendModuleController
 {
-    /**
-     * @var TokenChecker $tokenChecker
-     */
-    private $tokenChecker;
+    private TokenChecker $tokenChecker;
     
     public function __construct(
         ContaoFramework $framework,

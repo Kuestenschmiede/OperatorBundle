@@ -9,6 +9,7 @@
  */
 namespace gutesio\OperatorBundle\Classes;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
@@ -19,46 +20,6 @@ class OfferInsertTag
     const TAG = 'offer';
 
     const TAG_PAYLOAD = ['description', 'firstGalleryImage', 'name', 'meta', 'canonical'];
-
-    //ToDO -> Core
-    private function isBinary($str)
-    {
-        $umlauts = explode(',', 'Ŕ,Á,Â,Ă,Ä,Ĺ,Ç,Č,É,Ę,Ë,Ě,Í,Î,Ď,Ň,Ó,Ô,Ő,Ö,Ř,Ů,Ú,Ű,Ü,Ý,ŕ,á,â,ă,ä,ĺ,ç,č,é,ę,ë,ě,í,î,ď,đ,ň,ó,ô,ő,ö,ř,ů,ú,ű,ü,ý,˙,Ń,ń,ß');
-        foreach ($umlauts as $umlaut) {
-            if (false !== (strpos($str, $umlaut))) {
-                return false;
-            }
-        }
-
-        if (preg_match('~[^\x20-\x7E\t\r\n]~', $str) > 0) {
-            return preg_match('~[^\x20-\x7E\t\r\n]~', $str) > 0;
-        }
-    }
-
-    //ToDO -> Core
-    private function truncate($text, $length)
-    {
-        $text = str_replace('><', '> <', $text);
-        $text = strip_tags($text);
-        $text = htmlspecialchars($text, ENT_QUOTES, 'utf-8');
-        $length = abs((int) $length);
-        $firstFullstop = strpos($text, '.');
-        if ($firstFullstop && $firstFullstop <= ($length - 1)) {
-            for ($i = 0, $j = strlen($text); $i < $j; $i++) {
-                if ((strstr('.', $text[$i])) && ($i <= ($length - 1))) {
-                    $firstFullstop = $i;
-                }
-            }
-
-            return substr($text, 0, $firstFullstop + 1);
-        }
-
-        if (strlen($text) > $length) {
-            $text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
-        }
-
-        return($text);
-    }
 
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
@@ -93,12 +54,12 @@ class OfferInsertTag
                     case 'name':
                         return html_entity_decode($arrOffer['name']);
                     case 'description':
-                        return $this->truncate($arrOffer['description'], 150);
+                        return C4GUtils::truncate($arrOffer['description'], 150);
                     case 'firstGalleryImage':
                         $arrBin = StringUtil::deserialize($arrOffer['imageGallery']);
 
                         $uuid = $arrBin[0];
-                        if ($this->isBinary($uuid)) {
+                        if (C4GUtils::isBinary($uuid)) {
                             $uuid = StringUtil::binToUuid($uuid);
                         }
 
@@ -110,7 +71,7 @@ class OfferInsertTag
 
                             //replace image dummy
                             $uuid = $arrOffer['imageOffer']; //ToDo Test
-                            if ($this->isBinary($uuid)) {
+                            if (C4GUtils::isBinary($uuid)) {
                                 $uuid = StringUtil::binToUuid($uuid);
                             }
                             $image = Controller::replaceInsertTags("{{file::$uuid}}");
@@ -140,7 +101,7 @@ class OfferInsertTag
                                 if ($objShowcase) {
                                     //replace logo dummy
                                     $uuid = $objShowcase['logo'];
-                                    if ($this->isBinary($uuid)) {
+                                    if (C4GUtils::isBinary($uuid)) {
                                         $uuid = StringUtil::binToUuid($uuid);
                                     }
                                     $logo = Controller::replaceInsertTags("{{file::$uuid}}");
@@ -153,7 +114,7 @@ class OfferInsertTag
 
                                     //replace image dummy
                                     $uuid = $objShowcase['imageList'];
-                                    if ($this->isBinary($uuid)) {
+                                    if (C4GUtils::isBinary($uuid)) {
                                         $uuid = StringUtil::binToUuid($uuid);
                                     }
                                     $image = Controller::replaceInsertTags("{{file::$uuid}}");

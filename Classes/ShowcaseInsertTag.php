@@ -9,6 +9,7 @@
  */
 namespace gutesio\OperatorBundle\Classes;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
@@ -23,45 +24,6 @@ class ShowcaseInsertTag
     const TAG = 'showcase';
 
     const TAG_PAYLOAD = ['name', 'link', 'image', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
-
-    //ToDO -> Core
-    private function isBinary($str)
-    {
-        $umlauts = explode(',', 'Ŕ,Á,Â,Ă,Ä,Ĺ,Ç,Č,É,Ę,Ë,Ě,Í,Î,Ď,Ň,Ó,Ô,Ő,Ö,Ř,Ů,Ú,Ű,Ü,Ý,ŕ,á,â,ă,ä,ĺ,ç,č,é,ę,ë,ě,í,î,ď,đ,ň,ó,ô,ő,ö,ř,ů,ú,ű,ü,ý,˙,Ń,ń,ß');
-        foreach ($umlauts as $umlaut) {
-            if (false !== (strpos($str, $umlaut))) {
-                return false;
-            }
-        }
-
-        if (preg_match('~[^\x20-\x7E\t\r\n]~', $str) > 0) {
-            return preg_match('~[^\x20-\x7E\t\r\n]~', $str) > 0;
-        }
-    }
-
-    //ToDO -> Core
-    private function truncate($text, $length)
-    {
-        $text = str_replace('><', '> <', $text);
-        $text = strip_tags($text);
-        $text = htmlspecialchars($text, ENT_QUOTES, 'utf-8');
-        $length = abs((int) $length);
-        $firstFullstop = strpos($text, '.');
-        if ($firstFullstop && $firstFullstop <= ($length - 1)) {
-            for ($i = 0, $j = strlen($text); $i < $j; $i++) {
-                if ((strstr('.', $text[$i])) && ($i <= ($length - 1))) {
-                    $firstFullstop = $i;
-                }
-            }
-
-            return substr($text, 0, $firstFullstop + 1);
-        }
-        if (strlen($text) > $length) {
-            $text = preg_replace("/^(.{1,$length})(\s.*|$)/s", '\\1...', $text);
-        }
-
-        return(trim($text));
-    }
 
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
@@ -108,7 +70,7 @@ class ShowcaseInsertTag
                         return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';
                     case 'image':
                         $uuid = $arrShowcase['imageShowcase'];
-                        if ($this->isBinary($uuid)) {
+                        if (C4GUtils::isBinary($uuid)) {
                             $uuid = StringUtil::binToUuid($uuid);
                         }
 
@@ -116,7 +78,7 @@ class ShowcaseInsertTag
 
                     case 'imageList':
                         $uuid = $arrShowcase['imageList'];
-                        if ($this->isBinary($uuid)) {
+                        if (C4GUtils::isBinary($uuid)) {
                             $uuid = StringUtil::binToUuid($uuid);
                         }
 
@@ -124,20 +86,20 @@ class ShowcaseInsertTag
 
                     case 'previewimage':
                         $uuid = $arrShowcase['image'];
-                        if ($this->isBinary($uuid)) {
+                        if (C4GUtils::isBinary($uuid)) {
                             $uuid = StringUtil::binToUuid($uuid);
                         }
 
                         return $uuid ?: '';//Controller::replaceInsertTags("{{image::$uuid}}");
                     case 'logo':
                         $uuid = $arrShowcase['logo'];
-                        if ($this->isBinary($uuid)) {
+                        if (C4GUtils::isBinary($uuid)) {
                             $uuid = StringUtil::binToUuid($uuid);
                         }
 
                         return Controller::replaceInsertTags("{{image::$uuid?height=150&mode=proportional&class=img-fluid}}");
                     case 'description':
-                        return $this->truncate($arrShowcase['description'], 150);
+                        return C4GUtils::truncate($arrShowcase['description'], 150);
                     case 'meta':
                         $metaDescription = $arrShowcase['metaDescription'];
                         if ($metaDescription) {
@@ -145,7 +107,7 @@ class ShowcaseInsertTag
 
                             //replace logo dummy
                             $uuid = $arrShowcase['logo'];
-                            if ($this->isBinary($uuid)) {
+                            if (C4GUtils::isBinary($uuid)) {
                                 $uuid = StringUtil::binToUuid($uuid);
                             }
                             $logo = Controller::replaceInsertTags("{{file::$uuid}}");
@@ -158,7 +120,7 @@ class ShowcaseInsertTag
 
                             //replace image dummy
                             $uuid = $arrShowcase['imageList'];
-                            if ($this->isBinary($uuid)) {
+                            if (C4GUtils::isBinary($uuid)) {
                                 $uuid = StringUtil::binToUuid($uuid);
                             }
                             $image = Controller::replaceInsertTags("{{file::$uuid}}");

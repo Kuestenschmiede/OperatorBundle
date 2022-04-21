@@ -463,8 +463,13 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $arrOffers = [];
         foreach ($arrOfferElements as $element) {
             $offer = [];
-            if (is_string($element['imageOffer'])) {
+            if (C4GUtils::isBinary($element['imageOffer'])) {
                 $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
+                if ($model) {
+                    $offer['imageList'] = $converter->createFileDataFromModel($model);
+                }
+            } else if ($element['imageOffer']) {
+                $model = FilesModel::findByUuid($element['imageOffer']);
                 if ($model) {
                     $offer['imageList'] = $converter->createFileDataFromModel($model);
                 }

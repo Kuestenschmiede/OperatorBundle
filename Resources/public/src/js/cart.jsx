@@ -251,7 +251,7 @@ class Article extends React.Component {
                       {
                         this.props.article.options &&
                         this.props.article.options.length > 0 &&
-                        <button className="btn btn-sm btn-outline-dark"
+                        <button type={'button'} className="btn btn-sm btn-outline-dark"
                                 data-toggle="collapse"
                                 data-target={"#article" + this.props.article.articleId}
                                 aria-expanded="false"
@@ -259,7 +259,7 @@ class Article extends React.Component {
                           {this.int.moreOptions}
                         </button>
                       }
-                      <button className="btn btn-sm btn-danger"
+                      <button type={'button'} className="btn btn-sm btn-danger"
                               onClick={() => {
                                   this.props.removeArticle(
                                     this.props.vendorKey,

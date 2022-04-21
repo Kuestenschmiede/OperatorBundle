@@ -57,7 +57,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'N
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach Datum sortieren', 'Sortiert die Angebote initial nach ihrem Beginndatum. Achtung: Wird nur beachtet, wenn nur Veranstaltungen in der Liste dargestellt werden.'];
 
 $GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link zur Bezahlseite', 'Die Seite, auf der der Bezahlprozess durchgeführt wird.'];
-$GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text bei leerem Warenkorb', 'Dieser text wird angezeigt, wenn der Warenkorb leer ist.'];
+$GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text bei leerem Warenkorb', 'Dieser Text wird angezeigt, wenn der Warenkorb leer ist.'];
 
 $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Lade-Einstellungen';

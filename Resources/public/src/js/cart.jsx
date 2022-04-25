@@ -482,13 +482,15 @@ class Cart extends React.Component {
                   {vendor.name}
                 </a>
               </div>
-
-              <div className="card-header__image">
-                <img src={vendor.image.src}
-                     alt={vendor.image.alt}
-                     height={80} />
-              </div>
-
+              {
+                vendor.image &&
+                vendor.image.src &&
+                <div className="card-header__image">
+                  <img src={vendor.image.src}
+                       alt={vendor.image.alt}
+                       height={80}/>
+                </div>
+              }
             </div>
             <div className={"card-body"}>
               <div className={"cart__article-row mb-3"}>

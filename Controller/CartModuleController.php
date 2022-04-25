@@ -84,7 +84,7 @@ class CartModuleController extends AbstractFrontendModuleController
         
         if ($this->tokenChecker->hasFrontendUser()) {
             $template->getCartUrl = '/gutesio/operator/cart/items';
-            $template->cart_payment_url = $con4gisSettings->con4gisIoUrl . '/cart.php';
+            $template->cart_payment_url = rtrim($con4gisSettings->con4gisIoUrl, '/') . '/cart.php';
             $template->cart_no_items_text = nl2br($model->cart_no_items_text);
         }
 

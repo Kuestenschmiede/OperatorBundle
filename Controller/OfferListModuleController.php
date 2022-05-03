@@ -498,6 +498,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     protected function getFullTextTileFields(): array
     {
+        $user = FrontendUser::getInstance();
         $fields = [];
 
         $field = new ImageTileField();
@@ -601,6 +602,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setAsyncCall(true);
         $field->setConditionField("not_on_wishlist");
         $field->setConditionValue('1');
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
@@ -618,6 +620,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setConditionField("on_wishlist");
         $field->setConditionValue('1');
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
@@ -640,6 +643,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
                 $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
                 $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+                $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
                 $fields[] = $field;
             }
         } else {
@@ -659,6 +663,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
             $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
             $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+            $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
             $field->setAddDataAttributes(true);
             $field->setHookAfterClick(true);
             $field->setHookName("addToCart");
@@ -676,6 +681,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
             $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
             $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+            $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
             $fields[] = $field;
 
             $field = new TextTileField();
@@ -689,6 +695,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
             $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
             $field->addCondition(new FieldValueCondition('availableAmount', '0'));
+            $field->addCondition(new FieldNotValueCondition('ownerMemberId', $user->id));
             $fields[] = $field;
         }
 

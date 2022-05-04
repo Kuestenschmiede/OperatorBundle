@@ -181,6 +181,7 @@ class Article extends React.Component {
     // Wie Internationalisierung?
     this.int = {
       amount: 'Anzahl:',
+      availableAmount: 'Nur noch %s verfügbar.',
       priceSingle: 'Einzelpreis:',
       priceTotal: 'Gesamtpreis',
       tax: 'inkl. %s% MwSt.',
@@ -242,11 +243,18 @@ class Article extends React.Component {
                              step={1}
                              min={1}
                              max={this.props.article.availableAmount}
+                             disabled={this.props.article.availableAmount == 1}
+                             readOnly={this.props.article.availableAmount == 1}
                              onInput={this.props.updateValue.bind(this, this.props.vendorKey, this.props.articleKey)}
                              defaultValue={this.props.article.amount}/>
                     </span>
                       </label>
                     </div>
+                    {this.props.article.availableAmount < 10 &&
+                      <div className={'cart__article-availableAmount'}>
+                        <span>{this.textFormat(this.int.availableAmount, this.props.article.availableAmount)}</span>
+                      </div>
+                    }
                     <div className="cart__article-action">
                       {
                         this.props.article.options &&

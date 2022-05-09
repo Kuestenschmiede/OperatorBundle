@@ -184,7 +184,7 @@ class Article extends React.Component {
       availableAmount: 'Nur noch %s verfügbar.',
       priceSingle: 'Einzelpreis:',
       priceTotal: 'Gesamtpreis',
-      tax: 'inkl. %s% MwSt.',
+      tax: 'Preisangaben inkl. MwSt.',
       moreOptions: 'Weitere Optionen',
       remove: 'Entfernen',
       options : {
@@ -292,7 +292,7 @@ class Article extends React.Component {
                     {this.int.priceSingle + ' ' + this.numberFormat(this.props.article.pricePerUnit)}
                     <br/>
                     <small className="text-muted">
-                      {this.textFormat(this.int.tax, this.props.article.tax)}
+                      {this.int.tax}
                     </small>
                   </div>
                   <div className="article-price__sum">

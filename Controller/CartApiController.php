@@ -186,6 +186,9 @@ class CartApiController extends AbstractController
         }
 
         $settings = GutesioOperatorSettingsModel::findSettings();
+        if (!C4GUtils::endsWith($uuid, '}') && !C4GUtils::startsWith($uuid, '{')) {
+            $uuid = '{'.$uuid.'}';
+        }
         $childModel = GutesioDataChildModel::findByUuid($uuid);
         $childTypeModel = GutesioDataChildTypeModel::findBy('uuid', $childModel->typeId, ['return' => 'Model']);
         $childLink = match ($childTypeModel->type) {

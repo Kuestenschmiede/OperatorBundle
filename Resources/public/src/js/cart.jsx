@@ -384,7 +384,7 @@ class Cart extends React.Component {
         method: 'POST',
         mode: 'cors',
         cache: 'no-cache',
-        credentials: 'same-origin',
+        credentials: 'include',
         headers: {
           'X-Requested-With' : 'XMLHttpRequest'
         },
@@ -439,7 +439,7 @@ class Cart extends React.Component {
       method: 'POST',
       mode: 'cors',
       cache: 'no-cache',
-      credentials: 'same-origin',
+      credentials: 'include',
       headers: {
         'X-Requested-With' : 'XMLHttpRequest'
       },

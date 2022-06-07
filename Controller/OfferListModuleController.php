@@ -631,7 +631,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
         $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
         $field->addCondition(new FieldValueCondition('availableAmount', '0'));
-        $field->addCondition(new FieldNotValueCondition('ownerMemberId', $user->id));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
         $fields[] = $field;
 
         $detailLinks = $this->getOfferDetailLinks();

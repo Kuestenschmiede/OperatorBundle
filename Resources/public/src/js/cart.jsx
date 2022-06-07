@@ -573,6 +573,7 @@ jQuery(document).ready(() => {
     let cartUrlData = cart.dataset;
     if (cartUrlData.getCartUrl) {
       fetch(cartUrlData.getCartUrl, {
+        credentials: 'include',
         headers: {
           'X-Requested-With': 'XMLHttpRequest'
         }

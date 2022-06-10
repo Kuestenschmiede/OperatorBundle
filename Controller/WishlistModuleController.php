@@ -379,81 +379,43 @@ class WishlistModuleController extends AbstractFrontendModuleController
             new FieldValueCondition('internal_type', 'product'),
             new FieldValueCondition('internal_type', 'voucher')
         );
-        if ($user->id < 1) {
-            $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
-            $cartPage = PageModel::findByPk($cartPage);
-            if ($cartPage !== null) {
-                $field = new LinkButtonTileField();
-                $field->setName("cart-link");
-                $field->setWrapperClass("c4g-list-element__cart-link-wrapper");
-                $field->setClass("c4g-list-element__cart-link");
-                $field->setHref($cartPage->getFrontendUrl());
-                $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
-                $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-                $field->addCondition($offerCondition);
-                $field->addCondition(new FieldValueCondition('offerForSale', '1'));
-                $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
-                $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
-                $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
-                $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
-                $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
-                $fields[] = $field;
-            }
-        } else {
-            $field = new LinkButtonTileField();
-            $field->setName("uuid");
-            $field->setHrefField("uuid");
-            $field->setWrapperClass("c4g-list-element__cart-wrapper");
-            $field->setClass("c4g-list-element__cart-link put-in-cart");
-            $field->setHref("/gutesio/operator/cart/add/uuid");
-            $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
-            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-            $field->addConditionalClass("in_cart", "in-cart");
-            $field->setAsyncCall(true);
-            $field->addCondition($offerCondition);
-            $field->addCondition(new FieldValueCondition('not_in_cart', '1'));
-            $field->addCondition(new FieldValueCondition('offerForSale', '1'));
-            $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
-            $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
-            $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
-            $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
-            $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
-            $field->setAddDataAttributes(true);
-            $field->setHookAfterClick(true);
-            $field->setHookName("addToCart");
-            $fields[] = $field;
 
-            $field = new TextTileField();
-            $field->setName("uuid");
-            $field->setWrapperClass("c4g-list-element__cart-wrapper");
-            $field->setClass("c4g-list-element__cart-link in-cart");
-            $field->setFormat('Bereits im Warenkorb');
-            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-            $field->addCondition($offerCondition);
-            $field->addCondition(new FieldValueCondition('in_cart', '1'));
-            $field->addCondition(new FieldValueCondition('offerForSale', '1'));
-            $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
-            $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
-            $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
-            $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
-            $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
-            $fields[] = $field;
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link put-in-cart");
+        $field->setHref("http://gutes.localhost/gutesio/main/cart/add");
+        $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("in_cart", "in-cart");
+        $field->setAsyncCall(true);
+        $field->addCondition($offerCondition);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToCart");
+        $fields[] = $field;
 
-            $field = new TextTileField();
-            $field->setName("uuid");
-            $field->setWrapperClass("c4g-list-element__cart-wrapper");
-            $field->setClass("c4g-list-element__cart-link not-available");
-            $field->setFormat('Zurzeit nicht verfügbar');
-            $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
-            $field->addCondition($offerCondition);
-            $field->addCondition(new FieldValueCondition('offerForSale', '1'));
-            $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
-            $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
-            $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
-            $field->addCondition(new FieldValueCondition('availableAmount', '0'));
-            $field->addCondition(new FieldNotValueCondition('ownerMemberId', $user->id));
-            $fields[] = $field;
-        }
+        $field = new TextTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link not-available");
+        $field->setFormat('Zurzeit nicht verfügbar');
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addCondition($offerCondition);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $fields[] = $field;
 
         $field = new LinkButtonTileField();
         $field->setName("alias");
@@ -601,8 +563,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
 
             $offer['internal_type'] = $element['internal_type'];
-            //$offer['uuid'] = $element['uuid'];
             $offer['uuid'] = strtolower(str_replace(['{', '}'], '', $element['uuid']));
+            $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
             $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
             $offer['types'] = $type['name'];
             $offer['alias'] = $element['alias'];

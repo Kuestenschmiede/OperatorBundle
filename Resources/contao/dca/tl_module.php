@@ -49,7 +49,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page;{cart_legend},cart_page;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['cart_module'] =

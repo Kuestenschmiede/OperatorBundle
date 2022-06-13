@@ -275,31 +275,27 @@ $data = json_decode(json_encode($this->detailData));
             </div>
 
             <?php $this->block('cart-button'); ?>
-            <?php if ($this->offerForSale) {?>
+            <?php if ($this->offerForSale && $this->cartUrl) {?>
             <div class="cart-btn__wrapper">
-            <?php if ($this->loggedIn) {?>
-            <?php if ($this->not_in_cart === 0) {?>
-                <span class="btn btn--primary already-set">Bereits im Warenkorb</span>
-            <?php } else {?>
-                <button class="btn btn--primary logged-in" onclick="let button = this;let promise = fetch('<?php echo $this->addToCartUrl;?>', {
+                <button class="btn btn--primary logged-in" onclick="
+                    let data = new FormData();
+                    data.set('uuid', '<?php echo $this->childId;?>');
+                    data.set('elementId', '<?php echo $this->elementId;?>');
+                    let button = this;
+                    console.log(this);
+                    let promise = fetch('<?php echo $this->addToCartUrl;?>', {
                         method: 'POST',
                         mode: 'cors',
                         cache: 'no-cache',
                         credentials: 'same-origin',
                         redirect: 'follow',
-                        referrerPolicy: 'no-referrer'
-                        });promise.then((response) => {if (response.ok) {
-                          let span = document.createElement('span');
-                          span.classList.add('btn');
-                          span.classList.add('btn--primary');
-                          span.classList.add('already-set');
-                          span.innerHTML = 'Bereits im Warenkorb';
-                          button.replaceWith(span);
-                        }});">In den Warenkorb</button>
-            <?php }?>
-            <?php } else {?>
-                <a class="btn btn--primary no-account" href="<?php echo $this->cartPageUrl; ?>">In den Warenkorb</a>
-            <?php }?>
+                        referrerPolicy: 'no-referrer',
+                        body: data
+                        });
+                    promise.then((response) => {if (response.ok) {
+                      window.location = '<?php echo $this->cartUrl;?>';
+                    }});">In den Warenkorb
+                </button>
             </div>
             <?php }?>
             <?php $this->endblock();?>

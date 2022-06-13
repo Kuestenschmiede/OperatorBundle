@@ -133,7 +133,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
             $cartPage = PageModel::findByPk($cartPage);
             $template->cartPageUrl = $cartPage->getFrontendUrl();
-            $template->addToCartUrl = '/gutesio/operator/cart/add/'.$data['uuid'];
+            $template->addToCartUrl = 'http://gutes.localhost/gutesio/main/cart/add';
+            $template->childId = $data['uuid'];
+            $template->elementId = $data['elementId'];
             if ($data) {
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
@@ -195,6 +197,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         }
         $template->detailData = $data;
         $template->mapData = $this->getMapData();
+        $page = $this->model->cart_page ?: 0;
+        if ($page !== 0) {
+            $page = PageModel::findByPk($page);
+            if ($page) {
+                $template->cartUrl = $page->getAbsoluteUrl();
+            }
+        }
         
         return $template->getResponse();
     }

@@ -579,8 +579,8 @@ class OfferLoaderService
                 WHEN d.description IS NOT NULL THEN d.description ' . '
             ELSE NULL END) AS description, ' . '
             tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, 
+            tl_gutesio_data_element.uuid as elementId, 
             tl_gutesio_data_child_type.extendedSearchTerms as extendedSearchTerms FROM tl_gutesio_data_child a ' . '
-                tl_gutesio_data_element.uuid as elementId, ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
             LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '

@@ -15,6 +15,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
@@ -1271,15 +1272,53 @@ class OfferLoaderService
                 $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
 
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
-                $url = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
-
-                if (C4GUtils::endsWith($url, '.html')) {
-                    $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
-                } else {
-                    $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
+                if ($elementPage !== null) {
+                    $url = $elementPage->getAbsoluteUrl();
+                    if ($url) {
+                        if (C4GUtils::endsWith($url, '.html')) {
+                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                        } else {
+                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                        }
+                        $childRows[$key]['elementLink'] = $href ?: '';
+                    }
+                }
+                switch ($row['type']) {
+                    case 'product':
+                        $childPage = PageModel::findByPk($objSettings->productDetailPage);
+                        break;
+                    case 'jobs':
+                        $childPage = PageModel::findByPk($objSettings->jobDetailPage);
+                        break;
+                    case 'event':
+                        $childPage = PageModel::findByPk($objSettings->eventDetailPage);
+                        break;
+                    case 'arrangement':
+                        $childPage = PageModel::findByPk($objSettings->arrangementDetailPage);
+                        break;
+                    case 'service':
+                        $childPage = PageModel::findByPk($objSettings->serviceDetailPage);
+                        break;
+                    case 'voucher':
+                        $childPage = PageModel::findByPk($objSettings->voucherDetailPage);
+                        break;
+                    default:
+                        $childPage = null;
+                        break;
                 }
 
-                $childRows[$key]['elementLink'] = $href ?: '';
+                if ($childPage !== null) {
+                    $url = $childPage->getAbsoluteUrl();
+                    if ($url) {
+                        if (C4GUtils::endsWith($url, '.html')) {
+                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                        } else {
+                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                        }
+                        $childRows[$key]['childLink'] = $href ?: '';
+                    }
+                }
             } else {
                 unset($childRows[$key]);
             }

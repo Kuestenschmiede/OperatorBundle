@@ -74,8 +74,6 @@ services:
       lazy: true
       public: true
 
-    gutesio\OperatorBundle\Controller\CartApiController: ~
-
     gutesio\OperatorBundle\Classes\ShowcaseInsertTag:
       tags:
         - { name: contao.hook, hook: replaceInsertTags, method: replaceShowcaseTags, priority: 1 }

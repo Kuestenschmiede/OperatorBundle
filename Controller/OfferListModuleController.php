@@ -146,7 +146,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
      * @param $offset
      * @return JsonResponse
      */
-    public function getFilteredListDataAjax(Request $request, $offset, CartApiController $apiController)
+    public function getFilteredListDataAjax(Request $request, $offset)
     {
         $this->setAlias();
         $this->initializeContaoFramework();

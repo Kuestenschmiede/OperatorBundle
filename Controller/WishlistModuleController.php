@@ -53,12 +53,10 @@ class WishlistModuleController extends AbstractFrontendModuleController
     
     private $model = null;
     private OfferLoaderService $offerLoaderService;
-    private CartApiController $cartApiController;
 
-    public function __construct(OfferLoaderService $offerLoaderService, CartApiController $cartApiController)
+    public function __construct(OfferLoaderService $offerLoaderService)
     {
         $this->offerLoaderService = $offerLoaderService;
-        $this->cartApiController = $cartApiController;
     }
     
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -75,36 +73,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $data = $this->getListData($clientUuid);
         if (count($data) > 0 && is_array($data) && !($data[0])) {
             $data = [$data];
-        }
-        $cartApiResponse = $this->cartApiController->getCartItems($request);
-        $cartApiResponseContent = json_decode($cartApiResponse->getContent(), true);
-        $childIdsInCart = [];
-        foreach ($cartApiResponseContent['vendors'] as $vendor) {
-            foreach ($vendor['articles'] as $article) {
-                $childIdsInCart[] = $article['childId'];
-            }
-        }
-        foreach ($data as $key => $datum) {
-            if ($datum['internal_type'] === "showcase") {
-                $typeString = "";
-                $types = $datum['types'];
-                foreach ($types as $innerKey => $type) {
-                    $typeString .= $type['label'];
-                    if (!($innerKey === array_key_last($types))) {
-                        $typeString .= ",";
-                    }
-                }
-                $datum['types'] = $typeString;
-                $data[$key] = $datum;
-            } else {
-                if (in_array($datum['uuid'], $childIdsInCart)) {
-                    $data[$key]['in_cart'] = "1";
-                    $data[$key]['not_in_cart'] = "";
-                } else {
-                    $data[$key]['in_cart'] = "";
-                    $data[$key]['not_in_cart'] = "1";
-                }
-            }
         }
         
         $fc = new FrontendConfiguration('entrypoint_'.$this->model->id);

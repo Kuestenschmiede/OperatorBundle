@@ -56,6 +56,7 @@ use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use gutesio\OperatorBundle\Classes\Server;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
@@ -133,7 +134,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
             $cartPage = PageModel::findByPk($cartPage);
             $template->cartPageUrl = $cartPage->getFrontendUrl();
-            $template->addToCartUrl = 'http://gutes.localhost/gutesio/main/cart/add';
+            $template->addToCartUrl = Server::URL.'/gutesio/main/cart/add';
             $template->childId = $data['uuid'];
             $template->elementId = $data['elementId'];
             if ($data) {

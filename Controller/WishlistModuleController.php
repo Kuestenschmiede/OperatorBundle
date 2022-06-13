@@ -40,6 +40,7 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use gutesio\OperatorBundle\Classes\Server;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -353,7 +354,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setHrefField("uuid");
         $field->setWrapperClass("c4g-list-element__cart-wrapper");
         $field->setClass("c4g-list-element__cart-link put-in-cart");
-        $field->setHref("http://gutes.localhost/gutesio/main/cart/add");
+        $field->setHref(Server::URL."/gutesio/main/cart/add");
         $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->addConditionalClass("in_cart", "in-cart");

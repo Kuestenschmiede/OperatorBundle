@@ -41,6 +41,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
     '{load_legend},gutesio_child_data_mode,gutesio_data_limit,gutesio_data_max_data,gutesio_child_sort_by_date;'.
+    '{cart_legend},cart_page;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
     'gutesio_child_filter,gutesio_data_change_layout_filter;'.
@@ -70,7 +71,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_carousel_template;';
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;{cart_legend},cart_page;';
 
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
@@ -382,4 +383,11 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['cart_no_items_text'] = [
     'inputType'               => 'textarea',
     'eval'                    => ['tl_class' => 'clr'],
     'sql'                     => "text NOT NULL default ''"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['cart_page'] = [
+    'exclude'                 => true,
+    'inputType'               => 'pageTree',
+    'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+    'sql'                     => "int(10) unsigned NOT NULL default '0'"
 ];

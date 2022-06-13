@@ -400,6 +400,13 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("addToCart");
+        $page = $this->model->cart_page ?: 0;
+        if ($page !== 0) {
+            $page = PageModel::findByPk($page);
+            if ($page) {
+                $field->setRedirectPageOnSuccess($page->getAbsoluteUrl());
+            }
+        }
         $fields[] = $field;
 
         $field = new TextTileField();

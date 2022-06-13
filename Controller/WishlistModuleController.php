@@ -290,7 +290,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
     
     private function getListFields()
     {
-        $settings = C4gSettingsModel::findSettings();
         $fields = [];
     
         $field = new ImageTileField();

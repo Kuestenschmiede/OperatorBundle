@@ -449,6 +449,15 @@ $data = json_decode(json_encode($this->detailData));
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($data->brochureUpload) && !empty($data->brochureUpload)): ?>
+                            <div class="detail-field-pdf brochureUpload">
+                                <a class="btn btn-primary"
+                                   href="<?= $data->brochureUpload->path ?>"
+                                   title="Broschüre öffnen" target="_blank" rel="nofollow noopener">Brochüre
+                                    [pdf]</a>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (!empty($data->selfHelpFocus)): ?>
                             <div class="detail-field-text self-help-focus">
                                 <div class="detail-field-text__label">Schwerpunkte</div>

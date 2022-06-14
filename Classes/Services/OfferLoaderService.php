@@ -15,6 +15,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
@@ -1271,15 +1272,39 @@ class OfferLoaderService
                 $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
 
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
-                $url = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
-
-                if (C4GUtils::endsWith($url, '.html')) {
-                    $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
-                } else {
-                    $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
+                if ($elementPage !== null) {
+                    $url = $elementPage->getAbsoluteUrl();
+                    if ($url) {
+                        if (C4GUtils::endsWith($url, '.html')) {
+                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                        } else {
+                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                        }
+                        $childRows[$key]['elementLink'] = $href ?: '';
+                    }
                 }
+                $childPage = match ($row['type']) {
+                    'product' => PageModel::findByPk($objSettings->productDetailPage),
+                    'jobs' => PageModel::findByPk($objSettings->jobDetailPage),
+                    'event' => PageModel::findByPk($objSettings->eventDetailPage),
+                    'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
+                    'service' => PageModel::findByPk($objSettings->serviceDetailPage),
+                    'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
+                    default => null,
+                };
 
-                $childRows[$key]['elementLink'] = $href ?: '';
+                if ($childPage !== null) {
+                    $url = $childPage->getAbsoluteUrl();
+                    if ($url) {
+                        if (C4GUtils::endsWith($url, '.html')) {
+                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                        } else {
+                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                        }
+                        $childRows[$key]['childLink'] = $href ?: '';
+                    }
+                }
             } else {
                 unset($childRows[$key]);
             }

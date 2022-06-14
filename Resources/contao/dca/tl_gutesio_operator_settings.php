@@ -137,6 +137,9 @@ $GLOBALS['TL_DCA'][$strName] = [
             'inputType'               => 'text',
             'eval'                    => ['fieldType' => 'digit', 'mandatory' => true, 'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '7'"
+        ],
+        'mainServerUrl' => [
+            'sql'                     => "varchar(50) NOT NULL default ''"
         ]
     ],
 ];

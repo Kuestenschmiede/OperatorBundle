@@ -74,6 +74,8 @@ services:
       lazy: true
       public: true
 
+    gutesio\OperatorBundle\Classes\Services\ServerService: ~
+
     gutesio\OperatorBundle\Classes\ShowcaseInsertTag:
       tags:
         - { name: contao.hook, hook: replaceInsertTags, method: replaceShowcaseTags, priority: 1 }

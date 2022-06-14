@@ -9,7 +9,6 @@
 
 namespace gutesio\OperatorBundle\Controller;
 
-
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
@@ -19,7 +18,6 @@ use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHeadlineField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHTMLField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailMapLocationField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailModalFormButtonField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailTagField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailTextField;
 use con4gis\FrameworkBundle\Classes\DetailFields\PDFDetailField;
@@ -31,7 +29,6 @@ use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -56,7 +53,7 @@ use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Server;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,19 +79,24 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
     private $languageRefs = [];
 
+    private ServerService $serverService;
+
     const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * OfferDetailModuleController constructor.
      * @param OfferLoaderService|null $offerService
      * @param ShowcaseService $showcaseService
+     * @param ServerService $serverService
      */
     public function __construct(
         ?OfferLoaderService $offerService,
-        ShowcaseService $showcaseService
+        ShowcaseService $showcaseService,
+        ServerService $serverService
     ) {
         $this->offerService = $offerService;
         $this->showcaseService = $showcaseService;
+        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -134,7 +136,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
             $cartPage = PageModel::findByPk($cartPage);
             $template->cartPageUrl = $cartPage->getFrontendUrl();
-            $template->addToCartUrl = Server::URL.'/gutesio/main/cart/add';
+            $template->addToCartUrl = $this->serverService->getMainServerURL().'/gutesio/main/cart/add';
             $template->childId = $data['uuid'];
             $template->elementId = $data['elementId'];
             if ($data) {

@@ -52,7 +52,7 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Server;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -77,15 +77,19 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     private $languageRefs = [];
     private $languageRefsFrontend = [];
+    private ServerService $serverService;
 
     /**
      * OfferListModuleController constructor.
+     * @param ContaoFramework $framework
      * @param OfferLoaderService|null $offerService
+     * @param ServerService $serverService
      */
-    public function __construct(ContaoFramework $framework, ?OfferLoaderService $offerService)
+    public function __construct(ContaoFramework $framework, ?OfferLoaderService $offerService, ServerService $serverService)
     {
         $framework->initialize();
         $this->offerService = $offerService;
+        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -605,7 +609,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setName("uuid");
         $field->setWrapperClass("c4g-list-element__cart-wrapper");
         $field->setClass("c4g-list-element__cart-link put-in-cart");
-        $field->setHref(Server::URL."/gutesio/main/cart/add");
+        $field->setHref($this->serverService->getMainServerURL()."/gutesio/main/cart/add");
         $field->setLinkText($this->languageRefs['frontend']['putInCart']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->addConditionalClass("in_cart", "in-cart");

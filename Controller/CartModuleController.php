@@ -15,16 +15,20 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\ModuleModel;
 use Contao\Template;
-use gutesio\OperatorBundle\Classes\Server;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CartModuleController extends AbstractFrontendModuleController
 {
+    private ServerService $serverService;
+
     public function __construct(
-        ContaoFramework $framework
+        ContaoFramework $framework,
+        ServerService $serverService
     ) {
         $framework->initialize();
+        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -36,7 +40,7 @@ class CartModuleController extends AbstractFrontendModuleController
 
         $con4gisSettings = C4gSettingsModel::findSettings();
 
-        $template->getCartUrl = Server::URL.'/gutesio/main/cart/items';
+        $template->getCartUrl = $this->serverService->getMainServerURL().'/gutesio/main/cart/items';
         $template->cart_payment_url = rtrim($con4gisSettings->con4gisIoUrl, '/') . '/cart.php';
         $template->cart_no_items_text = nl2br($model->cart_no_items_text);
 

@@ -40,7 +40,7 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Server;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -54,10 +54,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
     
     private $model = null;
     private OfferLoaderService $offerLoaderService;
+    private ServerService $serverService;
 
-    public function __construct(OfferLoaderService $offerLoaderService)
+    public function __construct(OfferLoaderService $offerLoaderService, ServerService $serverService)
     {
         $this->offerLoaderService = $offerLoaderService;
+        $this->serverService = $serverService;
     }
     
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -353,7 +355,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setHrefField("uuid");
         $field->setWrapperClass("c4g-list-element__cart-wrapper");
         $field->setClass("c4g-list-element__cart-link put-in-cart");
-        $field->setHref(Server::URL."/gutesio/main/cart/add");
+        $field->setHref($this->serverService->getMainServerURL()."/gutesio/main/cart/add");
         $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
         $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->addConditionalClass("in_cart", "in-cart");

@@ -1284,29 +1284,15 @@ class OfferLoaderService
                         $childRows[$key]['elementLink'] = $href ?: '';
                     }
                 }
-                switch ($row['type']) {
-                    case 'product':
-                        $childPage = PageModel::findByPk($objSettings->productDetailPage);
-                        break;
-                    case 'jobs':
-                        $childPage = PageModel::findByPk($objSettings->jobDetailPage);
-                        break;
-                    case 'event':
-                        $childPage = PageModel::findByPk($objSettings->eventDetailPage);
-                        break;
-                    case 'arrangement':
-                        $childPage = PageModel::findByPk($objSettings->arrangementDetailPage);
-                        break;
-                    case 'service':
-                        $childPage = PageModel::findByPk($objSettings->serviceDetailPage);
-                        break;
-                    case 'voucher':
-                        $childPage = PageModel::findByPk($objSettings->voucherDetailPage);
-                        break;
-                    default:
-                        $childPage = null;
-                        break;
-                }
+                $childPage = match ($row['type']) {
+                    'product' => PageModel::findByPk($objSettings->productDetailPage),
+                    'jobs' => PageModel::findByPk($objSettings->jobDetailPage),
+                    'event' => PageModel::findByPk($objSettings->eventDetailPage),
+                    'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
+                    'service' => PageModel::findByPk($objSettings->serviceDetailPage),
+                    'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
+                    default => null,
+                };
 
                 if ($childPage !== null) {
                     $url = $childPage->getAbsoluteUrl();

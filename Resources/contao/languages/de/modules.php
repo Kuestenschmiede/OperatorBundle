@@ -12,17 +12,17 @@
  *
  */
 
-$GLOBALS['TL_LANG']['MOD']['gutesio'] = ['Gutes.io', 'Gutes.io'];
-$GLOBALS['TL_LANG']['MOD']['gutesio_operator_settings'] = ['gutes.io Einstellungen', 'gutes.io Einstellungen bearbeiten'];
+$GLOBALS['TL_LANG']['MOD']['gutesio'] = ['Gutes.digital', 'Gutes.digital'];
+$GLOBALS['TL_LANG']['MOD']['gutesio_operator_settings'] = ['gutes.digital Einstellungen', 'gutes.digital Einstellungen bearbeiten'];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_list_module'] = [
     'Schaufenster Liste',
-    'Kachelansicht der gutes.io-Schaufenster.',
+    'Kachelansicht der gutes.digital-Schaufenster.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_detail_module'] = [
     'Schaufenster Details',
-    'Detailansicht der gutes.io-Schaufenster.',
+    'Detailansicht der gutes.digital-Schaufenster.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_carousel_module'] = [
@@ -32,16 +32,21 @@ $GLOBALS['TL_LANG']['FMD']['showcase_carousel_module'] = [
 
 $GLOBALS['TL_LANG']['FMD']['offer_list_module'] = [
     'Angebotsliste',
-    'Kachelansicht der gutes.io-Angebote.',
+    'Kachelansicht der gutes.digital-Angebote.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['offer_detail_module'] = [
     'Angebots-Details',
-    'Detailansicht der gutes.io-Angebote.',
+    'Detailansicht der gutes.digital-Angebote.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['wishlist_module'] = [
     'Merkzettel',
     'Kachelansicht der gemerkten Elemente.',
+];
+
+$GLOBALS['TL_LANG']['FMD']['cart_module'] = [
+    'Warenkorb',
+    '',
 ];
 

@@ -1,59 +1,42 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
 
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 namespace gutesio\OperatorBundle\Controller;
-
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
-use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailContactField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailHTMLField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailImageLinkField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailLinkField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailMapLocationField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailTagField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailTextField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailVideoPreviewField;
-use con4gis\FrameworkBundle\Classes\DetailPage\DetailAnchorMenuLink;
-use con4gis\FrameworkBundle\Classes\DetailPage\DetailPage;
-use con4gis\FrameworkBundle\Classes\DetailPage\DetailPageSection;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\SearchConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
-use con4gis\FrameworkBundle\Classes\Utility\FieldUtil;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use con4gis\MapsBundle\Classes\MapDataConfigurator;
 use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
+use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\PageModel;
-use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
-use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
@@ -63,13 +46,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
+class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
     const TYPE = 'showcase_detail_module';
     const COOKIE_WISHLIST = "clientUuid";
-    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
 
     protected $model = null;
 
@@ -170,6 +152,9 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             }
         } else {
+            if (C4GUtils::endsWith($this->pageUrl, $redirectUrl)) {
+                return new Response();
+            }
             throw new RedirectResponseException($redirectUrl);
         }
         
@@ -374,28 +359,6 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
 
-        global $objPage;
-        $settings = C4gSettingsModel::findSettings();
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
-        $field->setClass('c4g-list-element__clickcollect');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('type', 'product');
-        $field->setCondition('type', 'showcase', true);
-        $field->setInnerFields([
-            'imageList',
-            'name',
-            'types'
-        ]);
-        $fields[] = $field;
-
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
@@ -483,7 +446,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.clickCollect '.
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName '.
             'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '

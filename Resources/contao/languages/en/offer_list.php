@@ -1,11 +1,11 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
  
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 $strName = 'offer_list';
 
@@ -64,14 +64,6 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['job'] = 'Job';
 $GLOBALS['TL_LANG'][$strName]['frontend']['arrangement'] = 'Arrangements';
 $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Service';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'starting at';
-
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['modal_button_label'] = 'Click and Collect';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'order now';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'close';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Your e-mail address for queries', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['name'] = ['Name', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Pickup time', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Notes', ''];
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Open filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Close filter';

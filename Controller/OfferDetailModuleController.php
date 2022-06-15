@@ -1,14 +1,13 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 
 namespace gutesio\OperatorBundle\Controller;
-
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
@@ -19,7 +18,6 @@ use con4gis\FrameworkBundle\Classes\DetailFields\DetailFancyboxImageGallery;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHeadlineField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailHTMLField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailMapLocationField;
-use con4gis\FrameworkBundle\Classes\DetailFields\DetailModalFormButtonField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailTagField;
 use con4gis\FrameworkBundle\Classes\DetailFields\DetailTextField;
 use con4gis\FrameworkBundle\Classes\DetailFields\PDFDetailField;
@@ -31,7 +29,6 @@ use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -48,6 +45,7 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
 use Contao\FilesModel;
+use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -55,6 +53,7 @@ use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
@@ -80,20 +79,24 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
     private $languageRefs = [];
 
-    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
+    private ServerService $serverService;
+
     const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * OfferDetailModuleController constructor.
      * @param OfferLoaderService|null $offerService
      * @param ShowcaseService $showcaseService
+     * @param ServerService $serverService
      */
     public function __construct(
         ?OfferLoaderService $offerService,
-        ShowcaseService $showcaseService
+        ShowcaseService $showcaseService,
+        ServerService $serverService
     ) {
         $this->offerService = $offerService;
         $this->showcaseService = $showcaseService;
+        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -128,6 +131,14 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
         if ($this->alias !== "") {
             $data = $this->offerService->getDetailData($this->alias);
+            $template->loggedIn = FrontendUser::getInstance()->id > 0;
+            $template->offerForSale = $data['offerForSale'];
+            $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
+            $cartPage = PageModel::findByPk($cartPage);
+            $template->cartPageUrl = $cartPage->getFrontendUrl();
+            $template->addToCartUrl = $this->serverService->getMainServerURL().'/gutesio/main/cart/add';
+            $template->childId = $data['uuid'];
+            $template->elementId = $data['elementId'];
             if ($data) {
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
@@ -189,6 +200,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         }
         $template->detailData = $data;
         $template->mapData = $this->getMapData();
+        $page = $this->model->cart_page ?: 0;
+        if ($page !== 0) {
+            $page = PageModel::findByPk($page);
+            if ($page) {
+                $template->cartUrl = $page->getAbsoluteUrl();
+            }
+        }
         
         return $template->getResponse();
     }
@@ -204,11 +222,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private function getDetailComponents(array $data, Request $request)
     {
         $components = [];
-//        $components['details'] = [
-//            $this->getDetailPage(),
-//            $this->getDetailFields($data),
-//            $data
-//        ];
         $components['elements'] = [
             $this->getElementTileList(),
             $this->getElementFields(),
@@ -368,31 +381,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setClass('detail-view__max-credit');
         $field->setLabel($this->languageRefs['maxCredit']);
         $field->setFormat('%s €');
-        $fields[] = $field;
-
-        global $objPage;
-        $field = new DetailModalFormButtonField();
-        $field->setSection(4);
-        $field->setName('cc');
-        $field->setClass('cc detail-view__modal');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setConditionField('clickCollect');
-        $field->setConditionField('type');
-        $field->setConditionValue('1');
-        $field->setConditionValue('product');
-        $field->setInnerFields([
-            'name',
-            'imageGallery',
-            'strikePrice',
-            'price',
-            'beginDate',
-            'beginTime',
-        ]);
         $fields[] = $field;
 
         $field = new DetailTextField();
@@ -723,28 +711,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
         
-        global $objPage;
-        $settings = C4gSettingsModel::findSettings();
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
-        $field->setClass('c4g-list-element__clickcollect');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('type', 'product');
-        $field->setCondition('type', 'showcase', true);
-        $field->setInnerFields([
-            'imageList',
-            'name',
-            'types'
-        ]);
-        $fields[] = $field;
-        
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefFields(["type", "uuid"]);
@@ -832,7 +798,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.clickCollect '.
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName '.
             'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '

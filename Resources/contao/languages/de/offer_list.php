@@ -1,11 +1,11 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
  
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 
 $strName = 'offer_list';
@@ -27,6 +27,8 @@ $GLOBALS['TL_LANG'][$strName]['endTime'] = ['Endzeit', ''];
 $GLOBALS['TL_LANG'][$strName]['minCredit'] = 'Mindestguthaben';
 $GLOBALS['TL_LANG'][$strName]['maxCredit'] = 'Höchstguthaben';
 $GLOBALS['TL_LANG'][$strName]['maxCredit_format'] = 'bis zu %s € Guthaben';
+$GLOBALS['TL_LANG'][$strName]['credit'] = 'Guthaben';
+$GLOBALS['TL_LANG'][$strName]['credit_format'] = '%s € Guthaben';
 $GLOBALS['TL_LANG'][$strName]['locationElementId'] = ['Ort der Veranstaltung', 'Der Ort der Veranstaltung.'];
 
 $GLOBALS['TL_LANG'][$strName]['frontend']['list']['taxInfo'] = '*Preise inkl. MwSt.';
@@ -36,6 +38,9 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['details']['headline'] = 'Details';
 $GLOBALS['TL_LANG'][$strName]['frontend']['details']['contact'] = 'Kontakt';
 $GLOBALS['TL_LANG'][$strName]['frontend']['putOnWishlist'] = 'Merken';
 $GLOBALS['TL_LANG'][$strName]['frontend']['removeFromWishlist'] = 'Gemerkt';
+
+$GLOBALS['TL_LANG'][$strName]['frontend']['putInCart'] = 'In den Warenkorb';
+$GLOBALS['TL_LANG'][$strName]['frontend']['removeFromCart'] = 'Im Warenkorb';
 
 $GLOBALS['TL_LANG'][$strName]['description'] = "Beschreibung";
 $GLOBALS['TL_LANG'][$strName]['detailData'] = "Detaildaten";
@@ -69,14 +74,6 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['job'] = 'Job';
 $GLOBALS['TL_LANG'][$strName]['frontend']['arrangement'] = 'Arrangements';
 $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Dienstleistung';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'ab';
-
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['modal_button_label'] = 'Click and Collect';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['confirm_button_text'] = 'jetzt bestellen';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['close_button_text'] = 'schließen';
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['email'] = ['Ihre E-Mail-Adresse für Rückfragen', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['name'] = ['Name', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['earliest'] = ['Abholzeitpunkt', ''];
-$GLOBALS['TL_LANG'][$strName]['frontend']['cc_form']['notes'] = ['Anmerkungen', ''];
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterte Suche';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';

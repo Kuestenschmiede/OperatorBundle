@@ -1,11 +1,11 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
 
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 namespace gutesio\OperatorBundle\Controller;
 
@@ -14,31 +14,34 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\OrCondition;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ListTypeTileFields\ListTypeModalButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ModalButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
-use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use Contao\Config;
 use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\Database;
 use Contao\FilesModel;
+use Contao\FrontendUser;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
+use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,16 +51,22 @@ use Symfony\Component\Routing\Annotation\Route;
 class WishlistModuleController extends AbstractFrontendModuleController
 {
     const TYPE = 'wishlist_module';
-    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
     
     private $model = null;
+    private OfferLoaderService $offerLoaderService;
+    private ServerService $serverService;
+
+    public function __construct(OfferLoaderService $offerLoaderService, ServerService $serverService)
+    {
+        $this->offerLoaderService = $offerLoaderService;
+        $this->serverService = $serverService;
+    }
     
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_wishlist.min.css");
-//        ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/modal.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
         System::loadLanguageFile('offer_list');
         System::loadLanguageFile("tl_gutesio_mini_wishlist");
@@ -67,21 +76,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $data = $this->getListData($clientUuid);
         if (count($data) > 0 && is_array($data) && !($data[0])) {
             $data = [$data];
-        }
-        foreach ($data as $key => $datum) {
-            if (!($datum['internal_type'] === "showcase")) {
-                continue;
-            }
-            $typeString = "";
-            $types = $datum['types'];
-            foreach ($types as $innerKey => $type) {
-                $typeString .= $type['label'];
-                if (!($innerKey === array_key_last($types))) {
-                    $typeString .= ",";
-                }
-            }
-            $datum['types'] = $typeString;
-            $data[$key] = $datum;
         }
         
         $fc = new FrontendConfiguration('entrypoint_'.$this->model->id);
@@ -298,7 +292,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
     
     private function getListFields()
     {
-        $settings = C4gSettingsModel::findSettings();
         $fields = [];
     
         $field = new ImageTileField();
@@ -340,36 +333,67 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $eventUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}");
         $jobUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
         $arrangementUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
-
-        global $objPage;
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass('c4g-list-element__clickcollect-wrapper');
-        $field->setClass('c4g-list-element__clickcollect');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('internal_type', 'product');
-        $field->setCondition('internal_type', 'showcase', true);
-        $field->setInnerFields([
-            'imageList',
-            'name',
-            'types'
-        ]);
-        $fields[] = $field;
     
         $urlSuffix = Config::get('urlSuffix');
         
         $field = new WrapperTileField();
-        $field->setWrappedFields(['alias', 'uuid']);
+        $field->setWrappedFields(['cart-link', 'uuid', 'alias', 'uuid']);
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
         
         $showcaseUrl = str_replace($urlSuffix, "", $showcaseUrl);
+
+        $user = FrontendUser::getInstance();
+        $offerCondition = new OrCondition();
+        $offerCondition->addConditions(
+            new FieldValueCondition('internal_type', 'product'),
+            new FieldValueCondition('internal_type', 'voucher')
+        );
+
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setHrefField("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link put-in-cart");
+        $field->setHref($this->serverService->getMainServerURL()."/gutesio/main/cart/add");
+        $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("in_cart", "in-cart");
+        $field->setAsyncCall(true);
+        $field->addCondition($offerCondition);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToCart");
+        $page = $this->model->cart_page ?: 0;
+        if ($page !== 0) {
+            $page = PageModel::findByPk($page);
+            if ($page) {
+                $field->setRedirectPageOnSuccess($page->getAbsoluteUrl());
+            }
+        }
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link not-available");
+        $field->setFormat('Zurzeit nicht verfügbar');
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addCondition($offerCondition);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $fields[] = $field;
+
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
@@ -386,12 +410,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$productUrl/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($productUrl."/uuid" . $urlSuffix);
+        $field->setHrefFields(["uuid"]);
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("product");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
     
         $eventUrl = str_replace($urlSuffix, "", $eventUrl);
@@ -399,12 +423,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$eventUrl/uuid" . $urlSuffix);
+        $field->setHref($eventUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("event");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
     
         $jobUrl = str_replace($urlSuffix, "", $jobUrl);
@@ -412,12 +436,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$jobUrl/uuid" . $urlSuffix);
+        $field->setHref($jobUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("job");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
     
         $arrangementUrl = str_replace($urlSuffix, "", $arrangementUrl);
@@ -425,12 +449,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref("$arrangementUrl/uuid" . $urlSuffix);
+        $field->setHref($arrangementUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("arrangement");
-        $field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");
         $fields[] = $field;
         
         $field = new LinkButtonTileField();
@@ -471,6 +495,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
                     $arrType = $db->prepare($sql)->execute($typeId)->fetchAssoc();
                     if ($arrType) {
                         $dataEntry['internal_type'] = $arrType['type'];
+                        $dataEntry['type'] = $arrType['type'];
+                        $dataEntry = $this->offerLoaderService->getAdditionalData([$dataEntry])[0];
+                        unset($dataEntry['type']);
                         $arrOfferElements[] = $dataEntry;
                     } else {
                         $sql2 = "DELETE FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataTable` = ? AND  `dataUuid` = ?";
@@ -489,33 +516,61 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $arrOffers = [];
         foreach ($arrOfferElements as $element) {
             $offer = [];
-            $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
-            if ($model) {
-                $offer['imageList'] = $converter->createFileDataFromModel($model);
+            if (C4GUtils::isBinary($element['imageOffer'])) {
+                $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
+                if ($model) {
+                    $offer['imageList'] = $converter->createFileDataFromModel($model);
+                }
+            } else if ($element['imageOffer']) {
+                $model = FilesModel::findByUuid($element['imageOffer']);
+                if ($model) {
+                    $offer['imageList'] = $converter->createFileDataFromModel($model);
+                }
             }
             $vendorUuid = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ? LIMIT 1")
                 ->execute($element['uuid'])->fetchAssoc();
             
             $vendor = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?")
                 ->execute($vendorUuid['elementId'])->fetchAssoc();
-            $offer['vendor'] = $vendor['name'];
-            $offer['name'] = $element['name'];
+            $offer['vendor'] = html_entity_decode($vendor['name']);
+            $offer['name'] = html_entity_decode($element['name']);
+
+            //hotfix special char
+            $offer['vendor'] = str_replace('&#39;', "'", $offer["vendor"]);
+            $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
+
             $offer['internal_type'] = $element['internal_type'];
-            $offer['uuid'] = str_replace(["{", "}"], ["", ""], $element['uuid']);
+            $offer['uuid'] = strtolower(str_replace(['{', '}'], '', $element['uuid']));
+            $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
             $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
             $offer['types'] = $type['name'];
             $offer['alias'] = $element['alias'];
             if ($element['foreignLink'] && $element['directLink']) {
                 $offer['external_link'] = $element['foreignLink'];
             }
-            $offer['clickCollect'] = $vendor['clickCollect'];
-            
+
+            foreach ($element as $key => $item) {
+                if (!array_key_exists($key, $offer)) {
+                    $offer[$key] = $item;
+                }
+            }
             $arrOffers[] = $offer;
         }
         
         $arrResult = array_merge($arrResult, $arrOffers);
-        
-        return $arrResult;
+        return $this->recursivelyConvertToUtf8($arrResult);
+    }
+
+    private function recursivelyConvertToUtf8($data)
+    {
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                $data[$key] = $this->recursivelyConvertToUtf8($value);
+            }
+        } elseif (is_string($data)) {
+            return mb_convert_encoding($data, "UTF-8", "UTF-8");
+        }
+        return $data;
     }
     
     private function addCookieToResponse(Response $response, Request $request, string $clientUuid)

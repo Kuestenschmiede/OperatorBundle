@@ -8,3 +8,6 @@
 
 <?php $this->block('detailpage_previewpage_actionbar'); ?>
 <?php $this->endblock(); //detailpage_previewpage_actionbar ?>
+
+<?php $this->block('cart-button'); ?>
+<?php $this->endblock()?>

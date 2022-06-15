@@ -1,10 +1,10 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 
 namespace gutesio\OperatorBundle\Controller;
@@ -84,7 +84,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
         }
         if ($this->alias !== "") {
-            throw new RedirectResponseException($this->pageUrl);
+            return new Response();
         }
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js", ResourceLoader::JAVASCRIPT, "c4g-all");

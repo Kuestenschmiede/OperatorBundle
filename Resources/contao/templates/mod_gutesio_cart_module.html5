@@ -1,0 +1,9 @@
+<?php if ($this->getCartUrl && $this->cart_payment_url) { ?>
+<div class="c4g-cart-wrapper"
+     data-get-cart-url="<?php echo $this->getCartUrl; ?>"
+     data-cart-payment-url="<?php echo $this->cart_payment_url; ?>"
+     data-cart-no-items-text="<?php echo $this->cart_no_items_text; ?>">
+</div>
+<?php } else { ?>
+
+<?php } ?>

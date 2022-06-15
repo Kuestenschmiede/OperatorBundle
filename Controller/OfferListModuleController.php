@@ -1,10 +1,10 @@
 <?php
 /**
- * This file belongs to gutes.io and is published exclusively for use
- * in gutes.io operator or provider pages.
+ * This file belongs to gutes.digital and is published exclusively for use
+ * in gutes.digital operator or provider pages.
  * @package    gutesio
  * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.io
+ * @link       https://gutes.digital
  */
 
 namespace gutesio\OperatorBundle\Controller;
@@ -14,6 +14,9 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\OrCondition;
 use con4gis\FrameworkBundle\Classes\FormButtons\FilterButton;
 use con4gis\FrameworkBundle\Classes\FormFields\DateRangeField;
 use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
@@ -42,12 +45,14 @@ use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
+use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -62,8 +67,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
     protected $request = null;
 
     protected $tileList = null;
-    
-    const CC_FORM_SUBMIT_URL = '/showcase_child_cc_form_submit.php';
+
     const COOKIE_WISHLIST = "clientUuid";
 
     /**
@@ -73,15 +77,19 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     private $languageRefs = [];
     private $languageRefsFrontend = [];
+    private ServerService $serverService;
 
     /**
      * OfferListModuleController constructor.
+     * @param ContaoFramework $framework
      * @param OfferLoaderService|null $offerService
+     * @param ServerService $serverService
      */
-    public function __construct(ContaoFramework $framework, ?OfferLoaderService $offerService)
+    public function __construct(ContaoFramework $framework, ?OfferLoaderService $offerService, ServerService $serverService)
     {
         $framework->initialize();
         $this->offerService = $offerService;
+        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
@@ -223,102 +231,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $search = str_replace("+", "", $search);
 
         return $search;
-    }
-
-    /**
-     * @Route(
-     *     "/gutesio/operator/showcase_child_cc_form/{lang}/{alias}",
-     *     name="showcase_child_cc_form",
-     *     methods={"GET"}
-     *     )
-     * @param Request $request
-     * @param string $lang
-     * @param string $alias
-     * @return JsonResponse
-     */
-    public function getClickCollectForm(Request $request, string $lang, string $alias): JsonResponse
-    {
-        System::loadLanguageFile('offer_list', $lang);
-        $formFields = [];
-
-        $comkey = C4GUtils::getKey(
-            C4gSettingsModel::findSettings(),
-            9
-        );
-        
-        $uuid = $alias;
-        if (C4GUtils::startsWith($uuid, '{') !== true) {
-            $uuid = '{' . $uuid;
-        }
-        if (C4GUtils::endsWith($uuid, '}') !== true) {
-            $uuid .= '}';
-        }
-
-        $field = new HiddenFormField();
-        $field->setName('uuid');
-        $field->setValue($uuid);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new HiddenFormField();
-        $field->setName('key');
-        $field->setValue((string) $comkey);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new HiddenFormField();
-        $field->setName('lang');
-        $field->setValue($lang);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextFormField();
-        $field->setName('email');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['email'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['email'][1]);
-        $field->setRequired();
-        $field->setPattern(RegularExpression::EMAIL);
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextFormField();
-        $field->setName('name');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['name'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['name'][1]);
-        $field->setRequired();
-        $formFields[] = $field->getConfiguration();
-
-        $field = new SelectFormField();
-        $field->setName('earliest');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['earliest'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['earliest'][1]);
-        $field->setRequired();
-        $field->setOptions($this->getEarliestOptions());
-        $formFields[] = $field->getConfiguration();
-
-        $field = new TextAreaFormField();
-        $field->setName('notes');
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['notes'][0]);
-        $field->setDescription($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['notes'][1]);
-        $field->setMaxLength(10000);
-        $formFields[] = $field->getConfiguration();
-
-
-        return new JsonResponse([
-            'formFields' => $formFields
-        ]);
-    }
-
-    private function getEarliestOptions(): array
-    {
-        System::loadLanguageFile('gutesio_frontend', 'de');
-        $options = [];
-        foreach ($GLOBALS['TL_LANG']['gutesio_frontend']['cc']['earliest'] as $key => $value) {
-            if ($key === 'afternoon' && (int)date('H') >= 12) {
-                continue;
-            }
-            $options[] = [
-                'value' => $key,
-                'label' => $value
-            ];
-        }
-        return $options;
     }
 
     private function setupLanguage()
@@ -560,7 +472,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     protected function getFullTextTileFields(): array
     {
-        $settings = C4gSettingsModel::findSettings();
+        $user = FrontendUser::getInstance();
         $fields = [];
 
         $field = new ImageTileField();
@@ -626,6 +538,17 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setFormat($GLOBALS['TL_LANG']['offer_list']['maxCredit_format']);
         $field->setWrapperClass("c4g-list-element__maxcredit-wrapper");
         $field->setClass("c4g-list-element__maxCredit");
+        $field->addCondition(new FieldNotValueCondition('maxCredit', '0'));
+        $field->addCondition(new FieldValueCondition('customizableCredit', '1'));
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName('credit');
+        $field->setFormat($GLOBALS['TL_LANG']['offer_list']['credit_format']);
+        $field->setWrapperClass("c4g-list-element__credit-wrapper");
+        $field->setClass("c4g-list-element__credit");
+        $field->addCondition(new FieldNotValueCondition('credit', '0'));
+        $field->addCondition(new FieldNotValueCondition('customizableCredit', '1'));
         $fields[] = $field;
 
         $field = new TagTileField();
@@ -635,33 +558,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setInnerClass("c4g-list-element__taglinks-image");
         $field->setLinkField("linkHref");
         $fields[] = $field;
-
-        global $objPage;
-        $field = new ModalButtonTileField();
-        $field->setName('cc');
-        $field->setWrapperClass("c4g-list-element__clickcollect-wrapper");
-        $field->setClass("c4g-list-element__clickcollect-link");
-        $field->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['modal_button_label']);
-        $field->setUrl('/gutesio/operator/showcase_child_cc_form/'.$objPage->language.'/uuid');
-        $field->setUrlField('uuid');
-        $field->setConfirmButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['confirm_button_text']);
-        $field->setCloseButtonText($GLOBALS['TL_LANG']['offer_list']['frontend']['cc_form']['close_button_text']);
-        $field->setSubmitUrl(rtrim($settings->con4gisIoUrl, '/').self::CC_FORM_SUBMIT_URL);
-        $field->setCondition('clickCollect', '1');
-        $field->setCondition('type', 'product');
-        $field->setInnerFields([
-            'image',
-            'name',
-            'typeName',
-            'strikePrice',
-            'price',
-            'beginDate',
-            'beginTime',
-        ]);
-        $fields[] = $field;
     
         $field = new WrapperTileField();
-        $field->setWrappedFields(['uuid', 'href']);
+        $field->setWrappedFields(['uuid', 'href', 'cart-link']);
         $field->setClass("c4g-list-element__buttons-wrapper");
         $fields[] = $field;
         
@@ -677,6 +576,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setAsyncCall(true);
         $field->setConditionField("not_on_wishlist");
         $field->setConditionValue('1');
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
@@ -694,9 +594,56 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->addConditionalClass("on_wishlist", "on-wishlist");
         $field->setConditionField("on_wishlist");
         $field->setConditionValue('1');
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
         $field->setAddDataAttributes(true);
         $field->setHookAfterClick(true);
         $field->setHookName("removeFromWishlist");
+        $fields[] = $field;
+
+        $purchasableOfferTypeCondition = new OrCondition();
+        $purchasableOfferTypeCondition->addConditions(
+            new FieldValueCondition('type', 'product'),
+            new FieldValueCondition('type', 'voucher')
+        );
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link put-in-cart");
+        $field->setHref($this->serverService->getMainServerURL()."/gutesio/main/cart/add");
+        $field->setLinkText($this->languageRefs['frontend']['putInCart']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("in_cart", "in-cart");
+        $field->setAsyncCall(true);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToCart");
+        $page = $this->model->cart_page ?: 0;
+        if ($page !== 0) {
+            $page = PageModel::findByPk($page);
+            if ($page) {
+                $field->setRedirectPageOnSuccess($page->getAbsoluteUrl());
+            }
+        }
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link not-available");
+        $field->setFormat('Zurzeit nicht verfügbar');
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
         $fields[] = $field;
 
         $detailLinks = $this->getOfferDetailLinks();

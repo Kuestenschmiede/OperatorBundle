@@ -274,6 +274,32 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
 
+            <?php $this->block('cart-button'); ?>
+            <?php if ($this->offerForSale && $this->cartUrl) {?>
+            <div class="cart-btn__wrapper">
+                <button class="btn btn--primary logged-in" onclick="
+                    let data = new FormData();
+                    data.set('uuid', '<?php echo $this->childId;?>');
+                    data.set('elementId', '<?php echo $this->elementId;?>');
+                    let button = this;
+                    console.log(this);
+                    let promise = fetch('<?php echo $this->addToCartUrl;?>', {
+                        method: 'POST',
+                        mode: 'cors',
+                        cache: 'no-cache',
+                        credentials: 'same-origin',
+                        redirect: 'follow',
+                        referrerPolicy: 'no-referrer',
+                        body: data
+                        });
+                    promise.then((response) => {if (response.ok) {
+                      window.location = '<?php echo $this->cartUrl;?>';
+                    }});">In den Warenkorb
+                </button>
+            </div>
+            <?php }?>
+            <?php $this->endblock();?>
+
             <?php if (isset($data->importantNotes) && !empty($data->importantNotes)): ?>
                 <section class="detail-view__section section__important-notes">
                     <div class="c4g-container">
@@ -420,6 +446,15 @@ $data = json_decode(json_encode($this->detailData));
                             <div class="detail-field-text cuisine">
                                 <div class="detail-field-text__label">Küche</div>
                                 <span class="detail-field-text__text"><?= $data->cuisine ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->brochureUpload) && !empty($data->brochureUpload)): ?>
+                            <div class="detail-field-pdf brochureUpload">
+                                <a class="btn btn-primary"
+                                   href="<?= $data->brochureUpload->path ?>"
+                                   title="Broschüre öffnen" target="_blank" rel="nofollow noopener">Brochüre
+                                    [pdf]</a>
                             </div>
                         <?php endif; ?>
 

@@ -56,10 +56,15 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Anzuzeigende Kate
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'Nur Angebote, denen mindestens eines dieser Tags zugeordnet wurde, werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach Datum sortieren', 'Sortiert die Angebote initial nach ihrem Beginndatum. Achtung: Wird nur beachtet, wenn nur Veranstaltungen in der Liste dargestellt werden.'];
 
+$GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link zur Bezahlseite', 'Die Seite, auf der der Bezahlprozess durchgeführt wird.'];
+$GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text bei leerem Warenkorb', 'Dieser Text wird angezeigt, wenn der Warenkorb leer ist.'];
+$GLOBALS['TL_LANG']['tl_module']['cart_page'] = ['Warenkobseite', 'Seite, auf der sich das Warenkorbmodul befindet.'];
+
 $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Lade-Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter-Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['showcase_tag_filter_legend'] = 'Tag-Filter-Einstellungen';
+$GLOBALS['TL_LANG']['tl_module']['cart_legend'] = 'Warenkorb-Einstellungen';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'zufällig';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_asc'] = 'aufsteigend';

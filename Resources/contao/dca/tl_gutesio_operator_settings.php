@@ -35,7 +35,7 @@ $GLOBALS['TL_DCA'][$strName] = [
         'default' => '{key_legend},gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
-            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,voucherDetailPage;'
+            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,voucherDetailPage,cartPage;'
     ],
     
     'fields' => [
@@ -55,7 +55,7 @@ $GLOBALS['TL_DCA'][$strName] = [
         'gutesIoKey' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'maxlength' => 32, 'doNotSaveEmpty' => true],
+            'eval'                    => ['mandatory' => true, 'maxlength' => 34, 'doNotSaveEmpty' => true],
             'load_callback'           => [[$cbClass, 'loadIoKey']],
             'save_callback'           => [[$cbClass, 'saveIoKey']]
         ],
@@ -118,6 +118,12 @@ $GLOBALS['TL_DCA'][$strName] = [
             'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
+        'cartPage' => [
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ],
         'taxRegular' => [
             'exclude'                 => true,
             'default'                 => '19',
@@ -131,6 +137,9 @@ $GLOBALS['TL_DCA'][$strName] = [
             'inputType'               => 'text',
             'eval'                    => ['fieldType' => 'digit', 'mandatory' => true, 'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '7'"
+        ],
+        'mainServerUrl' => [
+            'sql'                     => "varchar(50) NOT NULL default ''"
         ]
     ],
 ];

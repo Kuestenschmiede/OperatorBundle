@@ -28,7 +28,6 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesPart'] = "{general_legend},n
 
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['aliasSite'] =
     [
-        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_maps']['aliasSite'],
         'exclude'                 => true,
         'inputType'               => 'pageTree',
         'eval'                    => ['fieldType'=>'radio'],

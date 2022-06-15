@@ -37,6 +37,10 @@ class ServerService
         throw new Exception('Cannot determine main server url.');
     }
 
+    /**
+     * @return string
+     * @throws Exception
+     */
     private function fetchMainServerURL() : string
     {
         $settings = C4gSettingsModel::findSettings();
@@ -46,6 +50,11 @@ class ServerService
             $baseUrl .= '/';
         }
         $request->setUrl($baseUrl.'mainServerURL.php');
-        return $request->send()->getData();
+        $response = $request->send();
+        if ($response->getStatusCode() === 200 || $response->getStatusCode() === '200') {
+            return $response->getData();
+        } else {
+            throw new Exception('Proxy Server returned response other than 200.');
+        }
     }
 }

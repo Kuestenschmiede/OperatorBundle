@@ -13,19 +13,19 @@ const TerserPlugin = require('terser-webpack-plugin');
 var path = require('path');
 var config = {
   entry: {
-    'cart': './Resources/public/src/js/cart.jsx',
-    'openinghours': './Resources/public/src/js/openinghours.jsx',
-    'phonehours': './Resources/public/src/js/phonehours.jsx',
+    'cart': './src/Resources/public/src/js/cart.jsx',
+    'openinghours': './src/Resources/public/src/js/openinghours.jsx',
+    'phonehours': './src/Resources/public/src/js/phonehours.jsx',
   },
   mode: "production",
   output: {
     filename: '[name].js',
-    path: path.resolve('./Resources/public/dist/js'),
+    path: path.resolve('./src/Resources/public/dist/js'),
     chunkFilename: '[name].bundle.js',
     publicPath: "bundles/gutesiooperator/dist/js/"
   },
   resolve: {
-    roots: ['node_modules', 'Resources/public/src/js'],
+    roots: ['node_modules', 'src/Resources/public/src/js'],
     extensions: ['.jsx', '.js']
   },
   optimization: {
@@ -40,8 +40,8 @@ var config = {
         loader: "babel-loader",
         include: [
           path.resolve('.'),
-          path.resolve('./Resources/public/js/'),
-          path.resolve('./Resources/public/js/*'),
+          path.resolve('./src/Resources/public/js/'),
+          path.resolve('./src/Resources/public/js/*'),
         ],
         options: {
           extends: path.resolve('.babelrc')

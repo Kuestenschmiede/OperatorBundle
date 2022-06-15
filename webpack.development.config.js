@@ -13,13 +13,13 @@ const webpack = require("webpack");
 var path = require('path');
 var config = {
   entry: {
-    'cart': './Resources/public/src/js/cart.jsx',
-    'openinghours': './Resources/public/src/js/openinghours.jsx'
+    'cart': './src/Resources/public/src/js/cart.jsx',
+    'openinghours': './src/Resources/public/src/js/openinghours.jsx'
   },
   mode: "development",
   output: {
     filename: '[name].js',
-    path: path.resolve('./Resources/public/dist/js'),
+    path: path.resolve('./src/Resources/public/dist/js'),
     chunkFilename: '[name].bundle.js',
     publicPath: "bundles/gutesiooperator/dist/js/"
   },
@@ -36,8 +36,8 @@ var config = {
         loader: "babel-loader",
         include: [
           path.resolve('.'),
-          path.resolve('./Resources/public/js/'),
-          path.resolve('./Resources/public/js/*'),
+          path.resolve('./src/Resources/public/js/'),
+          path.resolve('./src/Resources/public/js/*'),
         ],
         options: {
           extends: path.resolve('.babelrc')

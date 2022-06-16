@@ -19,7 +19,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
-    'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals;' .
+    'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_data_show_city;' .
     '{showcase_filter_legend},gutesio_initial_sorting,gutesio_enable_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
@@ -247,6 +247,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_tag_filter_selection'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
     'eval'                    => ['multiple' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_city'] = [
+    'exclude'                 => true,
+    'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '0'"
 ];
 
 /*

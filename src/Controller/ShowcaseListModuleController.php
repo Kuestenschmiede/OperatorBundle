@@ -447,6 +447,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setLevel($level);
         $fields[] = $field;
 
+        if ($this->model->gutesio_data_show_city) {
+            $field = new TextTileField();
+            $field->setName("locationCity");
+            $field->setWrapperClass("c4g-list-element__city-wrapper");
+            $field->setClass("c4g-list-element__city");
+            $fields[] = $field;
+        }
+
         $field = new TextTileField();
         $field->setName("types");
         $field->setWrapperClass("c4g-list-element__types-wrapper");

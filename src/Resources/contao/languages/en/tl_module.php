@@ -23,6 +23,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_details'] = ['Show details',
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_render_searchHtml'] = ['Create HTML for Contao search', 'Determines whether this module should generate the HTML for the Contao search. This should only be active for the main showcase list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_limit'] = ['Loading steps', 'Determines how many records are loaded in each request (default: 30).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_max_data'] = ['Maximum number of records', 'Determines the maximum number of records displayed in the list (0 means no limit).'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_city'] = ['Show location in list', 'Also shows the location in the list.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initial sort', 'Changes the initial sort (default: random).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Activate filter', 'Activates the filter above the list.'];

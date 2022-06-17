@@ -8,6 +8,7 @@
  */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use con4gis\MapsBundle\Classes\Events\LoadInfoWindowEvent;
 use Contao\Controller;
@@ -160,6 +161,11 @@ class LoadPopupListener
             }
         }
 
+        if ($element['description']) {
+
+            $desc = C4GUtils::truncate($element['description'], 275);
+        }
+
         $html = "<div class='showcase-tile c4g-tile'>
                      <div class='c4g-tile-header'>
                         <div class='item image'>
@@ -173,6 +179,9 @@ class LoadPopupListener
                         <div class='item types'>
                             <span class='entry-label'>Kategorie(n)</span>
                             <span class='entry-content'>$strTypes</span>
+                        </div>
+                        <div class='item description'>
+                            <p>$desc</p>
                         </div>
                         <div class='tags'>
                             $tags

@@ -59,10 +59,6 @@ $gutes-box-shadow: 0 0 10px rgba(#000, .5) !default;
 $gutes-font-size-title: 1.5rem !default;
 $gutes-font-weight-title: normal !default;
 
-// click and collect
-$gutes-clickcollect-bgcolor: #e67e22 !default;
-$gutes-clickcollect-color: #fff !default;
-
 // anchor menu
 $anchor-menu-bgcolor: $gutes-element-bgcolor !default;
 $gutes-anchormenu-bgcolor: #eaefee !default;
@@ -141,10 +137,6 @@ html {
 
   // Video
   --gutes-video-bgcolor: #{$gutes-video-bgcolor};
-
-  // click and collect
-  --gutes-clickcollect-bgcolor: #{$gutes-clickcollect-bgcolor};
-  --gutes-clickcollect-color: #{$gutes-clickcollect-color};
 
   // anchor menu
   --anchor-menu-bgcolor: #{$anchor-menu-bgcolor};

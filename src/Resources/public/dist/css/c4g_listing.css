@@ -307,13 +307,6 @@ template {
   background-color: transparent;
   border: 0
 }
-.c4g-listfilter-outer .c4g-form-control:-moz-focusring,
-.c4g-listfilter-outer .react-datepicker__input-container input:-moz-focusring,
-.c4g-modal-content input:-moz-focusring,
-.form-control:-moz-focusring {
-  color: transparent;
-  text-shadow: 0 0 0 #495057
-}
 .c4g-listfilter-outer .c4g-form-control:focus,
 .c4g-listfilter-outer .react-datepicker__input-container input:focus,
 .c4g-modal-content input:focus,
@@ -375,6 +368,11 @@ input[type=time].form-control {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none
+}
+.c4g-listfilter-outer select.c4g-form-control:-moz-focusring,
+select.form-control:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #495057
 }
 .c4g-listfilter-outer select.c4g-form-control:focus::-ms-value,
 select.form-control:focus::-ms-value {
@@ -540,7 +538,7 @@ textarea.form-control {
 .was-validated .c4g-modal-content input:valid,
 .was-validated .form-control:valid {
   border-color: #28a745;
-  padding-right: calc(1.5em + .75rem);
+  padding-right: calc(1.5em + .75rem)!important;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right calc(.375em + .1875rem) center;
@@ -560,6 +558,14 @@ textarea.form-control {
   border-color: #28a745;
   box-shadow: 0 0 0 .2rem rgba(40,167,69,.25)
 }
+.c4g-listfilter-outer .was-validated select.c4g-form-control:valid,
+.c4g-listfilter-outer select.is-valid.c4g-form-control,
+.was-validated .c4g-listfilter-outer select.c4g-form-control:valid,
+.was-validated select.form-control:valid,
+select.form-control.is-valid {
+  padding-right: 3rem!important;
+  background-position: right 1.5rem center
+}
 .c4g-listfilter-outer .was-validated textarea.c4g-form-control:valid,
 .c4g-listfilter-outer textarea.is-valid.c4g-form-control,
 .was-validated .c4g-listfilter-outer textarea.c4g-form-control:valid,
@@ -571,7 +577,7 @@ textarea.form-control.is-valid {
 .custom-select.is-valid,
 .was-validated .custom-select:valid {
   border-color: #28a745;
-  padding-right: calc(.75em + 2.3125rem);
+  padding-right: calc(.75em + 2.3125rem)!important;
   background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") right .75rem center/8px 10px no-repeat,#fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8'%3e%3cpath fill='%2328a745' d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z'/%3e%3c/svg%3e") center right 1.75rem/calc(.75em + .375rem) calc(.75em + .375rem) no-repeat
 }
 .custom-select.is-valid:focus,
@@ -663,7 +669,7 @@ textarea.form-control.is-valid {
 .was-validated .c4g-modal-content input:invalid,
 .was-validated .form-control:invalid {
   border-color: #dc3545;
-  padding-right: calc(1.5em + .75rem);
+  padding-right: calc(1.5em + .75rem)!important;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
   background-repeat: no-repeat;
   background-position: right calc(.375em + .1875rem) center;
@@ -683,6 +689,14 @@ textarea.form-control.is-valid {
   border-color: #dc3545;
   box-shadow: 0 0 0 .2rem rgba(220,53,69,.25)
 }
+.c4g-listfilter-outer .was-validated select.c4g-form-control:invalid,
+.c4g-listfilter-outer select.is-invalid.c4g-form-control,
+.was-validated .c4g-listfilter-outer select.c4g-form-control:invalid,
+.was-validated select.form-control:invalid,
+select.form-control.is-invalid {
+  padding-right: 3rem!important;
+  background-position: right 1.5rem center
+}
 .c4g-listfilter-outer .was-validated textarea.c4g-form-control:invalid,
 .c4g-listfilter-outer textarea.is-invalid.c4g-form-control,
 .was-validated .c4g-listfilter-outer textarea.c4g-form-control:invalid,
@@ -694,7 +708,7 @@ textarea.form-control.is-invalid {
 .custom-select.is-invalid,
 .was-validated .custom-select:invalid {
   border-color: #dc3545;
-  padding-right: calc(.75em + 2.3125rem);
+  padding-right: calc(.75em + 2.3125rem)!important;
   background: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e") right .75rem center/8px 10px no-repeat,#fff url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='%23dc3545' viewBox='0 0 12 12'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e") center right 1.75rem/calc(.75em + .375rem) calc(.75em + .375rem) no-repeat
 }
 .custom-select.is-invalid:focus,
@@ -851,8 +865,6 @@ html {
   --gutes-tag-field-tag-width: 2.5rem;
   --gutes-tag-field-tag-height: 2.5rem;
   --gutes-video-bgcolor: #ebebeb;
-  --gutes-clickcollect-bgcolor: #e67e22;
-  --gutes-clickcollect-color: #fff;
   --anchor-menu-bgcolor: #eaefee;
   --gutes-anchormenu-bgcolor: white;
   -webkit-text-size-adjust: 100%;
@@ -1851,11 +1863,8 @@ html {
 .c4g-btn-default,
 .c4g-btn-sm,
 .c4g-btn-tagfilter,
-.c4g-grid-outer .c4g-list-element__clickcollect-link,
 .c4g-grid-outer .c4g-list-element__more-link,
 .c4g-grid-outer .c4g-list-element__notice-link,
-.c4g-list-element__clickcollect,
-.c4g-list-outer .c4g-list-element__clickcollect-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
 .c4g-listfilter-button,
@@ -1866,7 +1875,6 @@ html {
 .c4g-modal-content .c4g-btn-close,
 .c4g-modal-content .c4g-btn-top-close,
 .c4g-modal-content button,
-.c4g-plain-outer .c4g-list-element__clickcollect-link,
 .c4g-plain-outer .c4g-list-element__more-link,
 .c4g-plain-outer .c4g-list-element__notice-link,
 .tag-filter__filter-item > label {
@@ -1892,11 +1900,8 @@ html {
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
 .c4g-btn:hover,
-.c4g-grid-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-grid-outer .c4g-list-element__more-link:hover,
 .c4g-grid-outer .c4g-list-element__notice-link:hover,
-.c4g-list-element__clickcollect:hover,
-.c4g-list-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-list-outer .c4g-list-element__more-link:hover,
 .c4g-list-outer .c4g-list-element__notice-link:hover,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:hover,
@@ -1906,7 +1911,6 @@ html {
 .c4g-modal-content .c4g-btn-close:hover,
 .c4g-modal-content .c4g-btn-top-close:hover,
 .c4g-modal-content button:hover,
-.c4g-plain-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-plain-outer .c4g-list-element__more-link:hover,
 .c4g-plain-outer .c4g-list-element__notice-link:hover,
 .tag-filter__filter-item > label:hover {
@@ -1919,17 +1923,12 @@ html {
 .c4g-btn-sm:focus,
 .c4g-btn-tagfilter:focus,
 .c4g-btn:focus,
-.c4g-grid-outer .c4g-list-element__clickcollect-link:focus,
 .c4g-grid-outer .c4g-list-element__more-link:focus,
 .c4g-grid-outer .c4g-list-element__notice-link:focus,
-.c4g-grid-outer .focus.c4g-list-element__clickcollect-link,
 .c4g-grid-outer .focus.c4g-list-element__more-link,
 .c4g-grid-outer .focus.c4g-list-element__notice-link,
-.c4g-list-element__clickcollect:focus,
-.c4g-list-outer .c4g-list-element__clickcollect-link:focus,
 .c4g-list-outer .c4g-list-element__more-link:focus,
 .c4g-list-outer .c4g-list-element__notice-link:focus,
-.c4g-list-outer .focus.c4g-list-element__clickcollect-link,
 .c4g-list-outer .focus.c4g-list-element__more-link,
 .c4g-list-outer .focus.c4g-list-element__notice-link,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:focus,
@@ -1945,17 +1944,14 @@ html {
 .c4g-modal-content .focus.c4g-btn-top-close,
 .c4g-modal-content button.focus,
 .c4g-modal-content button:focus,
-.c4g-plain-outer .c4g-list-element__clickcollect-link:focus,
 .c4g-plain-outer .c4g-list-element__more-link:focus,
 .c4g-plain-outer .c4g-list-element__notice-link:focus,
-.c4g-plain-outer .focus.c4g-list-element__clickcollect-link,
 .c4g-plain-outer .focus.c4g-list-element__more-link,
 .c4g-plain-outer .focus.c4g-list-element__notice-link,
 .focus.c4g-btn,
 .focus.c4g-btn-default,
 .focus.c4g-btn-sm,
 .focus.c4g-btn-tagfilter,
-.focus.c4g-list-element__clickcollect,
 .focus.c4g-listfilter-button,
 .tag-filter__filter-item > label.focus,
 .tag-filter__filter-item > label:focus {
@@ -1968,17 +1964,12 @@ html {
 .c4g-btn-sm:disabled,
 .c4g-btn-tagfilter:disabled,
 .c4g-btn:disabled,
-.c4g-grid-outer .c4g-list-element__clickcollect-link:disabled,
 .c4g-grid-outer .c4g-list-element__more-link:disabled,
 .c4g-grid-outer .c4g-list-element__notice-link:disabled,
-.c4g-grid-outer .disabled.c4g-list-element__clickcollect-link,
 .c4g-grid-outer .disabled.c4g-list-element__more-link,
 .c4g-grid-outer .disabled.c4g-list-element__notice-link,
-.c4g-list-element__clickcollect:disabled,
-.c4g-list-outer .c4g-list-element__clickcollect-link:disabled,
 .c4g-list-outer .c4g-list-element__more-link:disabled,
 .c4g-list-outer .c4g-list-element__notice-link:disabled,
-.c4g-list-outer .disabled.c4g-list-element__clickcollect-link,
 .c4g-list-outer .disabled.c4g-list-element__more-link,
 .c4g-list-outer .disabled.c4g-list-element__notice-link,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:disabled,
@@ -1994,17 +1985,14 @@ html {
 .c4g-modal-content .disabled.c4g-btn-top-close,
 .c4g-modal-content button.disabled,
 .c4g-modal-content button:disabled,
-.c4g-plain-outer .c4g-list-element__clickcollect-link:disabled,
 .c4g-plain-outer .c4g-list-element__more-link:disabled,
 .c4g-plain-outer .c4g-list-element__notice-link:disabled,
-.c4g-plain-outer .disabled.c4g-list-element__clickcollect-link,
 .c4g-plain-outer .disabled.c4g-list-element__more-link,
 .c4g-plain-outer .disabled.c4g-list-element__notice-link,
 .disabled.c4g-btn,
 .disabled.c4g-btn-default,
 .disabled.c4g-btn-sm,
 .disabled.c4g-btn-tagfilter,
-.disabled.c4g-list-element__clickcollect,
 .disabled.c4g-listfilter-button,
 .tag-filter__filter-item > label.disabled,
 .tag-filter__filter-item > label:disabled {
@@ -2015,11 +2003,8 @@ html {
 .c4g-btn-sm:not(:disabled):not(.disabled),
 .c4g-btn-tagfilter:not(:disabled):not(.disabled),
 .c4g-btn:not(:disabled):not(.disabled),
-.c4g-grid-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled),
 .c4g-grid-outer .c4g-list-element__more-link:not(:disabled):not(.disabled),
 .c4g-grid-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled),
-.c4g-list-element__clickcollect:not(:disabled):not(.disabled),
-.c4g-list-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled),
 .c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled),
 .c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled),
 .c4g-listfilter-button:not(:disabled):not(.disabled),
@@ -2028,22 +2013,17 @@ html {
 .c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled),
 .c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled),
 .c4g-modal-content button:not(:disabled):not(.disabled),
-.c4g-plain-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled),
 .c4g-plain-outer .c4g-list-element__more-link:not(:disabled):not(.disabled),
 .c4g-plain-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled),
 .tag-filter__filter-item > label:not(:disabled):not(.disabled) {
   cursor: pointer
 }
-.c4g-grid-outer a.disabled.c4g-list-element__clickcollect-link,
 .c4g-grid-outer a.disabled.c4g-list-element__more-link,
 .c4g-grid-outer a.disabled.c4g-list-element__notice-link,
-.c4g-grid-outer fieldset:disabled a.c4g-list-element__clickcollect-link,
 .c4g-grid-outer fieldset:disabled a.c4g-list-element__more-link,
 .c4g-grid-outer fieldset:disabled a.c4g-list-element__notice-link,
-.c4g-list-outer a.disabled.c4g-list-element__clickcollect-link,
 .c4g-list-outer a.disabled.c4g-list-element__more-link,
 .c4g-list-outer a.disabled.c4g-list-element__notice-link,
-.c4g-list-outer fieldset:disabled a.c4g-list-element__clickcollect-link,
 .c4g-list-outer fieldset:disabled a.c4g-list-element__more-link,
 .c4g-list-outer fieldset:disabled a.c4g-list-element__notice-link,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) a.disabled.c4g-listfilter-button,
@@ -2054,10 +2034,8 @@ html {
 .c4g-modal-content a.disabled.c4g-btn-top-close,
 .c4g-modal-content fieldset:disabled a.c4g-btn-close,
 .c4g-modal-content fieldset:disabled a.c4g-btn-top-close,
-.c4g-plain-outer a.disabled.c4g-list-element__clickcollect-link,
 .c4g-plain-outer a.disabled.c4g-list-element__more-link,
 .c4g-plain-outer a.disabled.c4g-list-element__notice-link,
-.c4g-plain-outer fieldset:disabled a.c4g-list-element__clickcollect-link,
 .c4g-plain-outer fieldset:disabled a.c4g-list-element__more-link,
 .c4g-plain-outer fieldset:disabled a.c4g-list-element__notice-link,
 a.btn.disabled,
@@ -2065,19 +2043,15 @@ a.disabled.c4g-btn,
 a.disabled.c4g-btn-default,
 a.disabled.c4g-btn-sm,
 a.disabled.c4g-btn-tagfilter,
-a.disabled.c4g-list-element__clickcollect,
 a.disabled.c4g-listfilter-button,
-fieldset:disabled .c4g-grid-outer a.c4g-list-element__clickcollect-link,
 fieldset:disabled .c4g-grid-outer a.c4g-list-element__more-link,
 fieldset:disabled .c4g-grid-outer a.c4g-list-element__notice-link,
-fieldset:disabled .c4g-list-outer a.c4g-list-element__clickcollect-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__more-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__notice-link,
 fieldset:disabled .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) a.c4g-listfilter-button,
 fieldset:disabled .c4g-listfilter-outer a.c4g-btn-filter,
 fieldset:disabled .c4g-modal-content a.c4g-btn-close,
 fieldset:disabled .c4g-modal-content a.c4g-btn-top-close,
-fieldset:disabled .c4g-plain-outer a.c4g-list-element__clickcollect-link,
 fieldset:disabled .c4g-plain-outer a.c4g-list-element__more-link,
 fieldset:disabled .c4g-plain-outer a.c4g-list-element__notice-link,
 fieldset:disabled a.btn,
@@ -2085,7 +2059,6 @@ fieldset:disabled a.c4g-btn,
 fieldset:disabled a.c4g-btn-default,
 fieldset:disabled a.c4g-btn-sm,
 fieldset:disabled a.c4g-btn-tagfilter,
-fieldset:disabled a.c4g-list-element__clickcollect,
 fieldset:disabled a.c4g-listfilter-button {
   pointer-events: none
 }
@@ -2671,16 +2644,13 @@ fieldset:disabled a.c4g-listfilter-button {
 }
 .btn-sm,
 .c4g-btn-sm,
-.c4g-grid-outer .c4g-list-element__clickcollect-link,
 .c4g-grid-outer .c4g-list-element__more-link,
 .c4g-grid-outer .c4g-list-element__notice-link,
-.c4g-list-outer .c4g-list-element__clickcollect-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
 .c4g-modal-content .c4g-btn-close,
 .c4g-modal-content .c4g-btn-top-close,
 .c4g-modal-content button,
-.c4g-plain-outer .c4g-list-element__clickcollect-link,
 .c4g-plain-outer .c4g-list-element__more-link,
 .c4g-plain-outer .c4g-list-element__notice-link {
   padding: .25rem .5rem;
@@ -2865,20 +2835,6 @@ a.c4g-badge-tagfilter:hover {
 .c4g-btn-tagfilter .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-btn-tagfilter .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-btn-tagfilter .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .badge,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-badge-tagfilter,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__more-link .badge,
 .c4g-grid-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
 .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -2917,16 +2873,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -2947,8 +2897,6 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -2965,16 +2913,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -2995,42 +2937,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__taglinks,
-.c4g-list-element__clickcollect .badge,
-.c4g-list-element__clickcollect .c4g-badge-tagfilter,
-.c4g-list-element__clickcollect .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-element__clickcollect .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-element__clickcollect .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-element__clickcollect .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-element__clickcollect .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-element__clickcollect .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-element__clickcollect .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-element__clickcollect .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-element__clickcollect .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-element__clickcollect .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-element__clickcollect .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-element__clickcollect .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__clickcollect-link .badge,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-badge-tagfilter,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__clickcollect-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__more-link .badge,
 .c4g-list-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
 .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3069,16 +2981,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -3099,8 +3005,6 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -3117,16 +3021,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -3147,8 +3045,6 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -3267,20 +3163,6 @@ a.c4g-badge-tagfilter:hover {
 .c4g-modal-content button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-modal-content button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-modal-content button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .badge,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-badge-tagfilter,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__clickcollect-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__more-link .badge,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3319,22 +3201,14 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -3367,22 +3241,14 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__clickcollect-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -3563,11 +3429,8 @@ html {
 .c4g-btn-default,
 .c4g-btn-sm,
 .c4g-btn-tagfilter,
-.c4g-grid-outer .c4g-list-element__clickcollect-link,
 .c4g-grid-outer .c4g-list-element__more-link,
 .c4g-grid-outer .c4g-list-element__notice-link,
-.c4g-list-element__clickcollect,
-.c4g-list-outer .c4g-list-element__clickcollect-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
 .c4g-listfilter-button,
@@ -3578,7 +3441,6 @@ html {
 .c4g-modal-content .c4g-btn-close,
 .c4g-modal-content .c4g-btn-top-close,
 .c4g-modal-content button,
-.c4g-plain-outer .c4g-list-element__clickcollect-link,
 .c4g-plain-outer .c4g-list-element__more-link,
 .c4g-plain-outer .c4g-list-element__notice-link,
 .tag-filter__filter-item > label {
@@ -3595,11 +3457,8 @@ html {
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
 .c4g-btn:hover,
-.c4g-grid-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-grid-outer .c4g-list-element__more-link:hover,
 .c4g-grid-outer .c4g-list-element__notice-link:hover,
-.c4g-list-element__clickcollect:hover,
-.c4g-list-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-list-outer .c4g-list-element__more-link:hover,
 .c4g-list-outer .c4g-list-element__notice-link:hover,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button:hover,
@@ -3609,7 +3468,6 @@ html {
 .c4g-modal-content .c4g-btn-close:hover,
 .c4g-modal-content .c4g-btn-top-close:hover,
 .c4g-modal-content button:hover,
-.c4g-plain-outer .c4g-list-element__clickcollect-link:hover,
 .c4g-plain-outer .c4g-list-element__more-link:hover,
 .c4g-plain-outer .c4g-list-element__notice-link:hover,
 .tag-filter__filter-item > label:hover {
@@ -3731,65 +3589,6 @@ html {
 .tag-filter__filter-item > label:not(:disabled):not(.disabled):active:focus,
 .tag-filter__filter-item.show > label.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(222,222,223,.5)
-}
-.c4g-btn-cc,
-.c4g-list-element__clickcollect,
-.c4g-list-outer .c4g-list-element__clickcollect-link {
-  color: #fff;
-  background-color: #e67e22;
-  border-color: #e67e22
-}
-.c4g-btn-cc:hover,
-.c4g-list-element__clickcollect:hover,
-.c4g-list-outer .c4g-list-element__clickcollect-link:hover {
-  color: #fff;
-  background-color: #cb6b17;
-  border-color: #bf6516
-}
-.c4g-btn-cc.focus,
-.c4g-btn-cc:focus,
-.c4g-list-element__clickcollect:focus,
-.c4g-list-outer .c4g-list-element__clickcollect-link:focus,
-.c4g-list-outer .focus.c4g-list-element__clickcollect-link,
-.focus.c4g-list-element__clickcollect {
-  color: #fff;
-  background-color: #cb6b17;
-  border-color: #bf6516;
-  box-shadow: 0 0 0 .2rem rgba(234,145,67,.5)
-}
-.c4g-btn-cc.disabled,
-.c4g-btn-cc:disabled,
-.c4g-list-element__clickcollect:disabled,
-.c4g-list-outer .c4g-list-element__clickcollect-link:disabled,
-.c4g-list-outer .disabled.c4g-list-element__clickcollect-link,
-.disabled.c4g-list-element__clickcollect {
-  color: #fff;
-  background-color: #e67e22;
-  border-color: #e67e22
-}
-.c4g-btn-cc:not(:disabled):not(.disabled).active,
-.c4g-btn-cc:not(:disabled):not(.disabled):active,
-.c4g-list-element__clickcollect:not(:disabled):not(.disabled).active,
-.c4g-list-element__clickcollect:not(:disabled):not(.disabled):active,
-.c4g-list-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled).active,
-.c4g-list-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled):active,
-.c4g-list-outer .show > .dropdown-toggle.c4g-list-element__clickcollect-link,
-.show > .c4g-btn-cc.dropdown-toggle,
-.show > .dropdown-toggle.c4g-list-element__clickcollect {
-  color: #fff;
-  background-color: #bf6516;
-  border-color: #b45f14
-}
-.c4g-btn-cc:not(:disabled):not(.disabled).active:focus,
-.c4g-btn-cc:not(:disabled):not(.disabled):active:focus,
-.c4g-list-element__clickcollect:not(:disabled):not(.disabled).active:focus,
-.c4g-list-element__clickcollect:not(:disabled):not(.disabled):active:focus,
-.c4g-list-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled).active:focus,
-.c4g-list-outer .c4g-list-element__clickcollect-link:not(:disabled):not(.disabled):active:focus,
-.c4g-list-outer .show > .dropdown-toggle.c4g-list-element__clickcollect-link:focus,
-.show > .c4g-btn-cc.dropdown-toggle:focus,
-.show > .dropdown-toggle.c4g-list-element__clickcollect:focus {
-  box-shadow: 0 0 0 .2rem rgba(234,145,67,.5)
 }
 .c4g-btn-tagfilter,
 .tag-filter__filter-item > label {
@@ -4040,31 +3839,9 @@ html {
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__buttons-wrapper {
   margin-bottom: 0
 }
-.c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__clickcollect-wrapper,
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper,
-.c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__clickcollect-wrapper,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
   padding: 0 0
-}
-.c4g-grid-outer .c4g-list-element__clickcollect-wrapper,
-.c4g-plain-outer .c4g-list-element__clickcollect-wrapper {
-  display: inline-block;
-  position: absolute;
-  top: -1px;
-  left: 0;
-  margin: 0;
-  margin-bottom: 0;
-  line-height: 1
-}
-.c4g-grid-outer .c4g-list-element__clickcollect-link,
-.c4g-plain-outer .c4g-list-element__clickcollect-link {
-  -webkit-clip-path: polygon(0 0,100% 0,95% 100%,0 100%);
-  clip-path: polygon(0 0,100% 0,95% 100%,0 100%);
-  border-radius: 0;
-  padding: 0 .8rem 0 .3rem;
-  background-color: var(--gutes-clickcollect-bgcolor);
-  color: var(--gutes-clickcollect-color);
-  font-size: var(--gutes-base-font-size--xs)
 }
 .c4g-grid-outer .c4g-list-element__name,
 .c4g-grid-outer .c4g-list-element__title,
@@ -4258,10 +4035,6 @@ html {
   display: flex;
   align-items: center;
   justify-content: center
-}
-.c4g-list-outer .c4g-list-element__clickcollect-wrapper {
-  margin-top: .5rem;
-  margin-bottom: .5rem
 }
 .c4g-list-outer .c4g-list-element__buttons-wrapper {
   display: flex;

@@ -17,10 +17,4 @@
   font-weight: bold;
 }
 
-// click-and-collect button on Merkzettel Liste
-.c4g-list-element__clickcollect {
-  @extend .c4g-btn;
-  @extend .c4g-btn-cc;
-}
-
 

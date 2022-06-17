@@ -165,17 +165,6 @@ html {
       }
     }
 
-    &__clickcollect-wrapper {
-      margin-top: .5rem;
-      margin-bottom: .5rem;
-    }
-
-    &__clickcollect-link {
-      @extend .c4g-btn;
-      @extend .c4g-btn-sm;
-      @extend .c4g-btn-cc;
-    }
-
     &__buttons-wrapper {
       display: flex;
       justify-content: flex-end;

@@ -88,8 +88,3 @@ html {
   @include button-variant($gutes-tag-filter-bgcolor, $gutes-tag-filter-bgcolor);
 }
 
-// click and collect button
-.c4g-btn-cc {
-  @include button-variant($gutes-clickcollect-bgcolor, $gutes-clickcollect-bgcolor);
-}
-

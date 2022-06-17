@@ -107,37 +107,11 @@ html {
         &.c4g-list-element__buttons-wrapper {
           margin-bottom: 0;
         }
-
-        //&:not(.c4g-list-element__image-wrapper) {
         padding: 0 var(--gutes-base-spacing-unit);
-        //}
-
-        &.c4g-list-element__clickcollect-wrapper,
         &.c4g-list-element__image-wrapper {
           padding: 0 0;
         }
       }
-    }
-
-    &__clickcollect-wrapper {
-      display: inline-block;
-      position: absolute;
-      top: -1px;
-      left: 0;
-      margin: 0;
-      margin-bottom: 0;
-      line-height: 1;
-    }
-
-    &__clickcollect-link {
-      @extend .c4g-btn;
-      @extend .c4g-btn-sm;
-      clip-path: polygon(0 0, 100% 0%, 95% 100%, 0% 100%);
-      border-radius: 0;
-      padding: 0 .8rem 0 .3rem;
-      background-color: var(--gutes-clickcollect-bgcolor);
-      color: var(--gutes-clickcollect-color);
-      font-size: var(--gutes-base-font-size--xs);
     }
 
     &__title,

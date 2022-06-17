@@ -332,6 +332,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $productUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->productDetailPage."}}");
         $eventUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}");
         $jobUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
+        $serviceUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->serviceDetailPage."}}");
         $arrangementUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
     
         $urlSuffix = Config::get('urlSuffix');
@@ -454,6 +455,19 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("arrangement");
+        //$field->setExternalLinkField("external_link");
+        $fields[] = $field;
+
+        $serviceUrl = str_replace($urlSuffix, "", $serviceUrl);
+        $field = new LinkButtonTileField();
+        $field->setName("alias");
+        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setClass('c4g-list-element__more-link');
+        $field->setHref($serviceUrl."/uuid" . $urlSuffix);
+        $field->setHrefField("uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
+        $field->setConditionField("internal_type");
+        $field->setConditionValue("service");
         //$field->setExternalLinkField("external_link");
         $fields[] = $field;
         

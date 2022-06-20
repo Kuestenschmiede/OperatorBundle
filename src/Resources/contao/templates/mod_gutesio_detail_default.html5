@@ -277,7 +277,7 @@ $data = json_decode(json_encode($this->detailData));
             <?php $this->block('cart-button'); ?>
             <?php if ($this->offerForSale && $this->cartUrl) {?>
             <div class="cart-btn__wrapper">
-                <button class="btn btn--primary logged-in" onclick="
+                <button class="btn btn--primary" onclick="
                     let data = new FormData();
                     data.set('uuid', '<?php echo $this->childId;?>');
                     data.set('elementId', '<?php echo $this->elementId;?>');

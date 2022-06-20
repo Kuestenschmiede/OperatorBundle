@@ -760,7 +760,12 @@ $data = json_decode(json_encode($this->detailData));
     </div>
 
 <?php
-$newArr = json_decode($this->configuration, true);
+try {
+    $newArr = json_decode($this->configuration, true);
+} catch (TypeError $typeError) {
+    \con4gis\CoreBundle\Resources\contao\models\C4gLogModel::addLogEntry('operator', $typeError->getMessage());
+    throw new \Contao\CoreBundle\Exception\PageNotFoundException();
+}
 $newArr["detailData"]["openingHours"] = $newArr["components"]["detail"]["data"]["opening_hours"];
 unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);

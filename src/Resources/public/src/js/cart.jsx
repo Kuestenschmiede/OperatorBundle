@@ -115,8 +115,8 @@ class Select extends React.Component {
             {
               (() => {
                 let options = [];
-                this.props.options.forEach((opt) => {
-                  options.push(<option value={opt.value}>{this.textFormat(opt.label)}</option>);
+                this.props.options.forEach((opt, index) => {
+                  options.push(<option key={index} value={opt.value}>{this.textFormat(opt.label)}</option>);
                 }, this);
                 return options;
               })()
@@ -246,7 +246,7 @@ class Article extends React.Component {
                              disabled={this.props.article.availableAmount == 1}
                              readOnly={this.props.article.availableAmount == 1}
                              onInput={this.props.updateValue.bind(this, this.props.vendorKey, this.props.articleKey)}
-                             defaultValue={this.props.article.amount}/>
+                             value={this.props.article.amount}/>
                     </span>
                       </label>
                     </div>

@@ -499,7 +499,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setWrapperClass("c4g-list-element__elementname-wrapper");
         $field->setClass("c4g-list-element__elementname-link");
         $field->setLinkTextName('elementName');
-        $field->setHref("/elementLink");
+        $field->setHref("elementLink");
         $field->setHrefName('elementLink');
         $fields[] = $field;
 

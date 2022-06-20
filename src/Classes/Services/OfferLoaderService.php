@@ -1274,8 +1274,7 @@ class OfferLoaderService
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
                 $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
                 if ($elementPage !== null) {
-                    $url = $elementPage->getFrontendUrl();
-
+                    $url = $elementPage->getAbsoluteUrl();
                     if ($url) {
                         if (C4GUtils::endsWith($url, '.html')) {
                             $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);

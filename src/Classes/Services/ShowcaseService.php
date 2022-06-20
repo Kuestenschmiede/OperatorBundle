@@ -45,12 +45,12 @@ class ShowcaseService
      */
     private $visitCounter = null;
 
-    const FILTER_SQL_STRING = '(`name` LIKE ? OR `description` LIKE ? OR `contactName` LIKE ? OR ' .
-                                '`contactStreet` LIKE ? OR `contactCity` LIKE ? OR `locationStreet` LIKE ? OR `locationCity` LIKE ? OR `locationZip` LIKE ?)';
+    const FILTER_SQL_STRING = '(UPPER(`name`) LIKE ? OR UPPER(`description`) LIKE ? OR UPPER(`contactName`) LIKE ? OR ' .
+                                'UPPER(`contactStreet`) LIKE ? OR UPPER(`contactStreetNumber`) LIKE ? OR UPPER(`contactCity`) LIKE ? OR UPPER(`locationStreet`) LIKE ? OR UPPER(`locationStreetNumber`) LIKE ? OR UPPER(`locationCity`) LIKE ? OR UPPER(`locationZip`) LIKE ?)';
 
-    const FILTER_SQL_STRING_WEIGHT = 'IF (`name` LIKE ?, 50, 0) + IF (`description` LIKE ?, 20, 0) + ' .
-                                        'IF (`contactName` LIKE ?, 20, 0) + IF (`contactStreet` LIKE ?, 5,0) + IF (`contactCity` LIKE ?,5, 0) + ' .
-                                            'IF (`locationStreet` LIKE ?, 5, 0) + IF (`locationCity` LIKE ?, 5, 0) + IF (`locationZip` LIKE ?, 5, 0) AS weight';
+    const FILTER_SQL_STRING_WEIGHT = 'IF (UPPER(`name`) LIKE ?, 50, 0) + IF (UPPER(`description`) LIKE ?, 20, 0) + ' .
+                                        'IF (UPPER(`contactName`) LIKE ?, 20, 0) + IF (UPPER(`contactStreet`) LIKE ?, 10,0) + IF (UPPER(`contactStreetNumber`) LIKE ?, 5,0) + IF (UPPER(`contactCity`) LIKE ?,5, 0) + ' .
+                                            'IF (UPPER(`locationStreet`) LIKE ?, 10, 0) + IF (UPPER(`locationStreetNumber`) LIKE ?, 5, 0) + IF (UPPER(`locationCity`) LIKE ?, 5, 0) + IF (UPPER(`locationZip`) LIKE ?, 5, 0) AS weight';
 
     private $filterConnector = 'AND';
 
@@ -295,7 +295,13 @@ class ShowcaseService
         $arrTerms = explode(' ', $searchString);
         $result = '%';
         foreach ($arrTerms as $term) {
-            $result .= $term . '%';
+
+            /* ToDo straße, str., strasse
+            if ($term = 'strasse') {
+
+            }*/
+
+            $result .= strtoupper($term) . '%';
         }
 
         return $result;
@@ -466,7 +472,8 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -481,7 +488,8 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -527,7 +535,7 @@ class ShowcaseService
         if ($idString !== '()') {
             $sql .= ' WHERE tl_gutesio_data_element_type.`typeId` IN ' . $idString;
             if ($searchString !== '') {
-                $sql .= ' AND tl_gutesio_data_element.`name` LIKE ?';
+                $sql .= ' AND UPPER(tl_gutesio_data_element.`name`) LIKE ?';
             }
         }
         // get element ids connected to valid types (type name is already checked here)
@@ -709,7 +717,8 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString)
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString)
                     ->fetchAllAssoc();
             } else {
                 $sql = "SELECT id, geox, geoy, releaseType FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
@@ -728,7 +737,8 @@ class ShowcaseService
                     ->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString)
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString)
                     ->fetchAllAssoc();
             } else {
                 $sql = "SELECT id, geox, geoy FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
@@ -809,7 +819,8 @@ class ShowcaseService
                 ->execute(
                     $searchString, $searchString, $searchString, $searchString, $searchString,
                     $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString, $searchString)
+                    $searchString, $searchString, $searchString, $searchString, $searchString,
+                    $searchString, $searchString, $searchString, $searchString)
                 ->fetchAllAssoc();
         } else {
             $sql = "SELECT id FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";

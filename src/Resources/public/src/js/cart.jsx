@@ -246,7 +246,7 @@ class Article extends React.Component {
                              disabled={this.props.article.availableAmount == 1}
                              readOnly={this.props.article.availableAmount == 1}
                              onInput={this.props.updateValue.bind(this, this.props.vendorKey, this.props.articleKey)}
-                             defaultValue={this.props.article.amount}/>
+                             value={this.props.article.amount}/>
                     </span>
                       </label>
                     </div>

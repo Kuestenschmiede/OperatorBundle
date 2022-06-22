@@ -169,7 +169,7 @@ class ShowcaseService
         $restrictedPostals = []
     ) {
         if ($params && is_array($params)) {
-            $searchString = key_exists('filter',$params) ? $params['filter'] : '';
+            $searchString = key_exists('filter', $params) ? $params['filter'] : '';
             $sorting = key_exists('sorting',$params) ? $params['sorting'] : '';
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) ? explode(',', $params['pos']) : '';
@@ -247,15 +247,15 @@ class ShowcaseService
                 if ($sorting) {
                     $arrSort = explode('_', $sorting);
                     if ($searchString && ($sorting == 'random')) {
-                        $sortClause = ' ORDER BY weight DESC ';
+                        $sortClause = ' ORDER BY weight DESC LIMIT ? OFFSET ?';
                     } elseif ($sorting == 'random') {
-                        $sortClause = ' ORDER BY RAND() ';
-                    } else {
-                        $sortClause = " ORDER BY {$arrSort[0]} " . strtoupper($arrSort[1]);
+                        $sortClause = ' ORDER BY RAND() LIMIT ? OFFSET ?';
+                    } elseif ($arrSort && $arrSort[1]) {
+                        $sortClause = ' ORDER BY {'.$arrSort[0].'} ' . strtoupper($arrSort[1]) . '  LIMIT ? OFFSET ?';
                     }
                 }
 
-                $sql .= $sortClause . ' LIMIT ? OFFSET ?';
+                $sql .= $sortClause;
                 $stm = Database::getInstance()->prepare($sql);
 //                $searchString = '%' . $searchString . '%';
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
@@ -263,7 +263,8 @@ class ShowcaseService
                     $arrResult = $stm->execute(
                         $searchString, $searchString, $searchString, $searchString, $searchString,
                         $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $searchString, $searchString, $searchString, $searchString, $searchString,
                         $limit, $offset)->fetchAllAssoc();
                 } else {
                     $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
@@ -295,13 +296,12 @@ class ShowcaseService
         $arrTerms = explode(' ', $searchString);
         $result = '%';
         foreach ($arrTerms as $term) {
-
-            /* ToDo straße, str., strasse
-            if ($term = 'strasse') {
-
-            }*/
-
-            $result .= strtoupper($term) . '%';
+            $term = strtoupper($term);
+            /* straße, str., strasse */
+            $term = str_replace('STR:','STR', $term);
+            $term = str_replace('STRASSE','STR', $term);
+            $term = str_replace('STRA?E','STR', $term);
+            $result .= $term . '%';
         }
 
         return $result;
@@ -483,6 +483,7 @@ class ShowcaseService
 
                 $arrResult = array_merge($arrResult, $typeResult);
             } else {
+                $searchString = strtoupper($searchString);
                 $sql .= ' ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
                     ->execute(
@@ -510,7 +511,7 @@ class ShowcaseService
         $returnIds = [];
         foreach ($arrResult as $result) {
             if (!in_array($result['id'], $returnIds)) {
-                $returnIds[] = $result['id'];
+                $returnIds[$result['id']] = $result['id'];
             }
         }
 
@@ -531,13 +532,22 @@ class ShowcaseService
             }
         }
         $idString .= ')';
-        $sql = 'SELECT DISTINCT `elementId` FROM tl_gutesio_data_element_type JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid';
+
+        $sql = 'SELECT DISTINCT `elementId` FROM tl_gutesio_data_element_type t JOIN tl_gutesio_data_element e ON t.elementId = e.uuid';
         if ($idString !== '()') {
-            $sql .= ' WHERE tl_gutesio_data_element_type.`typeId` IN ' . $idString;
+            $sql .= ' WHERE t.`typeId` IN ' . $idString;
             if ($searchString !== '') {
-                $sql .= ' AND UPPER(tl_gutesio_data_element.`name`) LIKE ?';
+                //$searchString = $this->updateSearchStringForNonExactSearch($searchString);
+                $searchString = strtoupper($searchString);
+                $sql .= ' AND UPPER(e.`name`) LIKE ?';
             }
         }
+
+        if (($idString !== '()') && (count($typeIds) > 1)) {
+            $sql .= ' GROUP BY `elementId`';
+            $sql .= ' HAVING COUNT(DISTINCT t.`typeId`) = '.count($typeIds);
+        }
+
         // get element ids connected to valid types (type name is already checked here)
         if ($idString === '()' && $searchString !== '') {
             // no id constraint, but search constraint -> do not load everything
@@ -567,6 +577,7 @@ class ShowcaseService
         } else {
             $sql .= ' GROUP BY `elementId`';
         }
+
         if ($tagIdString === '()') {
             // no tagId constraint but search string, do not load everything
             $arrTaggedElements = [];
@@ -581,53 +592,18 @@ class ShowcaseService
             $additionalIds = [];
         }
 
-        $tagConstraintOnly = (count($tagIds) > 0)
-            && (count($arrTaggedElements) > 0)
-            && (count($arrElements) === 0);
-        $tagAndTypeConstraint = count($arrElements) > 0
-            && count($arrTaggedElements) > 0;
-
-        if ($tagConstraintOnly) {
-            $arrElements = $arrTaggedElements;
+        $arrElements = array_merge($arrElements, $arrTaggedElements, $additionalIds);
+        $arrCompareElements = [];
+        foreach ($arrElements as $arrElement) {
+            $arrCompareElements[$arrElement['elementId']] = $arrElement;
         }
+
         $elementIdString = '(';
 
-        if ($tagAndTypeConstraint) {
-            foreach ($arrElements as $key => $element) {
-                // check if $element['elementId'] === $taggedElement['elementId']
-                $found = false;
-                foreach ($arrTaggedElements as $taggedElement) {
-                    if ($taggedElement['elementId'] === $element['elementId']) {
-                        $found = true;
-
-                        break;
-                    }
-                }
-                if ($found) {
-                    $elementIdString .= '"' . $element['elementId'] . '"';
-                    if (array_key_last($arrElements) !== $key) {
-                        $elementIdString .= ',';
-                    }
-                }
-            }
-        } else {
-            // only type constraints are given
-            // or only tag constraints are given
-            // handling is identical
-            foreach ($arrElements as $key => $arrElement) {
-                $elementIdString .= "\"{$arrElement['elementId']}\"";
-                if (array_key_last($arrElements) !== $key) {
-                    $elementIdString .= ',';
-                }
-            }
-        }
-
-        foreach ($additionalIds as $key => $additionalId) {
-            if (strpos($elementIdString, $additionalId['elementId']) === false) {
-                $elementIdString .= "\"{$additionalId['elementId']}\"";
-                if (array_key_last($arrElements) !== $key) {
-                    $elementIdString .= ',';
-                }
+        foreach ($arrCompareElements as $key => $element) {
+            $elementIdString .= '"' . $key . '"';
+            if (array_key_last($arrCompareElements) !== $key) {
+                $elementIdString .= ',';
             }
         }
 

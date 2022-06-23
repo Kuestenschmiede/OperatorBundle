@@ -329,6 +329,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setDescription($this->model->gutesio_child_search_description);
         $field->setWrappingDiv();
         $field->setWrappingDivClass("form-view__searchinput");
+        $field->setCache(true);
 
         if ($this->model->gutesio_enable_tag_filter) {
             if ($useEventFilter || $useProductFilter) {
@@ -349,6 +350,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setHeadlineClass("form-view__period-title");
             $field->setClassName("offer-filter__period form-view__period");
             $field->setDescription($this->languageRefs['chooseDateRange_desc']);
+            $field->setCache(true);
             $fields[] = $field;
         }
         if ($useProductFilter) {
@@ -374,6 +376,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             
             $sortFilter->setClassName("offer-filter__ascend-descend form-view__ascend-descend");
             $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
+            $sortFilter->setCache(true);
             $fields[] = $sortFilter;
         }
 
@@ -384,6 +387,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item offer tag-filter__filter-item");
+            $tagFilter->setCache(true);
             $fields[] = $tagFilter;
         }
         // module id field so the id gets transferred when loading data async

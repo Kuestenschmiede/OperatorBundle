@@ -244,14 +244,17 @@ class ShowcaseService
                     $insertSearchParams = false;
                 }
                 $sortClause = '';
+                $withoutLimit = false;
                 if ($sorting) {
                     $arrSort = explode('_', $sorting);
                     if ($searchString && ($sorting == 'random')) {
                         $sortClause = ' ORDER BY weight DESC LIMIT ? OFFSET ?';
                     } elseif ($sorting == 'random') {
                         $sortClause = ' ORDER BY RAND() LIMIT ? OFFSET ?';
-                    } elseif ($arrSort && $arrSort[1]) {
-                        $sortClause = ' ORDER BY {'.$arrSort[0].'} ' . strtoupper($arrSort[1]) . '  LIMIT ? OFFSET ?';
+                    } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
+                        $sortClause = ' ORDER BY '.$arrSort[0].' ' . strtoupper($arrSort[1]);// . ' LIMIT ? OFFSET ?';
+                        //ToDO limit / offset
+                        $withoutLimit = true;
                     }
                 }
 
@@ -259,15 +262,27 @@ class ShowcaseService
                 $stm = Database::getInstance()->prepare($sql);
 //                $searchString = '%' . $searchString . '%';
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-                if ($insertSearchParams) {
-                    $arrResult = $stm->execute(
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $limit, $offset)->fetchAllAssoc();
+                if ($withoutLimit) {
+                    if ($insertSearchParams) {
+                        $arrResult = $stm->execute(
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $searchString, $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+                    } else {
+                        $arrResult = $stm->execute()->fetchAllAssoc();
+                    }
                 } else {
-                    $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
+                    if ($insertSearchParams) {
+                        $arrResult = $stm->execute(
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                            $limit, $offset)->fetchAllAssoc();
+                    } else {
+                        $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
+                    }
                 }
             }
         }

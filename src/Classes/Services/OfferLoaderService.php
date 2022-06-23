@@ -228,8 +228,8 @@ class OfferLoaderService
                 for ($i = 0; $i < $fieldCount; $i++) {
                     $parameters[] = '%' . $rawTermString . '%';
                 }
-                $parameters[] = $limit;
                 $parameters[] = (int) $offset;
+                $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -256,15 +256,15 @@ class OfferLoaderService
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                    ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
+                    ' ORDER BY relevance DESC LIMIT ?, ?'
                 )->execute($parameters)->fetchAllAssoc();
             } else {
                 $parameters = [];
                 for ($i = 0; $i < $fieldCount; $i++) {
                     $parameters[] = '%' . $rawTermString . '%';
                 }
-                $parameters[] = $limit;
                 $parameters[] = (int) $offset;
+                $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -289,7 +289,7 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
-                ORDER BY relevance DESC LIMIT ? OFFSET ?')
+                ORDER BY relevance DESC LIMIT ?, ?')
                     ->execute(
                         $parameters
                     )->fetchAllAssoc();
@@ -299,8 +299,8 @@ class OfferLoaderService
             for ($i = 0; $i < $fieldCount; $i++) {
                 $parameters[] = '%' . $rawTermString . '%';
             }
-            $parameters[] = $limit;
             $parameters[] = (int) $offset;
+            $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -326,15 +326,15 @@ class OfferLoaderService
                 WHERE a.published = 1 AND type ' . C4GUtils::buildInString($types) .
                 'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
+                ' ORDER BY relevance DESC LIMIT 0, 5000' //Todo ?, ? Hotfix offset error
             )->execute($parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
             for ($i = 0; $i < $fieldCount; $i++) {
                 $parameters[] = '%' . $rawTermString . '%';
             }
-            $parameters[] = $limit;
             $parameters[] = (int) $offset;
+            $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -360,7 +360,7 @@ class OfferLoaderService
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . ') ' . '
                 AND a.parentChildId ' . C4GUtils::buildInString($categories) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY relevance DESC LIMIT ? OFFSET ?'
+                ' ORDER BY relevance DESC LIMIT ?, ?'
             )->execute($parameters)->fetchAllAssoc();
         }
 
@@ -409,8 +409,8 @@ class OfferLoaderService
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
-                $parameters[] = $limit;
                 $parameters[] = (int) $offset;
+                $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -435,12 +435,12 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset
+                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
                 )->execute($parameters)->fetchAllAssoc();
             } else {
                 $parameters = [];
-                $parameters[] = $limit;
                 $parameters[] = (int) $offset;
+                $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -463,15 +463,15 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
-                ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset)
+                ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit)
                     ->execute(
                         $parameters
                     )->fetchAllAssoc();
             }
         } elseif (empty($categories)) {
             $parameters = $types;
-            $parameters[] = $limit;
             $parameters[] = (int) $offset;
+            $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -494,12 +494,12 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset
+                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
             )->execute($parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
-            $parameters[] = $limit;
             $parameters[] = (int) $offset;
+            $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -522,7 +522,7 @@ class OfferLoaderService
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 WHERE a.published = 1 AND a.typeId ' . C4GUtils::buildInString($categories) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$limit.' OFFSET '.$offset
+                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
             )->execute($parameters)->fetchAllAssoc();
         }
 

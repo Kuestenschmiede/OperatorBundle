@@ -198,7 +198,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             return new JsonResponse([]);
         }
         $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
-        if ($max !== 0 && $limit + $offset > $max) {
+        if ($max !== 0 && ($limit + $offset) > $max) {
             $limit = $max - $offset;
         }
         $params = $request->query->all();
@@ -634,7 +634,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
         . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
-        . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external'"
+        . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' ORDER BY name ASC"
         ;
         $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
         $options = [];

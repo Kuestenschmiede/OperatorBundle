@@ -322,11 +322,12 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $useEventFilter = true;
             }
         }
+
         $field = new TextFormField();
         $field->setName('search');
-        $field->setLabel($this->model->gutesio_child_search_label);
-        $field->setPlaceholder($this->model->gutesio_child_search_placeholder);
-        $field->setDescription($this->model->gutesio_child_search_description);
+        $field->setLabel(str_replace('&#39;', "'", $this->model->gutesio_child_search_label));
+        $field->setPlaceholder(str_replace('&#39;', "'", $this->model->gutesio_child_search_placeholder));
+        $field->setDescription(str_replace('&#39;', "'", $this->model->gutesio_child_search_description));
         $field->setWrappingDiv();
         $field->setWrappingDivClass("form-view__searchinput");
         $field->setCache(true);

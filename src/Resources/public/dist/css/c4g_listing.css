@@ -4123,9 +4123,6 @@ html {
   max-width: 400px;
   width: 100%
 }
-.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__searchinput .c4g-form-field > label {
-  display: none
-}
 .react-c4g-listfilter-opened .c4g-listfilter-button {
   text-indent: -999999px;
   overflow: hidden;

@@ -541,6 +541,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         if (count($arrResult) > 0 && !$arrResult[0]) {
             $arrResult = [$arrResult];
         }
+        foreach ($arrResult as $key => $showcase) {
+            foreach ($showcase['types'] as $type) {
+                $types[] = $type['label'];
+                $arrResult[$key]['types'] = implode(', ', $types);
+            }
+        }
         $arrOffers = [];
         foreach ($arrOfferElements as $element) {
             $offer = [];

@@ -125,6 +125,27 @@ html {
         //  }
         //}
 
+        &.c4g-list-element__contact-wrapper .c4g-list-element__address {
+          width: 80%;
+          display: grid;
+          justify-content: flex-start;
+
+          .street-address {
+              width: 100%;
+              display: grid;
+              justify-content: flex-start;
+              grid-template-columns: 1fr 1fr;
+              grid-gap: .5rem;
+          }
+
+          .postal-city {
+            width: 100%;
+            display: flex;
+            justify-content: flex-start;
+            grid-gap: .5rem;
+          }
+        }
+
         &.c4g-list-element__delete-wrapper,
         &.c4g-list-element__more-wrapper {
           width: auto;

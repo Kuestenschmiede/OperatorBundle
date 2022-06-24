@@ -3174,6 +3174,27 @@ html {
     width: calc(20% - 1rem)
   }
 }
+.c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address,
+.wishlist .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address {
+  width: 80%;
+  display: grid;
+  justify-content: flex-start
+}
+.c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address .street-address,
+.wishlist .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address .street-address {
+  width: 100%;
+  display: grid;
+  justify-content: flex-start;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: .5rem
+}
+.c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address .postal-city,
+.wishlist .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address .postal-city {
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  grid-gap: .5rem
+}
 .c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__delete-wrapper,
 .c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__more-wrapper,
 .wishlist .c4g-list-element__inner > div.c4g-list-element__delete-wrapper,

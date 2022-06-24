@@ -13,16 +13,15 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
-use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
 use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
 use con4gis\FrameworkBundle\Classes\Conditions\OrCondition;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
+use con4gis\FrameworkBundle\Classes\TileFields\AddressTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\PostalCityTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\StreetTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\PhoneTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -42,8 +41,8 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -153,7 +152,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         if (strpos($uuid, "{") === false) {
             $uuid = "{" . $uuid . "}";
         }
-        $table = $type === "showcase" ? "tl_gutesio_data_element" : "tl_gutesio_data_child";
+        $table = ($type === "showcase") ? "tl_gutesio_data_element" : "tl_gutesio_data_child";
         $db = Database::getInstance();
         $sql = "DELETE FROM tl_gutesio_data_wishlist WHERE `dataUuid` = ? AND `clientUuid` = ?";
         try {
@@ -315,21 +314,6 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__types');
         $fields[] = $field;
 
-        //ToDo weitere Daten
-        if ($this->model->gutesio_show_contact_data) {
-//            $field = new StreetTileField();
-//            $field->setName("locationStreet");
-//            $field->setWrapperClass("c4g-list-element__street-wrapper");
-//            $field->setClass("c4g-list-element__street");
-//            $fields[] = $field;
-//
-//            $field = new PostalCityTileField();
-//            $field->setName("locationCity");
-//            $field->setWrapperClass("c4g-list-element__city-wrapper");
-//            $field->setClass("c4g-list-element__city");
-//            $fields[] = $field;
-        }
-
         $field = new TagTileField();
         $field->setName("tags");
         $field->setWrapperClass("c4g-list-element__tags-wrapper");
@@ -337,13 +321,32 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setInnerClass("c4g-list-element__tag-image");
         $field->setLinkField("linkHref");
         $fields[] = $field;
-    
+
         $field = new TextTileField();
         $field->setName("vendor");
         $field->setWrapperClass('c4g-list-element__elementname-wrapper');
         $field->setClass('c4g-list-element__elementname');
         $fields[] = $field;
-        
+
+        //ToDo weitere Daten
+        if ($this->model->gutesio_show_contact_data) {
+            $field = new AddressTileField();
+            $field->setName("address");
+            $field->setStreetName('contactStreet');
+            $field->setStreetNumberName('contactStreetNumber');
+            $field->setPostalName('contactZip');
+            $field->setCityName('contactCity');
+            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+            $field->setClass("c4g-list-element__address");
+            $fields[] = $field;
+
+//            $field = new PhoneTileField();
+//            $field->setName("phone");
+//            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+//            $field->setClass("c4g-list-element__phone");
+//            $fields[] = $field;
+        }
+
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $showcaseUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->showcaseDetailPage."}}");
         $productUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->productDetailPage."}}");
@@ -563,7 +566,23 @@ class WishlistModuleController extends AbstractFrontendModuleController
                 $types[] = $type['label'];
                 $arrResult[$key]['types'] = implode(', ', $types);
             }
+
+            //ToDo
+            if ($this->model->gutesio_show_contact_data) {
+                if ($showcase['contactStreet']) {
+                    $arrResult[$key]['contactStreet'] = html_entity_decode($showcase['contactStreet']);
+                    $arrResult[$key]['contactStreetNumber'] = html_entity_decode($showcase['contactStreetNumber']);
+                    $arrResult[$key]['contactZip'] = html_entity_decode($showcase['contactZip']);
+                    $arrResult[$key]['contactCity'] = html_entity_decode($showcase['contactCity']);
+                } else {
+                    $arrResult[$key]['contactStreet'] = html_entity_decode($showcase['locationStreet']);
+                    $arrResult[$key]['contactStreetNumber'] = html_entity_decode($showcase['locationStreetNumber']);
+                    $arrResult[$key]['contactZip'] = html_entity_decode($showcase['locationZip']);
+                    $arrResult[$key]['contactCity'] = html_entity_decode($showcase['locationCity']);
+                }
+            }
         }
+
         $arrOffers = [];
         foreach ($arrOfferElements as $element) {
             $offer = [];
@@ -585,6 +604,21 @@ class WishlistModuleController extends AbstractFrontendModuleController
                 ->execute($vendorUuid['elementId'])->fetchAssoc();
             $offer['vendor'] = html_entity_decode($vendor['name']);
             $offer['name'] = html_entity_decode($element['name']);
+
+            //ToDo
+            if ($this->model->gutesio_show_contact_data) {
+                if ($vendor['contactStreet']) {
+                    $offer['contactStreet'] = html_entity_decode($vendor['contactStreet']);
+                    $offer['contactStreetNumber'] = html_entity_decode($vendor['contactStreetNumber']);
+                    $offer['contactZip'] = html_entity_decode($vendor['contactZip']);
+                    $offer['contactCity'] = html_entity_decode($vendor['contactCity']);
+                } else {
+                    $offer['contactStreet'] = html_entity_decode($vendor['locationStreet']);
+                    $offer['contactStreetNumber'] = html_entity_decode($vendor['locationStreetNumber']);
+                    $offer['contactZip'] = html_entity_decode($vendor['locationZip']);
+                    $offer['contactCity'] = html_entity_decode($vendor['locationCity']);
+                }
+            }
 
             //hotfix special char
             $offer['vendor'] = str_replace('&#39;', "'", $offer["vendor"]);

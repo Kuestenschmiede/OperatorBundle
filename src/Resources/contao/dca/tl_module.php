@@ -67,12 +67,10 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_ch
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_tag_filter'] = 'gutesio_tag_filter_selection';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filter'] = 'gutesio_data_layout_filter';
 
-
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_carousel_template;';
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type;{cart_legend},cart_page;';
-
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data;{cart_legend},cart_page;';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
     'exclude'                 => true,
@@ -391,6 +389,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['cart_no_items_text'] = [
     'inputType'               => 'textarea',
     'eval'                    => ['tl_class' => 'clr'],
     'sql'                     => "text NOT NULL default ''"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_show_contact_data'] = [
+    'exclude'                 => true,
+    'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '0'"
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['cart_page'] = [

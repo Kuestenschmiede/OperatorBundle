@@ -49,10 +49,16 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Types to be displayed
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Categories to display', 'Only the selected categories are displayed.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Tags to be displayed', 'Only offers that have been assigned at least one of these tags will be displayed.'];
 
+$GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link to payment page', 'The page where the payment process is performed.'];
+$GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text when cart is empty', 'This text will be displayed when the cart is empty.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_show_contact_data'] = ['Show contact data', 'If the checkbox is set, then contact data will be shown in the watchlist.'];
+$GLOBALS['TL_LANG']['tl_module']['cart_page'] = ['Shopping cart page', 'Page where the shopping cart module is located.'];
+
 $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Generic settings';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Load settings';
 $GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter settings';
 $GLOBALS['TL_LANG']['tl_module']['showcase_tag_filter_legend'] = 'Tag filter settings';
+$GLOBALS['TL_LANG']['tl_module']['cart_legend'] = 'Cart settings';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'random';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_asc'] = 'ascending';

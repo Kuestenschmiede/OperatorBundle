@@ -21,6 +21,8 @@ use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\PostalCityTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\StreetTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -312,7 +314,22 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setWrapperClass('c4g-list-element__types-wrapper');
         $field->setClass('c4g-list-element__types');
         $fields[] = $field;
-    
+
+        //ToDo weitere Daten
+        if ($this->model->gutesio_show_contact_data) {
+//            $field = new StreetTileField();
+//            $field->setName("locationStreet");
+//            $field->setWrapperClass("c4g-list-element__street-wrapper");
+//            $field->setClass("c4g-list-element__street");
+//            $fields[] = $field;
+//
+//            $field = new PostalCityTileField();
+//            $field->setName("locationCity");
+//            $field->setWrapperClass("c4g-list-element__city-wrapper");
+//            $field->setClass("c4g-list-element__city");
+//            $fields[] = $field;
+        }
+
         $field = new TagTileField();
         $field->setName("tags");
         $field->setWrapperClass("c4g-list-element__tags-wrapper");

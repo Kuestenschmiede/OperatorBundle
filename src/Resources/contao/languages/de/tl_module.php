@@ -59,6 +59,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach 
 
 $GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link zur Bezahlseite', 'Die Seite, auf der der Bezahlprozess durchgeführt wird.'];
 $GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text bei leerem Warenkorb', 'Dieser Text wird angezeigt, wenn der Warenkorb leer ist.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_show_contact_data'] = ['Kontaktdaten anzeigen', 'Ist die Checkbox gesetzt, dann werden Kontaktdaten in der Merkliste angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['cart_page'] = ['Warenkobseite', 'Seite, auf der sich das Warenkorbmodul befindet.'];
 
 $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Allgemeine Einstellungen';

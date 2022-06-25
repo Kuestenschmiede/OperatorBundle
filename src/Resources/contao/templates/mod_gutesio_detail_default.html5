@@ -925,27 +925,18 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                 <?php endif; ?>
             </div>
         </div>
-
-        <?php if ($imprintType !== "external"): ?>
-            <div class="detail-view__imprint-row">
-                <div class="detail-view__imprint-col">
-                    <p>
-                        <span style="display: block;"><strong>Das gutes.digital Schaufenster wird entwickelt und bereitgestellt durch:</strong></span>
-                        Küstenschmiede GmbH
-                        <br>Software & Design
-                        <br>Alter Markt 10
-                        <br>26441 Jever
-                        <br>Deutschland
-                    </p>
-                    <p>
-                        E-Mail: ahoi@kuestenschmiede.de
-                        <br>Telefon: +49 4461 8 999 70
-                    </p>
-                </div>
-            </div>
-        <?php endif; ?>
     </div>
 <?php endif; ?>
+
+<div class="detail-view__imprint-row">
+    <div class="detail-view__imprint-col">
+        <p>
+            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Diese Seite wird erstellt und aktualisiert über <a target="_blank" rel="noopener noreferer" href="https://gutes.digital">gutes.digital</a></span>
+        </p>
+    </div>
+</div>
+
+
 <?php $this->endblock(); //detailpage_imprint ?>
 
     <!-- Modal Shade Detail Page-->

@@ -566,6 +566,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter->setWrappingDiv(true);
         $textFilter->setWrappingDivClass("form-view__searchinput");
         $textFilter->setCache(true);
+        $textFilter->setEntryPoint($this->model->id);
         $fields[] = $textFilter;
 
         if ($this->model->gutesio_enable_type_filter) {
@@ -577,6 +578,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $typeField->setOptions($this->getTypeOptions());
             $typeField->setMultiple(true);
             $typeField->setCache(true);
+            $typeField->setEntryPoint($this->model->id);
             $fields[] = $typeField;
         }
 
@@ -588,6 +590,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");
             $tagFilter->setCache(true);
+            $tagFilter->setEntryPoint($this->model->id);
             $fields[] = $tagFilter;
         }
 
@@ -605,6 +608,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $sortFilter->setChecked($this->model->gutesio_initial_sorting);
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
         $sortFilter->setCache(true);
+        $sortFilter->setEntryPoint($this->model->id);
         $fields[] = $sortFilter;
         
 

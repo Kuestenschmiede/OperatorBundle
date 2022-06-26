@@ -300,7 +300,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
         $form->setToggleableOnClass('react-c4g-listfilter-opened');
         $form->setHidden($this->model->gutesio_enable_filter !== '1');
-
         return $form;
     }
 
@@ -331,6 +330,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setWrappingDiv();
         $field->setWrappingDivClass("form-view__searchinput");
         $field->setCache(true);
+        $field->setEntryPoint($this->model->id);
 
         if ($this->model->gutesio_enable_tag_filter) {
             if ($useEventFilter || $useProductFilter) {
@@ -352,6 +352,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setClassName("offer-filter__period form-view__period");
             $field->setDescription($this->languageRefs['chooseDateRange_desc']);
             $field->setCache(true);
+            $field->setEntryPoint($this->model->id);
             $fields[] = $field;
         }
         if ($useProductFilter) {
@@ -378,6 +379,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $sortFilter->setClassName("offer-filter__ascend-descend form-view__ascend-descend");
             $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
             $sortFilter->setCache(true);
+            $sortFilter->setEntryPoint($this->model->id);
             $fields[] = $sortFilter;
         }
 
@@ -389,6 +391,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item offer tag-filter__filter-item");
             $tagFilter->setCache(true);
+            $tagFilter->setEntryPoint($this->model->id);
             $fields[] = $tagFilter;
         }
         // module id field so the id gets transferred when loading data async

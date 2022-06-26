@@ -79,7 +79,7 @@ $GLOBALS['TL_LANG'][$strName]['wikipedia'] = "Wikipedia";
 $GLOBALS['TL_LANG'][$strName]['alsoInteresting'] = "Auch interessant";
 $GLOBALS['TL_LANG'][$strName]['more'] = "Mehr";
 
-$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterte Suche';
+$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Listenfilter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';
 
 

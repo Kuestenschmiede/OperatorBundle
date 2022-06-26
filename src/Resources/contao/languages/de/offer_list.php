@@ -75,7 +75,7 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['arrangement'] = 'Arrangements';
 $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Dienstleistung';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'ab';
 
-$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterte Suche';
+$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Listenfilter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Standard";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_asc'] = "Preis aufsteigend";

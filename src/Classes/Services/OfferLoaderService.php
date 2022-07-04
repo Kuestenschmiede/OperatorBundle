@@ -865,6 +865,17 @@ class OfferLoaderService
                         $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
 
                         break;
+                    case 'tag_donation':
+                        $stmt = $database->prepare(
+                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                        $tagLink = $stmt->execute(
+                            $uuid,
+                            'donationLink'
+                        )->fetchAssoc()['tagFieldValue'];
+                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+
+                        break;
                     default:
                         break;
                 }

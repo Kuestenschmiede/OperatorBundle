@@ -384,7 +384,8 @@
       .tag_menu,
       .tag_online_reservation,
       .tag_onlineshop,
-      .tag_delivery {
+      .tag_delivery,
+      .tag_donation {
         > a {
           @extend .c4g-btn;
           margin-bottom: 1rem;
@@ -413,6 +414,12 @@
       .tag_delivery {
         a {
           @include button-variant($gutes-tag-fields-tag-delivery, $gutes-tag-fields-tag-delivery);
+        }
+      }
+
+      .tag_donation {
+        a {
+          @include button-variant($gutes-tag-fields-tag-donation, $gutes-tag-fields-tag-donation);
         }
       }
 

@@ -559,6 +559,16 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                             )->fetchAssoc()['tagFieldValue'];
                             $icon['linkLabel'] = 'Onlineshop';
                             break;
+                        case 'tag_donation':
+                            $stmt = $database->prepare(
+                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
+                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
+                            $icon['linkHref'] = $stmt->execute(
+                                $row['uuid'],
+                                'donationLink'
+                            )->fetchAssoc()['tagFieldValue'];
+                            $icon['linkLabel'] = 'Spendenlink';
+                            break;
                         default:
                             break;
                     }

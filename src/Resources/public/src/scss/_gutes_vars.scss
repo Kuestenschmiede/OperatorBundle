@@ -46,6 +46,7 @@ $gutes-tag-fields-tag-menu: #F6921E !default;
 $gutes-tag-fields-tag-reservation: #B073D9 !default;
 $gutes-tag-fields-tag-onlineshop: #ADBD11 !default;
 $gutes-tag-fields-tag-delivery: #ff7bab !default;
+$gutes-tag-fields-tag-donation: #ff7bab !default;
 
 // detail page - video
 // Video
@@ -132,6 +133,7 @@ html {
   --gutes-tag-fields-tag-reservation: #{$gutes-tag-fields-tag-reservation};
   --gutes-tag-fields-tag-onlineshop: #{$gutes-tag-fields-tag-onlineshop};
   --gutes-tag-fields-tag-delivery: #{$gutes-tag-fields-tag-delivery};
+  --gutes-tag-fields-tag-donation: #{$gutes-tag-fields-tag-donation};
   --gutes-tag-field-tag-width: 2.5rem;
   --gutes-tag-field-tag-height: 2.5rem;
 

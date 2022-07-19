@@ -565,7 +565,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter->setPlaceholder($this->languageRefs['filter_placeholder']);
         $textFilter->setWrappingDiv(true);
         $textFilter->setWrappingDivClass("form-view__searchinput");
-        $textFilter->setCache(true);
+        $textFilter->setCache(true); //ToDo module switch
         $textFilter->setEntryPoint($this->model->id);
         $fields[] = $textFilter;
 
@@ -577,7 +577,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $typeField->setPlaceholder("Kategorie auswählen");
             $typeField->setOptions($this->getTypeOptions());
             $typeField->setMultiple(true);
-            $typeField->setCache(true);
+            $typeField->setCache(true); //ToDo module switch
             $typeField->setEntryPoint($this->model->id);
             $fields[] = $typeField;
         }
@@ -589,7 +589,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");
-            $tagFilter->setCache(true);
+            $tagFilter->setCache(true); //ToDo module switch
             $tagFilter->setEntryPoint($this->model->id);
             $fields[] = $tagFilter;
         }
@@ -607,7 +607,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
         $sortFilter->setChecked($this->model->gutesio_initial_sorting);
         $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
-        $sortFilter->setCache(true);
+        $sortFilter->setCache(true); //ToDo module switch
         $sortFilter->setEntryPoint($this->model->id);
         $fields[] = $sortFilter;
         

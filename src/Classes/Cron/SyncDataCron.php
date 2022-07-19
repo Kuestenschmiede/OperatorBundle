@@ -34,15 +34,15 @@ class SyncDataCron
                 $importIds = $importDataClass->loadBaseData(true);
                 if (!empty($importIds)) {
                     foreach ($importIds as $importId) {
-                        $currentImport = $db->prepare('SELECT importVersion FROM tl_c4g_import_data WHERE id=? AND type=?')->execute($importId, 'gutesio')->fetchAssoc();
-                        if ($currentImport['importVersion'] != '') {
+                        $currentImport = $db->prepare('SELECT availableVersion, importVersion FROM tl_c4g_import_data WHERE id=? AND type=?')->execute($importId, 'gutesio')->fetchAssoc();
+                        if ($currentImport['availableVersion'] && $currentImport['importVersion'] && ($currentImport['availableVersion'] > $currentImport['importVersion'])) {
                             $importDataClass->updateBaseData($importId);
                         }
                     }
                 }
-            } else {
+            }/* else {
                 C4gLogModel::addLogEntry('core', 'Cant update available import data. Import currently running.');
-            }
+            }*/
         }
     }
 }

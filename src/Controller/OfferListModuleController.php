@@ -329,7 +329,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setDescription(str_replace('&#39;', "'", $this->model->gutesio_child_search_description));
         $field->setWrappingDiv();
         $field->setWrappingDivClass("form-view__searchinput");
-        $field->setCache(true);
+        $field->setCache(true); //ToDo module switch
         $field->setEntryPoint($this->model->id);
 
         if ($this->model->gutesio_enable_tag_filter) {
@@ -351,7 +351,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setHeadlineClass("form-view__period-title");
             $field->setClassName("offer-filter__period form-view__period");
             $field->setDescription($this->languageRefs['chooseDateRange_desc']);
-            $field->setCache(true);
+            $field->setCache(true); //ToDo module switch
             $field->setEntryPoint($this->model->id);
             $fields[] = $field;
         }
@@ -378,7 +378,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             
             $sortFilter->setClassName("offer-filter__ascend-descend form-view__ascend-descend");
             $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
-            $sortFilter->setCache(true);
+            $sortFilter->setCache(true); //ToDo module switch
             $sortFilter->setEntryPoint($this->model->id);
             $fields[] = $sortFilter;
         }
@@ -390,7 +390,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item offer tag-filter__filter-item");
-            $tagFilter->setCache(true);
+            $tagFilter->setCache(true); //ToDo module switch
             $tagFilter->setEntryPoint($this->model->id);
             $fields[] = $tagFilter;
         }

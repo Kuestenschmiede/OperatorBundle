@@ -135,7 +135,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $template->offerForSale = $data['offerForSale'];
             $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
             $cartPage = PageModel::findByPk($cartPage);
-            $template->cartPageUrl = $cartPage->getFrontendUrl();
+            $template->cartPageUrl = $cartPage ? $cartPage->getFrontendUrl() : '';
             $template->addToCartUrl = $this->serverService->getMainServerURL().'/gutesio/main/cart/add';
             $template->childId = $data['uuid'];
             $template->elementId = $data['elementId'];

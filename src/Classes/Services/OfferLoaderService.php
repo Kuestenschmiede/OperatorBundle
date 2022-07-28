@@ -646,7 +646,7 @@ class OfferLoaderService
 
             if ($row['imageGallery']) {
                 $images = StringUtil::deserialize($row['imageGallery']);
-                if ($isPreview) {
+                if ($isPreview && $rows[$key]['image']) {
                     array_unshift($images, StringUtil::binToUuid($rows[$key]['image']));
                 }
                 $idx = 0;
@@ -657,7 +657,7 @@ class OfferLoaderService
                         $rows[$key]['imageGallery_' . $idx] = [
                             'src' => $model->path,
                             'path' => $model->path,
-                            'uuid' => StringUtil::binToUuid($model->uuid),
+                            'uuid' => $model->uuid ? StringUtil::binToUuid($model->uuid) : '',
                             'alt' => $model->meta && unserialize($model->meta)['de'] ? unserialize($model->meta)['de']['alt'] : $model->name,
                             'name' => $model->name,
                             'width' => $size[0],

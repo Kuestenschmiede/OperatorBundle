@@ -475,7 +475,7 @@ class ShowcaseService
             // connect with OR here since the other condition is already considering the filter
             $whereClause = self::FILTER_SQL_STRING;
             $sql .= ' ' . $whereClause;
-            if ($restrictedPostals && !empty($restrictedPostals)) {
+            if (!empty($restrictedPostals)) {
                 $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                 $sql .= ' ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
@@ -511,7 +511,7 @@ class ShowcaseService
                 $arrResult = array_merge($arrResult, $typeResult);
             }
         } else {
-            if ($restrictedPostals && !empty($restrictedPostals)) {
+            if (!empty($restrictedPostals)) {
                 $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                 $arrResult = $db->prepare($sql)->execute(...$restrictedPostals)->fetchAllAssoc();
             } else {

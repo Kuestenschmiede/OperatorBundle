@@ -16,9 +16,6 @@ use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
@@ -26,22 +23,16 @@ use Contao\Database;
 use Contao\ModuleModel;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
-use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class MiniWishlistModuleController extends AbstractFrontendModuleController
 {
-    const TYPE = 'mini_wishlist_module';
-    
-    private $model = null;
-    
+    public const TYPE = 'mini_wishlist_module';
+
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
-        $this->model = $model;
         $list = $this->getList();
         $fields = $this->getListFields();
         $clientUuid = $this->checkCookieForClientUuid($request);

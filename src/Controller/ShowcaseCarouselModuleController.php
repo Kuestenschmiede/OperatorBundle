@@ -14,12 +14,8 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
-use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
@@ -38,11 +34,10 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
-    const TYPE = 'showcase_tile_list_module';
+    public const TYPE = 'showcase_tile_list_module';
 
-    private $showcaseService = null;
-
-    private $model = null;
+    private ShowcaseService $showcaseService;
+    private ?ModuleModel $model = null;
 
     /**
      * ShowcaseCarouselModuleController constructor.

@@ -63,25 +63,15 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
-    protected $model = null;
-    protected $request = null;
-    protected $tileItems = [];
+    private ?Request $request = null;
+    private array $tileItems = [];
+    private array $languageRefs = [];
 
-    /**
-     * @var OfferLoaderService
-     */
-    private $offerService = null;
-    
-    /**
-     * @var ShowcaseService
-     */
-    private $showcaseService;
-
-    private $languageRefs = [];
-
+    private ?OfferLoaderService $offerService;
+    private ShowcaseService $showcaseService;
     private ServerService $serverService;
 
-    const COOKIE_WISHLIST = "clientUuid";
+    public const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * OfferDetailModuleController constructor.
@@ -102,11 +92,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         global $objPage;
-        $this->model = $model;
         $this->offerService->setModel($model);
         $this->setAlias();
         $pageUrl = "";
-        $page = PageModel::findByPk($this->model->gutesio_offer_list_page);
+        $page = PageModel::findByPk($model->gutesio_offer_list_page);
         if ($page) {
             $pageUrl = $page->getAbsoluteUrl();
         }
@@ -118,7 +107,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
 
-        if ($this->model->gutesio_data_layoutType !== "plain") {
+        if ($model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
@@ -141,7 +130,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $template->elementId = $data['elementId'];
             if ($data) {
                 $objPage->pageTitle = $data['name'];
-                $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
+                $conf = new FrontendConfiguration('entrypoint_' . $model->id);
                 $components = $this->getDetailComponents($data, $request);
                 if ($data['type'] === "event") {
                     if ($data['locationElementId']) {
@@ -175,21 +164,21 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 }
                 $conf->setLanguage($objPage->language);
                 if (!empty($data)) {
-                    if ($this->model->gutesio_data_render_searchHtml) {
+                    if ($model->gutesio_data_render_searchHtml) {
                         $sc = new SearchConfiguration();
                         $sc->addData($data, ['name', 'description', 'displayType', 'extendedSearchTerms']);
                     }
                 } else {
                     throw new RedirectResponseException($pageUrl);
                 }
-                $template->entrypoint = 'entrypoint_' . $this->model->id;
+                $template->entrypoint = 'entrypoint_' . $model->id;
                 $strConf = json_encode($conf);
                 $error = json_last_error_msg();
                 if ($error && (strtoupper($error) !== "NO ERROR")) {
                     C4gLogModel::addLogEntry("operator", $error);
                 }
                 $template->configuration = $strConf;
-                if ($this->model->gutesio_data_render_searchHtml) {
+                if ($model->gutesio_data_render_searchHtml) {
                     $template->searchHTML = $sc->getHTML();
                 }
             } else {
@@ -200,7 +189,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         }
         $template->detailData = $data;
         $template->mapData = $this->getMapData();
-        $page = $this->model->cart_page ?: 0;
+        $page = $model->cart_page ?: 0;
         if ($page !== 0) {
             $page = PageModel::findByPk($page);
             if ($page) {

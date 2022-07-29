@@ -9,7 +9,6 @@
  */
 namespace gutesio\OperatorBundle\Controller;
 
-
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
@@ -21,7 +20,6 @@ use con4gis\FrameworkBundle\Classes\TileFields\AddressTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\PhoneTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -51,11 +49,11 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class WishlistModuleController extends AbstractFrontendModuleController
 {
-    const TYPE = 'wishlist_module';
-    
-    private $model = null;
+    private ?ModuleModel $model = null;
     private OfferLoaderService $offerLoaderService;
     private ServerService $serverService;
+
+    public const TYPE = 'wishlist_module';
 
     public function __construct(OfferLoaderService $offerLoaderService, ServerService $serverService)
     {

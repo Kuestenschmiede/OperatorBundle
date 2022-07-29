@@ -34,7 +34,6 @@ use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\Controller;
-use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
@@ -51,20 +50,19 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 {
     use AutoItemTrait;
 
-    protected $tileList = null;
-    protected $tileItems = [];
-    protected $model = null;
+    private ?TileList $tileList = null;
+    private array $tileItems = [];
+    private ?ModuleModel $model = null;
 
-    const AJAX_GET_ROUTE = '/gutesio/operator/showcase_tile_list_data/{offset}';
-    const FILTER_ROUTE = '/gutesio/operator/showcase_tile_list/filter';
-    const TYPE = 'showcase_list_module';
-    const COOKIE_WISHLIST = "clientUuid";
+    private array $languageRefs = [];
+    private array $languageRefsFrontend = [];
 
-    private $showcaseService = null;
+    private ShowcaseService $showcaseService;
 
-    private $languageRefs = [];
-    private $languageRefsFrontend = [];
-
+    public const AJAX_GET_ROUTE = '/gutesio/operator/showcase_tile_list_data/{offset}';
+    public const FILTER_ROUTE = '/gutesio/operator/showcase_tile_list/filter';
+    public const TYPE = 'showcase_list_module';
+    public const COOKIE_WISHLIST = "clientUuid";
 
     public function __construct(ShowcaseService $showcaseService)
     {

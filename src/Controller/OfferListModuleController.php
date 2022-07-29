@@ -13,7 +13,6 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
-use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
 use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
 use con4gis\FrameworkBundle\Classes\Conditions\OrCondition;
@@ -63,21 +62,17 @@ class OfferListModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
-    protected $model = null;
-    protected $request = null;
+    private ?ModuleModel $model = null;
+    private ?Request $request = null;
+    private ?TileList $tileList = null;
 
-    protected $tileList = null;
+    private array $languageRefs = [];
+    private array $languageRefsFrontend = [];
 
-    const COOKIE_WISHLIST = "clientUuid";
-
-    /**
-     * @var OfferLoaderService
-     */
-    private $offerService = null;
-
-    private $languageRefs = [];
-    private $languageRefsFrontend = [];
+    private ?OfferLoaderService $offerService;
     private ServerService $serverService;
+
+    public const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * OfferListModuleController constructor.

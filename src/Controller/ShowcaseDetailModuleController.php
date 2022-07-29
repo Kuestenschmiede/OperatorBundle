@@ -50,25 +50,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
-    const TYPE = 'showcase_detail_module';
-    const COOKIE_WISHLIST = "clientUuid";
+    private array $languageRefs = [];
 
-    protected $model = null;
+    private ShowcaseService $showcaseService;
+    private UrlGeneratorInterface $generator;
+    private OfferLoaderService $offerLoaderService;
 
-    private $showcaseService = null;
-
-    private $languageRefs = [];
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $generator;
-
-    /**
-     * @var OfferLoaderService
-     */
-    private $offerLoaderService;
-
+    public const TYPE = 'showcase_detail_module';
+    public const COOKIE_WISHLIST = "clientUuid";
 
     /**
      * ShowcaseDetailModuleController constructor.
@@ -89,14 +78,12 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         global $objPage;
-        $this->model = $model;
         $this->setAlias();
         $redirectPage = $model->gutesio_showcase_list_page;
         $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
-//        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/jquery/jquery-3.5.1.slim.min.js|async|static?v=" . time(), ResourceLoader::JAVASCRIPT, "boostrap-jquery");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async", ResourceLoader::JAVASCRIPT, "boostrap-modal");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
@@ -112,7 +99,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
         if ($this->alias !== '') {
             MapsResourceLoader::loadResources(["router" => true], ['router_enable' => true]);
-            $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
+            $conf = new FrontendConfiguration('entrypoint_' . $model->id);
             $detailData = $this->getDetailData($request);
             $objPage->pageTitle = $detailData['name'];
             if (!empty($detailData)) {
@@ -147,7 +134,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             } else {
                 throw new RedirectResponseException($redirectUrl);
             }
-            if ($this->model->gutesio_data_render_searchHtml) {
+            if ($model->gutesio_data_render_searchHtml) {
                 $sc = new SearchConfiguration();
                 $sc->addData($detailData, ['name', 'description', 'types', 'extendedSearchTerms']);
             }
@@ -158,7 +145,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             throw new RedirectResponseException($redirectUrl);
         }
         
-        if ($this->model->gutesio_load_klaro_consent) {
+        if ($model->gutesio_load_klaro_consent) {
             $template->loadKlaro = true;
         }
         
@@ -166,20 +153,19 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $template->imprintData = $detailData['imprintData'];
         }
 
-        $template->entrypoint = 'entrypoint_' . $this->model->id;
+        $template->entrypoint = 'entrypoint_' . $model->id;
         $template->detailData = $detailData;
-        if ($this->model->gutesio_data_render_searchHtml) {
+        if ($model->gutesio_data_render_searchHtml) {
             $template->searchHTML = $sc->getHTML();
         }
 
         return $template->getResponse();
     }
-    
+
     /**
      * @Route("/gutesio/operator/showcase_detail_get_map_data", name="showcase_detail_get_map_data", methods={"GET"})
      * @param Request $request
      * @param ContaoFramework $framework
-     * @param $offset
      * @return JsonResponse
      */
     public function getMapData(Request $request, ContaoFramework $framework)

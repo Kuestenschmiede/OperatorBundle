@@ -491,7 +491,6 @@ class ShowcaseService
                     'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ? AND locationZip ' . C4GUtils::buildInString($restrictedPostals)
                 )->execute($searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
 
-                $arrResult = array_merge($arrResult, $typeResult);
             } else {
                 $searchString = strtoupper($searchString);
                 $sql .= ' ORDER BY weight DESC';
@@ -508,8 +507,8 @@ class ShowcaseService
                     'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ?'
                 )->execute($searchString, $searchString)->fetchAllAssoc();
 
-                $arrResult = array_merge($arrResult, $typeResult);
             }
+            $arrResult = array_merge($arrResult, $typeResult);
         } else {
             if (!empty($restrictedPostals)) {
                 $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);

@@ -461,13 +461,8 @@ class ShowcaseService
             }
             $sql = 'SELECT `id`, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
         } else {
-            if ($searchString) {
-                $sql = 'SELECT `id`, ' . self::FILTER_SQL_STRING_WEIGHT . ' FROM tl_gutesio_data_element ' .
-                    "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND `uuid` IN " . $elementIdString;
-            } else {
-                $sql = 'SELECT `id` FROM tl_gutesio_data_element ' .
-                    "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND `uuid` IN " . $elementIdString;
-            }
+            $sql = 'SELECT `id` FROM tl_gutesio_data_element ' .
+                "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND `uuid` IN " . $elementIdString;
         }
         if ($searchString) {
             $this->filterConnector = 'AND'; // todo temporary fix for filter

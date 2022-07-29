@@ -552,11 +552,6 @@ class ShowcaseService
             }
         }
 
-        if (($idString !== '()') && (count($typeIds) > 1)) {
-            $sql .= ' GROUP BY `elementId`';
-            $sql .= ' HAVING COUNT(DISTINCT t.`typeId`) = '.count($typeIds);
-        }
-
         // get element ids connected to valid types (type name is already checked here)
         if ($idString === '()' && $searchString !== '') {
             // no id constraint, but search constraint -> do not load everything

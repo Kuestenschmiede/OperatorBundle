@@ -3639,6 +3639,12 @@ html {
     opacity: 1
   }
 }
+.c4g-listfilter-outer {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0
+}
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button.executeSubmit,
 .c4g-listfilter-outer .c4g-btn-filter.executeSubmit,
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button.executeSubmit {
@@ -3694,17 +3700,21 @@ html {
   max-width: 100%;
   box-shadow: var(--gutes-box-shadow);
   -webkit-animation: fadeIn .5s;
-  animation: fadeIn .5s
+  animation: fadeIn .5s;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-left: 15px;
+  padding-right: 15px
 }
 .c4g-listfilter-outer.react-c4g-listfilter-opened .c4g-listfilter-form-wrapper {
   display: block
 }
 .c4g-listfilter-inner {
-  text-align: center
+  text-align: left
 }
 .c4g-listfilter-button-wrapper {
   padding-top: .5rem;
-  padding-bottom: .5rem
+  padding-bottom: 1rem
 }
 .c4g-listfilter-button-wrapper.react-c4g-listfilter-opened {
   text-align: right
@@ -4092,7 +4102,7 @@ html {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: end;
   grid-gap: .5rem
 }
 @media (min-width:992px) {

@@ -111,16 +111,26 @@
     .c4g-listfilter-form-wrapper {
       display: block;
     }
+
+    margin-left: 15px;
+    margin-right: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
   }
+
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .c4g-listfilter-inner {
-  text-align: center;
+  text-align: left;
 }
 
 .c4g-listfilter-button-wrapper {
   padding-top: .5rem;
-  padding-bottom: .5rem;
+  padding-bottom: 1rem;
 
   &.react-c4g-listfilter-opened {
     text-align: right;

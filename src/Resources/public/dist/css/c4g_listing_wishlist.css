@@ -464,7 +464,7 @@ textarea.form-control {
   display: none;
   width: 100%;
   margin-top: .25rem;
-  font-size: 80%;
+  font-size: .875em;
   color: #28a745
 }
 .valid-tooltip {
@@ -577,7 +577,7 @@ textarea.form-control.is-valid {
   display: none;
   width: 100%;
   margin-top: .25rem;
-  font-size: 80%;
+  font-size: .875em;
   color: #dc3545
 }
 .invalid-tooltip {
@@ -840,6 +840,7 @@ html {
   --gutes-tag-fields-tag-reservation: #B073D9;
   --gutes-tag-fields-tag-onlineshop: #ADBD11;
   --gutes-tag-fields-tag-delivery: #ff7bab;
+  --gutes-tag-fields-tag-donation: #ff7bab;
   --gutes-tag-field-tag-width: 2.5rem;
   --gutes-tag-field-tag-height: 2.5rem;
   --gutes-video-bgcolor: #ebebeb;

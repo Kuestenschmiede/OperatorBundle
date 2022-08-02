@@ -482,7 +482,7 @@ textarea.form-control {
   display: none;
   width: 100%;
   margin-top: .25rem;
-  font-size: 80%;
+  font-size: .875em;
   color: #28a745
 }
 .valid-tooltip {
@@ -603,7 +603,7 @@ textarea.is-valid.detail-view__list-filter-input {
   display: none;
   width: 100%;
   margin-top: .25rem;
-  font-size: 80%;
+  font-size: .875em;
   color: #dc3545
 }
 .invalid-tooltip {
@@ -851,7 +851,7 @@ hr {
 }
 .small,
 small {
-  font-size: 80%;
+  font-size: .875em;
   font-weight: 400
 }
 .mark,
@@ -883,7 +883,7 @@ mark {
 }
 .blockquote-footer {
   display: block;
-  font-size: 80%;
+  font-size: .875em;
   color: #6c757d
 }
 .blockquote-footer::before {
@@ -1894,6 +1894,7 @@ mark {
 .detail-view .anchor-menu__list > li > a,
 .detail-view .c4g-icon-wrapper > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
@@ -1933,6 +1934,7 @@ mark {
   .detail-view .anchor-menu__list > li > a,
   .detail-view .c4g-icon-wrapper > a,
   .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
+  .detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
   .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
   .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
   .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
@@ -1957,6 +1959,7 @@ mark {
 .detail-view .anchor-menu__list > li > a:hover,
 .detail-view .c4g-icon-wrapper > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:hover,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
@@ -1990,6 +1993,8 @@ mark {
 .detail-view .c4g-icon-wrapper > a:focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a.focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:focus,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a.focus,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a.focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a.focus,
@@ -2035,6 +2040,8 @@ mark {
 .detail-view .c4g-icon-wrapper > a:disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:disabled,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a.disabled,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a.disabled,
@@ -2070,6 +2077,7 @@ mark {
 .detail-view .anchor-menu__list > li > a:not(:disabled):not(.disabled),
 .detail-view .c4g-icon-wrapper > a:not(:disabled):not(.disabled),
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:not(:disabled):not(.disabled),
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:not(:disabled):not(.disabled),
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:not(:disabled):not(.disabled),
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:not(:disabled):not(.disabled),
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:not(:disabled):not(.disabled),
@@ -2091,10 +2099,12 @@ mark {
 .detail-view .anchor-menu__list > li > a.disabled,
 .detail-view .c4g-icon-wrapper > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a.disabled,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_delivery > a,
+.detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_donation > a,
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_onlineshop > a,
@@ -2120,6 +2130,7 @@ fieldset:disabled .c4g-modal-content a.c4g-btn-top-close,
 fieldset:disabled .detail-view .anchor-menu__list > li > a,
 fieldset:disabled .detail-view .c4g-icon-wrapper > a,
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
+fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
@@ -2926,6 +2937,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .c4g-icon-wrapper > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__tag,
@@ -2968,6 +2981,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .c4g-icon-wrapper > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__tag,
@@ -3020,6 +3035,12 @@ a.c4g-badge-tagfilter:hover {
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .badge,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-badge-tagfilter,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .badge,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-badge-tagfilter,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -6257,6 +6278,7 @@ a.text-dark:hover {
 .nav-tabs .detail-view .anchor-menu__list > li > a,
 .nav-tabs .nav-link {
   margin-bottom: -1px;
+  background-color: transparent;
   border: 1px solid transparent;
   border-top-left-radius: .25rem;
   border-top-right-radius: .25rem
@@ -6267,6 +6289,7 @@ a.text-dark:hover {
 .nav-tabs .detail-view .anchor-menu__list > li > a:hover,
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
+  isolation: isolate;
   border-color: #e9ecef #e9ecef #dee2e6
 }
 .detail-view .nav-tabs .anchor-menu__list > li > a.disabled,
@@ -6298,6 +6321,8 @@ a.text-dark:hover {
 .detail-view .nav-pills .anchor-menu__list > li > a,
 .nav-pills .detail-view .anchor-menu__list > li > a,
 .nav-pills .nav-link {
+  background: 0 0;
+  border: 0;
   border-radius: .25rem
 }
 .detail-view .nav-pills .anchor-menu__list > li > a.active,
@@ -6554,6 +6579,7 @@ html {
   --gutes-tag-fields-tag-reservation: #B073D9;
   --gutes-tag-fields-tag-onlineshop: #ADBD11;
   --gutes-tag-fields-tag-delivery: #ff7bab;
+  --gutes-tag-fields-tag-donation: #ff7bab;
   --gutes-tag-field-tag-width: 2.5rem;
   --gutes-tag-field-tag-height: 2.5rem;
   --gutes-video-bgcolor: #ebebeb;
@@ -6616,6 +6642,7 @@ html {
 .c4g-modal-content button,
 .detail-view .c4g-icon-wrapper > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
@@ -6644,6 +6671,7 @@ html {
 .c4g-modal-content button:hover,
 .detail-view .c4g-icon-wrapper > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:hover,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
@@ -7098,6 +7126,7 @@ html {
   margin-bottom: 0
 }
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a {
@@ -7241,6 +7270,41 @@ html {
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery a:not(:disabled):not(.disabled).active:focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_delivery a:not(:disabled):not(.disabled):active:focus,
 .show > .detail-view .detail-field-wrapper__tag-fields .tag_delivery a.dropdown-toggle:focus {
+  box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
+}
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a {
+  color: #212529;
+  background-color: #ff7bab;
+  border-color: #ff7bab
+}
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:hover {
+  color: #fff;
+  background-color: #ff5593;
+  border-color: #ff488b
+}
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a.focus,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:focus {
+  color: #fff;
+  background-color: #ff5593;
+  border-color: #ff488b;
+  box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
+}
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a.disabled,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:disabled {
+  color: #212529;
+  background-color: #ff7bab;
+  border-color: #ff7bab
+}
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled).active,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled):active,
+.show > .detail-view .detail-field-wrapper__tag-fields .tag_donation a.dropdown-toggle {
+  color: #fff;
+  background-color: #ff488b;
+  border-color: #ff3b82
+}
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled).active:focus,
+.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled):active:focus,
+.show > .detail-view .detail-field-wrapper__tag-fields .tag_donation a.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
 }
 .detail-view__contact-wrapper > div,

@@ -144,11 +144,11 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             }
             throw new RedirectResponseException($redirectUrl);
         }
-        
+
         if ($model->gutesio_load_klaro_consent) {
             $template->loadKlaro = true;
         }
-        
+
         if ($detailData['imprintData']) {
             $template->imprintData = $detailData['imprintData'];
         }
@@ -178,11 +178,42 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             ["profile" => $settings->detail_profile],
             false
         );
-    
+
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
         $mapData['addIdToDiv'] = false;
-        
+
+        $strPublishedElem = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
+        $strPublishedElem = str_replace('{{table}}', 'elem', $strPublishedElem);
+        $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
+        $alias = $_SERVER['HTTP_REFERER'];
+        $strC = substr_count($alias, '/');
+        $arrUrl = explode('/', $alias);
+
+        if (strpos($arrUrl[$strC], '.html')) {
+            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
+        } else {
+            $alias = $arrUrl[$strC];
+        }
+        if (strpos($alias, '?')) {
+            $alias = explode('?', $alias)[0];
+        }
+
+        if (C4GUtils::isValidGUID($alias)) {
+            $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
+                ->execute('{' . strtoupper($alias) . '}')->fetchAllAssoc();
+            if ($offerConnections and (count($offerConnections) > 0)) {
+                $firstConnection = $offerConnections[0];
+                $elem = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?')
+                    ->execute($firstConnection['elementId'])->fetchAssoc();
+            }
+        } else {
+            $elem = Database::getInstance()->prepare($strQueryElem)->execute($alias)->fetchAssoc();
+        }
+        if ($elem && $elem['geox'] && $elem['geoy']) {
+          $mapData['center']['lon'] = $elem['geox'];
+          $mapData['center']['lat'] = $elem['geoy'];
+        }
         return new JsonResponse($mapData);
     }
 
@@ -233,7 +264,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 $detailData[$key] = C4GUtils::addProtocolToLink($detailDatum);
             }
         }
-        
+
         // load extendedSearchTerms
         $typeParameters = [];
         foreach ($types as $type) {
@@ -247,7 +278,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $strSearchTerms .= $searchTerm['extendedSearchTerms'] . ",";
         }
         $detailData['extendedSearchTerms'] = str_replace(",", " ", $strSearchTerms);
-        
+
         return $detailData;
     }
 
@@ -268,7 +299,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $tileList->setHeadlineLevel(2);
         $tileList->setWithTextFilter(true);
         $tileList->setTextFilterFields(['name', 'shortDescription', 'typeName']);
-        
+
         return $tileList;
     }
 
@@ -339,7 +370,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $field->setInnerClass("c4g-list-element__taglinks-image");
         $field->setLinkField("linkHref");
         $fields[] = $field;
-    
+
         $field = new WrapperTileField();
         $field->setWrappedFields(['uuid', 'href']);
         $field->setClass("c4g-list-element__buttons-wrapper");
@@ -361,7 +392,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $field->setHookAfterClick(true);
         $field->setHookName("addToWishlist");
         $fields[] = $field;
-    
+
         $field = new LinkButtonTileField();
         $field->setName("uuid");
         $field->setHrefField("uuid");
@@ -621,7 +652,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $list->setListWrapper(true);
         $list->setWrapperId("related-showcase-tiles");
         $list->setHeadlineLevel(2);
-        
+
         return $list;
     }
 
@@ -664,7 +695,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $field->setGeoxField("geox");
         $field->setGeoyField("geoy");
         $fields[] = $field;
-    
+
         $field = new WrapperTileField();
         $field->setWrappedFields(['uuid', 'alias']);
         $field->setClass("c4g-list-element__buttons-wrapper");

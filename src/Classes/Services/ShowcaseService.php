@@ -105,7 +105,7 @@ class ShowcaseService
                 // check if the relation is bidirectional
                 foreach ($relatedShowcases as $relatedShowcase) {
                     $relatedUuids = StringUtil::deserialize($relatedShowcase['showcaseIds']);
-                    if (in_array($arrShowcase['uuid'], $relatedUuids)) {
+                    if ($arrShowcase && is_array($arrShowcase) && $relatedUuids && is_array($relatedUuids) && in_array($arrShowcase['uuid'], $relatedUuids)) {
                         $returnData[] = $relatedShowcase;
                     }
                 }

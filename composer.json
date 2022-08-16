@@ -50,6 +50,9 @@
     "preferred-install": "dist"
   },
   "extra": {
-    "contao-manager-plugin": "gutesio\\OperatorBundle\\ContaoManager\\Plugin"
+    "contao-manager-plugin": "gutesio\\OperatorBundle\\ContaoManager\\Plugin",
+    "branch-alias": {
+      "dev-main": "2.0.x-dev"
+    }
   }
 }

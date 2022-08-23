@@ -37,9 +37,11 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
+use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -701,5 +703,39 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             ];
         }
         return $links;
+    }
+
+    /**
+     * just needed with Contao 4.9
+     *
+     * @param array $pages
+     * @param int|null $rootId
+     * @param bool $isSitemap
+     * @param string|null $language
+     * @return array
+     */
+    public function onGetSearchablePages(array $pages, int $rootId = null, bool $isSitemap = false, string $language = null): array
+    {
+        $db = Database::getInstance();
+
+        $stmt = $db->prepare("SELECT alias FROM tl_gutesio_data_element");
+        $result = $stmt->execute()->fetchAllAssoc();
+
+        foreach ($result as $res) {
+            $objSettings = GutesioOperatorSettingsModel::findSettings();
+            $parents = PageModel::findParentsById($objSettings->showcaseDetailPage);
+            if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
+                continue;
+            }
+            $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+            if (C4GUtils::endsWith($url, '.html')) {
+                $url = str_replace('.html', '/' . $res['alias'] . '.html', $url);
+            } else {
+                $url = $url . '/' . $res['alias'];
+            }
+            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
+        }
+
+        return $pages;
     }
 }

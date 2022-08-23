@@ -51,8 +51,8 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -160,10 +160,16 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $moduleId = $request->query->get('moduleId');
         $filterData = [
             'tagIds' => $tagIds,
-            'filterFrom' => intval((string)$request->query->get('filterFrom')),
-            'filterUntil' => intval((string)$request->query->get('filterUntil')),
+            'filterFrom' => $request->query->get('filterFrom') ? intval((string)$request->query->get('filterFrom')) : null,
+            'filterUntil' => $request->query->get('filterUntil') ? intval((string)$request->query->get('filterUntil')) : null,
             'sorting' => (string)$request->query->get('sorting')
         ];
+
+        //ToDo hotfix event lists - rework needed
+        if ($this->model->gutesio_child_sort_by_date) {
+            $filterData['sorting'] = 'date';
+        }
+
         $module = ModuleModel::findByPk($moduleId);
         if ($module) {
             $max = (int) $module->gutesio_data_max_data;
@@ -248,7 +254,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         if ($this->model->gutesio_child_sort_by_date) {
             if ($this->model->gutesio_child_data_mode === "1") {
                 $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-                if (count($types) === 1 && $types[0] === "event") {
+                //if (count($types) === 1 && $types[0] === "event") {  //Es können auch auf anderen Wege nur Events sein (z.B. über die Kategorieeinschränkung
                     $filterData = [
                         'search' => $search,
                         'moduleId' => $this->model->id,
@@ -257,7 +263,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                         'sorting' => "date"
                     ];
                     $this->initialDateSort = true;
-                }
+                //}
             }
         }
         
@@ -735,5 +741,63 @@ class OfferListModuleController extends AbstractFrontendModuleController
             ];
         }
         return $links;
+    }
+
+    /**
+     * just needed with Contao 4.9
+     *
+     * @param array $pages
+     * @param int|null $rootId
+     * @param bool $isSitemap
+     * @param string|null $language
+     * @return array
+     */
+    public function onGetSearchablePages(array $pages, int $rootId = null, bool $isSitemap = false, string $language = null): array
+    {
+        $db = Database::getInstance();
+        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
+            'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
+            'where c.published = 1')->execute()->fetchAllAssoc();
+
+        foreach ($result as $row) {
+            switch ($row['type']) {
+                case 'product':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->productDetailPage;
+                    break;
+                case 'event':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->eventDetailPage;
+                    break;
+                case 'job':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->jobDetailPage;
+                    break;
+                case 'arrangement':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->arrangementDetailPage;
+                    break;
+                case 'service':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->serviceDetailPage;
+                    break;
+                default:
+                    continue 2;
+            }
+            $parents = PageModel::findParentsById($page);
+            if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
+                continue;
+            }
+            $url = Controller::replaceInsertTags("{{link_url::" . $page . "}}");
+            $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            if (C4GUtils::endsWith($url, '.html')) {
+                $url = str_replace('.html', '/' . $alias . '.html', $url);
+            } else {
+                $url = $url . '/' . $alias;
+            }
+            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
+        }
+
+        return $pages;
     }
 }

@@ -18,3 +18,12 @@ $GLOBALS['TL_MODELS']['tl_gutesio_operator_settings'] = \gutesio\OperatorBundle\
 
 $GLOBALS['TL_CRON']['minutely'][] = [\gutesio\OperatorBundle\Classes\Cron\SyncDataCron::class, 'onMinutely'];
 $GLOBALS['TL_CRON']['hourly'][] = [\gutesio\OperatorBundle\Classes\Cron\SendStatisticDataCron::class, 'onHourly'];
+
+
+/** just needed with Contao 4.9 */
+$installedPackages = \Contao\System::getContainer()->getParameter('kernel.packages');
+$contaoVersion = $installedPackages['contao/core-bundle'];
+if ($contaoVersion && strpos($contaoVersion, '4.9')) {
+    $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\gutesio\OperatorBundle\Controller\ShowcaseListModuleController::class, 'onGetSearchablePages'];
+    $GLOBALS['TL_HOOKS']['getSearchablePages'][] = [\gutesio\OperatorBundle\Controller\OfferListModuleController::class, 'onGetSearchablePages'];
+}

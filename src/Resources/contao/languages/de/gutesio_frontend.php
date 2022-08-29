@@ -2,10 +2,10 @@
 
 $strName = "gutesio_frontend";
 
-$GLOBALS['TL_LANG']['gutesio_frontend']['headline']['offers'] = 'Angebote';
+$GLOBALS['TL_LANG']['gutesio_frontend']['headline']['offers'] = 'Inhalte';
 $GLOBALS['TL_LANG']['gutesio_frontend']['headline']['showcaseIds'] = 'Verknüpfte Schaufenster';
 
-$GLOBALS['TL_LANG']['gutesio_frontend']['label']['searchOffers'] = 'Nach Angeboten suchen';
+$GLOBALS['TL_LANG']['gutesio_frontend']['label']['searchOffers'] = 'Nach Inhalten suchen';
 
 $GLOBALS['TL_LANG']['gutesio_frontend']['learnMore'] = 'Mehr';
 

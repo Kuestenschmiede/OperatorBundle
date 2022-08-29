@@ -112,7 +112,7 @@ $data = json_decode(json_encode($this->detailData));
                         <?php if ($this->hasOffers): ?>
                             <li>
                                 <a href="{{env::request}}#offer-tiles">Unsere
-                                    Angebote</a>
+                                    Inhalte</a>
                             </li>
                         <?php endif; ?>
 

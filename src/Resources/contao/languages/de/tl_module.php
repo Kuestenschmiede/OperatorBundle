@@ -11,14 +11,14 @@
  */
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode'] = ['Lademodus', 'Bestimmt, welche Schaufenster in diesem Modul geladen werden.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode'] = ['Lademodus', 'Bestimmt, welche Angebote in diesem Modul geladen werden.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode'] = ['Lademodus', 'Bestimmt, welche Inhalte in diesem Modul geladen werden.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_load_step'] = ['Ladeschritte', 'Die Anzahl Datensätze pro Anfrage, soweit vorhanden.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_load_max'] = ['Maximale Anzahl Datensätze', 'Die maximale Anzahl Datensätze, soweit vorhanden. 0 = Unbegrenzt.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType'] = ['Layout', 'Bestimmt, welches Layout für die Auflistung verwendet wird.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_redirect_page'] = ['Weiterleitungsseite', 'Wenn dieses Modul keine Details anzeigen soll, können Sie hier eine alternative Detailseite auswählen. Der Alias der Datensätze wird an die URL dieser Detailseite angehängt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_showcase_list_page'] = ['Seite mit Schaufensterliste', 'Wählen Sie die Seite aus, auf der die Schaufensterliste eingebunden ist (für Weiterleitung erforderlich).'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_offer_list_page'] = ['Seite mit Angebotsliste', 'Wählen Sie die Seite aus, auf der die Angebotsliste eingebunden ist (für Weiterleitung erforderlich).'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_offer_list_page'] = ['Seite mit Inhaltsliste', 'Wählen Sie die Seite aus, auf der die Inhaltsliste eingebunden ist (für Weiterleitung erforderlich).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_details'] = ['Details anzeigen', 'Bestimmt, ob dieses Modul eine Detailansicht haben soll.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_render_searchHtml'] = ['HTML für Contao-Suche erzeugen', 'Bestimmt, ob dieses Modul das HTML für die Contao-Suche erzeugen soll. Dies sollte nur bei der Haupt-Schaufensterliste aktiv sein.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_limit'] = ['Ladeschritte', 'Bestimmt, wieviele Datensätze jeweils in einer Anfrage geladen werden (Standard: 30).'];
@@ -44,18 +44,18 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_tag_filter_selection'] = ['Tag-Auswahl
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_type_filter'] = ['Kategorie-Filter', 'Aktiviert die Kategorie-Auswahl über dieser Schaufensterliste.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_label'] = ['Label des Suchfeldes', 'Das Label des Suchfeldes.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter'] = ['Angebotsfilter', 'Wählen Sie aus, welche Filter über der Liste zur Verfügung stehen sollen.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter'] = ['Inhaltsfilter', 'Wählen Sie aus, welche Filter über der Liste zur Verfügung stehen sollen.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_placeholder'] = ['Platzhalter des Suchfeldes', 'Der Platzhalter des Scuhfeldes.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_description'] = ['Beschreibung des Suchfeldes', 'Die Beschreibung des Suchfeldes.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_text_search'] = ['Text vor Suche', 'Der statt der Ergebnisliste ausgegebene Text, wenn noch nicht gesucht wurde.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_text_no_results'] = ['Text keine Ergebnisse', 'Der statt der Ergebnisliste ausgegebene Text, wenn keine Ergebnisse gefunden wurden.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_headline_search_results'] = ['Überschrift der Ergebnisliste', 'Überschrift über der Ergebnisliste, wenn vorhanden.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_headline_recent'] = ['Überschrift über der Liste der neuesten Angebote', 'Überschrift über der Liste der neuesten Angebote.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_headline_recent'] = ['Überschrift über der Liste der neuesten Inhalte', 'Überschrift über der Liste der neuesten Inhalte.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_showcase_link'] = ['Link zu den Schaufenstern', 'Die Seite, auf der die Schaufenster eingebunden sind.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Anzuzeigende Typen', 'Nur der gewählte Typ wird angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Anzuzeigende Kategorien', 'Nur der gewählte Kategorien werden angezeigt.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'Nur Angebote, denen mindestens eines dieser Tags zugeordnet wurde, werden angezeigt.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach Datum sortieren', 'Sortiert die Angebote initial nach ihrem Beginndatum. Achtung: Wird nur beachtet, wenn nur Veranstaltungen in der Liste dargestellt werden.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'Nur Inhalte, denen mindestens eines dieser Tags zugeordnet wurde, werden angezeigt.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach Datum sortieren', 'Sortiert die Inhalte initial nach ihrem Beginndatum. Achtung: Wird nur beachtet, wenn nur Veranstaltungen in der Liste dargestellt werden.'];
 
 $GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link zur Bezahlseite', 'Die Seite, auf der der Bezahlprozess durchgeführt wird.'];
 $GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text bei leerem Warenkorb', 'Dieser Text wird angezeigt, wenn der Warenkorb leer ist.'];
@@ -80,10 +80,10 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['2'] = 'Schaufenste
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['3'] = 'Schaufenster nach Tags laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['4'] = 'Schaufensterkategorien ausschließen';
 
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Alle Angebote laden';
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Angebote nach Typ laden';
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['2'] = 'Angebote nach Kategorie laden';
-$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['3'] = 'Angebote nach Tags laden';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Alle Inhalte laden';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Inhalte nach Typ laden';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['2'] = 'Inhalte nach Kategorie laden';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['3'] = 'Inhalte nach Tags laden';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['price'] = "Preissortierung";
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['range'] = "Datumsfilter";

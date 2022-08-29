@@ -56,7 +56,7 @@ $GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Hier können Sie einen 
 $GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Datum von";
 $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Datum bis";
 
-$GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Andere Angebote der Anbieter";
+$GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Andere Inhalte der Anbieter";
 $GLOBALS['TL_LANG'][$strName]['location'] = "Veranstaltungsort";
 
 

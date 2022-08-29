@@ -66,7 +66,7 @@ $GLOBALS['TL_LANG'][$strName]['imprint_responsible_title'] = "Verantwortlich fü
 
 $GLOBALS['TL_LANG'][$strName]['types'] = ['Kategorie(n)', 'Die Schaufensterkategorie(n).'];
 
-$GLOBALS['TL_LANG'][$strName]['our_offers'] = "Unsere Angebote";
+$GLOBALS['TL_LANG'][$strName]['our_offers'] = "Unsere Inhalte";
 $GLOBALS['TL_LANG'][$strName]['typeSingular'] = "Kategorie:";
 $GLOBALS['TL_LANG'][$strName]['typePlural'] = "Kategorien:";
 $GLOBALS['TL_LANG'][$strName]['facebook'] = "Facebook";

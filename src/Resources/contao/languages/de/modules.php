@@ -31,13 +31,13 @@ $GLOBALS['TL_LANG']['FMD']['showcase_carousel_module'] = [
 ];
 
 $GLOBALS['TL_LANG']['FMD']['offer_list_module'] = [
-    'Angebotsliste',
-    'Kachelansicht der gutes.digital-Angebote.',
+    'Inhaltsliste',
+    'Kachelansicht der gutes.digital-Inhalte.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['offer_detail_module'] = [
-    'Angebots-Details',
-    'Detailansicht der gutes.digital-Angebote.',
+    'Inhalts-Details',
+    'Detailansicht der gutes.digital-Inhalte.',
 ];
 
 $GLOBALS['TL_LANG']['FMD']['wishlist_module'] = [

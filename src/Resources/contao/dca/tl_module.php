@@ -334,7 +334,8 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_type'] = [
         'job',
         'arrangement',
         'service',
-        'voucher'
+        'voucher',
+        'person'
     ],
     'eval'                    => ['tl_class' => 'clr', 'multiple' => true],
     'sql'                     => "VARCHAR(250) NOT NULL default '".serialize([])."'"

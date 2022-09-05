@@ -267,17 +267,20 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
         // load extendedSearchTerms
         $typeParameters = [];
-        foreach ($types as $type) {
-            $typeParameters[] = $type['value'];
+
+        if ($types && is_array($types)) {
+            foreach ($types as $type) {
+                $typeParameters[] = $type['value'];
+            }
+            $typeInString = C4GUtils::buildInString($types);
+            $sql = "SELECT `extendedSearchTerms` FROM tl_gutesio_data_type WHERE `id` " . $typeInString;
+            $arrSearchTerms = $db->prepare($sql)->execute($typeParameters)->fetchAllAssoc();
+            $strSearchTerms = "";
+            foreach ($arrSearchTerms as $searchTerm) {
+                $strSearchTerms .= $searchTerm['extendedSearchTerms'] . ",";
+            }
+            $detailData['extendedSearchTerms'] = str_replace(",", " ", $strSearchTerms);
         }
-        $typeInString = C4GUtils::buildInString($types);
-        $sql = "SELECT `extendedSearchTerms` FROM tl_gutesio_data_type WHERE `id` " . $typeInString;
-        $arrSearchTerms = $db->prepare($sql)->execute($typeParameters)->fetchAllAssoc();
-        $strSearchTerms = "";
-        foreach ($arrSearchTerms as $searchTerm) {
-            $strSearchTerms .= $searchTerm['extendedSearchTerms'] . ",";
-        }
-        $detailData['extendedSearchTerms'] = str_replace(",", " ", $strSearchTerms);
 
         return $detailData;
     }
@@ -441,6 +444,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
         $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        $personPageModel = PageModel::findByPk($objSettings->personDetailPage);
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
             'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
@@ -448,6 +452,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
             'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
             'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
+            'person' => $personPageModel ? $personPageModel->getFrontendUrl() : '',
             'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
         ];
     }

@@ -352,6 +352,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $jobUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
         $serviceUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->serviceDetailPage."}}");
         $arrangementUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
+        $personUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->personDetailPage."}}");
         $voucherUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->voucherDetailPage."}}");
     
         $urlSuffix = Config::get('urlSuffix');
@@ -490,6 +491,19 @@ class WishlistModuleController extends AbstractFrontendModuleController
         //$field->setExternalLinkField("external_link");
         $fields[] = $field;
 
+        $personUrl = str_replace($urlSuffix, "", $personUrl);
+        $field = new LinkButtonTileField();
+        $field->setName("alias");
+        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setClass('c4g-list-element__more-link');
+        $field->setHref($serviceUrl."/uuid" . $urlSuffix);
+        $field->setHrefField("uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
+        $field->setConditionField("internal_type");
+        $field->setConditionValue("person");
+        //$field->setExternalLinkField("external_link");
+        $fields[] = $field;
+
         $voucherUrl = str_replace($urlSuffix, "", $voucherUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
@@ -500,6 +514,19 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("voucher");
+        //$field->setExternalLinkField("external_link");
+        $fields[] = $field;
+
+        $personUrl = str_replace($urlSuffix, "", $personUrl);
+        $field = new LinkButtonTileField();
+        $field->setName("alias");
+        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setClass('c4g-list-element__more-link');
+        $field->setHref($voucherUrl."/uuid" . $urlSuffix);
+        $field->setHrefField("uuid");
+        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
+        $field->setConditionField("internal_type");
+        $field->setConditionValue("person");
         //$field->setExternalLinkField("external_link");
         $fields[] = $field;
         

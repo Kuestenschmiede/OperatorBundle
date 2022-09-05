@@ -77,6 +77,7 @@ class OfferLoaderService
             $offset = 0;
         }
 
+        //ToDo compare UPPER terms
         if ($search !== '') {
             $terms = explode(' ', $search);
             $results = $this->getFullTextData($terms, $offset, $type, $limit, $dateFilter);
@@ -91,6 +92,7 @@ class OfferLoaderService
         if ($dateFilter) {
             $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
         }
+
         $results = $this->sortOfferData($sortFilter, $filterData, $results);
         if ($hasFilter) {
             $results = array_slice($results, $tmpOffset, $this->limit);
@@ -126,8 +128,8 @@ class OfferLoaderService
                     }
                 }
                 usort($dateOffers, function ($a, $b) use ($sort) {
-                    $aDate = strtotime($a['beginDate']);
-                    $bDate = strtotime($b['beginDate']);
+                    $aDate = $a['beginTime'] ? strtotime($a['beginDate']) + strtotime($a['beginTime']) : strtotime($a['beginDate']);
+                    $bDate = $b['beginTime'] ? strtotime($b['beginDate']) + strtotime($b['beginTime']) : strtotime($b['beginDate']);
                     if ($aDate === null) {
                         return 1;
                     }
@@ -299,8 +301,8 @@ class OfferLoaderService
             for ($i = 0; $i < $fieldCount; $i++) {
                 $parameters[] = '%' . $rawTermString . '%';
             }
-            $parameters[] = (int) $offset;
-            $parameters[] = $limit;
+//            $parameters[] = (int) $offset;  //Hotfix offset error
+//            $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                 'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -1052,7 +1054,8 @@ class OfferLoaderService
                             WHEN b.appointmentUponAgreement IS NOT NULL THEN b.appointmentUponAgreement ' . '
                             WHEN c.appointmentUponAgreement IS NOT NULL THEN c.appointmentUponAgreement ' . '
                             WHEN d.appointmentUponAgreement IS NOT NULL THEN d.appointmentUponAgreement ' . '
-                        ELSE NULL END) AS appointmentUponAgreement ' . '
+                        ELSE NULL END) AS appointmentUponAgreement, ' . '
+                        a.beginDate + a.beginTime AS beginDateTime ' . '
                         FROM tl_gutesio_data_child_event a ' . '
                         JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid ' . '
                         LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid ' . '
@@ -1061,7 +1064,7 @@ class OfferLoaderService
                         LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid ' . '
                         LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid ' . '
                         LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid ' . '
-                        WHERE a.childId = ?')
+                        WHERE a.childId = ? ORDER BY beginDateTime ASC')
                         ->execute($row['uuid'])->fetchAssoc();
 
                     $beginDateTime = new \DateTime();
@@ -1301,6 +1304,7 @@ class OfferLoaderService
                     'event' => PageModel::findByPk($objSettings->eventDetailPage),
                     'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
                     'service' => PageModel::findByPk($objSettings->serviceDetailPage),
+                    'person' => PageModel::findByPk($objSettings->personDetailPage),
                     'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
                     default => null,
                 };
@@ -1367,17 +1371,17 @@ class OfferLoaderService
                     // add one day so events are displayed on the day they expire
                     $beginTstamp = strtotime($datum['beginDate']);
                     $endTstamp = strtotime($datum['endDate']);
-                    if ($filterFrom !== 0) {
+                    if ($filterFrom) {
                         $fromDt = (new \DateTime())->setTimestamp($filterFrom);
                         $filterFrom = $fromDt->setTime(0, 0, 0)->getTimestamp();
                     }
-                    if ($filterUntil !== 0) {
+                    if ($filterUntil) {
                         $untilDt = (new \DateTime())->setTimestamp($filterUntil + 86400);
                         $filterUntil = $untilDt->setTime(23, 59, 59)->getTimestamp();
                     }
-                    $beginDateMatchesFilter = ($filterFrom === 0 || ($beginTstamp >= $filterFrom))
-                        && ($filterUntil === 0 || ($beginTstamp <= $filterUntil));
-                    $endDateMatchesFilter = !$endTstamp || ($filterUntil === 0) || ($endTstamp <= $filterUntil);
+                    $beginDateMatchesFilter = (!$filterFrom || ($beginTstamp >= $filterFrom))
+                        && (!$filterUntil || ($beginTstamp <= $filterUntil));
+                    $endDateMatchesFilter = !$endTstamp || (!$filterUntil) || ($endTstamp <= $filterUntil);
                     if ($beginDateMatchesFilter && $endDateMatchesFilter) {
                         $result[] = $datum;
                     }
@@ -1386,8 +1390,8 @@ class OfferLoaderService
         }
 
         usort($result, function ($a, $b) {
-            $aTstamp = strtotime($a['beginDate']);
-            $bTstamp = strtotime($b['beginDate']);
+            $aTstamp = $a['beginTime'] ? strtotime($a['beginDate']) + strtotime($a['beginTime']) : strtotime($a['beginDate']);
+            $bTstamp = $b['beginTime'] ? strtotime($b['beginDate']) + strtotime($b['beginTime']) : strtotime($b['beginDate']);
             if ($aTstamp < $bTstamp) {
                 return -1;
             } elseif ($aTstamp > $bTstamp) {

@@ -29,6 +29,7 @@ $GLOBALS['TL_LANG'][$strName]['jobDetailPage'] = ["Jobs detail page", "Select th
 $GLOBALS['TL_LANG'][$strName]['eventDetailPage'] = ["Event detail page", "Select the page where the events detail page is located."];
 $GLOBALS['TL_LANG'][$strName]['arrangementDetailPage'] = ["Arrangements detail page", "Select the page where the arrangement detail page is located."];
 $GLOBALS['TL_LANG'][$strName]['serviceDetailPage'] = ["Service detail page", "Select the page where the detail page of the services is located."];
+$GLOBALS['TL_LANG'][$strName]['personDetailPage'] = ["Person detail page", "Select the page where the detail page of the persons is located."];
 $GLOBALS['TL_LANG'][$strName]['cartPage'] = ["Cart page", "The cart page."];
 $GLOBALS['TL_LANG'][$strName]['taxRegular'] = ["Normal tax rate", "The current valid normal tax rate. Displayed in the details of the offer that have selected the normal tax rate."];
 $GLOBALS['TL_LANG'][$strName]['taxReduced'] = ["Reduced tax rate", "The currently valid reduced tax rate. Displayed in the details of the offer that have selected the reduced tax rate."];

@@ -63,6 +63,14 @@ class SitemapListener
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
                         $page = $objSettings->serviceDetailPage;
                         break;
+                    case 'person':
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $page = $objSettings->personDetailPage;
+                        break;
+                    case 'voucher':
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $page = $objSettings->voucherDetailPage;
+                        break;
                     default:
                         continue 2;
                 }

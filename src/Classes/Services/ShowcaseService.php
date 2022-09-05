@@ -84,6 +84,7 @@ class ShowcaseService
 
     public function loadRelatedShowcases($arrShowcase) : array
     {
+        $arrShowcase['showcaseIds'] = $arrShowcase['showcaseIds'] && is_array($arrShowcase['showcaseIds']) ? $arrShowcase['showcaseIds'] : [];
         $showcaseIds = array_column($arrShowcase['showcaseIds'], 'value');
         if (count($showcaseIds) > 0) {
             $idString = '(';

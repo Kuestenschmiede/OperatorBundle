@@ -765,6 +765,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
         $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        $personPageModel = PageModel::findByPk($objSettings->personDetailPage);
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
             'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
@@ -772,6 +773,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
             'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
             'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
+            'person' => $personPageModel ? $personPageModel->getFrontendUrl() : '',
             'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
         ];
     }

@@ -29,6 +29,7 @@ $GLOBALS['TL_LANG'][$strName]['jobDetailPage'] = ["Detailseite Jobs", "Wählen S
 $GLOBALS['TL_LANG'][$strName]['eventDetailPage'] = ["Detailseite Veranstaltungen", "Wählen Sie die Seite aus, auf der die Detailseite der Veranstaltungen liegt."];
 $GLOBALS['TL_LANG'][$strName]['arrangementDetailPage'] = ["Detailseite Arrangements", "Wählen Sie die Seite aus, auf der die Detailseite der Arrangements liegt."];
 $GLOBALS['TL_LANG'][$strName]['serviceDetailPage'] = ["Detailseite Dienstleistung", "Wählen Sie die Seite aus, auf der die Detailseite der Dienstleistungen liegt."];
+$GLOBALS['TL_LANG'][$strName]['personDetailPage'] = ["Detailseite Personen", "Wählen Sie die Seite aus, auf der die Detailseite der Personen liegt."];
 $GLOBALS['TL_LANG'][$strName]['voucherDetailPage'] = ["Detailseite Gutschein", "Wählen Sie die Seite aus, auf der die Detailseite der Gutscheine liegt."];
 $GLOBALS['TL_LANG'][$strName]['cartPage'] = ["Warenkorb Seite", "Die Warenkorb Seite."];
 $GLOBALS['TL_LANG'][$strName]['taxRegular'] = ["Normaler Steuersatz", "Der aktuell gültige normale Steuersatz. Wird in den Details der Inhalte angezeigt, die den normalen Steuersatz gewählt haben."];

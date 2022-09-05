@@ -686,6 +686,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
         $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
         $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
+        $personPageModel = PageModel::findByPk($objSettings->personDetailPage);
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
 
         return [
@@ -694,6 +695,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
             'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
             'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
+            'person' => $personPageModel ? $personPageModel->getFrontendUrl() : '',
             'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
         ];
     }
@@ -726,6 +728,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 case 'service':
                     $objSettings = GutesioOperatorSettingsModel::findSettings();
                     $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
+                    break;
+                case 'person':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->personDetailPage . "}}");
+                    break;
+                case 'voucher':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->voucherDetailPage . "}}");
                     break;
                 default:
                     continue 2;
@@ -780,6 +790,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 case 'service':
                     $objSettings = GutesioOperatorSettingsModel::findSettings();
                     $page = $objSettings->serviceDetailPage;
+                    break;
+                case 'person':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->personDetailPage;
+                    break;
+                case 'voucher':
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $page = $objSettings->voucherDetailPage;
                     break;
                 default:
                     continue 2;

@@ -63,6 +63,7 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['advertisement'] = 'Advertisement';
 $GLOBALS['TL_LANG'][$strName]['frontend']['job'] = 'Job';
 $GLOBALS['TL_LANG'][$strName]['frontend']['arrangement'] = 'Arrangements';
 $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Service';
+$GLOBALS['TL_LANG'][$strName]['frontend']['person'] = 'Person';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'starting at';
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Open filter';

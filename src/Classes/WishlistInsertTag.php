@@ -208,7 +208,7 @@ class WishlistInsertTag
             $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->eventDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
-                    <img class="product img-fluid"
+                    <img class="product event img-fluid"
                          src="' . $imagePath . '">
                 </div>
                 <div class="col-8">
@@ -231,7 +231,76 @@ class WishlistInsertTag
             $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->arrangementDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
-                    <img class="product img-fluid"
+                    <img class="product arrangement img-fluid"
+                         src="' . $imagePath . '">
+                </div>
+                <div class="col-8">
+                    <div class="title">' . $name . '</div>
+    
+                    <div class="row mt-2">
+                        <div class="col-6">
+    
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            </a>
+    
+                        </div>
+    
+                    </div>
+    
+    
+                </div>
+            </div>';
+        } elseif ($arrItem['internal_type'] === 'service') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->serviceDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $resultHtml = '<div class="row mt-4 wishlistItem">
+                <div class="col-4">
+                    <img class="product service img-fluid"
+                         src="' . $imagePath . '">
+                </div>
+                <div class="col-8">
+                    <div class="title">' . $name . '</div>
+    
+                    <div class="row mt-2">
+                        <div class="col-6">
+    
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            </a>
+    
+                        </div>
+    
+                    </div>
+    
+    
+                </div>
+            </div>';
+        } elseif ($arrItem['internal_type'] === 'person') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->personDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $resultHtml = '<div class="row mt-4 wishlistItem">
+                <div class="col-4">
+                    <img class="product person img-fluid"
+                         src="' . $imagePath . '">
+                </div>
+                <div class="col-8">
+                    <div class="title">' . $name . '</div>
+    
+                    <div class="row mt-2">
+                        <div class="col-6">
+    
+                            <a href="' . $detailRoute . '" class="btn btn-sm">Mehr <i class="fas fa-angle-right"></i>
+                            </a>
+    
+                        </div>
+    
+                    </div>
+    
+    
+                </div>
+            </div>';
+        } elseif ($arrItem['internal_type'] === 'voucher') {
+            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->voucherDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $resultHtml = '<div class="row mt-4 wishlistItem">
+                <div class="col-4">
+                    <img class="product voucher img-fluid"
                          src="' . $imagePath . '">
                 </div>
                 <div class="col-8">

@@ -183,6 +183,28 @@ $data = json_decode(json_encode($this->detailData));
                 </div>
             </div>
 
+            <?php if (isset($data->dateOfBirth) && !empty($data->dateOfBirth)): ?>
+                <div class="c4g-container">
+                    <div class="c4g-row">
+                        <div class="col-12">
+                            <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['dateOfBirth'] ?> </strong>
+                           <span><?= $data->dateOfBirth ?></span>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if (isset($data->dateOfDeath) && !empty($data->dateOfDeath)): ?>
+                <div class="c4g-container">
+                    <div class="c4g-row">
+                        <div class="col-12">
+                            <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['dateOfDeath'] ?> </strong>
+                           <span><?= $data->dateOfDeath ?></span>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <?php if (isset($data->beginDate) && !empty($data->beginDate)): ?>
                 <div class="c4g-container">
                     <div class="c4g-row">

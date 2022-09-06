@@ -326,6 +326,18 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
         $field = new DetailTextField();
         $field->setSection(4);
+        $field->setName("dateOfBirth");
+        $field->setClass('detail-view__dateOfBirth');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("dateOfDeath");
+        $field->setClass('detail-view__dateOfDeath');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
         $field->setName("beginDate");
         $field->setClass('detail-view__begin-date');
         $fields[] = $field;

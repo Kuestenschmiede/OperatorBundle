@@ -1256,6 +1256,18 @@ class OfferLoaderService
                     }
 
                     break;
+                case 'person':
+                    $personData = $database->prepare('SELECT dateOfBirth, dateOfDeath ' .
+                        'FROM tl_gutesio_data_child_person ' .
+                        'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_person.childId = tl_gutesio_data_child.uuid ' .
+                        'WHERE childId = ?')
+                        ->execute($row['uuid'])->fetchAssoc();
+
+                    if (!empty($personData)) {
+                        $childRows[$key] = array_merge($row, $personData);
+                    }
+
+                    break;
                 case 'voucher':
                     $voucherData = $database->prepare('SELECT minCredit, maxCredit, credit, customizableCredit ' .
                         'FROM tl_gutesio_data_child_voucher ' .

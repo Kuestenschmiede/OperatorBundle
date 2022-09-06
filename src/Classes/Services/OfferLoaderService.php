@@ -1173,23 +1173,52 @@ class OfferLoaderService
                         $beginDateTime->format('m'),
                         (int) $beginDateTime->format('d') - 1
                     );
-                    $eventData['beginDate'] = $beginDateTime->format('d.m.Y');
-                    $eventData['endDate'] = $endDateTime->format('d.m.Y');
-                    if ($nextDateTime) {
-                        $eventData['nextDate'] = $nextDateTime->format('d.m.Y');
+
+                    $beginDate = $beginDateTime ? $beginDateTime->format('d.m.Y') : false;
+                    $beginDateShort = $beginDateTime ? $beginDateTime->format('d.m') : false;
+                    $endDate = $endDateTime ? $endDateTime->format('d.m.Y') : false;
+                    $nextDate = $nextDateTime ? $nextDateTime->format('d.m.Y') : false;
+                    $beginTime = $eventData['beginTime'] ? gmdate('H:i', $eventData['beginTime']) : false;
+                    $endTime = $eventData['endTime'] ? gmdate('H:i', $eventData['endTime']) : false;
+
+                    if ($beginDate && $beginDate !== '01.01.1970') {
+                        if ($endDate && ($endDate !== $beginDate) && $endDate !== '01.01.1970') {
+                            if ($beginTime && $endTime && ($beginTime != '00:00')) {
+                                $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
+                                $eventData['endDate'] = '';
+                                $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
+                                $eventData['endTime'] = '';
+                            } else if ($beginTime && ($beginTime != '00:00')) {
+                                $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
+                                $eventData['endDate'] = '';
+                                $eventData['beginTime'] = $beginTime.' Uhr';
+                                $eventData['endTime'] = '';
+                            } else {
+                                $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
+                                $eventData['endDate'] = '';
+                                $eventData['beginTime'] = '';
+                                $eventData['endTime'] = '';
+                            }
+                        } else {
+                            if ($beginTime && $endTime && ($beginTime != '00:00')) {
+                                $eventData['beginDate'] = $beginDate;
+                                $eventData['endDate'] = '';
+                                $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
+                                $eventData['endTime'] = '';
+                            } else if ($beginTime && ($beginTime != '00:00')) {
+                                $eventData['beginDate'] = $beginDate;
+                                $eventData['endDate'] = '';
+                                $eventData['beginTime'] = $beginTime.' Uhr';
+                                $eventData['endTime'] = '';
+                            } else {
+                                $eventData['beginDate'] = $beginDate;
+                                $eventData['endDate'] = '';
+                                $eventData['beginTime'] = '';
+                                $eventData['endTime'] = '';
+                            }
+                        }
                     }
-                    if ($eventData['beginTime']) {
-                        $eventData['beginTime'] = gmdate('H:i', $eventData['beginTime']) . ' Uhr'; //ToDo
-                    }
-                    if ($eventData['endTime']) {
-                        $eventData['endTime'] = gmdate('H:i', $eventData['endTime']);
-                    }
-                    if ($eventData['beginDate'] === '01.01.1970') {
-                        $eventData['beginDate'] = '';
-                    }
-                    if ($eventData['endDate'] === '01.01.1970') {
-                        $eventData['endDate'] = '';
-                    }
+
                     if ($eventData['appointmentUponAgreement']) {
                         $fieldValue = $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreementContent'];
                         if ($eventData['beginDate']) {

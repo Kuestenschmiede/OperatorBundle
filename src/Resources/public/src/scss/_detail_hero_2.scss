@@ -41,7 +41,7 @@
     }
   }
 
-  &__title {
+  &__title, &__title h1 {
     color: $gutes-detail-hero-title-color;
     text-shadow: $gutes-detail-hero-text-shadow;
     font-size: 6vw;

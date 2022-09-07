@@ -92,10 +92,10 @@ $GLOBALS['TL_LANG'][$strName]['filter']['headline'] = "Filter-Headline";
 $GLOBALS['TL_LANG'][$strName]['filter']['filter_label'] = "Schaufensterfilter";
 $GLOBALS['TL_LANG'][$strName]['filter']['apply_filter'] = "Suchen";
 
-$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Standard";
-$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_asc'] = "A - Z";
-$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Z - A";
-$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['tstamp_desc'] = "Datum";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Standard (zufällig)";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_asc'] = "Name: aufsteigend";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Name: absteigend";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['tstamp_desc'] = "Letzte Änderung";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['distance'] = "Entfernung";
 
 

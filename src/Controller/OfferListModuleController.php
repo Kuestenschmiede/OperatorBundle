@@ -158,6 +158,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $tagIds = [];
         }
         $moduleId = $request->query->get('moduleId');
+
         $filterData = [
             'tagIds' => $tagIds,
             'filterFrom' => $request->query->get('filterFrom') ? intval((string)$request->query->get('filterFrom')) : null,
@@ -342,6 +343,11 @@ class OfferListModuleController extends AbstractFrontendModuleController
         }
 
         $fields[] = $field;
+
+        $sortFilter = new RadioGroupFormField();
+        $sortFilter->setName("sorting");
+        $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
+
         if ($useEventFilter) {
             $field = new DateRangeField();
             $field->setFromFieldname("filterFrom");
@@ -356,33 +362,47 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setEntryPoint($this->model->id);
             $fields[] = $field;
         }
-        if ($useProductFilter) {
-            $sortFilter = new RadioGroupFormField();
-            $sortFilter->setName("sorting");
-            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
-            if ($this->initialDateSort) {
-                $sortFilter->setOptions([
-                    'random' => $this->languageRefs['filter']['sorting']['random'],
-                    'date' => "Nach Datum",
-                    'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
-                    'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
-                ]);
-                $sortFilter->setChecked("date");
-            } else {
-                $sortFilter->setOptions([
-                    'random' => $this->languageRefs['filter']['sorting']['random'],
-                    'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
-                    'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
-                ]);
-                $sortFilter->setChecked("random");
-            }
-            
-            $sortFilter->setClassName("offer-filter__ascend-descend form-view__ascend-descend");
-            $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
-            $sortFilter->setCache(true); //ToDo module switch
-            $sortFilter->setEntryPoint($this->model->id);
-            $fields[] = $sortFilter;
+
+        if ($useEventFilter && !$useProductFilter) {
+            $sortFilterOptions = [
+                'date' => $this->languageRefs['filter']['sorting']['date_asc'],
+                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+                'random' => $this->languageRefs['filter']['sorting']['random'],
+            ];
+        } else if ($useEventFilter) {
+            $sortFilterOptions = [
+                'random' => $this->languageRefs['filter']['sorting']['random'],
+                'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
+                'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
+                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+                'date' => $this->languageRefs['filter']['sorting']['date_asc'],
+            ];
+        } else if ($useProductFilter) {
+            $sortFilterOptions = [
+                'random' => $this->languageRefs['filter']['sorting']['random'],
+                'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
+                'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
+                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+            ];
         }
+
+        $sortFilterOptions['tstmp_desc'] = $this->languageRefs['filter']['sorting']['tstmp_desc'];
+        $sortFilter->setOptions($sortFilterOptions);
+
+        if ($this->initialDateSort) {
+            $sortFilter->setChecked("date");
+        } else {
+            $sortFilter->setChecked("random");
+        }
+
+        $sortFilter->setClassName("offer-filter__ascend-descend form-view__ascend-descend");
+        $sortFilter->setOptionsClass("c4g-form-check c4g-form-check-inline");
+        $sortFilter->setCache(true); //ToDo module switch
+        $sortFilter->setEntryPoint($this->model->id);
+        $fields[] = $sortFilter;
 
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();

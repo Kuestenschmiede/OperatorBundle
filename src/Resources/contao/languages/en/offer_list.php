@@ -69,6 +69,10 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'starting at';
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Open filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Close filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Default";
-$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_asc'] = "Price ascending";
-$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_desc'] = "Price descending";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['date'] = "Date";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['tstmp_desc'] = "Timestamp";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_asc'] = "Name: ascending";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Name: descending";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_asc'] = "Price: ascending";
+$GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_desc'] = "Price: descending";
 

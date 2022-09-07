@@ -116,55 +116,52 @@ class OfferLoaderService
 
     private function sortOfferData(string $sortFilter, array $filterData, array $offers)
     {
-        if ($sortFilter && $sortFilter !== 'random') {
-            if ($sortFilter === 'date') {
-                $dateOffers = [];
-                $noDateOffers = [];
-                foreach ($offers as $offer) {
-                    if ($offer['beginDate']) {
-                        $dateOffers[] = $offer;
-                    } else {
-                        $noDateOffers[] = $offer;
+        if ($sortFilter) {
+            switch ($sortFilter) {
+                case 'date':
+                    $dateOffers = [];
+                    $noDateOffers = [];
+                    foreach ($offers as $offer) {
+                        if ($offer['beginDate']) {
+                            $dateOffers[] = $offer;
+                        } else {
+                            $noDateOffers[] = $offer;
+                        }
                     }
-                }
-                usort($dateOffers, function ($a, $b) use ($sort) {
-                    $aDate = $a['beginTime'] ? strtotime($a['beginDate']) + strtotime($a['beginTime']) : strtotime($a['beginDate']);
-                    $bDate = $b['beginTime'] ? strtotime($b['beginDate']) + strtotime($b['beginTime']) : strtotime($b['beginDate']);
-                    if ($aDate === null) {
-                        return 1;
-                    }
-                    if ($bDate === null) {
-                        return -1;
-                    }
-                    if ($aDate > $bDate) {
-                        return 1;
-                    } elseif ($aDate < $bDate) {
-                        return -1;
-                    }
+                    usort($dateOffers, function ($a, $b) use ($sort) {
+                        $aDate = $a['beginTime'] ? strtotime($a['beginDate']) + strtotime($a['beginTime']) : strtotime($a['beginDate']);
+                        $bDate = $b['beginTime'] ? strtotime($b['beginDate']) + strtotime($b['beginTime']) : strtotime($b['beginDate']);
+                        if ($aDate === null) {
+                            return 1;
+                        }
+                        if ($bDate === null) {
+                            return -1;
+                        }
+                        if ($aDate > $bDate) {
+                            return 1;
+                        } elseif ($aDate < $bDate) {
+                            return -1;
+                        }
 
-                    return 0;
-                });
-                foreach ($noDateOffers as $noDateOffer) {
-                    $index = rand(0, count($dateOffers));
-                    array_splice($dateOffers, $index, 0, [$noDateOffer]);
-                }
-                $offers = $dateOffers;
-            } else {
-                if ($filterData['sorting'] === 'price_asc') {
+                        return 0;
+                    });
+                    foreach ($noDateOffers as $noDateOffer) {
+                        $index = rand(0, count($dateOffers));
+                        array_splice($dateOffers, $index, 0, [$noDateOffer]);
+                    }
+                    $offers = $dateOffers;
+                    break;
+                case 'price_asc':
                     $sort = 'asc';
-                } else {
-                    $sort = 'desc';
-                }
-                usort($offers, function ($a, $b) use ($sort) {
-                    $aPrice = $a['rawPrice'];
-                    $bPrice = $b['rawPrice'];
-                    if ($aPrice === null) {
-                        return 1;
-                    }
-                    if ($bPrice === null) {
-                        return -1;
-                    }
-                    if ($sort === 'asc') {
+                    usort($offers, function ($a, $b) use ($sort) {
+                        $aPrice = $a['rawPrice'];
+                        $bPrice = $b['rawPrice'];
+                        if ($aPrice === null) {
+                            return 1;
+                        }
+                        if ($bPrice === null) {
+                            return -1;
+                        }
                         if ($aPrice > $bPrice) {
                             return 1;
                         } elseif ($aPrice < $bPrice) {
@@ -172,15 +169,92 @@ class OfferLoaderService
                         }
 
                         return 0;
-                    }
-                    if ($aPrice > $bPrice) {
-                        return -1;
-                    } elseif ($aPrice < $bPrice) {
-                        return 1;
-                    }
+                    });
 
-                    return 0;
-                });
+                    break;
+                case 'price_desc':
+                    $sort = 'desc';
+                    usort($offers, function ($a, $b) use ($sort) {
+                        $aPrice = $a['rawPrice'];
+                        $bPrice = $b['rawPrice'];
+                        if ($aPrice === null) {
+                            return 1;
+                        }
+                        if ($bPrice === null) {
+                            return -1;
+                        }
+                        if ($aPrice > $bPrice) {
+                            return -1;
+                        } elseif ($aPrice < $bPrice) {
+                            return 1;
+                        }
+
+                        return 0;
+                    });
+                    break;
+                case 'name_asc':
+                    $sort = 'asc';
+                    usort($offers, function ($a, $b) use ($sort) {
+                        $aCaption = $a['name'];
+                        $bCaption = $b['name'];
+                        if ($aCaption === null) {
+                            return 1;
+                        }
+                        if ($bCaption === null) {
+                            return -1;
+                        }
+                        if ($aCaption > $bCaption) {
+                            return 1;
+                        } elseif ($aCaption < $bCaption) {
+                            return -1;
+                        }
+
+                        return 0;
+                    });
+
+                    break;
+                case 'name_desc':
+                    $sort = 'desc';
+                    usort($offers, function ($a, $b) use ($sort) {
+                        $aCaption = $a['name'];
+                        $bCaption = $b['name'];
+                        if ($aCaption === null) {
+                            return 1;
+                        }
+                        if ($bCaption === null) {
+                            return -1;
+                        }
+                        if ($aCaption > $bCaption) {
+                            return -1;
+                        } elseif ($aCaption < $bCaption) {
+                            return 1;
+                        }
+
+                        return 0;
+                    });
+                    break;
+                case 'tstmp_desc':
+                    $sort = 'desc';
+                    usort($offers, function ($a, $b) use ($sort) {
+                        $aTstmp = $a['tstamp'];
+                        $bTstmp = $b['tstamp'];
+                        if ($aTstmp === null) {
+                            return 1;
+                        }
+                        if ($bTstmp === null) {
+                            return -1;
+                        }
+                        if ($aTstmp > $bTstmp) {
+                            return -1;
+                        } elseif ($aTstmp < $bTstmp) {
+                            return 1;
+                        }
+
+                        return 0;
+                    });
+                    break;
+                default: //random
+                    break;
             }
         }
 

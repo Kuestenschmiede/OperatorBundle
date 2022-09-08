@@ -255,16 +255,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
         if ($this->model->gutesio_child_sort_by_date) {
             if ($this->model->gutesio_child_data_mode === "1") {
                 $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-                //if (count($types) === 1 && $types[0] === "event") {  //Es können auch auf anderen Wege nur Events sein (z.B. über die Kategorieeinschränkung
-                    $filterData = [
-                        'search' => $search,
-                        'moduleId' => $this->model->id,
-                        'filterFrom' => null,
-                        'filterUntil' => null,
-                        'sorting' => "date"
-                    ];
-                    $this->initialDateSort = true;
-                //}
+                $filterData = [
+                    'search' => $search,
+                    'moduleId' => $this->model->id,
+                    'filterFrom' => null,
+                    'filterUntil' => null,
+                    'sorting' => "date"
+                ];
+                $this->initialDateSort = true;
             }
         }
         
@@ -384,6 +382,12 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 'random' => $this->languageRefs['filter']['sorting']['random'],
                 'price_asc' => $this->languageRefs['filter']['sorting']['price_asc'],
                 'price_desc' => $this->languageRefs['filter']['sorting']['price_desc'],
+                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+            ];
+        } else {
+            $sortFilterOptions = [
+                'random' => $this->languageRefs['filter']['sorting']['random'],
                 'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
                 'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
             ];

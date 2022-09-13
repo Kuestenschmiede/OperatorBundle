@@ -99,7 +99,7 @@ class ShowcaseInsertTag
 
                         return Controller::replaceInsertTags("{{image::$uuid?height=150&mode=proportional&class=img-fluid}}");
                     case 'description':
-                        return C4GUtils::truncate($arrShowcase['description'], 150);
+                        return C4GUtils::truncate($arrShowcase['description'], 275);
                     case 'meta':
                         $metaDescription = $arrShowcase['metaDescription'];
                         if ($metaDescription) {

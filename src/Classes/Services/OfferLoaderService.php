@@ -129,8 +129,13 @@ class OfferLoaderService
                         }
                     }
                     usort($dateOffers, function ($a, $b) use ($sort) {
-                        $aDate = $a['beginTime'] ? strtotime($a['beginDate']) + strtotime($a['beginTime']) : strtotime($a['beginDate']);
-                        $bDate = $b['beginTime'] ? strtotime($b['beginDate']) + strtotime($b['beginTime']) : strtotime($b['beginDate']);
+                        $a['storeBeginTime'] = $a['storeBeginTime'] ?: strtotime($a['beginTime']);
+                        $b['storeBeginTime'] = $b['storeBeginTime'] ?: strtotime($b['beginTime']);
+                        $a['storeBeginDate'] = $a['storeBeginDate'] ?: strtotime($a['beginDate']);
+                        $b['storeBeginDate'] = $b['storeBeginDate'] ?: strtotime($b['beginDate']);
+
+                        $aDate = $a['storeBeginTime'] ? $a['storeBeginDate'] + $a['storeBeginTime'] : $a['storeBeginDate'];
+                        $bDate = $b['storeBeginTime'] ? $b['storeBeginDate'] + $b['storeBeginTime'] : $b['storeBeginDate'];
                         if ($aDate === null) {
                             return 1;
                         }
@@ -1152,6 +1157,9 @@ class OfferLoaderService
                     $endDateTime = new \DateTime();
                     $endDateTime->setTimestamp($eventData['endDate']);
 
+                    $eventData['storeBeginDate'] = $eventData['beginDate'];
+                    $eventDate['storeBeginTime'] = $eventData['beginTime'];
+
                     if ($beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
@@ -1505,8 +1513,13 @@ class OfferLoaderService
         }
 
         usort($result, function ($a, $b) {
-            $aTstamp = $a['beginTime'] ? strtotime($a['beginDate']) + strtotime($a['beginTime']) : strtotime($a['beginDate']);
-            $bTstamp = $b['beginTime'] ? strtotime($b['beginDate']) + strtotime($b['beginTime']) : strtotime($b['beginDate']);
+            $a['storeBeginTime'] = $a['storeBeginTime'] ?: strtotime($a['beginTime']);
+            $b['storeBeginTime'] = $b['storeBeginTime'] ?: strtotime($b['beginTime']);
+            $a['storeBeginDate'] = $a['storeBeginDate'] ?: strtotime($a['beginDate']);
+            $b['storeBeginDate'] = $b['storeBeginDate'] ?: strtotime($b['beginDate']);
+
+            $aTstamp = $a['storeBeginTime'] ? $a['storeBeginDate'] + $a['storeBeginTime'] : $a['storeBeginDate'];
+            $bTstamp = $b['storeBeginTime'] ? $b['storeBeginDate'] + $b['storeBeginTime'] : $b['storeBeginDate'];
             if ($aTstamp < $bTstamp) {
                 return -1;
             } elseif ($aTstamp > $bTstamp) {

@@ -417,7 +417,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
 
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-showcase');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref("$showcaseUrl/alias" . $urlSuffix);
         $field->setHrefField("alias");
@@ -429,7 +429,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $productUrl = str_replace($urlSuffix, "", $productUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-product');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref($productUrl."/uuid" . $urlSuffix);
         $field->setHrefFields(["uuid"]);
@@ -442,7 +442,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $eventUrl = str_replace($urlSuffix, "", $eventUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-event');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref($eventUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
@@ -455,7 +455,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $jobUrl = str_replace($urlSuffix, "", $jobUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-job');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref($jobUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
@@ -468,7 +468,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $arrangementUrl = str_replace($urlSuffix, "", $arrangementUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-arrangement');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref($arrangementUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
@@ -481,7 +481,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $serviceUrl = str_replace($urlSuffix, "", $serviceUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-service');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref($serviceUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
@@ -494,9 +494,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $personUrl = str_replace($urlSuffix, "", $personUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-person');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($serviceUrl."/uuid" . $urlSuffix);
+        $field->setHref($personUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
@@ -507,26 +507,13 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $voucherUrl = str_replace($urlSuffix, "", $voucherUrl);
         $field = new LinkButtonTileField();
         $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
+        $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-voucher');
         $field->setClass('c4g-list-element__more-link');
         $field->setHref($voucherUrl."/uuid" . $urlSuffix);
         $field->setHrefField("uuid");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("voucher");
-        //$field->setExternalLinkField("external_link");
-        $fields[] = $field;
-
-        $personUrl = str_replace($urlSuffix, "", $personUrl);
-        $field = new LinkButtonTileField();
-        $field->setName("alias");
-        $field->setWrapperClass('c4g-list-element__more-wrapper');
-        $field->setClass('c4g-list-element__more-link');
-        $field->setHref($voucherUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
-        $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
-        $field->setConditionField("internal_type");
-        $field->setConditionValue("person");
         //$field->setExternalLinkField("external_link");
         $fields[] = $field;
         

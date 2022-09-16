@@ -80,6 +80,7 @@ $GLOBALS['TL_LANG'][$strName]['vimeoChannelLink'] = "Vimeo-Kanal";
 $GLOBALS['TL_LANG'][$strName]['wikipedia'] = "Wikipedia";
 $GLOBALS['TL_LANG'][$strName]['alsoInteresting'] = "Auch interessant";
 $GLOBALS['TL_LANG'][$strName]['more'] = "Mehr";
+$GLOBALS['TL_LANG'][$strName]['frontend']['putInCart'] = 'In den Warenkorb';
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterter Filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';

@@ -12,6 +12,9 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
+use con4gis\FrameworkBundle\Classes\Conditions\OrCondition;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\SearchConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\DistanceField;
@@ -33,12 +36,14 @@ use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FilesModel;
+use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
 use Contao\Template;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -55,6 +60,9 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     private ShowcaseService $showcaseService;
     private UrlGeneratorInterface $generator;
     private OfferLoaderService $offerLoaderService;
+    private ServerService $serverService;
+
+    private ModuleModel $model;
 
     public const TYPE = 'showcase_detail_module';
     public const COOKIE_WISHLIST = "clientUuid";
@@ -64,19 +72,23 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
      * @param ShowcaseService $showcaseService
      * @param UrlGeneratorInterface $generator
      * @param OfferLoaderService $offerLoaderService
+     * @param ServerService $serverService
      */
     public function __construct(
         ShowcaseService $showcaseService,
         UrlGeneratorInterface $generator,
-        OfferLoaderService $offerLoaderService
+        OfferLoaderService $offerLoaderService,
+        ServerService $serverService
     ) {
         $this->showcaseService = $showcaseService;
         $this->generator = $generator;
         $this->offerLoaderService = $offerLoaderService;
+        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
+        $this->model = $model;
         global $objPage;
         $this->setAlias();
         $redirectPage = $model->gutesio_showcase_list_page;
@@ -433,6 +445,53 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $fields[] = $field;
         }
 
+        $user = FrontendUser::getInstance();
+        $purchasableOfferTypeCondition = new OrCondition();
+        $purchasableOfferTypeCondition->addConditions(
+            new FieldValueCondition('type', 'product'),
+            new FieldValueCondition('type', 'voucher')
+        );
+        $field = new LinkButtonTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link put-in-cart");
+        $field->setHref($this->serverService->getMainServerURL()."/gutesio/main/cart/add");
+        $field->setLinkText($this->languageRefs['frontend']['putInCart']);
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addConditionalClass("in_cart", "in-cart");
+        $field->setAsyncCall(true);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldNotValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $field->setAddDataAttributes(true);
+        $field->setHookAfterClick(true);
+        $field->setHookName("addToCart");
+        $page = $this->model->cart_page ?: 0;
+        if ($page !== 0) {
+            $page = PageModel::findByPk($page);
+            if ($page) {
+                $field->setRedirectPageOnSuccess($page->getAbsoluteUrl());
+            }
+        }
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName("uuid");
+        $field->setWrapperClass("c4g-list-element__cart-wrapper");
+        $field->setClass("c4g-list-element__cart-link not-available");
+        $field->setFormat('Zurzeit nicht verfügbar');
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
+        $field->addCondition(new FieldValueCondition('offerForSale', '1'));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', ''));
+        $field->addCondition(new FieldNotValueCondition('rawPrice', '0'));
+        $field->addCondition(new FieldNotValueCondition('priceStartingAt', '1'));
+        $field->addCondition(new FieldValueCondition('availableAmount', '0'));
+        $field->addCondition(new FieldNotValueCondition('ownerMemberId', (string) $user->id));
+        $fields[] = $field;
+
         return $fields;
     }
 
@@ -461,14 +520,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     {
         $database = Database::getInstance();
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.image, a.imageOffer, a.foreignLink, a.directLink, ' . '
+        a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName '.
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.uuid as elementId '.
             'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '

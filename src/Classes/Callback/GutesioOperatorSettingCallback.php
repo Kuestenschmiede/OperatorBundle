@@ -31,6 +31,13 @@ class GutesioOperatorSettingCallback extends Backend
         }
     }
 
+    public function deleteMainServerUrl()
+    {
+        $database = Database::getInstance();
+        $statement = $database->prepare("UPDATE tl_gutesio_operator_settings SET mainServerUrl = ''");
+        $statement->execute();
+    }
+
     public function loadIoUrl()
     {
         $settings = C4gSettingsModel::findAll();

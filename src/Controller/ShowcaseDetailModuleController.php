@@ -527,7 +527,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.uuid as elementId '.
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.uuid as elementId, e.ownerMemberId '.
             'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '

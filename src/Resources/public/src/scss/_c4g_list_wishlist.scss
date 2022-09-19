@@ -199,11 +199,13 @@ html {
     &__more-link {
       @extend .c4g-btn;
       @extend .c4g-btn-primary;
+      white-space: nowrap;
     }
 
     &__cart-link {
       @extend .c4g-btn;
       @extend .c4g-btn-primary;
+      white-space: nowrap;
     }
 
     &__delete-link {

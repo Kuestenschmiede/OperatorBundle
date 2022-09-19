@@ -3280,6 +3280,14 @@ html {
     max-width: 250px
   }
 }
+.c4g-wishlist-outer .c4g-list-element__more-link,
+.wishlist .c4g-list-element__more-link {
+  white-space: nowrap
+}
+.c4g-wishlist-outer .c4g-list-element__cart-link,
+.wishlist .c4g-list-element__cart-link {
+  white-space: nowrap
+}
 .c4g-list-element__taglinks-wrapper,
 .c4g-list-element__tags-wrapper {
   display: flex;

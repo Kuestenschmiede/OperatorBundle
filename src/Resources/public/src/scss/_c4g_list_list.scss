@@ -175,7 +175,8 @@ html {
     }
 
     &__more-link,
-    &__notice-link {
+    &__notice-link,
+    &__cart-link{
       @extend .c4g-btn;
       @extend .c4g-btn-sm;
       @extend .c4g-btn-primary;

@@ -162,13 +162,14 @@ html {
     }
 
     &__notice-link,
+    &__cart-link,
     &__more-link {
       @extend .c4g-btn;
       @extend .c4g-btn-sm;
       @extend .c4g-btn-primary;
     }
 
-    &__notice-link {
+    &__notice-link, &__cart-link {
       &.remove-from-wishlist {
         @extend .c4g-btn-on-wishlist;
       }

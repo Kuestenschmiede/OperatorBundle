@@ -201,6 +201,11 @@ html {
       @extend .c4g-btn-primary;
     }
 
+    &__cart-link {
+      @extend .c4g-btn;
+      @extend .c4g-btn-primary;
+    }
+
     &__delete-link {
       @extend .c4g-btn;
       @extend .btn-danger;

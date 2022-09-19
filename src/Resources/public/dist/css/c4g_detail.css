@@ -1886,6 +1886,7 @@ mark {
 .c4g-btn-default,
 .c4g-btn-sm,
 .c4g-btn-tagfilter,
+.c4g-list-outer .c4g-list-element__cart-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
 .c4g-modal-content .c4g-btn-close,
@@ -1926,6 +1927,7 @@ mark {
   .c4g-btn-default,
   .c4g-btn-sm,
   .c4g-btn-tagfilter,
+  .c4g-list-outer .c4g-list-element__cart-link,
   .c4g-list-outer .c4g-list-element__more-link,
   .c4g-list-outer .c4g-list-element__notice-link,
   .c4g-modal-content .c4g-btn-close,
@@ -1951,6 +1953,7 @@ mark {
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
 .c4g-btn:hover,
+.c4g-list-outer .c4g-list-element__cart-link:hover,
 .c4g-list-outer .c4g-list-element__more-link:hover,
 .c4g-list-outer .c4g-list-element__notice-link:hover,
 .c4g-modal-content .c4g-btn-close:hover,
@@ -1977,8 +1980,10 @@ mark {
 .c4g-btn-sm:focus,
 .c4g-btn-tagfilter:focus,
 .c4g-btn:focus,
+.c4g-list-outer .c4g-list-element__cart-link:focus,
 .c4g-list-outer .c4g-list-element__more-link:focus,
 .c4g-list-outer .c4g-list-element__notice-link:focus,
+.c4g-list-outer .focus.c4g-list-element__cart-link,
 .c4g-list-outer .focus.c4g-list-element__more-link,
 .c4g-list-outer .focus.c4g-list-element__notice-link,
 .c4g-modal-content .c4g-btn-close:focus,
@@ -2024,8 +2029,10 @@ mark {
 .c4g-btn-sm:disabled,
 .c4g-btn-tagfilter:disabled,
 .c4g-btn:disabled,
+.c4g-list-outer .c4g-list-element__cart-link:disabled,
 .c4g-list-outer .c4g-list-element__more-link:disabled,
 .c4g-list-outer .c4g-list-element__notice-link:disabled,
+.c4g-list-outer .disabled.c4g-list-element__cart-link,
 .c4g-list-outer .disabled.c4g-list-element__more-link,
 .c4g-list-outer .disabled.c4g-list-element__notice-link,
 .c4g-modal-content .c4g-btn-close:disabled,
@@ -2069,6 +2076,7 @@ mark {
 .c4g-btn-sm:not(:disabled):not(.disabled),
 .c4g-btn-tagfilter:not(:disabled):not(.disabled),
 .c4g-btn:not(:disabled):not(.disabled),
+.c4g-list-outer .c4g-list-element__cart-link:not(:disabled):not(.disabled),
 .c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled),
 .c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled),
 .c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled),
@@ -2088,8 +2096,10 @@ mark {
 .detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled) {
   cursor: pointer
 }
+.c4g-list-outer a.disabled.c4g-list-element__cart-link,
 .c4g-list-outer a.disabled.c4g-list-element__more-link,
 .c4g-list-outer a.disabled.c4g-list-element__notice-link,
+.c4g-list-outer fieldset:disabled a.c4g-list-element__cart-link,
 .c4g-list-outer fieldset:disabled a.c4g-list-element__more-link,
 .c4g-list-outer fieldset:disabled a.c4g-list-element__notice-link,
 .c4g-modal-content a.disabled.c4g-btn-close,
@@ -2123,6 +2133,7 @@ a.disabled.c4g-btn,
 a.disabled.c4g-btn-default,
 a.disabled.c4g-btn-sm,
 a.disabled.c4g-btn-tagfilter,
+fieldset:disabled .c4g-list-outer a.c4g-list-element__cart-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__more-link,
 fieldset:disabled .c4g-list-outer a.c4g-list-element__notice-link,
 fieldset:disabled .c4g-modal-content a.c4g-btn-close,
@@ -2775,6 +2786,7 @@ fieldset:disabled a.c4g-btn-tagfilter {
 }
 .btn-sm,
 .c4g-btn-sm,
+.c4g-list-outer .c4g-list-element__cart-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
 .c4g-modal-content .c4g-btn-close,
@@ -2899,6 +2911,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__cart-link .badge,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__more-link .badge,
 .c4g-list-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
 .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -2921,6 +2939,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -2965,6 +2985,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
@@ -6635,6 +6657,7 @@ html {
 .c4g-btn-default,
 .c4g-btn-sm,
 .c4g-btn-tagfilter,
+.c4g-list-outer .c4g-list-element__cart-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link,
 .c4g-modal-content .c4g-btn-close,
@@ -6664,6 +6687,7 @@ html {
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
 .c4g-btn:hover,
+.c4g-list-outer .c4g-list-element__cart-link:hover,
 .c4g-list-outer .c4g-list-element__more-link:hover,
 .c4g-list-outer .c4g-list-element__notice-link:hover,
 .c4g-modal-content .c4g-btn-close:hover,
@@ -6683,6 +6707,7 @@ html {
   filter: brightness(.85)
 }
 .c4g-btn-primary,
+.c4g-list-outer .c4g-list-element__cart-link,
 .c4g-list-outer .c4g-list-element__more-link,
 .c4g-list-outer .c4g-list-element__notice-link {
   color: var(--btn-primary-color);
@@ -6735,6 +6760,7 @@ html {
   box-shadow: 0 0 0 .2rem rgba(222,170,12,.5)
 }
 .c4g-btn-on-wishlist,
+.c4g-list-element__cart-link.remove-from-wishlist,
 .c4g-list-element__notice-link.remove-from-wishlist {
   color: var(--btn-secondary-color);
   background-color: var(--btn-secondary-background-color);

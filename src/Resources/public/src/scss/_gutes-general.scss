@@ -1,4 +1,4 @@
-.c4g-list-element__notice-link {
+.c4g-list-element__notice-link, .c4g-list-element__cart-link {
   &.remove-from-wishlist {
     @extend .c4g-btn-on-wishlist;
   }

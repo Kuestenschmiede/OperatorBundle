@@ -118,25 +118,25 @@ class LoadPopupListener
         }
         if ($element['website']) {
             $website = $element['website'];
-            $contacts .= "<a class='entry-content contact-website' title='Website von $name' href='$website'>
+            $contacts .= "<a class='entry-content contact-website' title='Website von $name' href='$website' rel='noopener nofollow'target='_blank'>
                             <i class='fas fa-external-link-square-alt'></i>
                         </a>";
         }
         if ($element['facebook']) {
             $fb = $element['facebook'];
-            $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb'>
+            $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb' rel='noopener nofollow'target='_blank'>
                             <i class='fab fa-facebook-square'></i>
                         </a>";
         }
         if ($element['instagram']) {
             $ig = $element['instagram'];
-            $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig'>
+            $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig' rel='noopener nofollow'target='_blank'>
                             <i class='fab fa-instagram-square'></i>
                         </a>";
         }
         if ($element['twitter']) {
             $tw = $element['twitter'];
-            $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw'>
+            $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw' rel='noopener nofollow'target='_blank'>
                             <i class='fab fa-twitter-square'></i>
                         </a>";
         }

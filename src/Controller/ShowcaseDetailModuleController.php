@@ -672,9 +672,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $childRows[$key] = $row;
         }
 
-        $childRows = $this->offerLoaderService->getAdditionalData($childRows);
-
-        return $childRows;
+        return $this->offerLoaderService->getAdditionalData($childRows);
     }
 
     private function getRelatedShowcaseData($arrShowcase, $request): array

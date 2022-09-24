@@ -136,7 +136,7 @@
 
             <div class="detail-view__section-gallery" id="detail-section-description-and-gallery">
                 <div class="c4g-container">
-                    <div class="c4g-row">
+                    <div class="c4g-row detaildata-section-description-and-gallery">
                         <div class="item description detail-view__description">
                         <span class="entry-content">
                         <?= $data->description ?>
@@ -184,7 +184,7 @@
 
             <?php if (isset($data->dateOfBirth) && !empty($data->dateOfBirth)): ?>
                 <div class="c4g-container">
-                    <div class="c4g-row">
+                    <div class="c4g-row dateOfBirth">
                         <div class="col-12">
                             <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['dateOfBirth'] ?> </strong>
                            <span><?= $data->dateOfBirth ?></span>
@@ -195,7 +195,7 @@
 
             <?php if (isset($data->dateOfDeath) && !empty($data->dateOfDeath)): ?>
                 <div class="c4g-container">
-                    <div class="c4g-row">
+                    <div class="c4g-row dateOfDeath">
                         <div class="col-12">
                             <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['dateOfDeath'] ?> </strong>
                            <span><?= $data->dateOfDeath ?></span>
@@ -206,7 +206,7 @@
 
             <?php if (isset($data->beginDate) && !empty($data->beginDate)): ?>
                 <div class="c4g-container">
-                    <div class="c4g-row">
+                    <div class="c4g-row beginDate">
                         <div class="col-12">
                             <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginoffer'] ?> </strong>
 
@@ -256,10 +256,10 @@
 
             <div class="detail-view__section-detaildata" id="detail-section-4">
                 <div class="c4g-container">
-                    <div class="c4g-row">
+                    <div class="c4g-row detaildata-section-4">
                         <?php if (isset($data->strikePrice) && !empty($data->strikePrice)): ?>
                             <div class="col-12">
-                                <div class="detail-field-text detail-view__strike-price"><span
+                                <div class="detail-field-text-price detail-view__strike-price"><span
                                             class="detail-field-text__text"><?= $data->strikePrice ?></span>
                                 </div>
                             </div>
@@ -267,7 +267,7 @@
 
                         <?php if (isset($data->price) && !empty($data->price)): ?>
                             <div class="col-12">
-                                <div class="detail-field-text detail-view__price">
+                                <div class="detail-field-text-price detail-view__price">
                                     <span class="detail-field-text__text"><?= $data->price ?></span>
                                 </div>
                             </div>
@@ -276,7 +276,7 @@
                         <?php if (isset($data->color) && !empty($data->color)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__color">
-                                    <div class="detail-field-text__label">Farbe</div>
+                                    <div class="detail-field-text__label">Farbe:</div>
                                     <div class="detail-field-text__text"><?= $data->color ?></div>
                                 </div>
                             </div>
@@ -286,7 +286,7 @@
                             <?php if (isset($data->size) && !empty($data->size)): ?>
                                 <div class="col-12">
                                     <div class="detail-field-text detail-view__size">
-                                        <div class="detail-field-text__label">Menge</div>
+                                        <div class="detail-field-text__label">Menge:</div>
                                         <div class="detail-field-text__text"><?= $data->size.' '.$data->basePriceUnit ?></div>
                                     </div>
                                 </div>
@@ -294,7 +294,7 @@
                             <?php if (isset($data->basePriceUnit) && !empty($data->basePriceUnit)): ?>
                                 <div class="col-12">
                                     <div class="detail-field-text detail-view__basePriceUnit">
-                                        <div class="detail-field-text__label">Grundpreis</div>
+                                        <div class="detail-field-text__label">Grundpreis: </div>
                                         <div class="detail-field-text__text"><?= $data->basePrice ?> pro <?= $data->basePriceUnitPerPiece.' '.$data->basePriceUnit ?> </div>
                                     </div>
                                 </div>
@@ -303,7 +303,7 @@
                             <?php if (isset($data->size) && !empty($data->size)): ?>
                                 <div class="col-12">
                                     <div class="detail-field-text detail-view__size">
-                                        <div class="detail-field-text__label">Größe</div>
+                                        <div class="detail-field-text__label">Größe: </div>
                                         <div class="detail-field-text__text"><?= $data->size ?></div>
                                     </div>
                                 </div>
@@ -313,7 +313,7 @@
                         <?php if (isset($data->isbn) && !empty($data->isbn)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__isbn">
-                                    <div class="detail-field-text__label">ISBN</div>
+                                    <div class="detail-field-text__label">ISBN: </div>
                                     <div class="detail-field-text__text"><?= $data->isbn ?></div>
                                 </div>
                             </div>
@@ -322,7 +322,7 @@
                         <?php if (isset($data->ean) && !empty($data->ean)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__ean">
-                                    <div class="detail-field-text__label">EAN</div>
+                                    <div class="detail-field-text__label">EAN: </div>
                                     <div class="detail-field-text__text"><?= $data->ean ?></div>
                                 </div>
                             </div>
@@ -331,7 +331,7 @@
                         <?php if (isset($data->brand) && !empty($data->brand)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__brand">
-                                    <div class="detail-field-text__label">Marke</div>
+                                    <div class="detail-field-text__label">Marke: </div>
                                     <div class="detail-field-text__text"><?= $data->brand ?></div>
                                 </div>
                             </div>
@@ -340,7 +340,7 @@
                         <?php if (isset($data->allergenes) && !empty($data->allergenes)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__allergenes">
-                                    <div class="detail-field-text__label">Hinweise zu Allergenen</div>
+                                    <div class="detail-field-text__label">Hinweise zu Allergenen: </div>
                                     <div class="detail-field-text__text"><?= $data->allergenes ?></div>
                                 </div>
                             </div>
@@ -349,7 +349,7 @@
                         <?php if (isset($data->ingredients) && !empty($data->ingredients)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__ingredients">
-                                    <div class="detail-field-text__label">Zutaten</div>
+                                    <div class="detail-field-text__label">Zutaten: </div>
                                     <div class="detail-field-text__text"><?= $data->ingredients ?></div>
                                 </div>
                             </div>
@@ -358,8 +358,8 @@
                          <?php if (isset($data->kJ) && !empty($data->kJ)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__kJ">
-                                    <div class="detail-field-text__label">Brennwert (in kJ)</div>
-                                    <div class="detail-field-text__text"><?= $data->kJ ?></div>
+                                    <div class="detail-field-text__label">Brennwert: </div>
+                                    <div class="detail-field-text__text"><?= $data->kJ ?>kJ</div>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -367,8 +367,8 @@
                         <?php if (isset($data->fat) && !empty($data->fat)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__fat">
-                                    <div class="detail-field-text__label">Fett (in g)</div>
-                                    <div class="detail-field-text__text"><?= $data->fat ?></div>
+                                    <div class="detail-field-text__label">Fett: </div>
+                                    <div class="detail-field-text__text"><?= $data->fat ?>g</div>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -376,8 +376,8 @@
                         <?php if (isset($data->saturatedFattyAcid) && !empty($data->saturatedFattyAcid)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__saturatedFattyAcid">
-                                    <div class="detail-field-text__label">Davon gesättigte Fettsäuren (in g)</div>
-                                    <div class="detail-field-text__text"><?= $data->saturatedFattyAcid ?></div>
+                                    <div class="detail-field-text__label">Davon gesättigte Fettsäuren: </div>
+                                    <div class="detail-field-text__text"><?= $data->saturatedFattyAcid ?>g</div>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -385,8 +385,8 @@
                         <?php if (isset($data->carbonHydrates) && !empty($data->carbonHydrates)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__carbonHydrates">
-                                    <div class="detail-field-text__label">Kohlenhydrate (in g)</div>
-                                    <div class="detail-field-text__text"><?= $data->carbonHydrates ?></div>
+                                    <div class="detail-field-text__label">Kohlenhydrate: </div>
+                                    <div class="detail-field-text__text"><?= $data->carbonHydrates ?>g</div>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -394,8 +394,8 @@
                         <?php if (isset($data->sugar) && !empty($data->sugar)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__sugar">
-                                    <div class="detail-field-text__label">Davon Zucker (in g)</div>
-                                    <div class="detail-field-text__text"><?= $data->sugar ?></div>
+                                    <div class="detail-field-text__label">Davon Zucker: </div>
+                                    <div class="detail-field-text__text"><?= $data->sugar ?>g</div>
                                 </div>
                             </div>
                         <?php endif; ?>
@@ -403,20 +403,22 @@
                         <?php if (isset($data->salt) && !empty($data->salt)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__salt">
-                                    <div class="detail-field-text__label">Salz (in g)</div>
-                                    <div class="detail-field-text__text"><?= $data->salt ?></div>
+                                    <div class="detail-field-text__label">Salz: </div>
+                                    <div class="detail-field-text__text"><?= $data->salt ?>g</div>
                                 </div>
                             </div>
                         <?php endif; ?>
 
+<!--
                         <?php if (isset($data->availableAmount) && !empty($data->availableAmount)): ?>
                             <div class="col-12">
                                 <div class="detail-field-text detail-view__availableAmount">
-                                    <div class="detail-field-text__label">Verfügbare Menge</div>
+                                    <div class="detail-field-text__label">Lagerbestand: </div>
                                     <div class="detail-field-text__text"><?= $data->availableAmount ?> </div>
                                 </div>
                             </div>
                         <?php endif; ?>
+-->
                     </div>
                 </div>
             </div>
@@ -450,7 +452,7 @@
             <?php if (isset($data->importantNotes) && !empty($data->importantNotes)): ?>
                 <section class="detail-view__section section__important-notes">
                     <div class="c4g-container">
-                        <div class="c4g-row">
+                        <div class="c4g-row detaildata-section-important-notes">
                             <div class="col-12">
                                 <div class="c4g-card">
                                     <div class="c4g-card-body">
@@ -471,7 +473,7 @@
                 <div class="detail-view__section-detaildata" id="detail-section-5">
                     <div class="c4g-container">
                         <div class="c4g-container">
-                            <div class="c4g-row">
+                            <div class="c4g-row detaildata-section-5">
                                 <div class="detail-view__video-preview">
                                     <div class="embed-responsive embed-responsive-16by9">
 
@@ -521,7 +523,7 @@
 
             <div class="detail-view__section-tags" id="detail-section-6">
                 <div class="c4g-container">
-                    <div class="c4g-row">
+                    <div class="c4g-row detaildata-section-6">
 
                         <?php if (isset($data->relatedShowcaseLogos) && !empty($data->relatedShowcaseLogos)): ?>
                             <div class="detail-field-text__label">Verknüpfte Schaufenster:</div>
@@ -691,7 +693,7 @@
             <?php if (isset($data->taxNote) && !empty($data->taxNote)): ?>
                 <div class="detail-field-text taxNote detail-view__taxnote">
                     <div class="c4g-container">
-                        <div class="c4g-row">
+                        <div class="c4g-row detaildata-taxnote">
                             <div class="col">
                                 <span class="detail-field-text__text"><?= $data->taxNote ?></span>
                             </div>
@@ -703,7 +705,7 @@
             <div class="detail-view__section-contact-map" id="section-id-contact">
                 <div class="c4g-container">
 
-                    <div class="c4g-row">
+                    <div class="c4g-row detaildata-section-id-contact">
                         <div class="col-xs-12 col-lg-6">
                             <div class="detail-field-contact detail-view__contact-wrapper"><h2>
                                     Kontakt</h2>

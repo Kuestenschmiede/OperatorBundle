@@ -676,7 +676,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $result = $this->offerLoaderService->getAdditionalData($childRows);
         $childList = [];
         //remove duplicated offers
-        foreach ($result as $key=>$resultData) {
+        foreach ($result as $resultData) {
             $childList[$resultData['id']] = $resultData;
         }
 

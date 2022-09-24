@@ -7029,6 +7029,15 @@ html {
 .detail-view__section-tags .detail-field-text__label {
   font-weight: 700
 }
+.detail-view .c4g-row.detaildata-section-4 .col-12 {
+  margin-bottom: inherit
+}
+.detail-view .c4g-row.detaildata-section-4 .detail-field-text {
+  display: inline-flex
+}
+.detail-view .c4g-row.detaildata-section-4 .detail-field-text__text {
+  padding-left: .2em
+}
 .detail-view__section-tags .menuLink > a {
   color: #212529;
   background-color: #f6921e;
@@ -7384,8 +7393,8 @@ html {
 .detail-view__imprint-row {
   display: flex;
   flex-wrap: wrap;
-  margin-right: auto;
-  margin-left: auto;
+  margin-right: -15px;
+  margin-left: -15px
 }
 .detail-view__imprint-col {
   position: relative;

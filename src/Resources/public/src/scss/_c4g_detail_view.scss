@@ -251,6 +251,16 @@
     }
   }
 
+  .c4g-row.detaildata-section-4 .col-12 {
+    margin-bottom: inherit;
+  }
+  .c4g-row.detaildata-section-4 .detail-field-text {
+    display: inline-flex;
+  }
+  .c4g-row.detaildata-section-4 .detail-field-text__text {
+    padding-left: 0.2em;
+  }
+
   &__section-tags {
     .menuLink {
       > a {

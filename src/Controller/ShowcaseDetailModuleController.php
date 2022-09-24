@@ -673,7 +673,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $childRows[$key] = $row;
         }
 
-        return $this->offerLoaderService->getAdditionalData($childRows);
+        $result = $this->offerLoaderService->getAdditionalData($childRows);
+        $childList = [];
+        //remove duplicated offers
+        foreach ($result as $key=>$resultData) {
+            $childList[$resultData['id']] = $resultData;
+        }
+
+        return array_values($childList);
     }
 
     private function getRelatedShowcaseData($arrShowcase, $request): array

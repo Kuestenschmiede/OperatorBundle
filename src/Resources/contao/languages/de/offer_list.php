@@ -15,6 +15,23 @@ $GLOBALS['TL_LANG'][$strName]['strikePrice'] = ['Streichpreis', 'Streichpreis in
 $GLOBALS['TL_LANG'][$strName]['discount'] = ['Rabatt', 'Rabatt des Produktes in Prozent.'];
 $GLOBALS['TL_LANG'][$strName]['color'] = ['Farbe', 'Farbe des Produktes.'];
 $GLOBALS['TL_LANG'][$strName]['size'] = ['Größe', 'Größe des Produktes.'];
+
+$GLOBALS['TL_LANG'][$strName]['allergenes'] = ['Hinweise zu Allergenen', ''];
+$GLOBALS['TL_LANG'][$strName]['ingredients'] = ['Zutaten', ''];
+$GLOBALS['TL_LANG'][$strName]['kJ'] = ['Brennwert (in kJ)', ''];
+$GLOBALS['TL_LANG'][$strName]['fat'] = ['Fett (in g)', ''];
+$GLOBALS['TL_LANG'][$strName]['saturatedFattyAcidze'] = ['Davon gesättigte Fettsäuren (in g)', ''];
+$GLOBALS['TL_LANG'][$strName]['carbonHydrates'] = ['Kohlenhydrate (in g)', ''];
+$GLOBALS['TL_LANG'][$strName]['sugar'] = ['Davon Zucker (in g)', ''];
+$GLOBALS['TL_LANG'][$strName]['salt'] = ['Salz (in g)', ''];
+
+$GLOBALS['TL_LANG'][$strName]['isbn'] = ['ISBN', ''];
+$GLOBALS['TL_LANG'][$strName]['ean'] = ['EAN', ''];
+$GLOBALS['TL_LANG'][$strName]['brand'] = ['Marke', ''];
+$GLOBALS['TL_LANG'][$strName]['basePriceUnit'] = ['Grundpreis', ''];
+$GLOBALS['TL_LANG'][$strName]['basePriceUnitPerPiece'] = ['pro', ''];
+$GLOBALS['TL_LANG'][$strName]['availableAmount'] = ['Verfügbare Menge', ''];
+
 $GLOBALS['TL_LANG'][$strName]['appointmentUponAgreementContent'] = "Termin nach Absprache";
 $GLOBALS['TL_LANG'][$strName]['appointmentUponAgreement_startingAt'] = "ab";
 

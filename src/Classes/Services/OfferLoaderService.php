@@ -999,7 +999,9 @@ class OfferLoaderService
                 case 'product':
                     $productData = $database->prepare(
                         'SELECT p.price, p.strikePrice, p.priceStartingAt, p.priceReplacer, '.
-                        'p.tax as taxNote, p.discount, p.color, p.size, p.availableAmount '.
+                        'p.tax as taxNote, p.discount, p.color, p.size, p.availableAmount, p.basePriceUnit, p.basePriceUnitPerPiece, p.basePriceRequired, '.
+                        'p.allergenes, p.ingredients, p.kJ, p.fat, p.saturatedFattyAcid, p.carbonHydrates, p.sugar, p.salt, '.
+                        'p.isbn, p.ean, p.brand '.
                         'FROM tl_gutesio_data_child_product p WHERE p.childId = ?'
                     )->execute($row['uuid'])->fetchAssoc();
                     if (!empty($productData)) {
@@ -1046,6 +1048,31 @@ class OfferLoaderService
 
                         $productData['color'] = $productData['color'] ?: '';
                         $productData['size'] = $productData['size'] ?: '';
+                        $productData['isbn'] = $productData['isbn'] ?: '';
+                        $productData['ean'] = $productData['ean'] ?: '';
+                        $productData['brand'] = $productData['brand'] ?: '';
+                        $productData['basePriceUnit'] = $productData['basePriceUnit'] ?: '';
+                        $productData['basePriceUnitPerPiece'] = $productData['basePriceUnitPerPiece'] ?: '';
+                        $productData['basePriceRequired'] = $productData['basePriceRequired'] ?: false;
+                        $productData['availableAmount'] = $productData['availableAmount'] ?: '';
+
+                        if ($productData['basePriceRequired']) {
+                            $productData['basePrice'] = $productData['rawPrice'] && $productData['size'] && $productData['basePriceUnitPerPiece'] ? $productData['rawPrice'] / $productData['size'] * $productData['basePriceUnitPerPiece'] : '';
+                            $productData['basePrice'] = number_format(
+                                $productData['basePrice'] ?: 0,
+                                2,
+                                ',',
+                                ''
+                            ) . ' €';
+                        }
+                        $productData['allergenes'] = $productData['allergenes'] ?: '';
+                        $productData['ingredients'] = $productData['ingredients'] ?: '';
+                        $productData['kJ'] = $productData['kJ'] ?: '';
+                        $productData['fat'] = $productData['fat'] ?: '';
+                        $productData['saturatedFattyAcid'] = $productData['saturatedFattyAcid'] ?: '';
+                        $productData['carbonHydrates'] = $productData['carbonHydrates'] ?: '';
+                        $productData['sugar'] = $productData['sugar'] ?: '';
+                        $productData['salt'] = $productData['salt'] ?: '';
 
                         $settings = GutesioOperatorSettingsModel::findSettings();
                         switch ($productData['taxNote']) {

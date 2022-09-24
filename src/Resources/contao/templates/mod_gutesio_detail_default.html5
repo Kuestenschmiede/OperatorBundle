@@ -282,15 +282,141 @@
                             </div>
                         <?php endif; ?>
 
-                        <?php if (isset($data->size) && !empty($data->size)): ?>
+                        <?php if (isset($data->basePrice)): ?>
+                            <?php if (isset($data->size) && !empty($data->size)): ?>
+                                <div class="col-12">
+                                    <div class="detail-field-text detail-view__size">
+                                        <div class="detail-field-text__label">Menge</div>
+                                        <div class="detail-field-text__text"><?= $data->size.' '.$data->basePriceUnit ?></div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (isset($data->basePriceUnit) && !empty($data->basePriceUnit)): ?>
+                                <div class="col-12">
+                                    <div class="detail-field-text detail-view__basePriceUnit">
+                                        <div class="detail-field-text__label">Grundpreis</div>
+                                        <div class="detail-field-text__text"><?= $data->basePrice ?> pro <?= $data->basePriceUnitPerPiece.' '.$data->basePriceUnit ?> </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <?php if (isset($data->size) && !empty($data->size)): ?>
+                                <div class="col-12">
+                                    <div class="detail-field-text detail-view__size">
+                                        <div class="detail-field-text__label">Größe</div>
+                                        <div class="detail-field-text__text"><?= $data->size ?></div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->isbn) && !empty($data->isbn)): ?>
                             <div class="col-12">
-                                <div class="detail-field-text detail-view__size">
-                                    <div class="detail-field-text__label">Größe</div>
-                                    <div class="detail-field-text__text"><?= $data->size ?></div>
+                                <div class="detail-field-text detail-view__isbn">
+                                    <div class="detail-field-text__label">ISBN</div>
+                                    <div class="detail-field-text__text"><?= $data->isbn ?></div>
                                 </div>
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($data->ean) && !empty($data->ean)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__ean">
+                                    <div class="detail-field-text__label">EAN</div>
+                                    <div class="detail-field-text__text"><?= $data->ean ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->brand) && !empty($data->brand)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__brand">
+                                    <div class="detail-field-text__label">Marke</div>
+                                    <div class="detail-field-text__text"><?= $data->brand ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->allergenes) && !empty($data->allergenes)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__allergenes">
+                                    <div class="detail-field-text__label">Hinweise zu Allergenen</div>
+                                    <div class="detail-field-text__text"><?= $data->allergenes ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->ingredients) && !empty($data->ingredients)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__ingredients">
+                                    <div class="detail-field-text__label">Zutaten</div>
+                                    <div class="detail-field-text__text"><?= $data->ingredients ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                         <?php if (isset($data->kJ) && !empty($data->kJ)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__kJ">
+                                    <div class="detail-field-text__label">Brennwert (in kJ)</div>
+                                    <div class="detail-field-text__text"><?= $data->kJ ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->fat) && !empty($data->fat)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__fat">
+                                    <div class="detail-field-text__label">Fett (in g)</div>
+                                    <div class="detail-field-text__text"><?= $data->fat ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->saturatedFattyAcid) && !empty($data->saturatedFattyAcid)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__saturatedFattyAcid">
+                                    <div class="detail-field-text__label">Davon gesättigte Fettsäuren (in g)</div>
+                                    <div class="detail-field-text__text"><?= $data->saturatedFattyAcid ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->carbonHydrates) && !empty($data->carbonHydrates)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__carbonHydrates">
+                                    <div class="detail-field-text__label">Kohlenhydrate (in g)</div>
+                                    <div class="detail-field-text__text"><?= $data->carbonHydrates ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->sugar) && !empty($data->sugar)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__sugar">
+                                    <div class="detail-field-text__label">Davon Zucker (in g)</div>
+                                    <div class="detail-field-text__text"><?= $data->sugar ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->salt) && !empty($data->salt)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__salt">
+                                    <div class="detail-field-text__label">Salz (in g)</div>
+                                    <div class="detail-field-text__text"><?= $data->salt ?></div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->availableAmount) && !empty($data->availableAmount)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text detail-view__availableAmount">
+                                    <div class="detail-field-text__label">Verfügbare Menge</div>
+                                    <div class="detail-field-text__text"><?= $data->availableAmount ?> </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -438,7 +564,6 @@
                                 </div>
                             <?php endif; ?>
                         <?php endif; ?>
-
 
                         <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
                             <div class="menuLink">

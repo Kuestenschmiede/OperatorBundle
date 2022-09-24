@@ -326,6 +326,104 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
         $field = new DetailTextField();
         $field->setSection(4);
+        $field->setName("isbn");
+        $field->setLabel($this->languageRefs['isbn'][0]);
+        $field->setClass('detail-view__isbn');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("ean");
+        $field->setLabel($this->languageRefs['ean'][0]);
+        $field->setClass('detail-view__ean');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("brand");
+        $field->setLabel($this->languageRefs['brand'][0]);
+        $field->setClass('detail-view__brand');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("basePriceUnit");
+        $field->setLabel($this->languageRefs['basePriceUnit'][0]);
+        $field->setClass('detail-view__basePriceUnit');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("basePriceUnitPerPiece");
+        $field->setLabel($this->languageRefs['basePriceUnitPerPiece'][0]);
+        $field->setClass('detail-view__basePriceUnitPerPiece');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("allergenes");
+        $field->setLabel($this->languageRefs['allergenes'][0]);
+        $field->setClass('detail-view__allergenes');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("ingredients");
+        $field->setLabel($this->languageRefs['ingredients'][0]);
+        $field->setClass('detail-view__ingredients');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("kJ");
+        $field->setLabel($this->languageRefs['kJ'][0]);
+        $field->setClass('detail-view__kJ');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("fat");
+        $field->setLabel($this->languageRefs['fat'][0]);
+        $field->setClass('detail-view__fat');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("saturatedFattyAcid");
+        $field->setLabel($this->languageRefs['saturatedFattyAcid'][0]);
+        $field->setClass('detail-view__saturatedFattyAcid');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("carbonHydrates");
+        $field->setLabel($this->languageRefs['carbonHydrates'][0]);
+        $field->setClass('detail-view__carbonHydrates');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("sugar");
+        $field->setLabel($this->languageRefs['sugar'][0]);
+        $field->setClass('detail-view__sugar');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("salt");
+        $field->setLabel($this->languageRefs['salt'][0]);
+        $field->setClass('detail-view__salt');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("availableAmount");
+        $field->setLabel($this->languageRefs['availableAmount'][0]);
+        $field->setClass('detail-view__availableAmount');
+        $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
         $field->setName("dateOfBirth");
         $field->setClass('detail-view__dateOfBirth');
         $fields[] = $field;

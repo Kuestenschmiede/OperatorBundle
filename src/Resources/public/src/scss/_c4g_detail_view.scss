@@ -538,6 +538,8 @@
 
   &__imprint-row {
     @include make-row();
+    margin-right: auto;
+    margin-left: auto;
   }
 
   &__imprint-col {

@@ -154,6 +154,14 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     $components['elements'][2]
                 );
                 $otherChildData = $this->getChildTileData($data, $request);
+                $childList = [];
+                //remove duplicated offers
+                foreach ($otherChildData as $key=>$resultData) {
+                    $childList[$resultData['id']] = $resultData;
+                }
+
+                $otherChildData = array_values($childList);
+
                 if (count($otherChildData) > 0) {
                     $conf->addTileList(
                         $this->getChildTileList(),

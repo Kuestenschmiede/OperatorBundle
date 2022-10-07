@@ -274,8 +274,6 @@ template {
 [hidden] {
   display: none!important
 }
-.c4g-modal-content input,
-.detail-view__list-filter-input,
 .form-control {
   display: block;
   width: 100%;
@@ -292,20 +290,14 @@ template {
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out
 }
 @media (prefers-reduced-motion:reduce) {
-  .c4g-modal-content input,
-  .detail-view__list-filter-input,
   .form-control {
     transition: none
   }
 }
-.c4g-modal-content input::-ms-expand,
-.detail-view__list-filter-input::-ms-expand,
 .form-control::-ms-expand {
   background-color: transparent;
   border: 0
 }
-.c4g-modal-content input:focus,
-.detail-view__list-filter-input:focus,
 .form-control:focus {
   color: #495057;
   background-color: #fff;
@@ -313,41 +305,23 @@ template {
   outline: 0;
   box-shadow: 0 0 0 .2rem rgba(16,58,93,.25)
 }
-.c4g-modal-content input::-moz-placeholder,
-.detail-view__list-filter-input::-moz-placeholder,
 .form-control::-moz-placeholder {
   color: #6c757d;
   opacity: 1
 }
-.c4g-modal-content input:-ms-input-placeholder,
-.detail-view__list-filter-input:-ms-input-placeholder,
 .form-control:-ms-input-placeholder {
   color: #6c757d;
   opacity: 1
 }
-.c4g-modal-content input::placeholder,
-.detail-view__list-filter-input::placeholder,
 .form-control::placeholder {
   color: #6c757d;
   opacity: 1
 }
-.c4g-modal-content input:disabled,
-.c4g-modal-content input[readonly],
-.detail-view__list-filter-input:disabled,
-.detail-view__list-filter-input[readonly],
 .form-control:disabled,
 .form-control[readonly] {
   background-color: #e9ecef;
   opacity: 1
 }
-.c4g-modal-content input[type=date],
-.c4g-modal-content input[type=datetime-local],
-.c4g-modal-content input[type=month],
-.c4g-modal-content input[type=time],
-input.detail-view__list-filter-input[type=date],
-input.detail-view__list-filter-input[type=datetime-local],
-input.detail-view__list-filter-input[type=month],
-input.detail-view__list-filter-input[type=time],
 input[type=date].form-control,
 input[type=datetime-local].form-control,
 input[type=month].form-control,
@@ -356,12 +330,10 @@ input[type=time].form-control {
   -moz-appearance: none;
   appearance: none
 }
-select.detail-view__list-filter-input:-moz-focusring,
 select.form-control:-moz-focusring {
   color: transparent;
   text-shadow: 0 0 0 #495057
 }
-select.detail-view__list-filter-input:focus::-ms-value,
 select.form-control:focus::-ms-value {
   color: #495057;
   background-color: #fff
@@ -421,13 +393,10 @@ select.form-control:focus::-ms-value {
   line-height: 1.5;
   border-radius: .3rem
 }
-select.detail-view__list-filter-input[multiple],
-select.detail-view__list-filter-input[size],
 select.form-control[multiple],
 select.form-control[size] {
   height: auto
 }
-textarea.detail-view__list-filter-input,
 textarea.form-control {
   height: auto
 }
@@ -510,12 +479,7 @@ textarea.form-control {
 .was-validated :valid ~ .valid-tooltip {
   display: block
 }
-.c4g-modal-content .was-validated input:valid,
-.c4g-modal-content input.is-valid,
 .form-control.is-valid,
-.is-valid.detail-view__list-filter-input,
-.was-validated .c4g-modal-content input:valid,
-.was-validated .detail-view__list-filter-input:valid,
 .was-validated .form-control:valid {
   border-color: #28a745;
   padding-right: calc(1.5em + .75rem)!important;
@@ -524,27 +488,18 @@ textarea.form-control {
   background-position: right calc(.375em + .1875rem) center;
   background-size: calc(.75em + .375rem) calc(.75em + .375rem)
 }
-.c4g-modal-content .was-validated input:valid:focus,
-.c4g-modal-content input.is-valid:focus,
 .form-control.is-valid:focus,
-.is-valid.detail-view__list-filter-input:focus,
-.was-validated .c4g-modal-content input:valid:focus,
-.was-validated .detail-view__list-filter-input:valid:focus,
 .was-validated .form-control:valid:focus {
   border-color: #28a745;
   box-shadow: 0 0 0 .2rem rgba(40,167,69,.25)
 }
-.was-validated select.detail-view__list-filter-input:valid,
 .was-validated select.form-control:valid,
-select.form-control.is-valid,
-select.is-valid.detail-view__list-filter-input {
+select.form-control.is-valid {
   padding-right: 3rem!important;
   background-position: right 1.5rem center
 }
-.was-validated textarea.detail-view__list-filter-input:valid,
 .was-validated textarea.form-control:valid,
-textarea.form-control.is-valid,
-textarea.is-valid.detail-view__list-filter-input {
+textarea.form-control.is-valid {
   padding-right: calc(1.5em + .75rem);
   background-position: top calc(.375em + .1875rem) right calc(.375em + .1875rem)
 }
@@ -631,12 +586,7 @@ textarea.is-valid.detail-view__list-filter-input {
 .was-validated :invalid ~ .invalid-tooltip {
   display: block
 }
-.c4g-modal-content .was-validated input:invalid,
-.c4g-modal-content input.is-invalid,
 .form-control.is-invalid,
-.is-invalid.detail-view__list-filter-input,
-.was-validated .c4g-modal-content input:invalid,
-.was-validated .detail-view__list-filter-input:invalid,
 .was-validated .form-control:invalid {
   border-color: #dc3545;
   padding-right: calc(1.5em + .75rem)!important;
@@ -645,27 +595,18 @@ textarea.is-valid.detail-view__list-filter-input {
   background-position: right calc(.375em + .1875rem) center;
   background-size: calc(.75em + .375rem) calc(.75em + .375rem)
 }
-.c4g-modal-content .was-validated input:invalid:focus,
-.c4g-modal-content input.is-invalid:focus,
 .form-control.is-invalid:focus,
-.is-invalid.detail-view__list-filter-input:focus,
-.was-validated .c4g-modal-content input:invalid:focus,
-.was-validated .detail-view__list-filter-input:invalid:focus,
 .was-validated .form-control:invalid:focus {
   border-color: #dc3545;
   box-shadow: 0 0 0 .2rem rgba(220,53,69,.25)
 }
-.was-validated select.detail-view__list-filter-input:invalid,
 .was-validated select.form-control:invalid,
-select.form-control.is-invalid,
-select.is-invalid.detail-view__list-filter-input {
+select.form-control.is-invalid {
   padding-right: 3rem!important;
   background-position: right 1.5rem center
 }
-.was-validated textarea.detail-view__list-filter-input:invalid,
 .was-validated textarea.form-control:invalid,
-textarea.form-control.is-invalid,
-textarea.is-invalid.detail-view__list-filter-input {
+textarea.form-control.is-invalid {
   padding-right: calc(1.5em + .75rem);
   background-position: top calc(.375em + .1875rem) right calc(.375em + .1875rem)
 }
@@ -742,9 +683,6 @@ textarea.is-invalid.detail-view__list-filter-input {
     align-items: center;
     margin-bottom: 0
   }
-  .c4g-modal-content .form-inline input,
-  .form-inline .c4g-modal-content input,
-  .form-inline .detail-view__list-filter-input,
   .form-inline .form-control {
     display: inline-block;
     width: auto;
@@ -889,20 +827,12 @@ mark {
 .blockquote-footer::before {
   content: "\2014\00A0"
 }
-.c4g-list-outer .c4g-list-elements,
-.c4g-tile-headline-wrapper,
 .container,
 .container-fluid,
 .container-lg,
 .container-md,
 .container-sm,
-.container-xl,
-.detail-hero__inner-wrapper,
-.detail-view .anchor-menu__inner,
-.detail-view .c4g-container,
-.detail-view__imprint-container,
-.detail-view__list-filter-wrapper,
-.detail-view__section-headline {
+.container-xl {
   width: 100%;
   padding-right: 15px;
   padding-left: 15px;
@@ -910,64 +840,32 @@ mark {
   margin-left: auto
 }
 @media (min-width:576px) {
-  .c4g-list-outer .c4g-list-elements,
-  .c4g-tile-headline-wrapper,
   .container,
-  .container-sm,
-  .detail-hero__inner-wrapper,
-  .detail-view .anchor-menu__inner,
-  .detail-view .c4g-container,
-  .detail-view__imprint-container,
-  .detail-view__list-filter-wrapper,
-  .detail-view__section-headline {
+  .container-sm {
     max-width: 540px
   }
 }
 @media (min-width:768px) {
-  .c4g-list-outer .c4g-list-elements,
-  .c4g-tile-headline-wrapper,
   .container,
   .container-md,
-  .container-sm,
-  .detail-hero__inner-wrapper,
-  .detail-view .anchor-menu__inner,
-  .detail-view .c4g-container,
-  .detail-view__imprint-container,
-  .detail-view__list-filter-wrapper,
-  .detail-view__section-headline {
+  .container-sm {
     max-width: 720px
   }
 }
 @media (min-width:992px) {
-  .c4g-list-outer .c4g-list-elements,
-  .c4g-tile-headline-wrapper,
   .container,
   .container-lg,
   .container-md,
-  .container-sm,
-  .detail-hero__inner-wrapper,
-  .detail-view .anchor-menu__inner,
-  .detail-view .c4g-container,
-  .detail-view__imprint-container,
-  .detail-view__list-filter-wrapper,
-  .detail-view__section-headline {
+  .container-sm {
     max-width: 960px
   }
 }
 @media (min-width:1200px) {
-  .c4g-list-outer .c4g-list-elements,
-  .c4g-tile-headline-wrapper,
   .container,
   .container-lg,
   .container-md,
   .container-sm,
-  .container-xl,
-  .detail-hero__inner-wrapper,
-  .detail-view .anchor-menu__inner,
-  .detail-view .c4g-container,
-  .detail-view__imprint-container,
-  .detail-view__list-filter-wrapper,
-  .detail-view__section-headline {
+  .container-xl {
     max-width: 1140px
   }
 }
@@ -1885,25 +1783,7 @@ mark {
 .c4g-btn,
 .c4g-btn-default,
 .c4g-btn-sm,
-.c4g-btn-tagfilter,
-.c4g-list-outer .c4g-list-element__cart-link,
-.c4g-list-outer .c4g-list-element__more-link,
-.c4g-list-outer .c4g-list-element__notice-link,
-.c4g-modal-content .c4g-btn-close,
-.c4g-modal-content .c4g-btn-top-close,
-.c4g-modal-content button,
-.detail-view .anchor-menu__list > li > a,
-.detail-view .c4g-icon-wrapper > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
-.detail-view__contact-wrapper .email > a,
-.detail-view__contact-wrapper .phone > a,
-.detail-view__contact-wrapper .website > a,
-.detail-view__modal > button,
-.detail-view__section-tags .menuLink > a {
+.c4g-btn-tagfilter {
   display: inline-block;
   font-weight: 400;
   color: #212529;
@@ -1926,25 +1806,7 @@ mark {
   .c4g-btn,
   .c4g-btn-default,
   .c4g-btn-sm,
-  .c4g-btn-tagfilter,
-  .c4g-list-outer .c4g-list-element__cart-link,
-  .c4g-list-outer .c4g-list-element__more-link,
-  .c4g-list-outer .c4g-list-element__notice-link,
-  .c4g-modal-content .c4g-btn-close,
-  .c4g-modal-content .c4g-btn-top-close,
-  .c4g-modal-content button,
-  .detail-view .anchor-menu__list > li > a,
-  .detail-view .c4g-icon-wrapper > a,
-  .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
-  .detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
-  .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
-  .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
-  .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
-  .detail-view__contact-wrapper .email > a,
-  .detail-view__contact-wrapper .phone > a,
-  .detail-view__contact-wrapper .website > a,
-  .detail-view__modal > button,
-  .detail-view__section-tags .menuLink > a {
+  .c4g-btn-tagfilter {
     transition: none
   }
 }
@@ -1952,25 +1814,7 @@ mark {
 .c4g-btn-default:hover,
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
-.c4g-btn:hover,
-.c4g-list-outer .c4g-list-element__cart-link:hover,
-.c4g-list-outer .c4g-list-element__more-link:hover,
-.c4g-list-outer .c4g-list-element__notice-link:hover,
-.c4g-modal-content .c4g-btn-close:hover,
-.c4g-modal-content .c4g-btn-top-close:hover,
-.c4g-modal-content button:hover,
-.detail-view .anchor-menu__list > li > a:hover,
-.detail-view .c4g-icon-wrapper > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
-.detail-view__contact-wrapper .email > a:hover,
-.detail-view__contact-wrapper .phone > a:hover,
-.detail-view__contact-wrapper .website > a:hover,
-.detail-view__modal > button:hover,
-.detail-view__section-tags .menuLink > a:hover {
+.c4g-btn:hover {
   color: #212529;
   text-decoration: none
 }
@@ -1980,42 +1824,6 @@ mark {
 .c4g-btn-sm:focus,
 .c4g-btn-tagfilter:focus,
 .c4g-btn:focus,
-.c4g-list-outer .c4g-list-element__cart-link:focus,
-.c4g-list-outer .c4g-list-element__more-link:focus,
-.c4g-list-outer .c4g-list-element__notice-link:focus,
-.c4g-list-outer .focus.c4g-list-element__cart-link,
-.c4g-list-outer .focus.c4g-list-element__more-link,
-.c4g-list-outer .focus.c4g-list-element__notice-link,
-.c4g-modal-content .c4g-btn-close:focus,
-.c4g-modal-content .c4g-btn-top-close:focus,
-.c4g-modal-content .focus.c4g-btn-close,
-.c4g-modal-content .focus.c4g-btn-top-close,
-.c4g-modal-content button.focus,
-.c4g-modal-content button:focus,
-.detail-view .anchor-menu__list > li > a.focus,
-.detail-view .anchor-menu__list > li > a:focus,
-.detail-view .c4g-icon-wrapper > a.focus,
-.detail-view .c4g-icon-wrapper > a:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:focus,
-.detail-view__contact-wrapper .email > a.focus,
-.detail-view__contact-wrapper .email > a:focus,
-.detail-view__contact-wrapper .phone > a.focus,
-.detail-view__contact-wrapper .phone > a:focus,
-.detail-view__contact-wrapper .website > a.focus,
-.detail-view__contact-wrapper .website > a:focus,
-.detail-view__modal > button.focus,
-.detail-view__modal > button:focus,
-.detail-view__section-tags .menuLink > a.focus,
-.detail-view__section-tags .menuLink > a:focus,
 .focus.c4g-btn,
 .focus.c4g-btn-default,
 .focus.c4g-btn-sm,
@@ -2029,42 +1837,6 @@ mark {
 .c4g-btn-sm:disabled,
 .c4g-btn-tagfilter:disabled,
 .c4g-btn:disabled,
-.c4g-list-outer .c4g-list-element__cart-link:disabled,
-.c4g-list-outer .c4g-list-element__more-link:disabled,
-.c4g-list-outer .c4g-list-element__notice-link:disabled,
-.c4g-list-outer .disabled.c4g-list-element__cart-link,
-.c4g-list-outer .disabled.c4g-list-element__more-link,
-.c4g-list-outer .disabled.c4g-list-element__notice-link,
-.c4g-modal-content .c4g-btn-close:disabled,
-.c4g-modal-content .c4g-btn-top-close:disabled,
-.c4g-modal-content .disabled.c4g-btn-close,
-.c4g-modal-content .disabled.c4g-btn-top-close,
-.c4g-modal-content button.disabled,
-.c4g-modal-content button:disabled,
-.detail-view .anchor-menu__list > li > a.disabled,
-.detail-view .anchor-menu__list > li > a:disabled,
-.detail-view .c4g-icon-wrapper > a.disabled,
-.detail-view .c4g-icon-wrapper > a:disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a:disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:disabled,
-.detail-view__contact-wrapper .email > a.disabled,
-.detail-view__contact-wrapper .email > a:disabled,
-.detail-view__contact-wrapper .phone > a.disabled,
-.detail-view__contact-wrapper .phone > a:disabled,
-.detail-view__contact-wrapper .website > a.disabled,
-.detail-view__contact-wrapper .website > a:disabled,
-.detail-view__modal > button.disabled,
-.detail-view__modal > button:disabled,
-.detail-view__section-tags .menuLink > a.disabled,
-.detail-view__section-tags .menuLink > a:disabled,
 .disabled.c4g-btn,
 .disabled.c4g-btn-default,
 .disabled.c4g-btn-sm,
@@ -2075,80 +1847,14 @@ mark {
 .c4g-btn-default:not(:disabled):not(.disabled),
 .c4g-btn-sm:not(:disabled):not(.disabled),
 .c4g-btn-tagfilter:not(:disabled):not(.disabled),
-.c4g-btn:not(:disabled):not(.disabled),
-.c4g-list-outer .c4g-list-element__cart-link:not(:disabled):not(.disabled),
-.c4g-list-outer .c4g-list-element__more-link:not(:disabled):not(.disabled),
-.c4g-list-outer .c4g-list-element__notice-link:not(:disabled):not(.disabled),
-.c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled),
-.c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled),
-.c4g-modal-content button:not(:disabled):not(.disabled),
-.detail-view .anchor-menu__list > li > a:not(:disabled):not(.disabled),
-.detail-view .c4g-icon-wrapper > a:not(:disabled):not(.disabled),
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:not(:disabled):not(.disabled),
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:not(:disabled):not(.disabled),
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a:not(:disabled):not(.disabled),
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:not(:disabled):not(.disabled),
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:not(:disabled):not(.disabled),
-.detail-view__contact-wrapper .email > a:not(:disabled):not(.disabled),
-.detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled),
-.detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled),
-.detail-view__modal > button:not(:disabled):not(.disabled),
-.detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled) {
+.c4g-btn:not(:disabled):not(.disabled) {
   cursor: pointer
 }
-.c4g-list-outer a.disabled.c4g-list-element__cart-link,
-.c4g-list-outer a.disabled.c4g-list-element__more-link,
-.c4g-list-outer a.disabled.c4g-list-element__notice-link,
-.c4g-list-outer fieldset:disabled a.c4g-list-element__cart-link,
-.c4g-list-outer fieldset:disabled a.c4g-list-element__more-link,
-.c4g-list-outer fieldset:disabled a.c4g-list-element__notice-link,
-.c4g-modal-content a.disabled.c4g-btn-close,
-.c4g-modal-content a.disabled.c4g-btn-top-close,
-.c4g-modal-content fieldset:disabled a.c4g-btn-close,
-.c4g-modal-content fieldset:disabled a.c4g-btn-top-close,
-.detail-view .anchor-menu__list > li > a.disabled,
-.detail-view .c4g-icon-wrapper > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a.disabled,
-.detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_delivery > a,
-.detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_donation > a,
-.detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_menu > a,
-.detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_online_reservation > a,
-.detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_onlineshop > a,
-.detail-view fieldset:disabled .anchor-menu__list > li > a,
-.detail-view fieldset:disabled .c4g-icon-wrapper > a,
-.detail-view__contact-wrapper .email > a.disabled,
-.detail-view__contact-wrapper .phone > a.disabled,
-.detail-view__contact-wrapper .website > a.disabled,
-.detail-view__contact-wrapper fieldset:disabled .email > a,
-.detail-view__contact-wrapper fieldset:disabled .phone > a,
-.detail-view__contact-wrapper fieldset:disabled .website > a,
-.detail-view__section-tags .menuLink > a.disabled,
-.detail-view__section-tags fieldset:disabled .menuLink > a,
 a.btn.disabled,
 a.disabled.c4g-btn,
 a.disabled.c4g-btn-default,
 a.disabled.c4g-btn-sm,
 a.disabled.c4g-btn-tagfilter,
-fieldset:disabled .c4g-list-outer a.c4g-list-element__cart-link,
-fieldset:disabled .c4g-list-outer a.c4g-list-element__more-link,
-fieldset:disabled .c4g-list-outer a.c4g-list-element__notice-link,
-fieldset:disabled .c4g-modal-content a.c4g-btn-close,
-fieldset:disabled .c4g-modal-content a.c4g-btn-top-close,
-fieldset:disabled .detail-view .anchor-menu__list > li > a,
-fieldset:disabled .detail-view .c4g-icon-wrapper > a,
-fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
-fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
-fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
-fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
-fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
-fieldset:disabled .detail-view__contact-wrapper .email > a,
-fieldset:disabled .detail-view__contact-wrapper .phone > a,
-fieldset:disabled .detail-view__contact-wrapper .website > a,
-fieldset:disabled .detail-view__section-tags .menuLink > a,
 fieldset:disabled a.btn,
 fieldset:disabled a.c4g-btn,
 fieldset:disabled a.c4g-btn-default,
@@ -2156,40 +1862,31 @@ fieldset:disabled a.c4g-btn-sm,
 fieldset:disabled a.c4g-btn-tagfilter {
   pointer-events: none
 }
-.btn-primary,
-.c4g-modal-content .c4g-btn-submit {
+.btn-primary {
   color: #fff;
   background-color: #103a5d;
   border-color: #103a5d
 }
-.btn-primary:hover,
-.c4g-modal-content .c4g-btn-submit:hover {
+.btn-primary:hover {
   color: #fff;
   background-color: #0a263c;
   border-color: #091f31
 }
 .btn-primary.focus,
-.btn-primary:focus,
-.c4g-modal-content .c4g-btn-submit:focus,
-.c4g-modal-content .focus.c4g-btn-submit {
+.btn-primary:focus {
   color: #fff;
   background-color: #0a263c;
   border-color: #091f31;
   box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
 }
 .btn-primary.disabled,
-.btn-primary:disabled,
-.c4g-modal-content .c4g-btn-submit:disabled,
-.c4g-modal-content .disabled.c4g-btn-submit {
+.btn-primary:disabled {
   color: #fff;
   background-color: #103a5d;
   border-color: #103a5d
 }
 .btn-primary:not(:disabled):not(.disabled).active,
 .btn-primary:not(:disabled):not(.disabled):active,
-.c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled).active,
-.c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled):active,
-.c4g-modal-content .show > .dropdown-toggle.c4g-btn-submit,
 .show > .btn-primary.dropdown-toggle {
   color: #fff;
   background-color: #091f31;
@@ -2197,9 +1894,6 @@ fieldset:disabled a.c4g-btn-tagfilter {
 }
 .btn-primary:not(:disabled):not(.disabled).active:focus,
 .btn-primary:not(:disabled):not(.disabled):active:focus,
-.c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled).active:focus,
-.c4g-modal-content .c4g-btn-submit:not(:disabled):not(.disabled):active:focus,
-.c4g-modal-content .show > .dropdown-toggle.c4g-btn-submit:focus,
 .show > .btn-primary.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(52,88,117,.5)
 }
@@ -2378,85 +2072,31 @@ fieldset:disabled a.c4g-btn-tagfilter {
 .show > .btn-danger.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(225,83,97,.5)
 }
-.btn-light,
-.c4g-modal-content .c4g-btn-close,
-.c4g-modal-content .c4g-btn-top-close,
-.detail-view .c4g-icon-wrapper > a,
-.detail-view__contact-wrapper .email > a,
-.detail-view__contact-wrapper .phone > a,
-.detail-view__contact-wrapper .website > a {
+.btn-light {
   color: #212529;
   background-color: #f8f9fa;
   border-color: #f8f9fa
 }
-.btn-light:hover,
-.c4g-modal-content .c4g-btn-close:hover,
-.c4g-modal-content .c4g-btn-top-close:hover,
-.detail-view .c4g-icon-wrapper > a:hover,
-.detail-view__contact-wrapper .email > a:hover,
-.detail-view__contact-wrapper .phone > a:hover,
-.detail-view__contact-wrapper .website > a:hover {
+.btn-light:hover {
   color: #212529;
   background-color: #e2e6ea;
   border-color: #dae0e5
 }
 .btn-light.focus,
-.btn-light:focus,
-.c4g-modal-content .c4g-btn-close:focus,
-.c4g-modal-content .c4g-btn-top-close:focus,
-.c4g-modal-content .focus.c4g-btn-close,
-.c4g-modal-content .focus.c4g-btn-top-close,
-.detail-view .c4g-icon-wrapper > a.focus,
-.detail-view .c4g-icon-wrapper > a:focus,
-.detail-view__contact-wrapper .email > a.focus,
-.detail-view__contact-wrapper .email > a:focus,
-.detail-view__contact-wrapper .phone > a.focus,
-.detail-view__contact-wrapper .phone > a:focus,
-.detail-view__contact-wrapper .website > a.focus,
-.detail-view__contact-wrapper .website > a:focus {
+.btn-light:focus {
   color: #212529;
   background-color: #e2e6ea;
   border-color: #dae0e5;
   box-shadow: 0 0 0 .2rem rgba(216,217,219,.5)
 }
 .btn-light.disabled,
-.btn-light:disabled,
-.c4g-modal-content .c4g-btn-close:disabled,
-.c4g-modal-content .c4g-btn-top-close:disabled,
-.c4g-modal-content .disabled.c4g-btn-close,
-.c4g-modal-content .disabled.c4g-btn-top-close,
-.detail-view .c4g-icon-wrapper > a.disabled,
-.detail-view .c4g-icon-wrapper > a:disabled,
-.detail-view__contact-wrapper .email > a.disabled,
-.detail-view__contact-wrapper .email > a:disabled,
-.detail-view__contact-wrapper .phone > a.disabled,
-.detail-view__contact-wrapper .phone > a:disabled,
-.detail-view__contact-wrapper .website > a.disabled,
-.detail-view__contact-wrapper .website > a:disabled {
+.btn-light:disabled {
   color: #212529;
   background-color: #f8f9fa;
   border-color: #f8f9fa
 }
 .btn-light:not(:disabled):not(.disabled).active,
 .btn-light:not(:disabled):not(.disabled):active,
-.c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled).active,
-.c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled):active,
-.c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled).active,
-.c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled):active,
-.c4g-modal-content .show > .dropdown-toggle.c4g-btn-close,
-.c4g-modal-content .show > .dropdown-toggle.c4g-btn-top-close,
-.detail-view .c4g-icon-wrapper > a:not(:disabled):not(.disabled).active,
-.detail-view .c4g-icon-wrapper > a:not(:disabled):not(.disabled):active,
-.detail-view .c4g-icon-wrapper.show > a.dropdown-toggle,
-.detail-view__contact-wrapper .email > a:not(:disabled):not(.disabled).active,
-.detail-view__contact-wrapper .email > a:not(:disabled):not(.disabled):active,
-.detail-view__contact-wrapper .email.show > a.dropdown-toggle,
-.detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled).active,
-.detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled):active,
-.detail-view__contact-wrapper .phone.show > a.dropdown-toggle,
-.detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled).active,
-.detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled):active,
-.detail-view__contact-wrapper .website.show > a.dropdown-toggle,
 .show > .btn-light.dropdown-toggle {
   color: #212529;
   background-color: #dae0e5;
@@ -2464,24 +2104,6 @@ fieldset:disabled a.c4g-btn-tagfilter {
 }
 .btn-light:not(:disabled):not(.disabled).active:focus,
 .btn-light:not(:disabled):not(.disabled):active:focus,
-.c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled).active:focus,
-.c4g-modal-content .c4g-btn-close:not(:disabled):not(.disabled):active:focus,
-.c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled).active:focus,
-.c4g-modal-content .c4g-btn-top-close:not(:disabled):not(.disabled):active:focus,
-.c4g-modal-content .show > .dropdown-toggle.c4g-btn-close:focus,
-.c4g-modal-content .show > .dropdown-toggle.c4g-btn-top-close:focus,
-.detail-view .c4g-icon-wrapper > a:not(:disabled):not(.disabled).active:focus,
-.detail-view .c4g-icon-wrapper > a:not(:disabled):not(.disabled):active:focus,
-.detail-view .c4g-icon-wrapper.show > a.dropdown-toggle:focus,
-.detail-view__contact-wrapper .email > a:not(:disabled):not(.disabled).active:focus,
-.detail-view__contact-wrapper .email > a:not(:disabled):not(.disabled):active:focus,
-.detail-view__contact-wrapper .email.show > a.dropdown-toggle:focus,
-.detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled).active:focus,
-.detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled):active:focus,
-.detail-view__contact-wrapper .phone.show > a.dropdown-toggle:focus,
-.detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled).active:focus,
-.detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled):active:focus,
-.detail-view__contact-wrapper .website.show > a.dropdown-toggle:focus,
 .show > .btn-light.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(216,217,219,.5)
 }
@@ -2785,13 +2407,7 @@ fieldset:disabled a.c4g-btn-tagfilter {
   border-radius: .3rem
 }
 .btn-sm,
-.c4g-btn-sm,
-.c4g-list-outer .c4g-list-element__cart-link,
-.c4g-list-outer .c4g-list-element__more-link,
-.c4g-list-outer .c4g-list-element__notice-link,
-.c4g-modal-content .c4g-btn-close,
-.c4g-modal-content .c4g-btn-top-close,
-.c4g-modal-content button {
+.c4g-btn-sm {
   padding: .25rem .5rem;
   font-size: .875rem;
   line-height: 1.5;
@@ -2833,11 +2449,7 @@ input[type=submit].btn-block {
   color: #6c757d
 }
 .badge,
-.c4g-badge-tagfilter,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
+.c4g-badge-tagfilter {
   display: inline-block;
   padding: .25em .4em;
   font-size: 75%;
@@ -2851,22 +2463,10 @@ input[type=submit].btn-block {
 }
 @media (prefers-reduced-motion:reduce) {
   .badge,
-  .c4g-badge-tagfilter,
-  .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-  .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-  .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-  .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
+  .c4g-badge-tagfilter {
     transition: none
   }
 }
-.c4g-list-outer .c4g-list-element__taglinks-wrapper a.c4g-list-element__tag:focus,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper a.c4g-list-element__tag:hover,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper a.c4g-list-element__taglinks:focus,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper a.c4g-list-element__taglinks:hover,
-.c4g-list-outer .c4g-list-element__tags-wrapper a.c4g-list-element__tag:focus,
-.c4g-list-outer .c4g-list-element__tags-wrapper a.c4g-list-element__tag:hover,
-.c4g-list-outer .c4g-list-element__tags-wrapper a.c4g-list-element__taglinks:focus,
-.c4g-list-outer .c4g-list-element__tags-wrapper a.c4g-list-element__taglinks:hover,
 a.badge:focus,
 a.badge:hover,
 a.c4g-badge-tagfilter:focus,
@@ -2874,243 +2474,19 @@ a.c4g-badge-tagfilter:hover {
   text-decoration: none
 }
 .badge:empty,
-.c4g-badge-tagfilter:empty,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag:empty,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks:empty,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag:empty,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks:empty {
+.c4g-badge-tagfilter:empty {
   display: none
 }
 .btn .badge,
 .btn .c4g-badge-tagfilter,
-.btn .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.btn .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-btn .badge,
 .c4g-btn .c4g-badge-tagfilter,
-.c4g-btn .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-btn .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-btn-default .badge,
 .c4g-btn-default .c4g-badge-tagfilter,
-.c4g-btn-default .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-btn-default .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-btn-default .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-btn-default .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-btn-sm .badge,
 .c4g-btn-sm .c4g-badge-tagfilter,
-.c4g-btn-sm .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-btn-sm .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-btn-sm .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-btn-sm .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-btn-tagfilter .badge,
-.c4g-btn-tagfilter .c4g-badge-tagfilter,
-.c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-btn-tagfilter .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__cart-link .badge,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__more-link .badge,
-.c4g-list-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__notice-link .badge,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .btn .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .btn .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-default .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-default .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-sm .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .anchor-menu__list > li > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .anchor-menu__list > li > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .c4g-icon-wrapper > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .c4g-icon-wrapper > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .phone > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .phone > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .website > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .website > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__modal > button .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__modal > button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .btn .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .btn .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-default .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-default .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-sm .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-tagfilter .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .anchor-menu__list > li > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .anchor-menu__list > li > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .c4g-icon-wrapper > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .c4g-icon-wrapper > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .phone > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .phone > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .website > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .website > a .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__modal > button .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__modal > button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__taglinks,
-.c4g-modal-content .c4g-btn-close .badge,
-.c4g-modal-content .c4g-btn-close .c4g-badge-tagfilter,
-.c4g-modal-content .c4g-btn-close .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-modal-content .c4g-btn-close .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-modal-content .c4g-btn-close .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-modal-content .c4g-btn-close .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-modal-content .c4g-btn-top-close .badge,
-.c4g-modal-content .c4g-btn-top-close .c4g-badge-tagfilter,
-.c4g-modal-content .c4g-btn-top-close .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-modal-content .c4g-btn-top-close .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-modal-content .c4g-btn-top-close .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-modal-content .c4g-btn-top-close .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-modal-content button .badge,
-.c4g-modal-content button .c4g-badge-tagfilter,
-.c4g-modal-content button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-modal-content button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-modal-content button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-modal-content button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .anchor-menu__list > li > a .badge,
-.detail-view .anchor-menu__list > li > a .c4g-badge-tagfilter,
-.detail-view .anchor-menu__list > li > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .anchor-menu__list > li > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .anchor-menu__list > li > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .anchor-menu__list > li > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .c4g-icon-wrapper > a .badge,
-.detail-view .c4g-icon-wrapper > a .c4g-badge-tagfilter,
-.detail-view .c4g-icon-wrapper > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .c4g-icon-wrapper > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .c4g-icon-wrapper > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .c4g-icon-wrapper > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .badge,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-badge-tagfilter,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .badge,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-badge-tagfilter,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a .badge,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-badge-tagfilter,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .badge,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-badge-tagfilter,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .badge,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-badge-tagfilter,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view__contact-wrapper .email > a .badge,
-.detail-view__contact-wrapper .email > a .c4g-badge-tagfilter,
-.detail-view__contact-wrapper .email > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view__contact-wrapper .email > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view__contact-wrapper .email > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view__contact-wrapper .email > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view__contact-wrapper .phone > a .badge,
-.detail-view__contact-wrapper .phone > a .c4g-badge-tagfilter,
-.detail-view__contact-wrapper .phone > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view__contact-wrapper .phone > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view__contact-wrapper .phone > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view__contact-wrapper .phone > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view__contact-wrapper .website > a .badge,
-.detail-view__contact-wrapper .website > a .c4g-badge-tagfilter,
-.detail-view__contact-wrapper .website > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view__contact-wrapper .website > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view__contact-wrapper .website > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view__contact-wrapper .website > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view__modal > button .badge,
-.detail-view__modal > button .c4g-badge-tagfilter,
-.detail-view__modal > button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view__modal > button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view__modal > button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view__modal > button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.detail-view__section-tags .menuLink > a .badge,
-.detail-view__section-tags .menuLink > a .c4g-badge-tagfilter,
-.detail-view__section-tags .menuLink > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.detail-view__section-tags .menuLink > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.detail-view__section-tags .menuLink > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.detail-view__section-tags .menuLink > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
+.c4g-btn-tagfilter .c4g-badge-tagfilter {
   position: relative;
   top: -1px
 }
@@ -3595,7 +2971,6 @@ button.bg-dark:hover {
     display: inline-flex!important
   }
 }
-.detail-view__video-preview .embed-responsive,
 .embed-responsive {
   position: relative;
   display: block;
@@ -3603,15 +2978,10 @@ button.bg-dark:hover {
   padding: 0;
   overflow: hidden
 }
-.detail-view__video-preview .embed-responsive::before,
 .embed-responsive::before {
   display: block;
   content: ""
 }
-.detail-view__video-preview .embed-responsive embed,
-.detail-view__video-preview .embed-responsive iframe,
-.detail-view__video-preview .embed-responsive object,
-.detail-view__video-preview .embed-responsive video,
 .embed-responsive .embed-responsive-item,
 .embed-responsive embed,
 .embed-responsive iframe,
@@ -3628,7 +2998,6 @@ button.bg-dark:hover {
 .embed-responsive-21by9::before {
   padding-top: 42.85714%
 }
-.detail-view__video-preview .embed-responsive::before,
 .embed-responsive-16by9::before {
   padding-top: 56.25%
 }
@@ -6268,7 +5637,6 @@ a.text-dark:hover {
 .invisible {
   visibility: hidden!important
 }
-.detail-view .anchor-menu__list,
 .nav {
   display: flex;
   flex-wrap: wrap;
@@ -6276,18 +5644,14 @@ a.text-dark:hover {
   margin-bottom: 0;
   list-style: none
 }
-.detail-view .anchor-menu__list > li > a,
 .nav-link {
   display: block;
   padding: .5rem 1rem
 }
-.detail-view .anchor-menu__list > li > a:focus,
-.detail-view .anchor-menu__list > li > a:hover,
 .nav-link:focus,
 .nav-link:hover {
   text-decoration: none
 }
-.detail-view .anchor-menu__list > li > a.disabled,
 .nav-link.disabled {
   color: #6c757d;
   pointer-events: none;
@@ -6296,8 +5660,6 @@ a.text-dark:hover {
 .nav-tabs {
   border-bottom: 1px solid #dee2e6
 }
-.detail-view .nav-tabs .anchor-menu__list > li > a,
-.nav-tabs .detail-view .anchor-menu__list > li > a,
 .nav-tabs .nav-link {
   margin-bottom: -1px;
   background-color: transparent;
@@ -6305,30 +5667,16 @@ a.text-dark:hover {
   border-top-left-radius: .25rem;
   border-top-right-radius: .25rem
 }
-.detail-view .nav-tabs .anchor-menu__list > li > a:focus,
-.detail-view .nav-tabs .anchor-menu__list > li > a:hover,
-.nav-tabs .detail-view .anchor-menu__list > li > a:focus,
-.nav-tabs .detail-view .anchor-menu__list > li > a:hover,
 .nav-tabs .nav-link:focus,
 .nav-tabs .nav-link:hover {
   isolation: isolate;
   border-color: #e9ecef #e9ecef #dee2e6
 }
-.detail-view .nav-tabs .anchor-menu__list > li > a.disabled,
-.nav-tabs .detail-view .anchor-menu__list > li > a.disabled,
 .nav-tabs .nav-link.disabled {
   color: #6c757d;
   background-color: transparent;
   border-color: transparent
 }
-.detail-view .nav-tabs .anchor-menu__list > li > a.active,
-.detail-view .nav-tabs .anchor-menu__list > li.show .anchor-menu__list > li > a,
-.detail-view .nav-tabs .anchor-menu__list > li.show .nav-link,
-.detail-view .nav-tabs .nav-item.show .anchor-menu__list > li > a,
-.nav-tabs .detail-view .anchor-menu__list > li > a.active,
-.nav-tabs .detail-view .anchor-menu__list > li.show .anchor-menu__list > li > a,
-.nav-tabs .detail-view .anchor-menu__list > li.show .nav-link,
-.nav-tabs .nav-item.show .detail-view .anchor-menu__list > li > a,
 .nav-tabs .nav-item.show .nav-link,
 .nav-tabs .nav-link.active {
   color: #495057;
@@ -6340,33 +5688,21 @@ a.text-dark:hover {
   border-top-left-radius: 0;
   border-top-right-radius: 0
 }
-.detail-view .nav-pills .anchor-menu__list > li > a,
-.nav-pills .detail-view .anchor-menu__list > li > a,
 .nav-pills .nav-link {
   background: 0 0;
   border: 0;
   border-radius: .25rem
 }
-.detail-view .nav-pills .anchor-menu__list > li > a.active,
-.detail-view .nav-pills .anchor-menu__list > li.show > a,
-.nav-pills .detail-view .anchor-menu__list > li > a.active,
-.nav-pills .detail-view .anchor-menu__list > li.show > a,
 .nav-pills .nav-link.active,
 .nav-pills .show > .nav-link {
   color: #fff;
   background-color: #103a5d
 }
-.detail-view .anchor-menu__list > li.nav-fill > a,
-.detail-view .nav-fill .anchor-menu__list > li,
-.nav-fill .detail-view .anchor-menu__list > li,
 .nav-fill .nav-item,
 .nav-fill > .nav-link {
   flex: 1 1 auto;
   text-align: center
 }
-.detail-view .anchor-menu__list > li.nav-justified > a,
-.detail-view .nav-justified .anchor-menu__list > li,
-.nav-justified .detail-view .anchor-menu__list > li,
 .nav-justified .nav-item,
 .nav-justified > .nav-link {
   flex-basis: 0;
@@ -6656,24 +5992,7 @@ html {
 .c4g-btn,
 .c4g-btn-default,
 .c4g-btn-sm,
-.c4g-btn-tagfilter,
-.c4g-list-outer .c4g-list-element__cart-link,
-.c4g-list-outer .c4g-list-element__more-link,
-.c4g-list-outer .c4g-list-element__notice-link,
-.c4g-modal-content .c4g-btn-close,
-.c4g-modal-content .c4g-btn-top-close,
-.c4g-modal-content button,
-.detail-view .c4g-icon-wrapper > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
-.detail-view__contact-wrapper .email > a,
-.detail-view__contact-wrapper .phone > a,
-.detail-view__contact-wrapper .website > a,
-.detail-view__modal > button,
-.detail-view__section-tags .menuLink > a {
+.c4g-btn-tagfilter {
   font-family: var(--btn-font-family);
   font-weight: var(--btn-font-weight);
   color: var(--btn-color);
@@ -6686,30 +6005,10 @@ html {
 .c4g-btn-default:hover,
 .c4g-btn-sm:hover,
 .c4g-btn-tagfilter:hover,
-.c4g-btn:hover,
-.c4g-list-outer .c4g-list-element__cart-link:hover,
-.c4g-list-outer .c4g-list-element__more-link:hover,
-.c4g-list-outer .c4g-list-element__notice-link:hover,
-.c4g-modal-content .c4g-btn-close:hover,
-.c4g-modal-content .c4g-btn-top-close:hover,
-.c4g-modal-content button:hover,
-.detail-view .c4g-icon-wrapper > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
-.detail-view__contact-wrapper .email > a:hover,
-.detail-view__contact-wrapper .phone > a:hover,
-.detail-view__contact-wrapper .website > a:hover,
-.detail-view__modal > button:hover,
-.detail-view__section-tags .menuLink > a:hover {
+.c4g-btn:hover {
   filter: brightness(.85)
 }
-.c4g-btn-primary,
-.c4g-list-outer .c4g-list-element__cart-link,
-.c4g-list-outer .c4g-list-element__more-link,
-.c4g-list-outer .c4g-list-element__notice-link {
+.c4g-btn-primary {
   color: var(--btn-primary-color);
   background-color: var(--btn-primary-background-color);
   border-color: var(--btn-primary-border-color)
@@ -6805,11 +6104,7 @@ html {
   background-color: var(--gutes-tag-filter-bgcolor);
   border-color: var(--gutes-tag-filter-border-color)
 }
-.c4g-badge-tagfilter,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
+.c4g-badge-tagfilter {
   background-color: var(--gutes-tag-filter-bgcolor);
   border: 1.5px solid var(--gutes-tag-filter-border-color)
 }
@@ -6824,937 +6119,21 @@ html {
 .c4g-list-element__price-wrapper {
   font-weight: 700
 }
-.detail-hero {
-  position: relative;
-  background-size: cover;
-  height: 55vh;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-color: var(--gutes-detail-hero-filter-color)
-}
-.detail-hero__inner-overlay {
-  height: 100%;
-  background-color: var(--gutes-detail-hero-filter-color)
-}
-.detail-hero__inner-wrapper {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center
-}
-.detail-hero__title {
-  color: #fff;
-  text-shadow: 0 0 10px #000;
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  text-align: center
-}
-.detail-hero__logo {
-  max-width: 300px;
-  width: 50%;
-  text-align: center
-}
-.detail-hero__logo img {
-  background: #fff;
-  border: 3px solid #fff
-}
-.detail-view > div {
-  margin-bottom: 2rem
-}
-.detail-view .anchor-menu__inner,
-.detail-view .c4g-container {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto
-}
-.detail-view .c4g-row:not(ul) {
-  display: flex;
-  flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px
-}
-.detail-view #anchor-menu {
-  margin-top: 1rem;
-  margin-bottom: 1rem
-}
-.detail-view .anchor-menu__inner {
-  position: relative
-}
-.detail-view .anchor-menu__list {
-  background-color: var(--gutes-anchormenu-bgcolor);
-  list-style: none;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  grid-gap: 10px
-}
-@media (max-width:991.98px) {
-  .detail-view .anchor-menu__list {
-    visibility: hidden
-  }
-}
-.detail-view .anchor-menu__list > li > a {
-  color: #212529
-}
-.detail-view .anchor-menu__share {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  position: absolute;
-  right: 1rem;
-  top: 0;
-  height: 100%
-}
-@media (max-width:991.98px) {
-  .detail-view .anchor-menu__share {
-    background: rgba(255,255,255,.8);
-    border-radius: 4px;
-    border: 7px solid rgba(255,255,255,.8);
-    height: 45px
-  }
-}
-.detail-view .anchor-menu__share .c4g-btn-sharedetail {
-  margin-left: .5rem
-}
-.detail-view__section-headline {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto
-}
-.detail-view__description {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
-}
-@media (min-width:992px) {
-  .detail-view__description {
-    flex: 0 0 50%;
-    max-width: 50%
-  }
-}
-.detail-view__image-gallery {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
-}
-@media (min-width:992px) {
-  .detail-view__image-gallery {
-    flex: 0 0 50%;
-    max-width: 50%
-  }
-}
-.detail-view__image-gallery-inner {
-  display: grid;
-  grid-template-columns: repeat(var(--grid__columns),1fr);
-  grid-gap: 1rem;
-  grid-auto-columns: 1fr
-}
-.detail-view__image-gallery-inner .relatedShowcaseLogos-item {
-  max-width: 100px
-}
-.detail-view .imageGallery-item {
-  grid-column: span 6/span 6;
-  overflow: hidden;
-  text-align: center;
-  border: 1px solid #ced5d3;
-  padding: 10px;
-  border-radius: .25rem;
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-.detail-view .imageGallery-item:empty {
-  border: none
-}
-.detail-view .imageGallery-item.first {
-  grid-column: span 12/span 12
-}
-.detail-view .imageGallery-item img {
-  max-height: 500px;
-  width: auto;
-  transition: ease-in-out .3s
-}
-.detail-view .imageGallery-item:hover img {
-  transform: scale(1.3)
-}
-.detail-view__modal,
-.detail-view__price {
-  text-align: right;
-  display: block;
-  width: 100%
-}
-.detail-view__price {
-  font-size: 2rem
-}
-.detail-view__strike-price {
-  text-align: right;
-  display: block;
-  width: 100%
-}
-.detail-view__strike-price > .detail-field-text__text {
-  text-decoration: line-through
-}
-.detail-view__section-detaildata .c4g-row > div,
-.detail-view__section-tags .c4g-row > div {
-  margin-bottom: 1rem;
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
-}
-.detail-view__section-detaildata .c4g-row > div.detail-view__strike-price,
-.detail-view__section-tags .c4g-row > div.detail-view__strike-price {
-  margin-bottom: 0
-}
-.detail-view__section-detaildata .detail-field-text__label,
-.detail-view__section-tags .detail-field-text__label {
-  font-weight: 700
-}
-.detail-view .c4g-row.detaildata-section-4 .col-12 {
-  margin-bottom: inherit
-}
-.detail-view .c4g-row.detaildata-section-4 .detail-field-text {
-  display: inline-flex
-}
-.detail-view .c4g-row.detaildata-section-4 .detail-field-text__text {
-  padding-left: .2em
-}
-.detail-view__section-tags .menuLink > a {
-  color: #212529;
-  background-color: #f6921e;
-  border-color: #f6921e
-}
-.detail-view__section-tags .menuLink > a:hover {
-  color: #fff;
-  background-color: #e57f09;
-  border-color: #d87809
-}
-.detail-view__section-tags .menuLink > a.focus,
-.detail-view__section-tags .menuLink > a:focus {
-  color: #fff;
-  background-color: #e57f09;
-  border-color: #d87809;
-  box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
-}
-.detail-view__section-tags .menuLink > a.disabled,
-.detail-view__section-tags .menuLink > a:disabled {
-  color: #212529;
-  background-color: #f6921e;
-  border-color: #f6921e
-}
-.detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled).active,
-.detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled):active,
-.show > .detail-view__section-tags .menuLink > a.dropdown-toggle {
-  color: #fff;
-  background-color: #d87809;
-  border-color: #cc7108
-}
-.detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled).active:focus,
-.detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled):active:focus,
-.show > .detail-view__section-tags .menuLink > a.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
-}
-.detail-view__logos {
-  display: inline-block
-}
-.detail-view__logos > img {
-  max-height: 60px
-}
-.detail-view__display-type {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
-}
-.detail-view__video-preview {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%;
-  background-color: var(--gutes-video-bgcolor);
-  border-radius: var(--gutes-base-border-radius);
-  padding-top: 2rem;
-  padding-bottom: 2rem
-}
-.detail-view__video-preview .embed-responsive {
-  max-width: 700px;
-  margin: 0 auto;
-  border: .5rem solid #fff;
-  border-radius: var(--gutes-base-border-radius)
-}
-.detail-view .detail-field-wrapper > div {
-  margin-bottom: 2rem
-}
-.detail-view .detail-field-wrapper__tags {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  margin: -.5rem;
-  padding-left: 0;
-  padding-right: 0
-}
-.detail-view .detail-field-wrapper__tags .tag-entry {
-  border: 1.5px solid var(--gutes-tag-filter-border-color);
-  background-color: var(--gutes-tag-filter-bgcolor);
-  border-radius: var(--gutes-base-border-radius);
-  margin: .5rem
-}
-.detail-view .detail-field-wrapper__tags .tag-entry > .detail-field-image {
-  width: var(--gutes-tag-field-tag-width);
-  height: var(--gutes-tag-field-tag-height);
-  padding: 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-.detail-view .detail-field-wrapper__tags .tag-entry > .detail-field-image > img {
-  max-height: 100%
-}
-.detail-view .detail-field-wrapper__tags .tag-entry__linked > a {
-  box-shadow: 4px 4px 8px rgba(0,0,0,.6);
-  transition: ease-in-out .3s
-}
-.detail-view .detail-field-wrapper__tags .tag-entry__linked > a:hover {
-  box-shadow: none
-}
-.detail-view .detail-field-wrapper__tags .detail-field-text {
-  display: none
-}
-.detail-view .detail-field-wrapper__tag-fields > .item {
-  padding: 1rem;
-  border: 1.5px solid var(--gutes-base-font-color);
-  border-radius: var(--gutes-base-border-radius);
-  background-color: #fff;
-  margin-bottom: 1rem
-}
-.detail-view .detail-field-wrapper__tag-fields > .item:last-child {
-  margin-bottom: 0
-}
-.detail-view .detail-field-wrapper__tag-fields > .item > .entry-label {
-  font-weight: 700
-}
-.detail-view .detail-field-wrapper__tag-fields > .item > .entry-content p:last-child {
-  margin-bottom: 0
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a {
-  margin-bottom: 1rem
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a {
-  color: #212529;
-  background-color: #f6921e;
-  border-color: #f6921e
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:hover {
-  color: #fff;
-  background-color: #e57f09;
-  border-color: #d87809
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:focus {
-  color: #fff;
-  background-color: #e57f09;
-  border-color: #d87809;
-  box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:disabled {
-  color: #212529;
-  background-color: #f6921e;
-  border-color: #f6921e
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:not(:disabled):not(.disabled).active,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:not(:disabled):not(.disabled):active,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_menu a.dropdown-toggle {
-  color: #fff;
-  background-color: #d87809;
-  border-color: #cc7108
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:not(:disabled):not(.disabled).active:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_menu a:not(:disabled):not(.disabled):active:focus,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_menu a.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a {
-  color: #fff;
-  background-color: #b073d9;
-  border-color: #b073d9
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:hover {
-  color: #fff;
-  background-color: #9f55d1;
-  border-color: #994bce
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:focus {
-  color: #fff;
-  background-color: #9f55d1;
-  border-color: #994bce;
-  box-shadow: 0 0 0 .2rem rgba(188,136,223,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:disabled {
-  color: #fff;
-  background-color: #b073d9;
-  border-color: #b073d9
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:not(:disabled):not(.disabled).active,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:not(:disabled):not(.disabled):active,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a.dropdown-toggle {
-  color: #fff;
-  background-color: #994bce;
-  border-color: #9441cb
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:not(:disabled):not(.disabled).active:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a:not(:disabled):not(.disabled):active:focus,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation a.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(188,136,223,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a {
-  color: #212529;
-  background-color: #adbd11;
-  border-color: #adbd11
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:hover {
-  color: #fff;
-  background-color: #8d9a0e;
-  border-color: #828e0d
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:focus {
-  color: #fff;
-  background-color: #8d9a0e;
-  border-color: #828e0d;
-  box-shadow: 0 0 0 .2rem rgba(152,166,21,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:disabled {
-  color: #212529;
-  background-color: #adbd11;
-  border-color: #adbd11
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:not(:disabled):not(.disabled).active,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:not(:disabled):not(.disabled):active,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a.dropdown-toggle {
-  color: #fff;
-  background-color: #828e0d;
-  border-color: #77830c
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:not(:disabled):not(.disabled).active:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a:not(:disabled):not(.disabled):active:focus,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop a.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(152,166,21,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a {
-  color: #212529;
-  background-color: #ff7bab;
-  border-color: #ff7bab
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:hover {
-  color: #fff;
-  background-color: #ff5593;
-  border-color: #ff488b
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:focus {
-  color: #fff;
-  background-color: #ff5593;
-  border-color: #ff488b;
-  box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:disabled {
-  color: #212529;
-  background-color: #ff7bab;
-  border-color: #ff7bab
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:not(:disabled):not(.disabled).active,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:not(:disabled):not(.disabled):active,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_delivery a.dropdown-toggle {
-  color: #fff;
-  background-color: #ff488b;
-  border-color: #ff3b82
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:not(:disabled):not(.disabled).active:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_delivery a:not(:disabled):not(.disabled):active:focus,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_delivery a.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a {
-  color: #212529;
-  background-color: #ff7bab;
-  border-color: #ff7bab
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:hover {
-  color: #fff;
-  background-color: #ff5593;
-  border-color: #ff488b
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a.focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:focus {
-  color: #fff;
-  background-color: #ff5593;
-  border-color: #ff488b;
-  box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a.disabled,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:disabled {
-  color: #212529;
-  background-color: #ff7bab;
-  border-color: #ff7bab
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled).active,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled):active,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_donation a.dropdown-toggle {
-  color: #fff;
-  background-color: #ff488b;
-  border-color: #ff3b82
-}
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled).active:focus,
-.detail-view .detail-field-wrapper__tag-fields .tag_donation a:not(:disabled):not(.disabled):active:focus,
-.show > .detail-view .detail-field-wrapper__tag-fields .tag_donation a.dropdown-toggle:focus {
-  box-shadow: 0 0 0 .2rem rgba(222,110,152,.5)
-}
-.detail-view__contact-wrapper > div,
-.detail-view__contact-wrapper > span {
-  margin-bottom: 1rem;
-  display: block
-}
-.detail-view .opening-hours > div,
-.detail-view .phone-hours > div {
-  margin-bottom: 1rem
-}
-.detail-view .opening-hours > div:last-child,
-.detail-view .phone-hours > div:last-child {
-  margin-bottom: 0
-}
-.detail-view .opening-hours-day-entry,
-.detail-view .phone-hours-day-entry {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  flex-wrap: wrap
-}
-.detail-view .opening-hours-day,
-.detail-view .phone-hours-day {
-  min-width: 115px
-}
-.detail-view .opening-hours-days > div,
-.detail-view .phone-hours-days > div {
-  margin-bottom: 1rem
-}
-.detail-view .opening-hours-opened,
-.detail-view .phone-hours-opened {
-  border: 1px solid var(--gutes-base-font-color);
-  border-radius: var(--gutes-base-border-radius);
-  padding: .5rem;
-  background-color: #fff
-}
-@media (min-width:992px) {
-  .detail-view__list-filter-input {
-    max-width: 50%;
-    margin: 1rem auto
-  }
-}
-.detail-view__imprint-container {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto
-}
-.detail-view__imprint-row {
-  display: flex;
-  flex-wrap: wrap;
-  margin-right: -15px;
-  margin-left: -15px;
-  margin-right: auto;
-  margin-left: auto
-}
-.detail-view__imprint-col {
-  position: relative;
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  flex: 0 0 100%;
-  max-width: 100%
-}
-.detail-view__logos-wrapper {
-  display: flex;
-  align-items: center;
-  grid-gap: 1rem;
-  flex-wrap: wrap
-}
-.c4g-tile-headline-wrapper {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto
-}
-.c4g-tile-headline {
-  text-align: center
-}
-.entry-content__social-links {
-  display: flex;
-  grid-gap: .5em;
-  flex-wrap: wrap
-}
-.c4g-card {
-  padding: 1rem;
-  border: 1.5px solid var(--gutes-base-font-color);
-  border-radius: var(--gutes-base-border-radius);
-  background-color: #fff;
-  margin-bottom: 1rem
-}
-.c4g-card .c4g-card-label {
-  font-weight: 700;
-  margin-bottom: 1em
-}
-.c4g-card .c4g-card-text p:last-child {
-  margin-bottom: 0
-}
-.detail-hero2 {
-  position: relative;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  background-attachment: fixed
-}
-.detail-hero2__inner-overlay {
-  position: absolute;
-  z-index: 10;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%
-}
-.detail-hero2__inner-wrapper {
-  position: absolute;
-  z-index: 20;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column
-}
-.detail-hero2__image-wrapper {
-  height: 55vh;
-  overflow: hidden
-}
-.detail-hero2__image-wrapper img {
-  height: 55vh;
-  width: 100%;
-  -o-object-fit: contain;
-  object-fit: contain;
-  background: rgba(255,255,255,.5);
-  padding: 2vh 0
-}
-.detail-hero2__title,
-.detail-hero2__title h1 {
-  color: #fff;
-  text-shadow: 0 0 10px #000;
-  font-size: 6vw;
-  max-width: 700px;
-  line-height: 1.2;
-  margin-bottom: 1rem;
-  text-align: center
-}
-@media (min-width:768px) {
-  .detail-hero2__title,
-  .detail-hero2__title h1 {
-    font-size: 3rem
-  }
-}
-.detail-hero2__logo {
-  max-width: 150px;
-  width: 25vh;
-  text-align: center
-}
-.detail-hero2__logo img {
-  background: #fff;
-  border: 5px solid #fff
-}
-html {
-  box-sizing: border-box
-}
-*,
-:after,
-:before {
-  box-sizing: inherit
-}
-.c4g-list-outer {
-  width: 100%;
-  font-family: var(--gutes-base-font-family)
-}
-.c4g-list-outer img {
-  max-width: 100%;
-  height: auto
-}
-.c4g-list-outer .c4g-list-elements {
-  width: 100%;
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
-  padding-top: 15px;
-  padding-bottom: 15px
-}
-.c4g-list-outer .c4g-list-element {
-  position: relative;
-  padding-bottom: 2rem;
-  background-color: var(--gutes-element-bgcolor);
-  border-radius: var(--gutes-base-border-radius);
-  border: var(--gutes-base-border-width) solid #cdd9d7;
-  margin-bottom: var(--gutes-base-spacing-unit);
-  overflow: hidden;
-  transition: .3s ease-in-out
-}
-.c4g-list-outer .c4g-list-element__image-wrapper {
-  overflow: hidden
-}
-.c4g-list-outer .c4g-list-element__image-wrapper img {
-  transition: .6s ease-in-out
-}
-.c4g-list-outer .c4g-list-element:hover {
-  box-shadow: var(--gutes-box-shadow)
-}
-.c4g-list-outer .c4g-list-element:hover .c4g-list-element__image-wrapper img {
-  transform: scale(1.1)
-}
-.c4g-list-outer .c4g-list-element__inner {
-  padding: 10px;
-  overflow: hidden
-}
-@media (min-width:768px) {
-  .c4g-list-outer .c4g-list-element__inner > div {
-    width: 60%;
-    float: right
-  }
-}
-@media (min-width:992px) {
-  .c4g-list-outer .c4g-list-element__inner > div {
-    width: 80%
-  }
-}
-@media (min-width:768px) {
-  .c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
-    margin-right: 1rem;
-    width: calc(40% - 1rem);
-    float: left
-  }
-}
-@media (min-width:992px) {
-  .c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
-    width: calc(20% - 1rem)
-  }
-}
-.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__more-wrapper,
-.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__notice-wrapper {
-  width: auto;
-  display: inline-block;
-  float: right
-}
-.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__notice-wrapper {
-  clear: right;
-  margin-left: 1rem
-}
-.c4g-list-outer .c4g-list-element__title-wrapper {
-  grid-area: 1/2
-}
-.c4g-list-outer .c4g-list-element__title {
-  font-size: var(--gutes-font-size-title);
-  font-weight: var(--gutes-font-weight-title)
-}
-.c4g-list-outer .c4g-list-element__typename-wrapper,
-.c4g-list-outer .c4g-list-element__types-wrapper {
-  font-size: var(--gutes-font-size-types);
-  grid-area: 2/2
-}
-.c4g-list-outer .c4g-list-element__shortdescription-wrapper {
-  grid-area: 3/2
-}
-.c4g-list-outer .c4g-list-element__strikeprice-wrapper {
-  grid-area: 4/2
-}
-.c4g-list-outer .c4g-list-element__strikeprice {
-  text-decoration: line-through;
-  font-size: var(--gutes-font-size-types)
-}
-.c4g-list-outer .c4g-list-element__price-wrapper {
-  grid-area: 5/2
-}
-.c4g-list-outer .c4g-list-element__taglinks-wrapper,
-.c4g-list-outer .c4g-list-element__tags-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: flex-start;
-  margin: 10px 0
-}
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks {
-  width: 40px;
-  height: 40px;
-  margin: 0 5px 5px 0;
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-.c4g-list-outer .c4g-list-element__buttons-wrapper {
-  display: flex;
-  justify-content: flex-end;
-  grid-gap: .5rem;
-  position: absolute;
-  bottom: 10px;
-  right: 10px
-}
-.c4g-modal-outer {
-  position: fixed;
-  z-index: 100;
-  padding-top: 100px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,.4);
-  display: flex;
-  align-items: center;
-  justify-content: center
-}
-.c4g-modal-inner {
-  position: fixed;
-  display: block;
-  min-height: 100px;
-  max-width: 100%;
-  padding: 1.25em;
-  border: none;
-  border-radius: 5px;
-  background: #fff;
-  font-family: inherit;
-  max-height: 80%;
-  overflow: auto
-}
-.c4g-modal-hide {
-  display: none
-}
-.c4g-modal-content {
-  color: #2d2d2d;
-  font-weight: 400;
-  line-height: normal;
-  text-align: center;
-  word-wrap: break-word;
-  background-color: rgba(0,0,0,0)
-}
-.c4g-modal-content h1,
-.c4g-modal-content h2,
-.c4g-modal-content h3,
-.c4g-modal-content h4 {
-  font-size: 2rem
-}
-.c4g-modal-content > div {
-  margin-top: 5px;
-  margin-bottom: 10px
-}
-.c4g-modal-content .title {
-  padding: 0 1rem;
-  font-weight: 700;
-  font-size: 1.5rem
-}
-.c4g-modal-content .c4g-list-element {
-  background-color: transparent;
-  border: none
-}
-.c4g-modal-content .c4g-list-element:hover {
-  box-shadow: none;
-  transform: none
-}
-.c4g-modal-content .c4g-list-element:hover img {
-  transform: none
-}
-.c4g-modal-content .c4g-list-element__image {
-  max-width: 250px
-}
-.c4g-modal-content .detail-view__contact-wrapper,
-.c4g-modal-content .detail-view__display-type,
-.c4g-modal-content .detail-view__map {
-  display: none
-}
-.c4g-modal-content .detail-view__price {
-  text-align: center;
-  margin-bottom: 1rem
-}
-.c4g-modal-content .detail-view__taxnote {
-  font-size: .8rem;
-  margin-bottom: 1rem;
-  color: #6c757d
-}
-.c4g-modal-content .detail-view__description,
-.c4g-modal-content .detail-view__image-gallery {
-  flex: 0 0 100%;
-  max-width: 100%
-}
-.c4g-modal-content .imageGallery-item {
-  border: none
-}
-.c4g-modal-content .imageGallery-item img {
-  max-width: 250px
-}
-.c4g-modal-content .imageGallery-item:hover img {
-  transform: none
-}
-.c4g-modal-content .field-description {
-  font-size: .8rem;
-  margin-bottom: 1rem
-}
-.c4g-modal-content .detail-field-wrapper {
-  display: none
-}
-.c4g-modal-content .c4g-form-field {
+.c4g-popup-wrapper .c4g-tile-content > div {
+  margin-top: 1em;
   margin-bottom: .5rem
 }
-.c4g-modal-content .c4g-btn-submit {
-  margin-right: 1rem
+.c4g-popup-wrapper .c4g-tile-content .tags {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap
 }
-.c4g-modal-content .c4g-btn-top-close {
-  float: right
-}
-.c4g-modal-content .c4g-panel-buttons {
-  margin-bottom: 1rem
-}
-.c4g-modal-content .c4g-modal__title-wrapper {
-  clear: right
+.c4g-popup-wrapper .c4g-tile-content .tags .item {
+  background: #fff;
+  width: 40px;
+  padding: 5px;
+  border: 1.5px solid #333;
+  border-radius: 4px;
+  margin-right: .25em
 }

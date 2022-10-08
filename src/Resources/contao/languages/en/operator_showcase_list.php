@@ -40,6 +40,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['accessibility_title'] = "Acce
 $GLOBALS['TL_LANG'][$strName]['details']['label']['importantnotes_title'] = "Important Notes";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phonehours_title'] = "Phone Hours:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['routedesc_title'] = "Route Description:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['surroungdings'] = "Surroundings description:";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name and Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";
 $GLOBALS['TL_LANG'][$strName]['sections']['menu'] = "Menu";

@@ -39,7 +39,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['familyFriendlyNotes'] = "Fami
 $GLOBALS['TL_LANG'][$strName]['details']['label']['accessibility_title'] = "Hinweise zur Rollstuhleignung";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['importantnotes_title'] = "Wichtige Hinweise";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phonehours_title'] = "Abweichende Telefonzeiten:";
-$GLOBALS['TL_LANG'][$strName]['details']['label']['routedesc_title'] = "Wegbeschreibung:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['routedesc_title'] = "Anreisebeschreibung:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['surroungdings'] = "Umgebungsbeschreibung:";
+
 $GLOBALS['TL_LANG'][$strName]['details']['label']['timesuffix'] = "Uhr";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name und Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";

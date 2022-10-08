@@ -908,6 +908,20 @@
                                     </div>
                                 </div>
                             <?php endif; ?>
+
+                            <?php if (isset($data->surroungdings) && !empty($data->surroungdings)): ?>
+                                <div class="row surroungdings-row">
+                                    <div class="col-12 surroungdings-col">
+                                        <div class="surroungdings-inner">
+                                            <h3 class="surroungdings-title"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['surroungdings'] ?></h3>
+
+                                            <div class="surroungdings-text">
+                                                <?= $data->surroungdings ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
                             <?php $this->endblock(); ?>
                         </div>
                     </div>

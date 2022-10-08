@@ -35,6 +35,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['location'] = "Location:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['dateOfBirth'] = "Date of birth:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['dateOfDeath'] = "Date of death:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['coronanote_title'] = "Corona Info";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['familyFriendlyNotes'] = "Family friendly";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['accessibility_title'] = "Accessibility Info ";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['importantnotes_title'] = "Important Notes";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phonehours_title'] = "Phone Hours:";

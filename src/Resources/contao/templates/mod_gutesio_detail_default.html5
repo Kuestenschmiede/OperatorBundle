@@ -679,6 +679,16 @@
                                             </div>
                                         </div>
                                     <?php endif; ?>
+
+                                    <?php if (isset($data->familyFriendlyNotes) && !empty($data->familyFriendlyNotes)): ?>
+                                        <div class="item familyFriendlyNotes tag_familyFriendly">
+                                            <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['familyFriendlyNotes'] ?></div>
+
+                                            <div class="entry-content">
+                                                <?= $data->familyFriendlyNotes ?>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
                                 </div>
 
 

@@ -567,6 +567,33 @@
                             <?php endif; ?>
                         <?php endif; ?>
 
+                        <?php if (isset($data->admissionPrices) && !empty($data->admissionPrices)): ?>
+                            <div class="detail-field-text admissionPrices">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['admissionPrices'] ?></div>
+                                <div class="detail-field-text__text">
+                                    <?= $data->admissionPrices ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->technicalEquipment) && !empty($data->technicalEquipment)): ?>
+                            <div class="detail-field-text technicalEquipment">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['technicalEquipment'] ?></div>
+                                <div class="detail-field-text__text">
+                                    <?= $data->technicalEquipment ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                         <?php if (isset($data->maxPersons) && !empty($data->maxPersons)): ?>
+                            <div class="detail-field-text maxPersons">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['maxPersons'] ?></div>
+                                <div class="detail-field-text__text">
+                                    <?= $data->maxPersons ?>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (isset($data->menuLink) && !empty($data->menuLink)): ?>
                             <div class="menuLink">
                                 <a href="<?= $data->menuLink ?>" target="_blank" rel="nofollow noopener"
@@ -909,14 +936,14 @@
                                 </div>
                             <?php endif; ?>
 
-                            <?php if (isset($data->surroungdings) && !empty($data->surroungdings)): ?>
-                                <div class="row surroungdings-row">
-                                    <div class="col-12 surroungdings-col">
-                                        <div class="surroungdings-inner">
-                                            <h3 class="surroungdings-title"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['surroungdings'] ?></h3>
+                            <?php if (isset($data->surroundings) && !empty($data->surroundings)): ?>
+                                <div class="row surroundings-row">
+                                    <div class="col-12 surroundings-col">
+                                        <div class="surroundings-inner">
+                                            <h3 class="surroundings-title"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['surroundings'] ?></h3>
 
-                                            <div class="surroungdings-text">
-                                                <?= $data->surroungdings ?>
+                                            <div class="surroundings-text">
+                                                <?= $data->surroundings ?>
                                             </div>
                                         </div>
                                     </div>

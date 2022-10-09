@@ -23,7 +23,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'link', 'image', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
@@ -62,6 +62,12 @@ class ShowcaseInsertTag
                 switch ($field) {
                     case 'name':
                         return html_entity_decode($arrShowcase['name']);
+                    case 'longitude':
+                        return $arrShowcase['geox'];
+                    case 'latitude':
+                        return $arrShowcase['geoy'];
+                    case 'city':
+                        return $arrShowcase['locationCity'];
                     case 'link':
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
                         $showcaseUrl = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');

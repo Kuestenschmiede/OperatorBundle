@@ -508,11 +508,23 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $user = FrontendUser::getInstance();
         $fields = [];
 
-        $field = new ImageTileField();
-        $field->setWrapperClass("c4g-list-element__image-wrapper");
-        $field->setClass("c4g-list-element__image");
-        $field->setName('image');
-        $fields[] = $field;
+        $detailLinks = $this->getOfferDetailLinks();
+        $urlSuffix = Config::get('urlSuffix');
+        foreach ($detailLinks as $key => $value) {
+            $value = str_replace($urlSuffix, "", $value);
+
+            $field = new ImageTileField();
+            $field->setWrapperClass("c4g-list-element__image-wrapper");
+            $field->setClass("c4g-list-element__image");
+            $field->setName('image');
+            $field->setHrefFields(["href"]);
+            $field->setHref($value . "/href" . $urlSuffix);
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $fields[] = $field;
+            break;
+        }
 
         $field = new HeadlineTileField();
         $field->setName('name');

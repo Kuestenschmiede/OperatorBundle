@@ -428,11 +428,22 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $fields = [];
 
+        if (C4GUtils::endsWith($this->pageUrl, '.html')) {
+            $href = str_replace('.html', '/alias.html', $this->pageUrl);
+        } else {
+            $href = $this->pageUrl . '/alias';
+        }
+
         $field = new ImageTileField();
         $field->setName("imageList");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
+        $field->setHref($href);
+        $field->setHrefField("alias");
+        $field->setExternalLinkField('foreignLink');
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $fields[] = $field;
 
         $headline = StringUtil::deserialize($this->model->headline, true);
@@ -517,19 +528,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
 
-        if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-            $href = str_replace('.html', '/alias.html', $this->pageUrl);
-        } else {
-            $href = $this->pageUrl . '/alias';
-        }
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setHrefField("alias");
         $field->setWrapperClass("c4g-list-element__more-wrapper");
         $field->setClass("c4g-list-element__more-link");
+        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setHref($href);
         $field->setLinkText($this->languageRefs['alias_link_text']);
-        $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
         $field->setExternalLinkField('foreignLink');
         $field->setExternalLinkFieldConditionField("directLink");
         $field->setExternalLinkFieldConditionValue("1");

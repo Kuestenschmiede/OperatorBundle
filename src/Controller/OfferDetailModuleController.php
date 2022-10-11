@@ -594,12 +594,23 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
     protected function getElementFields(): array
     {
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+        $href = $url . '/alias';
+        $urlSuffix = Config::get('urlSuffix');
+        $href = str_replace($urlSuffix, "", $href);
+        $href .= $urlSuffix;
 
         $field = new ImageTileField();
         $field->setName("imageList");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
+        $field->setHrefField("alias");
+        $field->setHref($href);
+        $field->setExternalLinkField('foreignLink');
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $this->tileItems[] = $field;
 
         $field = new HeadlineTileField();
@@ -671,13 +682,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setHookName("removeFromWishlist");
         $this->tileItems[] = $field;
 
-        $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
-        $href = $url . '/alias';
-        $urlSuffix = Config::get('urlSuffix');
-        $href = str_replace($urlSuffix, "", $href);
-        $href .= $urlSuffix;
-
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setWrapperClass("c4g-list-element__more-wrapper");
@@ -748,13 +752,24 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private function getChildTileFields()
     {
         $fields = [];
-        
-        $field = new ImageTileField();
-        $field->setWrapperClass("c4g-list-element__image-wrapper");
-        $field->setClass("c4g-list-element__image");
-        $field->setName('image');
-        $fields[] = $field;
-        
+
+        $detailLinks = $this->getOfferDetailLinks();
+        $urlSuffix = Config::get('urlSuffix');
+        foreach ($detailLinks as $key => $value) {
+            $value = str_replace($urlSuffix, "", $value);
+            $field = new ImageTileField();
+            $field->setWrapperClass("c4g-list-element__image-wrapper");
+            $field->setClass("c4g-list-element__image");
+            $field->setName('image');
+            $field->setHrefFields(["href"]);
+            $field->setHref($value . "/href" . $urlSuffix);
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $fields[] = $field;
+            break;
+        }
+
         $field = new HeadlineTileField();
         $field->setName('name');
         $field->setLevel(4);

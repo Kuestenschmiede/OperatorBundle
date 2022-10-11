@@ -322,11 +322,21 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     {
         $fields = [];
 
-        $field = new ImageTileField();
-        $field->setWrapperClass("c4g-list-element__image-wrapper");
-        $field->setClass("c4g-list-element__image");
-        $field->setName('image');
-        $fields[] = $field;
+        $detailLinks = $this->getOfferDetailLinks();
+        $urlSuffix = Config::get('urlSuffix');
+        foreach ($detailLinks as $key => $value) {
+            $field = new ImageTileField();
+            $field->setWrapperClass("c4g-list-element__image-wrapper");
+            $field->setClass("c4g-list-element__image");
+            $field->setName('image');
+            $field->setHrefFields(["href"]);
+            $field->setHref($value . "/href" . $urlSuffix);
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $fields[] = $field;
+            break;
+        }
 
         $field = new HeadlineTileField();
         $field->setName('name');
@@ -731,10 +741,20 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     {
         $fields = [];
 
+        if (C4GUtils::endsWith($this->pageUrl, '.html')) {
+            $href = str_replace('.html', '/alias.html', $this->pageUrl);
+        } else {
+            $href = $this->pageUrl . '/alias';
+        }
+
         $field = new ImageTileField();
         $field->setName("imageList");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
+        $field->setHref($href);
+        $field->setExternalLinkField('foreignLink');
+        $field->setExternalLinkFieldConditionField("directLink");
+        $field->setExternalLinkFieldConditionValue("1");
         $fields[] = $field;
 
         $field = new HeadlineTileField();
@@ -806,11 +826,6 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
 
-        if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-            $href = str_replace('.html', '/alias.html', $this->pageUrl);
-        } else {
-            $href = $this->pageUrl . '/alias';
-        }
         $field = new LinkButtonTileField();
         $field->setName("alias");
         $field->setHrefField("alias");

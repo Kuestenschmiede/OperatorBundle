@@ -900,6 +900,7 @@ mark {
 .detail-hero__inner-wrapper,
 .detail-view .anchor-menu__inner,
 .detail-view .c4g-container,
+.detail-view__imageCredits-container,
 .detail-view__imprint-container,
 .detail-view__list-filter-wrapper,
 .detail-view__section-headline {
@@ -917,6 +918,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__imageCredits-container,
   .detail-view__imprint-container,
   .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
@@ -932,6 +934,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__imageCredits-container,
   .detail-view__imprint-container,
   .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
@@ -948,6 +951,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__imageCredits-container,
   .detail-view__imprint-container,
   .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
@@ -965,6 +969,7 @@ mark {
   .detail-hero__inner-wrapper,
   .detail-view .anchor-menu__inner,
   .detail-view .c4g-container,
+  .detail-view__imageCredits-container,
   .detail-view__imprint-container,
   .detail-view__list-filter-wrapper,
   .detail-view__section-headline {
@@ -7383,6 +7388,7 @@ html {
     margin: 1rem auto
   }
 }
+.detail-view__imageCredits-container,
 .detail-view__imprint-container {
   width: 100%;
   padding-right: 15px;
@@ -7390,6 +7396,7 @@ html {
   margin-right: auto;
   margin-left: auto
 }
+.detail-view__imageCredits-row,
 .detail-view__imprint-row {
   display: flex;
   flex-wrap: wrap;
@@ -7398,6 +7405,7 @@ html {
   margin-right: auto;
   margin-left: auto
 }
+.detail-view__imageCredits-col,
 .detail-view__imprint-col {
   position: relative;
   width: 100%;

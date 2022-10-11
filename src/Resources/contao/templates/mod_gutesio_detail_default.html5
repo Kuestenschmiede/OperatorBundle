@@ -1127,6 +1127,38 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
     </div>
 <?php endif; ?>
 
+<?php if (!isset($this->childId) && isset($data->imageCredits) && !empty($data->imageCredits)): ?>
+    <div id="showcase-imageCredits" class="detail-view__imageCredits-container">
+        <div class="detail-view__imageCredits-row">
+            <div class="detail-view__imageCredits-col">
+                <div class="detail-view__imageCredist-inner">
+                    <h3 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCredits'] ?></h3>
+
+                    <div class="imageCredits-text">
+                        <?= $data->imageCredits ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($this->childId) && isset($data->imageCredits) && !empty($data->imageCredits)): ?>
+    <div id="showcase-imageCredits" class="detail-view__imageCredits-container">
+        <div class="detail-view__imageCredits-row">
+            <div class="detail-view__imageCredits-col">
+                <div class="detail-view__imageCredist-inner">
+                    <h3 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCreditsOffer'] ?></h3>
+
+                    <div class="imageCredits-text">
+                        <?= $data->imageCredits ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
 <div class="detail-view__imprint-row">
     <div class="detail-view__imprint-col">
         <p>
@@ -1134,7 +1166,6 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
         </p>
     </div>
 </div>
-
 
 <?php $this->endblock(); //detailpage_imprint ?>
 

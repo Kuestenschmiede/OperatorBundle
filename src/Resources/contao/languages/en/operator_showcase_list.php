@@ -44,6 +44,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['surroundings'] = "Surrounding
 $GLOBALS['TL_LANG'][$strName]['details']['label']['admissionPrices'] = "Admission prices:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['technicalEquipment'] = "Technical equipment:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['maxPersons'] = "Max persons:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['imageCredits'] = "Showcase image credits";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['imageCreditsOffer'] = "Offer image credits";
+
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name and Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";
 $GLOBALS['TL_LANG'][$strName]['sections']['menu'] = "Menu";

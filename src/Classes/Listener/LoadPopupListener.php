@@ -194,7 +194,7 @@ class LoadPopupListener
                         <div class='item alias'>
                             <span class='entry-content'>
                                 $buttonWishlist
-                                <a class='btn btn-primary' href='$href'>Mehr</a>
+                                <a class='btn btn-primary' href='$href' target=_blank>Mehr</a>
                             </span>
                         </div>
                     </div>

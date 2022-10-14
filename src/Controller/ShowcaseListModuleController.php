@@ -575,13 +575,18 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter->setEntryPoint($this->model->id);
         $fields[] = $textFilter;
 
+
+        $dataMode = $this->model->gutesio_data_mode;
+        $types = $dataMode == '1' ? unserialize($this->model->gutesio_data_type) : [];
+        $blockedTypes = $dataMode == '4' ? unserialize($this->model->gutesio_data_blocked_types) : [];
+
         if ($this->model->gutesio_enable_type_filter) {
             $typeField = new SelectFormField();
             $typeField->setName("types");
             $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
             $typeField->setClassName("form-view__type-filter");
             $typeField->setPlaceholder("Kategorie auswählen");
-            $typeField->setOptions($this->getTypeOptions());
+            $typeField->setOptions($this->getTypeOptions($types, $blockedTypes));
             $typeField->setMultiple(true);
             $typeField->setCache(true); //ToDo module switch
             $typeField->setEntryPoint($this->model->id);
@@ -640,12 +645,22 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         return $arrFilter;
     }
     
-    private function getTypeOptions()
+    private function getTypeOptions($types = [], $blockedTypes = [])
     {
-        $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
-        . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
-        . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' ORDER BY name ASC"
-        ;
+        if (is_array($types) && count($types) > 0) {
+            $typeStr = implode(',',$types);
+            $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type"
+                . " WHERE uuid IN ('".$typeStr."') ORDER BY name ASC";
+        } else if (is_array($blockedTypes) && count($blockedTypes) > 0) {
+            $typeStr = implode(',',$blockedTypes);
+            $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
+                . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
+                . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' AND tl_gutesio_data_type.uuid NOT IN ('".$typeStr."') ORDER BY name ASC";
+        } else {
+            $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
+                . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
+                . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' ORDER BY name ASC";
+        }
         $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
         $options = [];
         foreach ($typeResult as $result) {

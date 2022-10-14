@@ -45,14 +45,60 @@ class ShowcaseService
      */
     private $visitCounter = null;
 
-    const FILTER_SQL_STRING = '(UPPER(`name`) LIKE ? OR UPPER(`description`) LIKE ? OR UPPER(`contactName`) LIKE ? OR ' .
-                                'UPPER(`contactStreet`) LIKE ? OR UPPER(`contactStreetNumber`) LIKE ? OR UPPER(`contactCity`) LIKE ? OR UPPER(`locationStreet`) LIKE ? OR UPPER(`locationStreetNumber`) LIKE ? OR UPPER(`locationCity`) LIKE ? OR UPPER(`locationZip`) LIKE ?)';
-
-    const FILTER_SQL_STRING_WEIGHT = 'IF (UPPER(`name`) LIKE ?, 50, 0) + IF (UPPER(`description`) LIKE ?, 20, 0) + ' .
-                                        'IF (UPPER(`contactName`) LIKE ?, 20, 0) + IF (UPPER(`contactStreet`) LIKE ?, 10,0) + IF (UPPER(`contactStreetNumber`) LIKE ?, 5,0) + IF (UPPER(`contactCity`) LIKE ?,5, 0) + ' .
-                                            'IF (UPPER(`locationStreet`) LIKE ?, 10, 0) + IF (UPPER(`locationStreetNumber`) LIKE ?, 5, 0) + IF (UPPER(`locationCity`) LIKE ?, 5, 0) + IF (UPPER(`locationZip`) LIKE ?, 5, 0) AS weight';
 
     private $filterConnector = 'AND';
+
+
+    //ToDo AND search to find exact results
+    const FILTER_FIELDS = ['name'=>50,'alias'=>50,'description'=>20,'contactName'=>20,'contactStreet'=>10,'contactStreetNumber'=>5,'contactCity'=>5,'contactZip'=>5,'locationStreet'=>10,'locationStreetNumber'=>5,'locationCity'=>5,'locationZip'=>5];
+
+    public static function getFilterSQLString() {
+        $result = '(';
+        foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+            If ($result == '(') {
+                $result .= 'UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+            } else {
+                $result .= ' OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+            }
+        }
+        $result .= ')';
+        return $result;
+    }
+
+    public static function getFilterSQLStringWeight() {
+        $result = '';
+        foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+            If ($result == '') {
+                $result .= 'IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+            } else {
+                $result .= ' + IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+            }
+        }
+        $result .= ' AS weight';
+        return $result;
+    }
+
+    public static function getFilterSQLValueSet($filterString) {
+        $count = count(ShowcaseService::FILTER_FIELDS)*4; //2*LIKE, 2*WEIGHT
+        $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
+
+        $partArr = [];
+        foreach($strParts as $part) {
+            $part = trim($part);
+            $partArr[] = $part;
+        }
+
+        $filterString = $partArr[0];
+        $extraFilterString = count($partArr) > 1 ? $partArr[1] : $partArr[0];
+
+        $resultArr = [];
+        for ($i=0;$i<$count;$i++) {
+            $resultArr[] = $filterString;
+            $resultArr[] = $extraFilterString;
+        }
+
+        return $resultArr;
+    }
 
     /**
      * @return null
@@ -227,8 +273,8 @@ class ShowcaseService
             if ($execQuery) {
                 $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
                 if ($elementIdString !== '()' && $searchString) {
-                    $sql = 'SELECT *, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-                    $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::FILTER_SQL_STRING . ')';
+                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
+                    $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::getFilterSQLString() . ')';
                     $additionalOrderBy = ' weight';
                     $insertSearchParams = true;
                 } elseif ($elementIdString !== '()') {
@@ -236,8 +282,8 @@ class ShowcaseService
                     $sql .= 'AND `uuid` IN ' . $elementIdString;
                     $insertSearchParams = false;
                 } elseif ($searchString) {
-                    $sql = 'SELECT *, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-                    $sql .= 'AND ' . self::FILTER_SQL_STRING;
+                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
+                    $sql .= 'AND ' . self::getFilterSQLString();
                     $additionalOrderBy = ' weight';
                     $insertSearchParams = true;
                 } else {
@@ -265,21 +311,13 @@ class ShowcaseService
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
                 if ($withoutLimit) {
                     if ($insertSearchParams) {
-                        $arrResult = $stm->execute(
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
-                            $searchString, $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+                        $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString))->fetchAllAssoc();
                     } else {
                         $arrResult = $stm->execute()->fetchAllAssoc();
                     }
                 } else {
                     if ($insertSearchParams) {
-                        $arrResult = $stm->execute(
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
-                            $searchString, $searchString, $searchString, $searchString, $searchString,
+                        $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString),
                             $limit, $offset)->fetchAllAssoc();
                     } else {
                         $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
@@ -460,31 +498,23 @@ class ShowcaseService
             if ($searchString === '') {
                 return [];
             }
-            $sql = 'SELECT `id`, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
+            $sql = 'SELECT `id`, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
         } else {
             $sql = 'SELECT `id` FROM tl_gutesio_data_element ' .
                 "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND `uuid` IN " . $elementIdString;
         }
         if ($searchString) {
             $this->filterConnector = 'AND'; // todo temporary fix for filter
-            $sql .= ' ' . $this->filterConnector . ' ';
-        }
-
-        if ($searchString) {
-//            $searchString = "%$searchString%";
+            $sql .= ' ' . $this->filterConnector;
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
             // connect with OR here since the other condition is already considering the filter
-            $whereClause = self::FILTER_SQL_STRING;
+            $whereClause = self::getFilterSQLString();
             $sql .= ' ' . $whereClause;
             if (!empty($restrictedPostals)) {
                 $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                 $sql .= ' ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
-                    ->execute(
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
+                    ->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -496,11 +526,7 @@ class ShowcaseService
                 $searchString = strtoupper($searchString);
                 $sql .= ' ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
-                    ->execute(
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString)->fetchAllAssoc();
+                    ->execute(self::getFilterSQLValueSet($searchString))->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -688,18 +714,14 @@ class ShowcaseService
         $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
         if ($elementIdString !== '()') {
             if ($searchString) {
-                $sql = 'SELECT id, geox, geoy,releaseType, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
+                $sql = 'SELECT id, geox, geoy,releaseType, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
                 $sql .= ' AND `uuid` IN ' . $elementIdString;
 //                $searchString = "%$searchString%";
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-                $whereClause = 'AND (' . self::FILTER_SQL_STRING . ')';
+                $whereClause = 'AND (' . self::getFilterSQLString() . ')';
                 $sql .= ' ' . $whereClause;
                 $arrResult = Database::getInstance()->prepare($sql)
-                    ->execute(
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString)
+                    ->execute(self::getFilterSQLValueSet($searchString))
                     ->fetchAllAssoc();
             } else {
                 $sql = "SELECT id, geox, geoy, releaseType FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
@@ -708,18 +730,14 @@ class ShowcaseService
             }
         } else {
             if ($searchString) {
-                $sql = 'SELECT id, geox, geoy,releaseType, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
+                $sql = 'SELECT id, geox, geoy,releaseType, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
 //                $searchString = "%$searchString%";
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-                $whereClause = 'WHERE ' . self::FILTER_SQL_STRING;
+                $whereClause = 'WHERE ' . self::getFilterSQLString();
                 $sql .= ' ' . $whereClause;
                 $sql .= ' ORDER BY weight DESC'; //TEST
                 $arrResult = Database::getInstance()->prepare($sql)
-                    ->execute(
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString, $searchString,
-                        $searchString, $searchString, $searchString, $searchString)
+                    ->execute(self::getFilterSQLValueSet($searchString))
                     ->fetchAllAssoc();
             } else {
                 $sql = "SELECT id, geox, geoy FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
@@ -790,18 +808,14 @@ class ShowcaseService
     private function loadAllIds($searchString)
     {
         if ($searchString) {
-            $sql = 'SELECT id, ' . self::FILTER_SQL_STRING_WEIGHT . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
+            $sql = 'SELECT id, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";
 //            $searchString = "%$searchString%";
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-            $whereClause = 'AND ' . self::FILTER_SQL_STRING;
+            $whereClause = 'AND ' . self::getFilterSQLString();
             $sql .= ' ' . $whereClause;
             $sql .= ' ORDER BY weight DESC'; //TEST
             $arrResult = Database::getInstance()->prepare($sql)
-                ->execute(
-                    $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString, $searchString,
-                    $searchString, $searchString, $searchString, $searchString)
+                ->execute(self::getFilterSQLValueSet($searchString))
                 ->fetchAllAssoc();
         } else {
             $sql = "SELECT id FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '')";

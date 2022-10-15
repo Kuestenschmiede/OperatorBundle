@@ -85,7 +85,7 @@ class ShowcaseService
         $partArr = [];
         foreach($strParts as $part) {
             $part = trim($part);
-            $partArr[] = $part;
+            $partArr[] = '%'.$part.'%';
         }
 
         $filterString = $partArr[0];

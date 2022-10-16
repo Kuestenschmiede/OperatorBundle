@@ -250,6 +250,15 @@
                         <?php else: ?>
                         <?php endif; ?>
 
+                        <?php if (isset($data->eventPrice) && !empty($data->eventPrice)): ?>
+                            <div class="col-12">
+                                <div class="detail-field-text-event-price detail-view__event-price">
+                                    <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eventPrice'] ?></strong>
+                                    <span class="detail-field-text__text"><?= $data->eventPrice ?></span>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
                             <div class="col-12">
                                 <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['location'] ?></strong>

@@ -32,6 +32,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['beginoffer'] = "Beginn:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['endoffer'] = "Ende:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['begintime'] = "Uhrzeit:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['entryTime'] = "Einlass:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['eventPrice'] = "Preis pro Person:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['location'] = "Veranstaltungsort:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['dateOfBirth'] = "Geburtsdatum:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['dateOfDeath'] = "Todesdatum:";

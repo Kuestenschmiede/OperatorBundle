@@ -50,7 +50,7 @@ class ShowcaseService
 
 
     //ToDo AND search to find exact results
-    const FILTER_FIELDS = ['name'=>50,'alias'=>50,'description'=>20,'contactName'=>20,'contactStreet'=>10,'contactStreetNumber'=>5,'contactCity'=>5,'contactZip'=>5,'locationStreet'=>10,'locationStreetNumber'=>5,'locationCity'=>5,'locationZip'=>5];
+    const FILTER_FIELDS = ['name'=>5,'alias'=>5,'description'=>3,'contactName'=>4,'contactStreet'=>2.5,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>2.5,'locationStreetNumber'=>1,'locationCity'=>2.5,'locationZip'=>2.5];
 
     public static function getFilterSQLString() {
         $result = '(';
@@ -65,6 +65,32 @@ class ShowcaseService
         return $result;
     }
 
+
+    public static function getFilterSQLStringRelevance($result) {
+
+        $database = Database::getInstance();
+
+        $first = true;
+        $result .= '(';
+        //$key = '';
+        foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+            If ($first) {
+          //      $keys = $key;
+                $result .= $weight.' * (MATCH (UPPER(`'.$key.'`)) AGAINST (? IN BOOLEAN MODE))';
+                $first = false;
+            } else {
+            //    $keys .= ', '.$key;
+                $result .= ' + '.$weight.' * (MATCH (UPPER(`'.$key.'`)) AGAINST (? IN BOOLEAN MODE))';
+            }
+        }
+        $result .= ') AS relevance';
+
+        //$database->prepare('ALTER TABLE tl_gutesio_data_element ADD FULLTEXT('.$keys.')')->execute();
+
+
+        return $result;
+    }
+
     public static function getFilterSQLStringWeight() {
         $result = '';
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
@@ -75,28 +101,36 @@ class ShowcaseService
             }
         }
         $result .= ' AS weight';
-        return $result;
+        return $result; //self::getFilterSQLStringRelevance($result);
     }
 
     public static function getFilterSQLValueSet($filterString) {
-        $count = count(ShowcaseService::FILTER_FIELDS)*4; //2*LIKE, 2*WEIGHT
+        $count = count(ShowcaseService::FILTER_FIELDS); //2*LIKE, 2*WEIGHT, 1*RELEVANCE
         $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
 
         $partArr = [];
         foreach($strParts as $part) {
             $part = trim($part);
-            $partArr[] = '%'.$part.'%';
+            $partArr[] = $part;
         }
 
         $filterString = $partArr[0];
         $extraFilterString = count($partArr) > 1 ? $partArr[1] : $partArr[0];
 
-        $resultArr = [];
+        $likeArr = [];
+        $weightArr = [];
+        $relevanceArr = [];
         for ($i=0;$i<$count;$i++) {
-            $resultArr[] = $filterString;
-            $resultArr[] = $extraFilterString;
+            $likeArr[] = '%'.$filterString.'%';
+            $likeArr[] = '%'.$extraFilterString.'%';
+
+            $weightArr[] = '%'.$filterString.'%';
+            $weightArr[] = '%'.$extraFilterString.'%';
+
+            //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
         }
 
+        $resultArr = array_merge($likeArr, $weightArr, $relevanceArr);
         return $resultArr;
     }
 
@@ -512,7 +546,8 @@ class ShowcaseService
             $sql .= ' ' . $whereClause;
             if (!empty($restrictedPostals)) {
                 $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                $sql .= ' ORDER BY weight DESC';
+                //$sql .= ' ORDER BY weight DESC';
+                $sql .= ' HAVING weight > 2.5 ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
                     ->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
                 // search for type name matches
@@ -524,7 +559,8 @@ class ShowcaseService
 
             } else {
                 $searchString = strtoupper($searchString);
-                $sql .= ' ORDER BY weight DESC';
+                //$sql .= ' ORDER BY weight DESC';
+                $sql .= ' HAVING weight > 2.5 ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
                     ->execute(self::getFilterSQLValueSet($searchString))->fetchAllAssoc();
                 // search for type name matches
@@ -735,7 +771,8 @@ class ShowcaseService
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
                 $whereClause = 'WHERE ' . self::getFilterSQLString();
                 $sql .= ' ' . $whereClause;
-                $sql .= ' ORDER BY weight DESC'; //TEST
+                //$sql .= ' ORDER BY weight DESC';
+                $sql .= ' HAVING weight > 2.5 ORDER BY weight DESC';
                 $arrResult = Database::getInstance()->prepare($sql)
                     ->execute(self::getFilterSQLValueSet($searchString))
                     ->fetchAllAssoc();
@@ -813,7 +850,8 @@ class ShowcaseService
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
             $whereClause = 'AND ' . self::getFilterSQLString();
             $sql .= ' ' . $whereClause;
-            $sql .= ' ORDER BY weight DESC'; //TEST
+            //$sql .= ' ORDER BY weight DESC';
+            $sql .= ' HAVING weight > 2.5 ORDER BY weight DESC';
             $arrResult = Database::getInstance()->prepare($sql)
                 ->execute(self::getFilterSQLValueSet($searchString))
                 ->fetchAllAssoc();

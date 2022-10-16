@@ -31,6 +31,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['headline'] = "Tile";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['beginoffer'] = "Start:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['endoffer'] = "End:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['begintime'] = "Time:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['entryTime'] = "Entry time:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['location'] = "Location:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['dateOfBirth'] = "Date of birth:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['dateOfDeath'] = "Date of death:";

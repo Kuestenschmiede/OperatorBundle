@@ -1131,6 +1131,12 @@ class OfferLoaderService
                             WHEN d.endTime IS NOT NULL THEN d.endTime ' . '
                         ELSE NULL END) AS endTime, ' . '
                         (CASE ' . '
+                            WHEN a.entryTime IS NOT NULL THEN a.entryTime ' . '
+                            WHEN b.entryTime IS NOT NULL THEN b.entryTime ' . '
+                            WHEN c.entryTime IS NOT NULL THEN c.entryTime ' . '
+                            WHEN d.entryTime IS NOT NULL THEN d.entryTime ' . '
+                        ELSE NULL END) AS entryTime, ' . '
+                        (CASE ' . '
                             WHEN a.locationElementId IS NOT NULL THEN a.locationElementId ' . '
                             WHEN b.locationElementId IS NOT NULL THEN b.locationElementId ' . '
                             WHEN c.locationElementId IS NOT NULL THEN c.locationElementId ' . '
@@ -1325,6 +1331,11 @@ class OfferLoaderService
                                 $eventData['endTime'] = '';
                             }
                         }
+                    }
+
+                    $entryTime = $eventData['entryTime'] ? gmdate('H:i', $eventData['entryTime']) : false;
+                    if ($entryTime) {
+                        $eventData['entryTime'] = $entryTime.' Uhr';
                     }
 
                     if ($eventData['appointmentUponAgreement']) {

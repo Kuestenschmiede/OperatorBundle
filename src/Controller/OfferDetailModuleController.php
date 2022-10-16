@@ -460,6 +460,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setLabel($this->languageRefs['nextDate'][0]);
         $field->setClass('detail-view__next-date');
         $fields[] = $field;
+
+        $field = new DetailTextField();
+        $field->setSection(4);
+        $field->setName("entryTime");
+        $field->setClass('detail-view__entry-time');
+        $fields[] = $field;
     
         $field = new DetailTextField();
         $field->setSection(4);
@@ -811,6 +817,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setName('beginTime');
         $field->setWrapperClass("c4g-list-element__begintime-wrapper");
         $field->setClass("c4g-list-element__begintime");
+        $fields[] = $field;
+
+        $field = new TextTileField();
+        $field->setName('entryTime');
+        $field->setWrapperClass("c4g-list-element__entrytime-wrapper");
+        $field->setClass("c4g-list-element__entrytime");
         $fields[] = $field;
         
         $field = new TextTileField();

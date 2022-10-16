@@ -207,6 +207,12 @@
             <?php if (isset($data->beginDate) && !empty($data->beginDate)): ?>
                 <div class="c4g-container">
                     <div class="c4g-row beginDate">
+                        <?php if (isset($data->entryTime) && !empty($data->entryTime)): ?>
+                            <div class="col-12">
+                                <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['entryTime'] ?></strong>
+                                <span> <?= $data->entryTime ?></span>
+                            </div>
+                        <?php endif; ?>
                         <div class="col-12">
                             <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginoffer'] ?> </strong>
 

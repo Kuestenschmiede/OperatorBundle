@@ -914,7 +914,23 @@
                                                     title="Wikipedia">Wikipedia</a>
                                         </div>
                                     <?php endif; ?>
-                                </section>
+
+                                    <?php if (isset($data->androidAppLink) && !empty($data->androidAppLink)): ?>
+                                        <div class="android-app-link c4g-icon-wrapper icon-android"><a
+                                                    href="<?= $data->androidAppLink ?>" target="_blank"
+                                                    rel="nofollow noopener"
+                                                    title="Android App Link">Android</a>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($data->playstoreLink) && !empty($data->playstoreLink)): ?>
+                                        <div class="playstore-link c4g-icon-wrapper icon-app-store-ios"><a
+                                                    href="<?= $data->playstoreLink ?>" target="_blank"
+                                                    rel="nofollow noopener"
+                                                    title="Playstore Link">Playstore</a>
+                                        </div>
+                                    <?php endif; ?>
+                                </section
                             </div>
                         </div>
                         <div class="col-xs-12 col-lg-6">

@@ -50,7 +50,7 @@ class ShowcaseService
 
 
     //ToDo AND search to find exact results
-    const FILTER_FIELDS = ['name'=>5,'alias'=>5,'description'=>3,'contactName'=>4,'contactStreet'=>2.5,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>2.5,'locationStreetNumber'=>1,'locationCity'=>2.5,'locationZip'=>2.5];
+    const FILTER_FIELDS = ['name'=>50,'alias'=>5,'description'=>3,'contactName'=>40,'contactStreet'=>3,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>3,'locationStreetNumber'=>1,'locationCity'=>3,'locationZip'=>100];
 
     public static function getFilterSQLString() {
         $result = '(';
@@ -574,6 +574,7 @@ class ShowcaseService
                 )->execute($searchString, $searchString)->fetchAllAssoc();
 
             }
+
             $arrResult = array_merge($arrResult, $typeResult);
         } else {
             if (!empty($restrictedPostals)) {

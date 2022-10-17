@@ -25,8 +25,8 @@
   "require": {
     "php": ">=8.0",
     "contao/core-bundle": "^4.9",
-    "gutesio/data-model": "^2.0.4",
-    "con4gis/maps": "^8.1.19"
+    "gutesio/data-model": "^2.0.5",
+    "con4gis/maps": "^8.1.24"
   },
   "conflict": {
     "contao/core": "*",

@@ -107,10 +107,13 @@ class ShowcaseService
     public static function getFilterSQLValueSet($filterString) {
         $count = count(ShowcaseService::FILTER_FIELDS); //2*LIKE, 2*WEIGHT, 1*RELEVANCE
         $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
-
+        if (count($strParts) <= 1) {
+            $strParts = explode(',', (trim(str_replace('%',' ', $filterString))));
+        }
         $partArr = [];
         foreach($strParts as $part) {
             $part = trim($part);
+            $part = str_replace([",",";","+","-"], "", $part);
             $partArr[] = $part;
         }
 

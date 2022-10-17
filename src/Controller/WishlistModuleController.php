@@ -20,6 +20,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\AddressTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\PhoneTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
@@ -338,11 +339,18 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $field->setClass("c4g-list-element__address");
             $fields[] = $field;
 
-//            $field = new PhoneTileField();
-//            $field->setName("phone");
-//            $field->setWrapperClass("c4g-list-element__contact-wrapper");
-//            $field->setClass("c4g-list-element__phone");
-//            $fields[] = $field;
+            $field = new PhoneTileField();
+            $field->setName("contactPhone");
+            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+            $field->setClass("c4g-list-element__phone");
+            $fields[] = $field;
+
+            $field = new TextTileField();
+            $field->setName("phoneHours");
+            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+            $field->setClass("c4g-list-element__phonehours");
+            $fields[] = $field;
+
         }
 
         $objSettings = GutesioOperatorSettingsModel::findSettings();

@@ -335,19 +335,19 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $field->setStreetNumberName('contactStreetNumber');
             $field->setPostalName('contactZip');
             $field->setCityName('contactCity');
-            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+            $field->setWrapperClass("c4g-list-element__contact-address-wrapper");
             $field->setClass("c4g-list-element__address");
             $fields[] = $field;
 
             $field = new PhoneTileField();
             $field->setName("contactPhone");
-            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+            $field->setWrapperClass("c4g-list-element__contact-phone-wrapper");
             $field->setClass("c4g-list-element__phone");
             $fields[] = $field;
 
             $field = new TextTileField();
             $field->setName("phoneHours");
-            $field->setWrapperClass("c4g-list-element__contact-wrapper");
+            $field->setWrapperClass("c4g-list-element__contact-phonehours-wrapper");
             $field->setClass("c4g-list-element__phonehours");
             $fields[] = $field;
 

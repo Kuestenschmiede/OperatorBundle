@@ -110,11 +110,28 @@ class ShowcaseService
         if (count($strParts) <= 1) {
             $strParts = explode(',', (trim(str_replace('%',' ', $filterString))));
         }
+        if (count($strParts) <= 1) {
+            $strParts = explode(';', (trim(str_replace('%',' ', $filterString))));
+        }
+        if (count($strParts) <= 1) {
+            $strParts = explode('#', (trim(str_replace('%',' ', $filterString))));
+        }
+        if (count($strParts) <= 1) {
+            $strParts = explode('+', (trim(str_replace('%',' ', $filterString))));
+        }
+        if (count($strParts) <= 1) {
+            $strParts = explode('-', (trim(str_replace('%',' ', $filterString))));
+        }
         $partArr = [];
         foreach($strParts as $part) {
             $part = trim($part);
-            $part = str_replace([",",";","+","-"], "", $part);
-            $partArr[] = $part;
+            $part = str_replace([",",";","+","-","#"], "", $part);
+            if ($pos = strpos($part,'*IN')) {
+                $part = substr($part,0,$pos+1);
+            }
+            if ($part) {
+                $partArr[] = $part;
+            }
         }
 
         $filterString = $partArr[0];

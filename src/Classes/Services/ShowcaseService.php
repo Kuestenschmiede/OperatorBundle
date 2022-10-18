@@ -50,7 +50,7 @@ class ShowcaseService
 
 
     //ToDo AND search to find exact results
-    const FILTER_FIELDS = ['name'=>50,'alias'=>5,'description'=>3,'contactName'=>40,'contactStreet'=>3,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>3,'locationStreetNumber'=>1,'locationCity'=>3,'locationZip'=>100];
+    const FILTER_FIELDS = ['name'=>50,'alias'=>100,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60];
 
     public static function getFilterSQLString() {
         $result = '(';
@@ -65,31 +65,30 @@ class ShowcaseService
         return $result;
     }
 
-
-    public static function getFilterSQLStringRelevance($result) {
-
-        $database = Database::getInstance();
-
-        $first = true;
-        $result .= '(';
-        //$key = '';
-        foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
-            If ($first) {
-          //      $keys = $key;
-                $result .= $weight.' * (MATCH (UPPER(`'.$key.'`)) AGAINST (? IN BOOLEAN MODE))';
-                $first = false;
-            } else {
-            //    $keys .= ', '.$key;
-                $result .= ' + '.$weight.' * (MATCH (UPPER(`'.$key.'`)) AGAINST (? IN BOOLEAN MODE))';
-            }
-        }
-        $result .= ') AS relevance';
-
-        //$database->prepare('ALTER TABLE tl_gutesio_data_element ADD FULLTEXT('.$keys.')')->execute();
-
-
-        return $result;
-    }
+//    public static function getFilterSQLStringRelevance($result) {
+//
+//        $database = Database::getInstance();
+//
+//        $first = true;
+//        $result .= '(';
+//        //$key = '';
+//        foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+//            If ($first) {
+//          //      $keys = $key;
+//                $result .= $weight.' * (MATCH (UPPER(`'.$key.'`)) AGAINST (? IN BOOLEAN MODE))';
+//                $first = false;
+//            } else {
+//            //    $keys .= ', '.$key;
+//                $result .= ' + '.$weight.' * (MATCH (UPPER(`'.$key.'`)) AGAINST (? IN BOOLEAN MODE))';
+//            }
+//        }
+//        $result .= ') AS relevance';
+//
+//        //$database->prepare('ALTER TABLE tl_gutesio_data_element ADD FULLTEXT('.$keys.')')->execute();
+//
+//
+//        return $result;
+//    }
 
     public static function getFilterSQLStringWeight() {
         $result = '';
@@ -105,7 +104,7 @@ class ShowcaseService
     }
 
     public static function getFilterSQLValueSet($filterString) {
-        $count = count(ShowcaseService::FILTER_FIELDS); //2*LIKE, 2*WEIGHT, 1*RELEVANCE
+        $count = count(ShowcaseService::FILTER_FIELDS);
         $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
         if (count($strParts) <= 1) {
             $strParts = explode(',', (trim(str_replace('%',' ', $filterString))));
@@ -151,6 +150,8 @@ class ShowcaseService
         }
 
         $resultArr = array_merge($likeArr, $weightArr, $relevanceArr);
+        //C4gLogModel::addLogEntry('operator', "Result: ".implode(',',$resultArr));
+
         return $resultArr;
     }
 
@@ -353,7 +354,7 @@ class ShowcaseService
                     } elseif ($sorting == 'random') {
                         $sortClause = ' ORDER BY RAND() LIMIT ? OFFSET ?';
                     } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
-                        $sortClause = ' ORDER BY '.$arrSort[0].' ' . strtoupper($arrSort[1]);// . ' LIMIT ? OFFSET ?';
+                        $sortClause = ' ORDER BY '.$arrSort[0].' ' . strtoupper($arrSort[1]);//. ' LIMIT ? OFFSET ?';
                         //ToDO limit / offset
                         $withoutLimit = true;
                     }
@@ -569,14 +570,13 @@ class ShowcaseService
                 //$sql .= ' ORDER BY weight DESC';
                 $sql .= ' HAVING weight > 2.5 ORDER BY weight DESC';
                 $arrResult = $db->prepare($sql)
-                    ->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
+                    ->execute(...self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
                     'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
                     'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ? AND locationZip ' . C4GUtils::buildInString($restrictedPostals)
                 )->execute($searchString, $searchString, ...$restrictedPostals)->fetchAllAssoc();
-
             } else {
                 $searchString = strtoupper($searchString);
                 //$sql .= ' ORDER BY weight DESC';
@@ -589,7 +589,6 @@ class ShowcaseService
                     'JOIN `tl_gutesio_data_type` ON `tl_gutesio_data_element_type`.`typeId` = `tl_gutesio_data_type`.`uuid` ' .
                     'WHERE `tl_gutesio_data_type`.`name` LIKE ? OR `tl_gutesio_data_type`.`extendedSearchTerms` LIKE ?'
                 )->execute($searchString, $searchString)->fetchAllAssoc();
-
             }
 
             $arrResult = array_merge($arrResult, $typeResult);

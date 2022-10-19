@@ -356,7 +356,7 @@ class LoadLayersListener
 
             $element['content'] = $content;
         }
-        else if ($popup) {
+        if ($popup) {
             $element['popup'] = $popup;
         }
         $element = array_merge($dataLayer, $element);

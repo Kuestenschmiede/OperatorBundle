@@ -118,25 +118,25 @@ class LoadPopupListener
         }
         if ($element['website']) {
             $website = $element['website'];
-            $contacts .= "<a class='entry-content contact-website' title='Website von $name' href='$website' rel='noopener nofollow'target='_blank'>
+            $contacts .= "<a class='entry-content contact-website' title='Website von $name' href='$website' rel='noopener nofollow' target='_blank'>
                             <i class='fas fa-external-link-square-alt'></i>
                         </a>";
         }
         if ($element['facebook']) {
             $fb = $element['facebook'];
-            $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb' rel='noopener nofollow'target='_blank'>
+            $contacts .= "<a class='entry-content contact-fb' title='Facebookseite von $name' href='$fb' rel='noopener nofollow' target='_blank'>
                             <i class='fab fa-facebook-square'></i>
                         </a>";
         }
         if ($element['instagram']) {
             $ig = $element['instagram'];
-            $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig' rel='noopener nofollow'target='_blank'>
+            $contacts .= "<a class='entry-content contact-ig' title='Instagram von $name' href='$ig' rel='noopener nofollow' target='_blank'>
                             <i class='fab fa-instagram-square'></i>
                         </a>";
         }
         if ($element['twitter']) {
             $tw = $element['twitter'];
-            $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw' rel='noopener nofollow'target='_blank'>
+            $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw' rel='noopener nofollow' target='_blank'>
                             <i class='fab fa-twitter-square'></i>
                         </a>";
         }
@@ -194,7 +194,7 @@ class LoadPopupListener
                         <div class='item alias'>
                             <span class='entry-content'>
                                 $buttonWishlist
-                                <a class='btn btn-primary' href='$href' target=_blank>Mehr</a>
+                                <a class='btn btn-primary' href='$href'>Mehr</a>
                             </span>
                         </div>
                     </div>

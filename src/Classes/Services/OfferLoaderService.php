@@ -653,7 +653,7 @@ class OfferLoaderService
         $alias = $this->cleanAlias($alias);
 
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.image, a.imageOffer, a.imageGallery, a.imageCredits, a.memberId, a.infoFile, a.offerForSale,' . '
+            a.name, a.image, a.imageOffer, a.imageGallery, a.imageCredits, a.videoType, a.videoLink, a.videoPreviewImage, a.memberId, a.infoFile, a.offerForSale,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '
@@ -709,6 +709,18 @@ class OfferLoaderService
             $rows[$key]['geox'] = $result['geox'];
             $rows[$key]['geoy'] = $result['geoy'];
             $rows[$key]['elementId'] = $result['uuid'];
+
+            $rows[$key]['videoPreview'] = [
+                'videoType' => $rows[$key]['videoType'],
+                'video' => html_entity_decode($rows[$key]['videoLink']),
+            ];
+            if ($rows[$key]['videoPreviewImage']) {
+                $model = FilesModel::findByUuid(StringUtil::deserialize($rows[$key]['videoPreviewImage']));
+                if ($model !== null) {
+                    $rows[$key]['videoPreview']['videoPreviewImage'] = $this->createFileDataFromModel($model);
+                    $rows[$key]['videoPreviewImage'] = $rows[$key]['videoPreview']['videoPreviewImage'];
+                }
+            }
 
             if ($row['infoFile']) {
                 $infoFile = FilesModel::findByUuid(StringUtil::binToUuid($row['infoFile']));

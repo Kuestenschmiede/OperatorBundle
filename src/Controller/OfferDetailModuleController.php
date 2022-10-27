@@ -710,6 +710,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $clientUuid = $this->checkCookieForClientUuid($request);
         $db = Database::getInstance();
         foreach ($results as $key => $row) {
+//            foreach ($row as $rowKey => $rowValue) {
+//               if ($data[$rowKey] && $rowKey != 'uuid' && $rowKey != 'id' && $rowKey != 'tstamp') {
+//                    $row[$rowKey] = $data[$rowKey]; //do not override duplicated field names
+//               }
+//            }
+
             $types = [];
             if ($clientUuid !== null) {
                 $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
@@ -724,6 +730,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 $types[] = $type['label'];
                 $row['types'] = implode(', ', $types);
             }
+
             $results[$key] = $row;
         }
 

@@ -758,10 +758,10 @@
             <div class="detail-view__section-contact-map" id="section-id-contact">
                 <div class="c4g-container">
 
-                    <div class="c4g-row detaildata-section-id-contact">
-                        <div class="col-xs-12 col-lg-6">
-                            <div class="detail-field-contact detail-view__contact-wrapper"><h2>
-                                    Kontakt</h2>
+                    <div class="detaildata-section-id-contact">
+                        <div class="c4g-row col-12">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 detail-field-contact detail-view__contact-wrapper">
+                            	<h2>Kontakt</h2>
                                 <div>
                                     <?php if ($data->contactable && !empty($data->contactName)): ?>
                                         <h3 class="entry-content name"><?= $data->contactName ?></h3>
@@ -943,14 +943,13 @@
                                 </section
                             </div>
                         </div>
-                        <div class="col-xs-12 col-lg-6">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
                             <?php $this->block('detailpage_map'); ?>
-                            <div class="row">
-                                <div class="col-12">
+
                                     <div id="react__detail-view__map"
-                                         class="detail-field-map detail-view__map-wrapper"></div>
-                                </div>
-                            </div>
+                                         class="detail-field-map detail-view__map-wrapper">
+                                    </div>
+
                             <?php $this->endblock(); ?>
 
                             <?php $this->block('detailpage_routedescription'); ?>

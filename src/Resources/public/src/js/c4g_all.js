@@ -90,15 +90,14 @@ function reactRenderReady() {
 
         /* filter actions on listing page */
         jQuery('.tag-filter__filter-item > label > input').on('click', function () {
-
             // check if tag-filter is checked or not
             if (jQuery(this).is(':checked')) {
-                jQuery(this).parent(".c4g-form-label").addClass('checked-tag-filter');
-                jQuery(this).addClass('checked-tag-filter');
+                jQuery(this).parent(".c4g-form-label").addClass('checked-mcb');
+                jQuery(this).addClass('checked-mcb');
                 findAllFilterState();
             } else {
-                jQuery(this).parent(".c4g-form-label").removeClass('checked-tag-filter');
-                jQuery(this).removeClass('checked-tag-filter');
+                jQuery(this).parent(".c4g-form-label").removeClass('checked-mcb');
+                jQuery(this).removeClass('checked-mcb');
                 findAllFilterState();
             }
         });
@@ -236,7 +235,7 @@ function findAllFilterState() {
     let datepickerInput = false;
     let priceFilterRadio = false;
 
-    const tagFilterClass = "checked-tag-filter";
+    const tagFilterClass = "checked-mcb";
 
     // check search input
     // const $inputSearch = jQuery('.form-view__searchinput input');
@@ -246,7 +245,7 @@ function findAllFilterState() {
 
     // check filter tags
     const $tagFilterItemLabel = jQuery(".tag-filter__filter-item > label");
-    if ($tagFilterItemLabel.hasClass("checked-tag-filter")) {
+    if ($tagFilterItemLabel.hasClass("checked-mcb")) {
         filterTag = true;
     }
 

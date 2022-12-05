@@ -3870,7 +3870,7 @@ html {
 .tag-filter__filter-item > label > img {
   width: 40px
 }
-.tag-filter__filter-item > label.checked-tag-filter,
+.tag-filter__filter-item > label.checked-mcb,
 .tag-filter__filter-item > label:hover {
   border-color: var(--gutes-tag-filter-border-color-checked);
   background-color: #ecf0f1;

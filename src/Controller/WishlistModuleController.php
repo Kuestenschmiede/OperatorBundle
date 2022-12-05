@@ -20,6 +20,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\AddressTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
+use con4gis\FrameworkBundle\Classes\TileFields\OSMOpeningHoursTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\PhoneTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
@@ -68,6 +69,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_wishlist.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/phonehours.js|async", ResourceLoader::JAVASCRIPT, "phonehours");
+
         System::loadLanguageFile('offer_list');
         System::loadLanguageFile("tl_gutesio_mini_wishlist");
         $list = $this->getList();
@@ -345,7 +349,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $field->setClass("c4g-list-element__phone");
             $fields[] = $field;
 
-            $field = new TextTileField();
+            $field = new OSMOpeningHoursTileField();
             $field->setName("phoneHours");
             $field->setWrapperClass("c4g-list-element__contact-phonehours-wrapper");
             $field->setClass("c4g-list-element__phonehours");

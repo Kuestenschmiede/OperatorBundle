@@ -341,12 +341,36 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $field->setCityName('contactCity');
             $field->setWrapperClass("c4g-list-element__contact-address-wrapper");
             $field->setClass("c4g-list-element__address");
+            $field->setConditionField(['contactable']);
+            $field->setConditionValue(["1"]);
+            $fields[] = $field;
+
+            $field = new AddressTileField();
+            $field->setName("address");
+            $field->setStreetName('locationStreet');
+            $field->setStreetNumberName('locationStreetNumber');
+            $field->setPostalName('locationZip');
+            $field->setCityName('locationCity');
+            $field->setWrapperClass("c4g-list-element__contact-address-wrapper");
+            $field->setClass("c4g-list-element__address");
+            $field->setConditionField(['contactable']);
+            $field->setConditionValue(["0"]);
             $fields[] = $field;
 
             $field = new PhoneTileField();
             $field->setName("contactPhone");
             $field->setWrapperClass("c4g-list-element__contact-phone-wrapper");
             $field->setClass("c4g-list-element__phone");
+            $field->setConditionField(['contactable']);
+            $field->setConditionValue(["1"]);
+            $fields[] = $field;
+
+            $field = new PhoneTileField();
+            $field->setName("phone");
+            $field->setWrapperClass("c4g-list-element__contact-phone-wrapper");
+            $field->setClass("c4g-list-element__phone");
+            $field->setConditionField(['contactable']);
+            $field->setConditionValue(["0"]);
             $fields[] = $field;
 
             $field = new OSMOpeningHoursTileField();

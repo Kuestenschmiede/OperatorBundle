@@ -129,6 +129,7 @@ class OfferLoaderService
                             $noDateOffers[] = $offer;
                         }
                     }
+                    $sort = 'desc';
                     usort($dateOffers, function ($a, $b) use ($sort) {
                         $a['storeBeginTime'] = $a['storeBeginTime'] ?: strtotime($a['beginTime']);
                         $b['storeBeginTime'] = $b['storeBeginTime'] ?: strtotime($b['beginTime']);

@@ -53,7 +53,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         if ($model->gutesio_carousel_template) {
             $template = new FrontendTemplate($model->gutesio_carousel_template);
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js|async", ResourceLoader::JAVASCRIPT, "c4g-framework");
         $tileList = $this->getTileList();
         $fields = $this->getFields();
         $data = $this->getData();

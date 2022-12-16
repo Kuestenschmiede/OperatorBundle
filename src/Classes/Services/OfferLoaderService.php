@@ -82,6 +82,7 @@ class OfferLoaderService
             $terms = explode(' ', $search);
             $results = $this->getFullTextData($terms, $offset, $type, $limit, $dateFilter);
         } else {
+            //ToDo performance check
             $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit, $dateFilter);
         }
         if ($tagFilter) {
@@ -370,7 +371,7 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
-                ORDER BY relevance DESC LIMIT ?, ?')
+                ORDER BY relevance DESC LIMIT 0, 5000') //Todo ?, ? Hotfix offset error
                     ->execute(
                         $parameters
                     )->fetchAllAssoc();

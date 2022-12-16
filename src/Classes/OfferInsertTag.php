@@ -54,7 +54,7 @@ class OfferInsertTag
                     case 'name':
                         return html_entity_decode($arrOffer['name']);
                     case 'description':
-                        return C4GUtils::truncate($arrOffer['description'], 275);
+                        return C4GUtils::truncate($arrOffer['description'], 275) ?: '';
                     case 'firstGalleryImage':
                         $arrBin = StringUtil::deserialize($arrOffer['imageGallery']);
 
@@ -151,10 +151,10 @@ class OfferInsertTag
 
                         return '<link rel="canonical" href="' . $currentUrl . '" />';
                     default:
-                        return false;
+                        return '';
                 }
             } else {
-                return false;
+                return '';
             }
         } else {
             return false;

@@ -160,10 +160,10 @@ class ShowcaseInsertTag
 
                         return '<link rel="canonical" href="' . $currentUrl . '" />';
                     default:
-                        return false;
+                        return '';
                 }
             } else {
-                return false;
+                return '';
             }
         } else {
             return false;

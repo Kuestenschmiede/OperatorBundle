@@ -110,6 +110,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             ]
         );
         unset($data['randKey']);
+
         $conf->addTileList($tileList, $fields, $data);
         $jsonConf = json_encode($conf);
         if ($jsonConf === false) {
@@ -124,13 +125,19 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");
         }
 
-
         $template->entrypoint = 'entrypoint_' . $this->model->id;
+
+        $database = Database::getInstance();
+
+
+        //ToDo load by module settings
+        $elements = $this->getAllData($this->model);
 
         if ($this->model->gutesio_data_render_searchHtml) {
             $sc = new SearchConfiguration();
-            $sc->addData($this->getSearchLinks(), ['link']);
+            $sc->addData($this->getSearchLinks($elements), ['link']);
             $template->searchHTML = $sc->getHTML();
+            $template->itemListElement = $this->getMetaData($elements);
         }
 
         return $template->getResponse();
@@ -138,7 +145,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
     protected function getTileList(): TileList
     {
-        $tileList = new TileList();
+        $tileList = new TileList('tiles');
         $headline = StringUtil::deserialize($this->model->headline, true);
         $tileList->setHeadline((string)$headline['value']);
         $tileList->setHeadlineLevel((int)str_replace("h", "", $headline['unit']));
@@ -332,6 +339,75 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         return new JsonResponse($data);
+    }
+
+    /**
+     * @param $moduleModel
+     * @return array|JsonResponse
+     */
+    public function getAllData($moduleModel)
+    {
+        $this->get('contao.framework')->initialize(true);
+        System::loadLanguageFile("field_translations", "de");
+        System::loadLanguageFile("operator_showcase_list", "de");
+        System::loadLanguageFile("form_tag_fields", "de");
+
+        $offset = 0;
+        $typeIds = [];
+        $tagIds = [];
+
+        $max = (int) $moduleModel->gutesio_data_max_data;
+        if ($max !== 0 && $offset >= $max) {
+            return new JsonResponse([]);
+        }
+        $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
+        if ($max !== 0 && ($limit + $offset) > $max) {
+            $limit = $max - $offset;
+        }
+
+        $mode = intval($moduleModel->gutesio_data_mode);
+        if ($mode === 1 || $mode === 2 || $mode === 4) {
+            $typeIds = $this->getTypeConstraintForModule($moduleModel);
+        }
+        if ($mode === 3) {
+            $tagIds = $this->getTagConstraintForModule($moduleModel);
+        }
+
+        try {
+            if (!$moduleModel->gutesio_data_restrict_postals || empty($moduleModel->gutesio_data_restrict_postals)) {
+                $restrictedPostals = [];
+            } else {
+                $restrictedPostals = explode(",", $moduleModel->gutesio_data_restrict_postals);
+                if ($restrictedPostals === false) {
+                    $restrictedPostals = [];
+                }
+            }
+
+        } catch(\Throwable $error) {
+            $restrictedPostals = [];
+        }
+
+        $data = $this->showcaseService->loadDataChunk([], $offset, $limit, $typeIds, $tagIds, $restrictedPostals);
+
+        if ($mode === 4) {
+            $tmpData = [];
+            foreach ($data as $key => $value) {
+                $exit = false;
+                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
+                foreach ($value['types'] as $type) {
+                    if (in_array($type['uuid'], $blockedTypeIds)) {
+                        $exit = true;
+                        break;
+                    }
+                }
+                if (!$exit) {
+                    $tmpData[] = $value;
+                }
+            }
+            $data = $tmpData;
+        }
+
+        return $data;
     }
 
     private function checkCookieForClientUuid(Request $request)
@@ -707,23 +783,48 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         return $optionData;
     }
 
-    protected function getSearchLinks(): array
+    protected function getSearchLinks($result = false): array
     {
         $database = Database::getInstance();
-        $result = $database->prepare('SELECT alias FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
+        $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
         $links = [];
         foreach ($result as $row) {
             $alias = $row['alias'];
+            $name  = $row['name'];
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
                 $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
             } else {
                 $href = $this->pageUrl . '/' . $alias;
             }
             $links[] = [
-                'link' => "<a href=\"$href\"></a>"
+                'link' => "<a href=\"$href\">".$name."</a>"
             ];
         }
         return $links;
+    }
+
+    protected function getMetaData($elements = []) {
+        $meta = '';
+        $last_key = end(array_keys($elements));
+        foreach ($elements as $key=>$row) {
+            $alias = $row['alias'];
+            $name  = $row['name'];
+            $image = $row['image']['src'];
+
+            if (C4GUtils::endsWith($this->pageUrl, '.html')) {
+                $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
+            } else {
+                $href = $this->pageUrl . '/' . $alias;
+            }
+
+            $meta .= '{"@type": "ListItem", "name": "'.htmlspecialchars(strip_tags($name)).'", "url": "{{env::url}}/'.$href.'", "image": "{{env::url}}/'.$image.'"}';
+
+            if ($key != $last_key) {
+                $meta .= ',';
+            }
+        }
+
+        return [$meta,count($elements)];
     }
 
     /**

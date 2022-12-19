@@ -809,7 +809,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         foreach ($elements as $key=>$row) {
             $alias = $row['alias'];
             $name  = $row['name'];
-            $image = $row['image']['src'];
+            $image = $row['imageList']['src'];
 
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
                 $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);

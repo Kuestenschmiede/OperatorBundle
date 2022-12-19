@@ -86,8 +86,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->alias !== "") {
             return new Response();
         }
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js", ResourceLoader::JAVASCRIPT, "c4g-all");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js|async", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
@@ -356,14 +356,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $typeIds = [];
         $tagIds = [];
 
-        $max = (int) $moduleModel->gutesio_data_max_data;
-        if ($max !== 0 && $offset >= $max) {
-            return new JsonResponse([]);
-        }
-        $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
-        if ($max !== 0 && ($limit + $offset) > $max) {
-            $limit = $max - $offset;
-        }
+//        $max = (int) $moduleModel->gutesio_data_max_data;
+//        if ($max !== 0 && $offset >= $max) {
+//            return new JsonResponse([]);
+//        }
+//        $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
+//        if ($max !== 0 && ($limit + $offset) > $max) {
+//            $limit = $max - $offset;
+//        }
+
+        $limit = 1000;
 
         $mode = intval($moduleModel->gutesio_data_mode);
         if ($mode === 1 || $mode === 2 || $mode === 4) {
@@ -387,7 +389,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $restrictedPostals = [];
         }
 
-        $data = $this->showcaseService->loadDataChunk([], $offset, $limit, $typeIds, $tagIds, $restrictedPostals);
+        $params['sorting'] = false; //dummy value
+        $data = $this->showcaseService->loadDataChunk($params, $offset, $limit, $typeIds, $tagIds, $restrictedPostals);
 
         if ($mode === 4) {
             $tmpData = [];

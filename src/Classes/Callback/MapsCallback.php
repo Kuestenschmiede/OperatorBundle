@@ -70,6 +70,31 @@ class MapsCallback extends Backend
 
         return $return;
     }
+    public function getFilterColumns()
+    {
+        $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published = 1';
+        $options = [];
+        $objOptions = $this->Database->prepare($strSelect)->execute()->fetchAllAssoc();
+        foreach ($objOptions  as $objOption) {
+            $options[$objOption['uuid']] = $objOption['name'];
+        }
+        $return = [
+            'filterOption' => [
+                'label'                 => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['filterOption'],
+                'exclude'               => true,
+                'inputType'             => 'select',
+                'options'            	=> $options,
+                'eval' 			        => ['style' => 'width:250px', 'includeBlankOption'=>false, 'chosen'=>true]
+            ],
+            'filterLink' => [
+                'label'                 => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['filterLink'],
+                'exclude'               => true,
+                'inputType'             => 'text',
+                'eval'                  => ['style'=>'width:200px']
+            ]
+        ];
+        return $return;
+    }
     public function getLocStyles()
     {
         $locStyles = $this->Database->prepare("SELECT id,name FROM tl_c4g_map_locstyles ORDER BY name")->execute();

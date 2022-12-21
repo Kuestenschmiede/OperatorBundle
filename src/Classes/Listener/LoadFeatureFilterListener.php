@@ -14,6 +14,7 @@ use con4gis\MapsBundle\Classes\Filter\FeatureFilter;
 use con4gis\MapsBundle\Classes\Services\FilterService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
+use Contao\Controller;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use Contao\Database;
 use Contao\FilesModel;
@@ -41,6 +42,8 @@ class LoadFeatureFilterListener
 
         if ($filterHandling == 1) { //Filters with tags
             if ($filterElements) {
+                $linkFilterElements = unserialize($modelProfile->linkFilterElements);
+
                 $arrFilterElems = unserialize($filterElements);
                 foreach ($arrFilterElems as $filterElem) {
                     $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published=1 AND uuid=?';
@@ -48,6 +51,14 @@ class LoadFeatureFilterListener
                     $filterObject = new FeatureFilter();
                     $filterObject->setFieldName($tag['name']);
 
+                    foreach ($linkFilterElements as $key => $linkFilterElement) {
+                        if ($tag['uuid'] === $linkFilterElement['filterOption']) {
+                            $link = $linkFilterElement['filterLink'];
+                        }
+                    }
+                    if ($link) {
+                        $filterObject->setLink($link);
+                    }
                     $imageUuid = StringUtil::binToUuid($tag['image']);
                     $file = FilesModel::findByUuid($imageUuid);
                     if ($file && $file->path) {
@@ -76,6 +87,10 @@ class LoadFeatureFilterListener
                 foreach ($tags as $tag) {
                     $filterObject = new FeatureFilter();
                     $filterObject->setFieldName($tag['name']);
+
+                    if ($tag['link']) {
+                        $filterObject->setLink($tag['link']);
+                    }
 
                     $imageUuid = StringUtil::binToUuid($tag['image']);
                     $file = FilesModel::findByUuid($imageUuid);

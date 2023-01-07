@@ -355,16 +355,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $offset = 0;
         $typeIds = [];
         $tagIds = [];
-
-//        $max = (int) $moduleModel->gutesio_data_max_data;
-//        if ($max !== 0 && $offset >= $max) {
-//            return new JsonResponse([]);
-//        }
-//        $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
-//        if ($max !== 0 && ($limit + $offset) > $max) {
-//            $limit = $max - $offset;
-//        }
-
         $limit = 1000;
 
         $mode = intval($moduleModel->gutesio_data_mode);

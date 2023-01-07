@@ -7552,7 +7552,8 @@ html {
   overflow: hidden
 }
 .c4g-list-outer .c4g-list-element__image-wrapper img {
-  transition: .6s ease-in-out
+  transition: .6s ease-in-out;
+  max-height: 600px;
 }
 .c4g-list-outer .c4g-list-element:hover {
   box-shadow: var(--gutes-box-shadow)

@@ -270,9 +270,10 @@ class ShowcaseService
         $tagIds = [],
         $restrictedPostals = []
     ) {
+        $sorting = 'random';
         if ($params && is_array($params)) {
             $searchString = key_exists('filter', $params) ? $params['filter'] : '';
-            $sorting = key_exists('sorting',$params) ? $params['sorting'] : '';
+            $sorting = key_exists('sorting',$params) ? $params['sorting'] : 'random';
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) ? explode(',', $params['pos']) : '';
         }

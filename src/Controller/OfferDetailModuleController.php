@@ -947,10 +947,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
             LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
             JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            LEFT JOIN tl_gutesio_data_child_event v ON a.uuid = v.childId ' . '
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.uuid = ?'
-            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY RAND()'
+            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate RAND, v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC'
         )->execute($childData['elementId'])->fetchAllAssoc();
         
         foreach ($childRows as $key => $row) {

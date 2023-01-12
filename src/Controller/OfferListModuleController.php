@@ -253,15 +253,10 @@ class OfferListModuleController extends AbstractFrontendModuleController
         if ($this->model->gutesio_child_sort_by_date) {
             if ($this->model->gutesio_child_data_mode === "1") {
                 $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-                $filterData = [
-                    'search' => $search,
-                    'moduleId' => $this->model->id,
-                    'filterFrom' => null,
-                    'filterUntil' => null,
-                    'sorting' => "date"
-                ];
                 $this->initialDateSort = true;
             }
+
+            $filterData['sorting'] = 'date';
         }
         
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);

@@ -508,7 +508,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("arrangement");
-        //$field->setExternalLinkField("external_link");
+        //$field->setExternalLinkField("external_link");$arrResult = array_merge($arrResult, $arrOffers);
         $fields[] = $field;
 
         $serviceUrl = str_replace($urlSuffix, "", $serviceUrl);
@@ -571,6 +571,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $arrWishlistElements = $db->prepare($sql)->execute($clientUuid)->fetchAllAssoc();
         $arrShowcaseElements = [];
         $arrOfferElements = [];
+        $arrResult = [];
         foreach ($arrWishlistElements as $element) {
             $table = $element['dataTable'];
             $uuid = $element['dataUuid'];
@@ -644,49 +645,52 @@ class WishlistModuleController extends AbstractFrontendModuleController
             }
             $vendorUuid = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ? LIMIT 1")
                 ->execute($element['uuid'])->fetchAssoc();
-            
-            $vendor = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?")
-                ->execute($vendorUuid['elementId'])->fetchAssoc();
-            $offer['vendor'] = html_entity_decode($vendor['name']);
-            $offer['name'] = html_entity_decode($element['name']);
 
-            //ToDo
-            if ($this->model->gutesio_show_contact_data) {
-                if ($vendor['contactStreet']) {
-                    $offer['contactStreet'] = html_entity_decode($vendor['contactStreet']);
-                    $offer['contactStreetNumber'] = html_entity_decode($vendor['contactStreetNumber']);
-                    $offer['contactZip'] = html_entity_decode($vendor['contactZip']);
-                    $offer['contactCity'] = html_entity_decode($vendor['contactCity']);
-                } else {
-                    $offer['contactStreet'] = html_entity_decode($vendor['locationStreet']);
-                    $offer['contactStreetNumber'] = html_entity_decode($vendor['locationStreetNumber']);
-                    $offer['contactZip'] = html_entity_decode($vendor['locationZip']);
-                    $offer['contactCity'] = html_entity_decode($vendor['locationCity']);
+            if ($vendorUuid['elementId']) {
+                $vendor = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?")
+                    ->execute($vendorUuid['elementId'])->fetchAssoc();
+                $offer['vendor'] = html_entity_decode($vendor['name']);
+                $offer['name'] = html_entity_decode($element['name']);
+
+                //ToDo
+                if ($this->model->gutesio_show_contact_data) {
+                    if ($vendor['contactStreet']) {
+                        $offer['contactStreet'] = html_entity_decode($vendor['contactStreet']);
+                        $offer['contactStreetNumber'] = html_entity_decode($vendor['contactStreetNumber']);
+                        $offer['contactZip'] = html_entity_decode($vendor['contactZip']);
+                        $offer['contactCity'] = html_entity_decode($vendor['contactCity']);
+                    } else {
+                        $offer['contactStreet'] = html_entity_decode($vendor['locationStreet']);
+                        $offer['contactStreetNumber'] = html_entity_decode($vendor['locationStreetNumber']);
+                        $offer['contactZip'] = html_entity_decode($vendor['locationZip']);
+                        $offer['contactCity'] = html_entity_decode($vendor['locationCity']);
+                    }
+                }
+
+                //hotfix special char
+                $offer['vendor'] = str_replace('&#39;', "'", $offer["vendor"]);
+                $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
+
+                $offer['internal_type'] = $element['internal_type'];
+                $offer['uuid'] = strtolower(str_replace(['{', '}'], '', $element['uuid']));
+                $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
+                $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
+                $offer['types'] = $type['name'];
+                $offer['alias'] = $element['alias'];
+                if ($element['foreignLink'] && $element['directLink']) {
+                    $offer['external_link'] = $element['foreignLink'];
+                }
+
+                if ($offer) {
+                    foreach ($element as $key => $item) {
+                        if (!array_key_exists($key, $offer)) {
+                            $offer[$key] = $item;
+                        }
+                    }
+                    $arrOffers[] = $offer;
                 }
             }
-
-            //hotfix special char
-            $offer['vendor'] = str_replace('&#39;', "'", $offer["vendor"]);
-            $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
-
-            $offer['internal_type'] = $element['internal_type'];
-            $offer['uuid'] = strtolower(str_replace(['{', '}'], '', $element['uuid']));
-            $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
-            $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
-            $offer['types'] = $type['name'];
-            $offer['alias'] = $element['alias'];
-            if ($element['foreignLink'] && $element['directLink']) {
-                $offer['external_link'] = $element['foreignLink'];
-            }
-
-            foreach ($element as $key => $item) {
-                if (!array_key_exists($key, $offer)) {
-                    $offer[$key] = $item;
-                }
-            }
-            $arrOffers[] = $offer;
         }
-        
         $arrResult = array_merge($arrResult, $arrOffers);
         return $this->recursivelyConvertToUtf8($arrResult);
     }

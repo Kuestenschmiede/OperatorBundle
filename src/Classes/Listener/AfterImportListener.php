@@ -83,10 +83,10 @@ class AfterImportListener
 
                     $this->escargot = $this->escargot
                         ->withLogger($this->createLogger())
-                        ->withConcurrency(10)
+                        ->withConcurrency(5) //10
                         ->withRequestDelay(0)
-                        ->withMaxRequests(0)
-                        ->withMaxDepth(0)
+                        ->withMaxRequests(20) //0
+                        ->withMaxDepth(10) //0
                     ;
 
                     $this->escargot->crawl();
@@ -113,7 +113,7 @@ class AfterImportListener
             $this->filesystem->remove($this->rootDir . '/var/logs/gutesio_crawl_log.csv');
         }
 
-        $csvDebugHandler = new CrawlCsvLogHandler($this->rootDir . '/var/logs/gutesio_crawl_log.csv', Logger::DEBUG);
+        $csvDebugHandler = new CrawlCsvLogHandler($this->rootDir . '/var/logs/gutesio_crawl_log.csv', Logger::INFO);
         $handlers[] = $csvDebugHandler;
 
         $groupHandler = new GroupHandler($handlers);

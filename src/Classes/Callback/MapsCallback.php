@@ -47,6 +47,8 @@ class MapsCallback extends Backend
     }
     public function getFilterOptions($dc)
     {
+        $return = [];
+
         if ($dc instanceof DC_Table) {
             $dc = $dc->activeRecord;
         }

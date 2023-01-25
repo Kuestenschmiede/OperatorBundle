@@ -271,10 +271,14 @@
   }
 
   &__section-tags {
+    .bookingGroup {
+      display:flex;
+    }
     .bookingButton {
       > a {
         @extend .c4g-btn;
         @include button-variant($gutes-tag-fields-tag-reservation, $gutes-tag-fields-tag-reservation);
+        margin-right: 1rem;
       }
     }
   }

@@ -7101,10 +7101,14 @@ html {
 .show > .detail-view__section-tags .menuLink > a.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
 }
+.detail-view__section-tags .bookingGroup {
+  display: flex
+}
 .detail-view__section-tags .bookingButton > a {
   color: #fff;
   background-color: #b073d9;
-  border-color: #b073d9
+  border-color: #b073d9;
+  margin-right: 1rem
 }
 .detail-view__section-tags .bookingButton > a:hover {
   color: #fff;

@@ -685,7 +685,7 @@
                                              <?php endif; ?>
                                              <?php if (isset($data->reservationContactPhone) && !empty($data->reservationContactPhone)): ?>
                                                  <div class="bookingButton entry-content phone" itemprop="phone">
-                                                     <a href="mailto:{{tel:<?= $data->reservationContactPhone ?>}}"title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?></a>
+                                                     <a href="tel:<?= $data->reservationContactPhone ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?></a>
                                                  </div>
                                               <?php endif; ?>
                                           </div>

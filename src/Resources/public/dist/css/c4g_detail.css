@@ -1908,6 +1908,7 @@ mark {
 .detail-view__contact-wrapper .phone > a,
 .detail-view__contact-wrapper .website > a,
 .detail-view__modal > button,
+.detail-view__section-tags .bookingButton > a,
 .detail-view__section-tags .menuLink > a {
   display: inline-block;
   font-weight: 400;
@@ -1949,6 +1950,7 @@ mark {
   .detail-view__contact-wrapper .phone > a,
   .detail-view__contact-wrapper .website > a,
   .detail-view__modal > button,
+  .detail-view__section-tags .bookingButton > a,
   .detail-view__section-tags .menuLink > a {
     transition: none
   }
@@ -1975,6 +1977,7 @@ mark {
 .detail-view__contact-wrapper .phone > a:hover,
 .detail-view__contact-wrapper .website > a:hover,
 .detail-view__modal > button:hover,
+.detail-view__section-tags .bookingButton > a:hover,
 .detail-view__section-tags .menuLink > a:hover {
   color: #212529;
   text-decoration: none
@@ -2019,6 +2022,8 @@ mark {
 .detail-view__contact-wrapper .website > a:focus,
 .detail-view__modal > button.focus,
 .detail-view__modal > button:focus,
+.detail-view__section-tags .bookingButton > a.focus,
+.detail-view__section-tags .bookingButton > a:focus,
 .detail-view__section-tags .menuLink > a.focus,
 .detail-view__section-tags .menuLink > a:focus,
 .focus.c4g-btn,
@@ -2068,6 +2073,8 @@ mark {
 .detail-view__contact-wrapper .website > a:disabled,
 .detail-view__modal > button.disabled,
 .detail-view__modal > button:disabled,
+.detail-view__section-tags .bookingButton > a.disabled,
+.detail-view__section-tags .bookingButton > a:disabled,
 .detail-view__section-tags .menuLink > a.disabled,
 .detail-view__section-tags .menuLink > a:disabled,
 .disabled.c4g-btn,
@@ -2098,6 +2105,7 @@ mark {
 .detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled),
 .detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled),
 .detail-view__modal > button:not(:disabled):not(.disabled),
+.detail-view__section-tags .bookingButton > a:not(:disabled):not(.disabled),
 .detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled) {
   cursor: pointer
 }
@@ -2131,7 +2139,9 @@ mark {
 .detail-view__contact-wrapper fieldset:disabled .email > a,
 .detail-view__contact-wrapper fieldset:disabled .phone > a,
 .detail-view__contact-wrapper fieldset:disabled .website > a,
+.detail-view__section-tags .bookingButton > a.disabled,
 .detail-view__section-tags .menuLink > a.disabled,
+.detail-view__section-tags fieldset:disabled .bookingButton > a,
 .detail-view__section-tags fieldset:disabled .menuLink > a,
 a.btn.disabled,
 a.disabled.c4g-btn,
@@ -2153,6 +2163,7 @@ fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop
 fieldset:disabled .detail-view__contact-wrapper .email > a,
 fieldset:disabled .detail-view__contact-wrapper .phone > a,
 fieldset:disabled .detail-view__contact-wrapper .website > a,
+fieldset:disabled .detail-view__section-tags .bookingButton > a,
 fieldset:disabled .detail-view__section-tags .menuLink > a,
 fieldset:disabled a.btn,
 fieldset:disabled a.c4g-btn,
@@ -2978,6 +2989,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .website > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__modal > button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__modal > button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__section-tags .bookingButton > a .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__section-tags .bookingButton > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .btn .c4g-list-element__tag,
@@ -3024,6 +3037,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .website > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__modal > button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__modal > button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__section-tags .bookingButton > a .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__section-tags .bookingButton > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__section-tags .menuLink > a .c4g-list-element__taglinks,
 .c4g-modal-content .c4g-btn-close .badge,
@@ -3110,6 +3125,12 @@ a.c4g-badge-tagfilter:hover {
 .detail-view__modal > button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .detail-view__modal > button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .detail-view__modal > button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.detail-view__section-tags .bookingButton > a .badge,
+.detail-view__section-tags .bookingButton > a .c4g-badge-tagfilter,
+.detail-view__section-tags .bookingButton > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.detail-view__section-tags .bookingButton > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.detail-view__section-tags .bookingButton > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.detail-view__section-tags .bookingButton > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .detail-view__section-tags .menuLink > a .badge,
 .detail-view__section-tags .menuLink > a .c4g-badge-tagfilter,
 .detail-view__section-tags .menuLink > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -6678,6 +6699,7 @@ html {
 .detail-view__contact-wrapper .phone > a,
 .detail-view__contact-wrapper .website > a,
 .detail-view__modal > button,
+.detail-view__section-tags .bookingButton > a,
 .detail-view__section-tags .menuLink > a {
   font-family: var(--btn-font-family);
   font-weight: var(--btn-font-weight);
@@ -6708,6 +6730,7 @@ html {
 .detail-view__contact-wrapper .phone > a:hover,
 .detail-view__contact-wrapper .website > a:hover,
 .detail-view__modal > button:hover,
+.detail-view__section-tags .bookingButton > a:hover,
 .detail-view__section-tags .menuLink > a:hover {
   filter: brightness(.85)
 }
@@ -7077,6 +7100,41 @@ html {
 .detail-view__section-tags .menuLink > a:not(:disabled):not(.disabled):active:focus,
 .show > .detail-view__section-tags .menuLink > a.dropdown-toggle:focus {
   box-shadow: 0 0 0 .2rem rgba(214,130,32,.5)
+}
+.detail-view__section-tags .bookingButton > a {
+  color: #fff;
+  background-color: #b073d9;
+  border-color: #b073d9
+}
+.detail-view__section-tags .bookingButton > a:hover {
+  color: #fff;
+  background-color: #9f55d1;
+  border-color: #994bce
+}
+.detail-view__section-tags .bookingButton > a.focus,
+.detail-view__section-tags .bookingButton > a:focus {
+  color: #fff;
+  background-color: #9f55d1;
+  border-color: #994bce;
+  box-shadow: 0 0 0 .2rem rgba(188,136,223,.5)
+}
+.detail-view__section-tags .bookingButton > a.disabled,
+.detail-view__section-tags .bookingButton > a:disabled {
+  color: #fff;
+  background-color: #b073d9;
+  border-color: #b073d9
+}
+.detail-view__section-tags .bookingButton > a:not(:disabled):not(.disabled).active,
+.detail-view__section-tags .bookingButton > a:not(:disabled):not(.disabled):active,
+.show > .detail-view__section-tags .bookingButton > a.dropdown-toggle {
+  color: #fff;
+  background-color: #994bce;
+  border-color: #9441cb
+}
+.detail-view__section-tags .bookingButton > a:not(:disabled):not(.disabled).active:focus,
+.detail-view__section-tags .bookingButton > a:not(:disabled):not(.disabled):active:focus,
+.show > .detail-view__section-tags .bookingButton > a.dropdown-toggle:focus {
+  box-shadow: 0 0 0 .2rem rgba(188,136,223,.5)
 }
 .detail-view__logos {
   display: inline-block
@@ -7552,8 +7610,7 @@ html {
   overflow: hidden
 }
 .c4g-list-outer .c4g-list-element__image-wrapper img {
-  transition: .6s ease-in-out;
-  max-height: 600px;
+  transition: .6s ease-in-out
 }
 .c4g-list-outer .c4g-list-element:hover {
   box-shadow: var(--gutes-box-shadow)

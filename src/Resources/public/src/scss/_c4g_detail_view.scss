@@ -270,6 +270,15 @@
     }
   }
 
+  &__section-tags {
+    .bookingButton {
+      > a {
+        @extend .c4g-btn;
+        @include button-variant($gutes-tag-fields-tag-reservation, $gutes-tag-fields-tag-reservation);
+      }
+    }
+  }
+
   // logos
   &__logos {
     //@include make-col-ready();

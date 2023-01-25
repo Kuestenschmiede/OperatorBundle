@@ -47,6 +47,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['technicalEquipment'] = "Techn
 $GLOBALS['TL_LANG'][$strName]['details']['label']['maxPersons'] = "Max persons:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCredits'] = "Showcase image credits";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCreditsOffer'] = "Offer image credits";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['onlineReservationButton'] = "Book online";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['eMailReservationButton'] = "Book per email";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['phoneReservationButton'] = "Book per phone";
 
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name and Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";

@@ -672,6 +672,25 @@
 
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
+                                <?php if (isset($data->bookable) && ($data->bookable == "1")): ?>
+                                <?php foreach ($data->tags as $k => $v): ?>
+                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && (strPos($v->linkHref, 'gutes.digital/booking'))): ?>
+                                        <div class="bookingButton">
+                                            <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
+                                        </div>
+                                        <?php if (isset($data->reservationContactEMail) && !empty($data->reservationContactEMail)): ?>
+                                            <div class="bookingButton entry-content email" itemprop="email">
+                                                <a href="mailto:{{email_url::<?= $data->reservationContactEMail ?>}}?subject=Veranstaltung: <?= str_replace(',','.', $data->name) ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailReservationButton']?></a>
+                                            </div>
+                                         <?php endif; ?>
+                                         <?php if (isset($data->reservationContactPhone) && !empty($data->reservationContactPhone)): ?>
+                                             <div class="bookingButton entry-content phone" itemprop="phone">
+                                                 <a href="mailto:{{tel:<?= $data->reservationContactPhone ?>}}"title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?></a>
+                                             </div>
+                                          <?php endif; ?>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                                <?php endif; ?>
                                 <div class="detail-field-wrapper__tags">
                                     <?php foreach ($data->tags as $k => $v): ?>
                                         <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">

@@ -133,7 +133,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         //ToDo load by module settings
         $elements = $this->getAllData($this->model);
 
-        if ($this->model->gutesio_data_render_searchHtml) {
+        if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_data_render_searchHtml) {
             $sc = new SearchConfiguration();
             $sc->addData($this->getSearchLinks($elements), ['link']);
             $template->searchHTML = $sc->getHTML();
@@ -783,8 +783,12 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $links = [];
         if ($result) {
             foreach ($result as $row) {
-                $alias = $row['alias'];
-                $name  = $row['name'];
+                $alias = is_array($row) && key_exists('alias', $row) ? $row['alias'] : false;
+                $name  = is_array($row) && key_exists('name', $row) ? $row['name'] : false;
+                if (!$alias || !$name) {
+                    continue;
+                }
+
                 if (C4GUtils::endsWith($this->pageUrl, '.html')) {
                     $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
                 } else {

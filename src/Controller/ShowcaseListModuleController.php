@@ -781,17 +781,19 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $database = Database::getInstance();
         $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
         $links = [];
-        foreach ($result as $row) {
-            $alias = $row['alias'];
-            $name  = $row['name'];
-            if (C4GUtils::endsWith($this->pageUrl, '.html')) {
-                $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
-            } else {
-                $href = $this->pageUrl . '/' . $alias;
+        if ($result) {
+            foreach ($result as $row) {
+                $alias = $row['alias'];
+                $name  = $row['name'];
+                if (C4GUtils::endsWith($this->pageUrl, '.html')) {
+                    $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
+                } else {
+                    $href = $this->pageUrl . '/' . $alias;
+                }
+                $links[] = [
+                    'link' => "<a href=\"$href\">".$name."</a>"
+                ];
             }
-            $links[] = [
-                'link' => "<a href=\"$href\">".$name."</a>"
-            ];
         }
         return $links;
     }

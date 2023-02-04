@@ -263,7 +263,11 @@
                         <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
                             <div class="col-12">
                                 <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['location'] ?></strong>
-                                <span> <?= $data->locationElementName ?></span>
+                                <?php if ($data->locationUrl): ?>
+                                    <span><a class="c4g-btn c4g-btn-primary" href="<?= $data->locationUrl ?>"><?= $data->locationElementName ?></a></span>
+                                <?php else: ?>
+                                    <span><?= $data->locationElementName ?></span>
+                                <?php endif; ?>
                             </div>
                         <?php endif; ?>
                     </div>

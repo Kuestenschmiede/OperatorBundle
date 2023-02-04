@@ -133,13 +133,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 $conf = new FrontendConfiguration('entrypoint_' . $model->id);
                 $components = $this->getDetailComponents($data, $request);
                 if ($data['type'] === "event") {
-                    if ($data['locationElementId']) {
-                        $elementUuid = $components['elements'][2][0]['uuid'];
-                        if ($elementUuid !== $data['locationElementId']) {
-                            $locationElementData = $this->getLocationElementData($data['locationElementId'], true);
-                            if ($locationElementData) {
-                                $objSettings = GutesioOperatorSettingsModel::findSettings();
-                                $data['locationUrl'] = $objSettings->showcaseDetailPage ? Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}").'/'.$locationElementData['alias'] : '';
+                    $elementUuid = $components['elements'][2][0]['uuid'];
+                    if ($data['locationElementId'] || $elementUuid) {
+                        $locationElementData = $this->getLocationElementData($data['locationElementId'] ?: $elementUuid, true);
+                        if ($locationElementData) {
+                            $objSettings = GutesioOperatorSettingsModel::findSettings();
+                            $data['locationUrl'] = $objSettings->showcaseDetailPage ? Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}") . '/' . $locationElementData['alias'] : '';
+                            if ($data['locationElementId'] && $elementUuid && ($elementUuid !== $data['locationElementId'])) {
                                 $locationList = $this->getLocationList();
                                 $conf->addTileList(
                                     $locationList,

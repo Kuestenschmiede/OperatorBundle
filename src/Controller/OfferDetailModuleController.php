@@ -781,8 +781,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $field->setExternalLinkField('foreignLink');
             $field->setExternalLinkFieldConditionField("directLink");
             $field->setExternalLinkFieldConditionValue("1");
+            $field->setConditionField('type');
+            $field->setConditionValue($key);
             $fields[] = $field;
-            break;
         }
 
         $field = new HeadlineTileField();
@@ -888,8 +889,8 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
         
-        $detailLinks = $this->getOfferDetailLinks();
-        $urlSuffix = Config::get('urlSuffix');
+//        $detailLinks = $this->getOfferDetailLinks();
+//        $urlSuffix = Config::get('urlSuffix');
         foreach ($detailLinks as $key => $value) {
             $value = str_replace($urlSuffix, "", $value);
             $field = new LinkButtonTileField();

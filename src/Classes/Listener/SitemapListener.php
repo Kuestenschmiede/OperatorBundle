@@ -5,9 +5,11 @@ namespace gutesio\OperatorBundle\Classes\Listener;
 use Ausi\SlugGenerator\SlugGenerator;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use Contao\ContentModel;
 use Contao\Controller;
 use Contao\CoreBundle\Event\SitemapEvent;
 use Contao\Database;
+use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
@@ -31,17 +33,54 @@ class SitemapListener
         }
     }
 
+    private function isOfferTypeinModule($category, $type) : bool
+    {
+        if ($category && $type) {
+            $db = Database::getInstance();
+
+            $moduleResult = $db->prepare("SELECT id FROM tl_module " .
+                "WHERE type = 'offer_list_module' AND (".
+                    "gutesio_child_data_mode = '0' OR ".
+                    "(gutesio_child_data_mode = '1' AND gutesio_child_type LIKE '%".$type."%') OR ".
+                    "(gutesio_child_data_mode = '2' AND gutesio_child_category LIKE '%".$category."%') OR ".
+                    "gutesio_child_data_mode = '3')")->execute()->fetchAllAssoc();
+
+            if ($moduleResult) {
+                foreach ($moduleResult as $module) {
+                    if ($module['id']) {
+                        $result = $db->prepare("SELECT id FROM tl_content " .
+                            "WHERE `type` = 'module' AND `module` = ? AND NOT `invisible` = '1'")->execute($module['id'])->fetchAllAssoc();
+                        if ($result) {
+                            //ToDo check visible parent (article)
+                            //Todo check tl_layout modules
+                            //ToDo check tags (3)
+                            return true;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
     private function getOfferUrls(array $pageIds) : array
     {
         $db = Database::getInstance();
-        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
+        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type, t.uuid as category FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
-            'where c.published = 1')->execute()->fetchAllAssoc();
+            'WHERE c.published = 1')->execute()->fetchAllAssoc();
 
         $urls = [];
 
         foreach ($pageIds as $pageId) {
             foreach ($result as $row) {
+                if (!$this->isOfferTypeinModule($row['category'], $row['type'])) {
+                    continue;
+                }
+
                 switch ($row['type']) {
                     case 'product':
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
@@ -82,7 +121,7 @@ class SitemapListener
                 $url = $page->getAbsoluteUrl();
                 $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
 
-                $urls[] = $this->combineUrl($page, $url, $alias);
+                $urls[$alias] = $this->combineUrl($page, $url, $alias);
             }
         }
 

@@ -74,7 +74,7 @@ $GLOBALS['TL_LANG'][$strName]['youtubeChannelLink'] = "YouTube channel";
 $GLOBALS['TL_LANG'][$strName]['vimeoChannelLink'] = "Vimeo channel";
 $GLOBALS['TL_LANG'][$strName]['wikipedia'] = "Wikipedia";
 $GLOBALS['TL_LANG'][$strName]['androidAppLink'] = "Android";
-$GLOBALS['TL_LANG'][$strName]['playstoreLink'] = "Playstore";
+$GLOBALS['TL_LANG'][$strName]['iosAppLink'] = "iOS";
 $GLOBALS['TL_LANG'][$strName]['alsoInteresting'] = "Also interesting";
 $GLOBALS['TL_LANG'][$strName]['more'] = "More";
 

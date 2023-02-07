@@ -956,11 +956,11 @@
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (isset($data->playstoreLink) && !empty($data->playstoreLink)): ?>
-                                        <div class="playstore-link c4g-icon-wrapper icon-app-store-ios"><a
-                                                    href="<?= $data->playstoreLink ?>" target="_blank"
+                                    <?php if (isset($data->iosAppLink) && !empty($data->iosAppLink)): ?>
+                                        <div class="ios-link c4g-icon-wrapper icon-app-store-ios"><a
+                                                    href="<?= $data->iosAppLink ?>" target="_blank"
                                                     rel="nofollow noopener"
-                                                    title="Playstore Link">Playstore</a>
+                                                    title="iOS Link">iOS</a>
                                         </div>
                                     <?php endif; ?>
                                 </section>

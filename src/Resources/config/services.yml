@@ -57,6 +57,13 @@ services:
                     renderer: forward,
                     template: mod_gutesio_mini_wishlist_module }
 
+    gutesio\OperatorBundle\Controller\BannerModuleController:
+      tags:
+        - { name: contao.frontend_module,
+            category: gutesio,
+            renderer: forward,
+            template: mod_gutesio_banner_module }
+
     gutesio\OperatorBundle\Controller\CartModuleController:
       public: true
       tags:

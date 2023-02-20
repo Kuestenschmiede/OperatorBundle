@@ -45,6 +45,11 @@ $GLOBALS['TL_LANG']['FMD']['wishlist_module'] = [
     'Kachelansicht der gemerkten Elemente.',
 ];
 
+$GLOBALS['TL_LANG']['FMD']['banner_module'] = [
+    'Werbebanner (Slider)',
+    'Slider zum automatischen Ausspielen von Werbeeinblendungen (Schaufenster und andere Inhalte).',
+];
+
 $GLOBALS['TL_LANG']['FMD']['cart_module'] = [
     'Warenkorb',
     '',

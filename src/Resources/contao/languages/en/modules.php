@@ -45,3 +45,15 @@ $GLOBALS['TL_LANG']['FMD']['wishlist_module'] = [
     'Lists the items on the wish list..',
 ];
 
+//ToDo translation
+
+$GLOBALS['TL_LANG']['FMD']['banner_module'] = [
+    'Werbebanner (Slider)',
+    'Slider zum automatischen Ausspielen von Werbeeinblendungen (Schaufenster und andere Inhalte).',
+];
+
+$GLOBALS['TL_LANG']['FMD']['cart_module'] = [
+    'Warenkorb',
+    '',
+];
+

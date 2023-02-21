@@ -1224,88 +1224,92 @@ class OfferLoaderService
                     $eventData['storeBeginDate'] = $eventData['beginDate'];
                     $eventDate['storeBeginTime'] = $eventData['beginTime'];
 
+                    //ToDo fix recurring
                     if ($beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
-                            $times = (int) $eventData['recurrences'];
-                            $value = (int) $repeatEach['value'];
-                            if ($times === 0) {
-                                $times = 100;
-                            }
-                            while ($times > 0) {
-                                $times -= 1;
-                                switch ($repeatEach['unit']) {
-                                    case 'weeks':
-                                        $beginDateTime->setDate(
-                                            $beginDateTime->format('Y'),
-                                            $beginDateTime->format('m'),
-                                            ((int) $beginDateTime->format('d')) + ($value * 7)
-                                        );
-                                        if ($times > 0) {
-                                            $nextDateTime = clone $beginDateTime;
-                                            $nextDateTime->setDate(
-                                                $nextDateTime->format('Y'),
-                                                $nextDateTime->format('m'),
-                                                ((int) $nextDateTime->format('d')) + ($value * 7)
-                                            );
-                                        }
-                                        $endDateTime = $beginDateTime;
-                                        break;
-                                    case 'months':
-                                        $beginDateTime->setDate(
-                                            $beginDateTime->format('Y'),
-                                            ((int) $beginDateTime->format('m')) + $value,
-                                            $beginDateTime->format('d')
-                                        );
-                                        if ($times > 0) {
-                                            $nextDateTime = clone $beginDateTime;
-                                            $nextDateTime->setDate(
-                                                $nextDateTime->format('Y'),
-                                                ((int) $nextDateTime->format('m')) + $value,
-                                                $nextDateTime->format('d')
-                                            );
-                                        }
-                                        $endDateTime = $beginDateTime;
-                                        break;
-                                    case 'years':
-                                        $beginDateTime->setDate(
-                                            ((int) $beginDateTime->format('Y')) + $value,
-                                            $beginDateTime->format('m'),
-                                            $beginDateTime->format('d')
-                                        );
-                                        if ($times > 0) {
-                                            $nextDateTime = clone $beginDateTime;
-                                            $nextDateTime->setDate(
-                                                ((int) $nextDateTime->format('Y')) + $value,
-                                                $nextDateTime->format('m'),
-                                                $nextDateTime->format('d')
-                                            );
-                                        }
-                                        $endDateTime = $beginDateTime;
-                                        break;
-                                    default:
-                                        $beginDateTime->setDate(
-                                            $beginDateTime->format('Y'),
-                                            $beginDateTime->format('m'),
-                                            ((int) $beginDateTime->format('d')) + $value
-                                        );
-                                        if ($times > 0) {
-                                            $nextDateTime = clone $beginDateTime;
-                                            $nextDateTime->setDate(
-                                                $nextDateTime->format('Y'),
-                                                $nextDateTime->format('m'),
-                                                ((int) $nextDateTime->format('d')) + $value
-                                            );
-                                        }
+                            if ($repeatEach && is_array($repeatEach)) {
+                                $times = key_exists('recurrences', $eventDate) && is_int($eventData['recurrences']) ? intval($eventData['recurrences']) : 0;
+                                $value = key_exists('value', $eventDate) && is_int($repeatEach['value']) ? intval($repeatEach['value']) : 0;
 
-                                        break;
+                                if ($times === 0) {
+                                    $times = 100;
                                 }
-                                if ($beginDateTime->getTimestamp() >= time()) {
-                                    break;
-                                } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
-                                    $tooOld = true;
+                                while ($times > 0) {
+                                    $times -= 1;
+                                    switch ($repeatEach['unit']) {
+                                        case 'weeks':
+                                            $beginDateTime->setDate(
+                                                $beginDateTime->format('Y'),
+                                                $beginDateTime->format('m'),
+                                                ((int) $beginDateTime->format('d')) + ($value * 7)
+                                            );
+                                            if ($times > 0) {
+                                                $nextDateTime = clone $beginDateTime;
+                                                $nextDateTime->setDate(
+                                                    $nextDateTime->format('Y'),
+                                                    $nextDateTime->format('m'),
+                                                    ((int) $nextDateTime->format('d')) + ($value * 7)
+                                                );
+                                            }
+                                            $endDateTime = $beginDateTime;
+                                            break;
+                                        case 'months':
+                                            $beginDateTime->setDate(
+                                                $beginDateTime->format('Y'),
+                                                ((int) $beginDateTime->format('m')) + $value,
+                                                $beginDateTime->format('d')
+                                            );
+                                            if ($times > 0) {
+                                                $nextDateTime = clone $beginDateTime;
+                                                $nextDateTime->setDate(
+                                                    $nextDateTime->format('Y'),
+                                                    ((int) $nextDateTime->format('m')) + $value,
+                                                    $nextDateTime->format('d')
+                                                );
+                                            }
+                                            $endDateTime = $beginDateTime;
+                                            break;
+                                        case 'years':
+                                            $beginDateTime->setDate(
+                                                ((int) $beginDateTime->format('Y')) + $value,
+                                                $beginDateTime->format('m'),
+                                                $beginDateTime->format('d')
+                                            );
+                                            if ($times > 0) {
+                                                $nextDateTime = clone $beginDateTime;
+                                                $nextDateTime->setDate(
+                                                    ((int) $nextDateTime->format('Y')) + $value,
+                                                    $nextDateTime->format('m'),
+                                                    $nextDateTime->format('d')
+                                                );
+                                            }
+                                            $endDateTime = $beginDateTime;
+                                            break;
+                                        default:
+                                            $beginDateTime->setDate(
+                                                $beginDateTime->format('Y'),
+                                                $beginDateTime->format('m'),
+                                                ((int) $beginDateTime->format('d')) + $value
+                                            );
+                                            if ($times > 0) {
+                                                $nextDateTime = clone $beginDateTime;
+                                                $nextDateTime->setDate(
+                                                    $nextDateTime->format('Y'),
+                                                    $nextDateTime->format('m'),
+                                                    ((int) $nextDateTime->format('d')) + $value
+                                                );
+                                            }
 
-                                    break;
+                                            break;
+                                    }
+                                    if ($beginDateTime->getTimestamp() >= time()) {
+                                        break;
+                                    } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
+                                        $tooOld = true;
+
+                                        break;
+                                    }
                                 }
                             }
                         } elseif (($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {

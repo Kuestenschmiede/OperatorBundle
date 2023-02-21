@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
+    "update-browserlist": "npx browserslist@latest --update-db",
     "build-css": "gulp deploy",
     "watch-css": "gulp",
     "build-prod": "gulp deploy && webpack --config webpack.production.config.js",

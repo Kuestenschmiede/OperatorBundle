@@ -104,11 +104,12 @@ class BannerModuleController extends AbstractFrontendModuleController
         $db = Database::getInstance();
         // TODO verschiedene Ladetypen berücksichtigen
 
-        $arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element ')->execute()->fetchAllAssoc();
-        //$arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element WHERE displayComply=1')->execute()->fetchAllAssoc();
+        //$arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element ')->execute()->fetchAllAssoc();
+        $arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element WHERE displayComply=1')->execute()->fetchAllAssoc();
         foreach ($arrElements as $element) {
             $arrReturn = $this->getSlidesForElement($element, $template ,$arrReturn);
         }
+        $arrReturn = $arrReturn ?: [];
         shuffle($arrReturn);
         $template->arr = $arrReturn;
         /*$template->arr2 = [
@@ -152,7 +153,9 @@ class BannerModuleController extends AbstractFrontendModuleController
                 Where uuid = ?')->execute($value['typeId'])->fetchAssoc();
             if ($type['type'] === "event") {
                 $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($value['uuid'])->fetchAssoc();
-                if ($event['beginDate'] + $event['beginTime'] < time()) {
+
+                //Events der nächsten 3 Monate
+                if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*90)))) {
                     continue;
                 }
                 $timezone = new \DateTimeZone('Europe/London');
@@ -185,6 +188,10 @@ class BannerModuleController extends AbstractFrontendModuleController
                 }
             }
             $objImage = $value['imageOffer'] && FilesModel::findByUuid($value['imageOffer']) ? FilesModel::findByUuid($value['imageOffer']) : FilesModel::findByUuid($value['image']);
+
+            if ($objImage && $objImage->path && strpos($objImage->path, '/default/')) {
+                continue; //remove events with default images
+            }
             $singleEle = [
                 'type'  => "event",
                 'image' => [

@@ -168,8 +168,8 @@ class BannerModuleController extends AbstractFrontendModuleController
                     $endDateTime->setTimezone($timezone);
                     $termin .=" - " . $endDateTime->format('d.m.Y');
                 }
-                $beginTime = $event['beginTime']     && $event['beginTime'] === 86400 ? gmdate('H:i', $event['beginTime']) : false;
-                if ($event['beginTime']) {
+                $beginTime = $event['beginTime'] && $event['beginTime'] !== 86400 ? gmdate('H:i', $event['beginTime']) : false;
+                if ($beginTime) {
                     $termin .= ", " . $beginTime;
                 }
                 $endTime = $event['endTime'] ? gmdate('H:i', $event['endTime']) : false;

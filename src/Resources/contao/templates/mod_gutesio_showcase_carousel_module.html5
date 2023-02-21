@@ -11,6 +11,8 @@ $carouselClass = "carousel-item-" . $this->id;
 </div>
 </div>
 
+
+
 <script>
     /**
      * Owl Carousel 2

@@ -39,6 +39,7 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
@@ -48,6 +49,12 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
+
+
 
 class BannerModuleController extends AbstractFrontendModuleController
 {
@@ -94,13 +101,134 @@ class BannerModuleController extends AbstractFrontendModuleController
             $template->setData($data);
             $template->configuration = $jsonConf;
         }
+        $db = Database::getInstance();
+        // TODO verschiedene Ladetypen berücksichtigen
 
-        $template->entrypoint = 'entrypoint_'.$this->model->id;
+        $arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element ')->execute()->fetchAllAssoc();
+        //$arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element WHERE displayComply=1')->execute()->fetchAllAssoc();
+        foreach ($arrElements as $element) {
+            $arrReturn = $this->getSlidesForElement($element, $template ,$arrReturn);
+        }
+        shuffle($arrReturn);
+        $template->arr = $arrReturn;
+        /*$template->arr2 = [
+            [
+                'type' => 'element',
+                'image' => [
+                    'src' => 'https://schlick.land/files/con4gis_import_data/29/showcases/%7BD3183390-161C-0510-9C21-141E660DBE50%7D/wattwanderzentrum_2-imageShowcaseSize.jpg',
+                    'alt' => "Ein Bild 1",
+                ],
+                'logo' => [
+                    'src' => "https://schlick.land/files/con4gis_import_data/29/showcases/%7BD3183390-161C-0510-9C21-141E660DBE50%7D/wattwanderzentrum_ostfriesland_logo-share.png",
+                    'alt' => "Logo Slide 1"
+                ],
+                'title' => "Vestibulum ante ipsum ",
+                'slogan' => 'Vestibulum ante ipsum primis in faucibus orci l',
+                'qrcode' => 'https://schlick.land/files/con4gis_import_data/qrcode.jpg'
+            ],
+            [
+                'type' => 'element',
+                'image' => [
+                    'src' => 'https://schlick.land/files/con4gis_import_data/29/showcases/%7BFC35CE6C-4B73-D47A-4A9A-13D90AC05D83%7D/f21e9719f197bb4cd012cc9fbc2f19c9-imageShowcaseSize.jpg',
+                    'alt' => "Ein Bild Slide 2",
+                ],
+                'title' => "Donec rutrum congue",
+                'slogan' => 'Donec rutrum congue leo eget malesuada.',
+                'qrcode' => ''
+            ],
+        ];*/
         $response = $template->getResponse();
 
         return $response;
     }
-    
+    private function getSlidesForElement ($element, $template, $arrReturn = []) {
+        $db = Database::getInstance();
+        $result = $db->prepare('SELECT child.* FROM tl_gutesio_data_child AS child
+                    JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
+                Where con.elementId = ?')->execute($element['uuid'])->fetchAllAssoc();
+        $objLogo = FilesModel::findByUuid($element['logo']);
+        foreach ($result as $value) {
+            $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
+                Where uuid = ?')->execute($value['typeId'])->fetchAssoc();
+            if ($type['type'] === "event") {
+                $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($value['uuid'])->fetchAssoc();
+                if ($event['beginDate'] + $event['beginTime'] < time()) {
+                    continue;
+                }
+                $timezone = new \DateTimeZone('Europe/London');
+                $beginDateTime = new \DateTime();
+                $beginDateTime->setTimestamp($event['beginDate']);
+                $beginDateTime->setTimezone($timezone);
+                $termin = $beginDateTime->format('d.m.Y');
+
+
+                if ($event['endDate'] && $event['endDate'] !== $event['beginDate']) {
+                    $endDateTime = new \DateTime();
+                    $endDateTime->setTimestamp($event['endDate']);
+                    $endDateTime->setTimezone($timezone);
+                    $termin .=" - " . $endDateTime->format('d.m.Y');
+                }
+                $beginTime = $event['beginTime']     && $event['beginTime'] === 86400 ? gmdate('H:i', $event['beginTime']) : false;
+                if ($event['beginTime']) {
+                    $termin .= ", " . $beginTime;
+                }
+                $endTime = $event['endTime'] ? gmdate('H:i', $event['endTime']) : false;
+                if ($endTime && $endTime !== $beginTime) {
+                    $termin .= " - " . $endTime;
+                }
+                if ($beginTime) {
+                    $termin .= " Uhr";
+                }
+                if ($event['locationElementId'] && $event['locationElementId'] !== $element['uuid']) {
+                    $location = $db->prepare("SELECT name FROM tl_gutesio_data_element WHERE uuid=?")->execute($event['locationElementId'])->fetchAssoc();
+                    $location = $location['name'];
+                }
+            }
+            $objImage = $value['imageOffer'] && FilesModel::findByUuid($value['imageOffer']) ? FilesModel::findByUuid($value['imageOffer']) : FilesModel::findByUuid($value['image']);
+            $singleEle = [
+                'type'  => "event",
+                'image' => [
+                    'src' =>    $objImage->path,
+                    'alt' =>    $value['name'] ?: $objImage->alt
+                ],
+                'dateTime' => $termin,
+                'location' => $location,
+                'title' => $value['name'],
+                'slogan' => $value['shortDescription'],
+                'contact' => $element['name'],
+                'qrcode' => "https://schlick.land/files/con4gis_import_data/qrcode.jpg"
+            ];
+            if ($objLogo->path) {
+                $singleEle['logo'] = [
+                    'src' => $objLogo->path,
+                    'alt' => $element['name']
+                ];
+        }
+            $arrReturn[] = $singleEle;
+        }
+        $objImage = FilesModel::findByUuid($element['imageShowcase']);
+
+        $singleEle = [
+            'type'  => "element",
+            'image' => [
+                'src' =>    $objImage->path,
+                'alt' =>    $element['name'] ?: $objImage->alt
+            ],
+            'title' => $element['name'],
+            'slogan' => $element ['displaySlogan'] ?: $element['shortDescription'],
+            //'contact' => $value['name'],
+            'qrcode' => "https://schlick.land/files/con4gis_import_data/qrcode.jpg"
+        ];
+        if ($objLogo->path) {
+            $singleEle['logo'] = [
+                'src' => $objLogo->path,
+                'alt' => $element['name']
+            ];
+        }
+        $arrReturn[] = $singleEle;
+        return $arrReturn;
+
+    }
     private function getList()
     {
         $tileList = new TileList();

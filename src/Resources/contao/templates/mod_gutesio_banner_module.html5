@@ -1,8 +1,65 @@
-<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
-    <script>
-        window.frameworkData = window.frameworkData || [];
-        window.frameworkData.push(<?php echo $this->configuration; ?>);
-    </script>
-</div>
+<?php
+$this->id = "3";
 
-TEST
+
+
+?>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+
+<section class="banner-section banner-section-<?= $this->id ?>">
+    <div class="banner__tns-container">
+        <?php foreach ($this->arr as $item): ?>
+            <div class="banner-slide">
+                <div class="banner__image-wrapper">
+                    <img class="banner__image-item" src="<?= $item['image']['src'] ?>"
+                         alt="<?= $item['image']['alt'] ?>">
+                </div>
+
+                <div class="banner__text-wrapper">
+                    <div class="banner__headline-wrapper">
+                        <h1 class="banner__headline"><?= $item['title'] ?></h1>
+                    </div>
+
+                    <div class="banner__slogan">
+                        <p>
+                            <?= $item['slogan'] ?>
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="banner__footer">
+                    <div class="banner__footer-logo">
+                        <img class="banner__footer-logo-image" src="<?= $item['logo']['src'] ?>" alt="">
+                    </div>
+
+                    <div class="banner__footer-text">
+                        Kontaktdaten
+                    </div>
+
+                    <div class="banner__footer-qrcode">
+                        <img src="<?= $item['qrcode'] ?>" alt="">
+                    </div>
+
+
+                </div>
+
+            </div>
+        <?php endforeach; ?>
+    </div>
+</section>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
+
+<script type="module">
+    var slider = tns({
+        container: '.banner__tns-container',
+        items: 1,
+        slideBy: 'page',
+        autoplay: true,
+        controls: false,
+        nav: false,
+        autoplayButtonOutput: false
+    });
+</script>

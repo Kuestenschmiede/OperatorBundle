@@ -27,7 +27,8 @@
     "contao/core-bundle": "^4.9",
     "gutesio/data-model": "^2.0.9",
     "con4gis/framework": "^1.1.12",
-    "con4gis/maps": "^8.1.34"
+    "con4gis/maps": "^8.1.34",
+    "bacon/bacon-qr-code": "^2.0"
   },
   "conflict": {
     "contao/core": "*",

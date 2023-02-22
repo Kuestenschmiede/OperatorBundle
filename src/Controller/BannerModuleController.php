@@ -12,19 +12,14 @@ namespace gutesio\OperatorBundle\Controller;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
-use con4gis\FrameworkBundle\Classes\Conditions\FieldNotValueCondition;
-use con4gis\FrameworkBundle\Classes\Conditions\FieldValueCondition;
-use con4gis\FrameworkBundle\Classes\Conditions\OrCondition;
 use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
 use con4gis\FrameworkBundle\Classes\TileFields\AddressTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\LinkButtonTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\OSMOpeningHoursTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\PhoneTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use Contao\Config;
@@ -32,28 +27,17 @@ use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\Database;
 use Contao\FilesModel;
-use Contao\FrontendUser;
 use Contao\ModuleModel;
-use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
-use Symfony\Component\HttpFoundation\Cookie;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
-
 
 
 class BannerModuleController extends AbstractFrontendModuleController
@@ -112,32 +96,6 @@ class BannerModuleController extends AbstractFrontendModuleController
         $arrReturn = $arrReturn ?: [];
         shuffle($arrReturn);
         $template->arr = $arrReturn;
-        /*$template->arr2 = [
-            [
-                'type' => 'element',
-                'image' => [
-                    'src' => 'https://schlick.land/files/con4gis_import_data/29/showcases/%7BD3183390-161C-0510-9C21-141E660DBE50%7D/wattwanderzentrum_2-imageShowcaseSize.jpg',
-                    'alt' => "Ein Bild 1",
-                ],
-                'logo' => [
-                    'src' => "https://schlick.land/files/con4gis_import_data/29/showcases/%7BD3183390-161C-0510-9C21-141E660DBE50%7D/wattwanderzentrum_ostfriesland_logo-share.png",
-                    'alt' => "Logo Slide 1"
-                ],
-                'title' => "Vestibulum ante ipsum ",
-                'slogan' => 'Vestibulum ante ipsum primis in faucibus orci l',
-                'qrcode' => 'https://schlick.land/files/con4gis_import_data/qrcode.jpg'
-            ],
-            [
-                'type' => 'element',
-                'image' => [
-                    'src' => 'https://schlick.land/files/con4gis_import_data/29/showcases/%7BFC35CE6C-4B73-D47A-4A9A-13D90AC05D83%7D/f21e9719f197bb4cd012cc9fbc2f19c9-imageShowcaseSize.jpg',
-                    'alt' => "Ein Bild Slide 2",
-                ],
-                'title' => "Donec rutrum congue",
-                'slogan' => 'Donec rutrum congue leo eget malesuada.',
-                'qrcode' => ''
-            ],
-        ];*/
         $response = $template->getResponse();
 
         return $response;
@@ -148,6 +106,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                     JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
                 Where con.elementId = ?')->execute($element['uuid'])->fetchAllAssoc();
         $objLogo = FilesModel::findByUuid($element['logo']);
+        $childs = 0;
         foreach ($result as $value) {
             $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
                 Where uuid = ?')->execute($value['typeId'])->fetchAssoc();
@@ -210,8 +169,12 @@ class BannerModuleController extends AbstractFrontendModuleController
                     'src' => $objLogo->path,
                     'alt' => $element['name']
                 ];
-        }
+            }
             $arrReturn[] = $singleEle;
+            $childs++;
+            if ($this->model->gutesio_max_childs && ($childs >= $this->model->gutesio_max_childs)) {
+                break;
+            }
         }
         $objImage = FilesModel::findByUuid($element['imageShowcase']);
 

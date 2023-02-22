@@ -97,3 +97,5 @@ $GLOBALS['TL_LANG']['tl_module']['optional_heading_hint'] = "Das Feld 'Überschr
 $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'Die Auswahl des h-Tags (z.B. h3) entscheidet auch über die jeweilige Überschrift der Listenelemente.
                     Beispiel: Wird für die Überschrift h3 gewählt,
                     erhalten die Listenelemente darunter jeweils eine h4-Überschrift.';
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximale Anzahl an Inhalten pro Schaufenster','Sie können die Anzahl an Angeboten pro Schaufenster einschränken (Standard: 0 = unbegrenzt).'];

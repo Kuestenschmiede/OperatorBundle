@@ -395,5 +395,6 @@ template {
   background-color: rgba(255,255,255,.2);
   padding: 1rem;
   width: 100%;
-  text-align: center
+  text-align: center;
+  font-size: .7vw
 }

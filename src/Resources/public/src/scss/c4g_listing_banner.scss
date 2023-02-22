@@ -1,28 +1,7 @@
-//// mandatory
-//@import "variables_custom";
 @import "node_modules/bootstrap/scss/functions";
 @import "node_modules/bootstrap/scss/variables";
 @import "node_modules/bootstrap/scss/mixins";
-//
 @import "node_modules/bootstrap/scss/reboot";
-//@import "node_modules/bootstrap/scss/forms";
-//
-//@import "print";
-//
-//@import "gutes_vars";
-//@import "gutes_mixins";
-//
-//@import "node_modules/bootstrap/scss/images";
-//@import "node_modules/bootstrap/scss/buttons";
-//@import "node_modules/bootstrap/scss/badge";
-//@import "node_modules/bootstrap/scss/grid";
-//
-//@import "gutes-buttons";
-//@import "gutes-badges";
-//@import "gutes-general";
-//@import "c4g_list_banner";
-//@import "gutes_default/list_element";
-//@import "c4g_detail_modal";
 
 /**
 Banner Styles
@@ -186,5 +165,6 @@ $bg-banner: #e9e9e9;
     padding: 1rem;
     width: 100%;
     text-align: center;
+    font-size: 0.7vw;
   }
 }

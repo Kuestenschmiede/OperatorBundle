@@ -3746,6 +3746,14 @@ html {
 .c4g-list-element__price-wrapper {
   font-weight: 700
 }
+@-webkit-keyframes fadeIn {
+  0% {
+    opacity: 0
+  }
+  100% {
+    opacity: 1
+  }
+}
 @keyframes fadeIn {
   0% {
     opacity: 0
@@ -3814,6 +3822,7 @@ html {
   width: 400px;
   max-width: 100%;
   box-shadow: var(--gutes-box-shadow);
+  -webkit-animation: fadeIn .5s;
   animation: fadeIn .5s;
   margin-left: 15px;
   margin-right: 15px;

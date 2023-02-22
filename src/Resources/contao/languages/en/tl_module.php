@@ -88,3 +88,5 @@ $GLOBALS['TL_LANG']['tl_module']['optional_heading_hint'] = "The 'Headline' fiel
 $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'The selection of the h tag (e.g. h3) also decides the respective heading of the list elements.
                     Example: If h3 is selected for the heading,
                     the list elements below it will each have an h4 heading.';
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximum number of content per showcase','You can limit the number of offers per showcase (default: 0 = unlimited).'];

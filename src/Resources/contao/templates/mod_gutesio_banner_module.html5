@@ -103,7 +103,7 @@
         items: 1,
         slideBy: 'page',
         speed: 5000,
-        autoplayTimeout: 8000,
+        autoplayTimeout: 15000,
         autoplay: true,
         // autoplay: false,
         controls: false,

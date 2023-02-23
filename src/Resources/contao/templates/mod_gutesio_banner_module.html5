@@ -80,7 +80,7 @@
                         </div>
 
                         <div class="banner__footer-qrcode">
-                            <img src="<?= $item['qrcode'] ?>" alt="">
+                            <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
                         </div>
                     </div>
 

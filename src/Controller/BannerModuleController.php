@@ -9,6 +9,10 @@
  */
 namespace gutesio\OperatorBundle\Controller;
 
+use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\RendererStyle\RendererStyle;
+use BaconQrCode\Writer;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
@@ -57,39 +61,42 @@ class BannerModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
     {
         $this->model = $model;
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_banner.min.css");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async", ResourceLoader::JAVASCRIPT, "c4g-all");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
-        ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/phonehours.js|async", ResourceLoader::JAVASCRIPT, "phonehours");
 
-        System::loadLanguageFile('offer_list');
-        //System::loadLanguageFile("tl_gutesio_banner");
-        $list = $this->getList();
-        $fields = $this->getListFields();
-
-
-        $data = $this->getListData();
-        if (count($data) > 0 && is_array($data) && !($data[0])) {
-            $data = [$data];
-        }
-        
-        $fc = new FrontendConfiguration('entrypoint_'.$this->model->id);
-        $fc->addTileList($list, $fields, $data);
-        $jsonConf = json_encode($fc);
-        if ($jsonConf === false) {
-            // error encoding
-            C4gLogModel::addLogEntry("operator", json_last_error_msg());
-            $template->configuration = [];
-        } else {
-            $template->setData($data);
-            $template->configuration = $jsonConf;
-        }
         $db = Database::getInstance();
         // TODO verschiedene Ladetypen berücksichtigen
+        $mode = $model->gutesio_data_mode;
+        switch ($mode) {
+            case 0: {
+                $arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element WHERE displayComply=1')->execute()->fetchAllAssoc();
+                break;
+            }
+            case 1: {
+                $types = unserialize($model->gutesio_data_type);
+                $arrElements = [];
+                foreach ($types as $type) {
+                    $strSql = 'SELECT elem.* FROM tl_gutesio_data_element AS elem 
+                                JOIN tl_gutesio_data_element_type AS con 
+                            WHERE elem.displayComply=1 AND con.typeId=?';
+                    $arrElements = array_merge($arrElements,  $db->prepare($strSql)->execute($type)->fetchAllAssoc());
+                }
 
+                break;
+            }
+            case 2: {
+                $directories = unserialize($model->gutesio_data_directory);
+                break;
+            }
+            case 3: {
+                $tags = unserialize($model->gutesio_data_tags);
+                break;
+            }
+            case 4: {
+                $blockedTypes = unserialize($model->gutesio_data_blocked_types);
+                break;
+            }
+        }
         //$arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element ')->execute()->fetchAllAssoc();
-        $arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element WHERE displayComply=1')->execute()->fetchAllAssoc();
         foreach ($arrElements as $element) {
             $arrReturn = $this->getSlidesForElement($element, $template ,$arrReturn);
         }
@@ -102,6 +109,7 @@ class BannerModuleController extends AbstractFrontendModuleController
     }
     private function getSlidesForElement ($element, $template, $arrReturn = []) {
         $db = Database::getInstance();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
         $result = $db->prepare('SELECT child.* FROM tl_gutesio_data_child AS child
                     JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
                 Where con.elementId = ?')->execute($element['uuid'])->fetchAllAssoc();
@@ -151,6 +159,9 @@ class BannerModuleController extends AbstractFrontendModuleController
             if ($objImage && $objImage->path && strpos($objImage->path, '/default/')) {
                 continue; //remove events with default images
             }
+            $detailPage = $type['type'] . "DetailPage";
+            $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($value['uuid'],'{}');
+
             $singleEle = [
                 'type'  => "event",
                 'image' => [
@@ -162,7 +173,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                 'title' => $value['name'],
                 'slogan' => $value['shortDescription'],
                 'contact' => $element['name'],
-                'qrcode' => "https://schlick.land/files/con4gis_import_data/qrcode.jpg"
+                'qrcode' => base64_encode($this->generateQrCode($detailRoute))
             ];
             if ($objLogo->path) {
                 $singleEle['logo'] = [
@@ -177,6 +188,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         $objImage = FilesModel::findByUuid($element['imageShowcase']);
+        $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
         $singleEle = [
             'type'  => "element",
@@ -187,7 +199,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             'title' => $element['name'],
             'slogan' => $element ['displaySlogan'] ?: $element['shortDescription'],
             //'contact' => $value['name'],
-            'qrcode' => "https://schlick.land/files/con4gis_import_data/qrcode.jpg"
+            'qrcode' => base64_encode($this->generateQrCode($detailRoute))
         ];
         if ($objLogo->path) {
             $singleEle['logo'] = [
@@ -199,209 +211,13 @@ class BannerModuleController extends AbstractFrontendModuleController
         return $arrReturn;
 
     }
-    private function getList()
-    {
-        $tileList = new TileList();
-        $tileList->setClassName("bannerlist");
-        $tileList->setTileClassName("item");
-        $tileList->setLayoutType("list");
-        $headline = StringUtil::deserialize($this->model->headline);
-        $tileList->setHeadline($headline['value'] ?: '');
-        $tileList->setHeadlineLevel((int) str_replace("h", "", $headline['unit']) ?: 1);
-    
-        return $tileList;
-    }
-    
-    private function getListFields()
-    {
-        $fields = [];
-    
-        $field = new ImageTileField();
-        $field->setName("imageList");
-        $field->setWrapperClass('c4g-list-element__image-wrapper');
-        $field->setClass('c4g-list-element__image');
-        $fields[] = $field;
-    
-        $field = new HeadlineTileField();
-        $field->setName("name");
-        $field->setWrapperClass('c4g-list-element__title-wrapper');
-        $field->setClass('c4g-list-element__title');
-        $field->setLevel(3);
-        $fields[] = $field;
-    
-        $field = new TextTileField();
-        $field->setName("types");
-        $field->setWrapperClass('c4g-list-element__types-wrapper');
-        $field->setClass('c4g-list-element__types');
-        $fields[] = $field;
-
-        $field = new TagTileField();
-        $field->setName("tags");
-        $field->setWrapperClass("c4g-list-element__tags-wrapper");
-        $field->setClass("c4g-list-element__tag");
-        $field->setInnerClass("c4g-list-element__tag-image");
-        $field->setLinkField("linkHref");
-        $fields[] = $field;
-
-        $field = new TextTileField();
-        $field->setName("vendor");
-        $field->setWrapperClass('c4g-list-element__elementname-wrapper');
-        $field->setClass('c4g-list-element__elementname');
-        $fields[] = $field;
-
-        //ToDo weitere Daten
-        if ($this->model->gutesio_show_contact_data) {
-            $field = new AddressTileField();
-            $field->setName("address");
-            $field->setStreetName('contactStreet');
-            $field->setStreetNumberName('contactStreetNumber');
-            $field->setPostalName('contactZip');
-            $field->setCityName('contactCity');
-            $field->setWrapperClass("c4g-list-element__contact-address-wrapper");
-            $field->setClass("c4g-list-element__address");
-            $field->setConditionField(['contactable']);
-            $field->setConditionValue(["1"]);
-            $fields[] = $field;
-
-            $field = new AddressTileField();
-            $field->setName("address");
-            $field->setStreetName('locationStreet');
-            $field->setStreetNumberName('locationStreetNumber');
-            $field->setPostalName('locationZip');
-            $field->setCityName('locationCity');
-            $field->setWrapperClass("c4g-list-element__contact-address-wrapper");
-            $field->setClass("c4g-list-element__address");
-            $field->setConditionField(['contactable']);
-            $field->setConditionValue(["0"]);
-            $fields[] = $field;
-
-            $field = new PhoneTileField();
-            $field->setName("contactPhone");
-            $field->setWrapperClass("c4g-list-element__contact-phone-wrapper");
-            $field->setClass("c4g-list-element__phone");
-            $field->setConditionField(['contactable']);
-            $field->setConditionValue(["1"]);
-            $fields[] = $field;
-
-            $field = new PhoneTileField();
-            $field->setName("phone");
-            $field->setWrapperClass("c4g-list-element__contact-phone-wrapper");
-            $field->setClass("c4g-list-element__phone");
-            $field->setConditionField(['contactable']);
-            $field->setConditionValue(["0"]);
-            $fields[] = $field;
-
-            $field = new OSMOpeningHoursTileField();
-            $field->setName("phoneHours");
-            $field->setWrapperClass("c4g-list-element__contact-phonehours-wrapper");
-            $field->setClass("c4g-list-element__phonehours");
-            $fields[] = $field;
-
-        }
-
-        $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $showcaseUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->showcaseDetailPage."}}");
-        $productUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->productDetailPage."}}");
-        $eventUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}");
-        $jobUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
-        $serviceUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->serviceDetailPage."}}");
-        $arrangementUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
-        $personUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->personDetailPage."}}");
-        $voucherUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->voucherDetailPage."}}");
-    
-        $urlSuffix = Config::get('urlSuffix');
-        
-        $field = new WrapperTileField();
-        $field->setWrappedFields(['cart-link', 'uuid', 'alias', 'uuid']);
-        $field->setClass("c4g-list-element__buttons-wrapper");
-        $fields[] = $field;
-        
-        $showcaseUrl = str_replace($urlSuffix, "", $showcaseUrl);
-
-        return $fields;
-    }
-    
-    private function getListData()
-    {
-        $db = Database::getInstance();
-        $converter = new ShowcaseResultConverter();
-
-        $arrOffers = [];
-        foreach ($arrOfferElements as $element) {
-            $offer = [];
-            if (C4GUtils::isBinary($element['imageOffer'])) {
-                $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
-                if ($model) {
-                    $offer['imageList'] = $converter->createFileDataFromModel($model);
-                }
-            } else if ($element['imageOffer']) {
-                $model = FilesModel::findByUuid($element['imageOffer']);
-                if ($model) {
-                    $offer['imageList'] = $converter->createFileDataFromModel($model);
-                }
-            }
-            $vendorUuid = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ? LIMIT 1")
-                ->execute($element['uuid'])->fetchAssoc();
-
-            if ($vendorUuid['elementId']) {
-                $vendor = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?")
-                    ->execute($vendorUuid['elementId'])->fetchAssoc();
-                $offer['vendor'] = html_entity_decode($vendor['name']);
-                $offer['name'] = html_entity_decode($element['name']);
-
-                //ToDo
-                if ($this->model->gutesio_show_contact_data) {
-                    if ($vendor['contactStreet']) {
-                        $offer['contactStreet'] = html_entity_decode($vendor['contactStreet']);
-                        $offer['contactStreetNumber'] = html_entity_decode($vendor['contactStreetNumber']);
-                        $offer['contactZip'] = html_entity_decode($vendor['contactZip']);
-                        $offer['contactCity'] = html_entity_decode($vendor['contactCity']);
-                    } else {
-                        $offer['contactStreet'] = html_entity_decode($vendor['locationStreet']);
-                        $offer['contactStreetNumber'] = html_entity_decode($vendor['locationStreetNumber']);
-                        $offer['contactZip'] = html_entity_decode($vendor['locationZip']);
-                        $offer['contactCity'] = html_entity_decode($vendor['locationCity']);
-                    }
-                }
-
-                //hotfix special char
-                $offer['vendor'] = str_replace('&#39;', "'", $offer["vendor"]);
-                $offer['name'] = str_replace('&#39;', "'", $offer["name"]);
-
-                $offer['internal_type'] = $element['internal_type'];
-                $offer['uuid'] = strtolower(str_replace(['{', '}'], '', $element['uuid']));
-                $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
-                $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
-                $offer['types'] = $type['name'];
-                $offer['alias'] = $element['alias'];
-                if ($element['foreignLink'] && $element['directLink']) {
-                    $offer['external_link'] = $element['foreignLink'];
-                }
-
-                if ($offer) {
-                    foreach ($element as $key => $item) {
-                        if (!array_key_exists($key, $offer)) {
-                            $offer[$key] = $item;
-                        }
-                    }
-                    $arrOffers[] = $offer;
-                }
-            }
-        }
-
-        $arrResult = $arrOffers;//array_merge($arrResult, $arrOffers);
-        return $this->recursivelyConvertToUtf8($arrResult);
-    }
-
-    private function recursivelyConvertToUtf8($data)
-    {
-        if (is_array($data)) {
-            foreach ($data as $key => $value) {
-                $data[$key] = $this->recursivelyConvertToUtf8($value);
-            }
-        } elseif (is_string($data)) {
-            return mb_convert_encoding($data, "UTF-8", "UTF-8");
-        }
-        return $data;
+    private function generateQrCode ($link) {
+        $renderer = new ImageRenderer(
+            new RendererStyle(400),
+            new ImagickImageBackEnd('png')
+        );
+        $writer = new Writer($renderer);
+        $return = $writer->writeString($link);
+        return $return;
     }
 }

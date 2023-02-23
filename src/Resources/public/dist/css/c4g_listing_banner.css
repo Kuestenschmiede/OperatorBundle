@@ -276,7 +276,9 @@ template {
 }
 .banner-section {
   width: 100vw;
+  min-width: 960px;
   height: 100vh;
+  min-height: 540px;
   background-color: #fff;
   background-image: repeating-radial-gradient(circle at 0 0,transparent 0,#fff 10px),repeating-linear-gradient(#dbdbdb55,#dbdbdb)
 }

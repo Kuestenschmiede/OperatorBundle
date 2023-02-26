@@ -141,11 +141,14 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                             $data['locationUrl'] = $objSettings->showcaseDetailPage ? Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}") . '/' . $locationElementData['alias'] : '';
                             if ($data['locationElementId'] && $elementUuid && ($elementUuid !== $data['locationElementId'])) {
                                 $locationList = $this->getLocationList();
-                                $conf->addTileList(
-                                    $locationList,
-                                    $this->tileItems,
-                                    [$locationElementData]
-                                );
+
+                                if ($locationList && $this->tileItem && (count($locationElementData) > 0)) {
+                                    $conf->addTileList(
+                                        $locationList,
+                                        $this->tileItems,
+                                        [$locationElementData]
+                                    );
+                                }
                             }
                         }
                     }

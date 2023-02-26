@@ -3953,8 +3953,10 @@ html {
   transition: .6s ease-in-out;
   height: var(--gutes-grid-list-element-img-height);
   width: 100%;
-  -o-object-fit: cover;
-  object-fit: cover
+  -o-object-fit: contain;
+  object-fit: contain;
+  max-height: 225px;
+  padding-top: 1em
 }
 .c4g-grid-outer .c4g-list-element:hover,
 .c4g-plain-outer .c4g-list-element:hover {

@@ -81,7 +81,9 @@ html {
       @include transition(600ms);
       height: var(--gutes-grid-list-element-img-height);
       width: 100%;
-      object-fit: cover;
+      object-fit: contain;
+      max-height: 225px;
+      padding-top: 1em;
     }
 
     &:hover {

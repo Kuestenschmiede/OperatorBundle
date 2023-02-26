@@ -136,19 +136,17 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     $elementUuid = $components['elements'][2][0]['uuid'];
                     if ($data['locationElementId'] || $elementUuid) {
                         $locationElementData = $this->getLocationElementData($data['locationElementId'] ?: $elementUuid, true);
-                        if ($locationElementData) {
+                        if ($locationElementData && is_array($locationElementData) && key_exists('name', $locationElementData)) {
                             $objSettings = GutesioOperatorSettingsModel::findSettings();
                             $data['locationUrl'] = $objSettings->showcaseDetailPage ? Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}") . '/' . $locationElementData['alias'] : '';
                             if ($data['locationElementId'] && $elementUuid && ($elementUuid !== $data['locationElementId'])) {
                                 $locationList = $this->getLocationList();
 
-                                if ($locationList && $this->tileItem && (count($locationElementData) > 0)) {
-                                    $conf->addTileList(
-                                        $locationList,
-                                        $this->tileItems,
-                                        [$locationElementData]
-                                    );
-                                }
+                                $conf->addTileList(
+                                    $locationList,
+                                    $this->tileItems,
+                                    [$locationElementData]
+                                );
                             }
                         }
                     }

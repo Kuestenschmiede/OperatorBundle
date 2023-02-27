@@ -457,7 +457,7 @@ class Cart extends React.Component {
 
     if (typeof this.state.vendors.forEach === 'function') {
       if (this.state.vendors.length === 0) {
-        return (<p dangerouslySetInnerHTML={{__html: this.props.cartNoItemsText}}></p>);
+        return (<p className={"alert alert-dark"} dangerouslySetInnerHTML={{__html: this.props.cartNoItemsText}}></p>);
       }
       this.state.vendors.forEach(function (vendor, vIndex) {
         let articles = [];

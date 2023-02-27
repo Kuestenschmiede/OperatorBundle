@@ -73,32 +73,65 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
             case 1: {
                 $types = unserialize($model->gutesio_data_type);
-                $arrElements = [];
+                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                                JOIN tl_gutesio_data_element_type AS con ON con.elementId = elem.uuid
+                            WHERE elem.displayComply=1 AND con.typeId IN(";
                 foreach ($types as $type) {
-                    $strSql = 'SELECT elem.* FROM tl_gutesio_data_element AS elem 
-                                JOIN tl_gutesio_data_element_type AS con 
-                            WHERE elem.displayComply=1 AND con.typeId=?';
-                    $arrElements = array_merge($arrElements,  $db->prepare($strSql)->execute($type)->fetchAllAssoc());
+                    $strSql .= "'" . $type . "',";
                 }
-
+                $strSql = trim($strSql, ",") . ")";
+                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
                 break;
             }
             case 2: {
                 $directories = unserialize($model->gutesio_data_directory);
+                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                                JOIN tl_gutesio_data_element_type AS con ON con.elementId = elem.uuid
+                                JOIN tl_gutesio_data_directory_type as dirType ON dirType.typeId = con.typeId
+                            WHERE elem.displayComply=1 AND dirType.directoryId IN(";
+                foreach ($directories as $directory) {
+                    $strSql .= "'" . $directory . "',";
+                }
+                $strSql = trim($strSql, ",") . ")";
+                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
                 break;
             }
             case 3: {
-                $tags = unserialize($model->gutesio_data_tags);
+                $arrTags = unserialize($model->gutesio_data_tags);
+                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                                JOIN tl_gutesio_data_tag_element AS con ON con.elementId = elem.uuid
+                            WHERE elem.displayComply=1 AND con.tagId IN(";
+                foreach ($arrTags as $tag) {
+                    $strSql .= "'" . $tag . "',";
+                }
+                $strSql = trim($strSql, ",") . ")";
+                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();                foreach ($tags as $tag) {
+                    $strSql = 'SELECT elem.* FROM tl_gutesio_data_element AS elem 
+                                JOIN tl_gutesio_data_tag_element AS con ON con.elementId = elem.uuid
+                            WHERE elem.displayComply=1 AND con.tagId=?';
+                    $arrElements = array_merge($arrElements,  $db->prepare($strSql)->execute($tag)->fetchAllAssoc());
+                }
                 break;
             }
             case 4: {
                 $blockedTypes = unserialize($model->gutesio_data_blocked_types);
+                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                                JOIN tl_gutesio_data_element_type AS con ON con.elementId = elem.uuid
+                            WHERE elem.displayComply=1 AND con.typeId NOT IN(";
+                foreach ($blockedTypes as $blockedType) {
+                    $strSql .= "'" . $blockedType . "',";
+                }
+                $strSql = trim($strSql, ",") . ")";
+                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
+                break;
+            }
+            default: {
+                $arrElements = [];
                 break;
             }
         }
-        //$arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element ')->execute()->fetchAllAssoc();
         foreach ($arrElements as $element) {
-            $arrReturn = $this->getSlidesForElement($element, $template ,$arrReturn);
+            $arrReturn = $this->getSlidesForElement($element ,$arrReturn);
         }
         $arrReturn = $arrReturn ?: [];
         shuffle($arrReturn);
@@ -107,85 +140,73 @@ class BannerModuleController extends AbstractFrontendModuleController
 
         return $response;
     }
-    private function getSlidesForElement ($element, $template, $arrReturn = []) {
+    /**
+     * get the slides for the element and its children
+     * @param array $element
+     * @param array|null $arrReturn
+     * @return array
+     */
+    private function getSlidesForElement (array $element, ?array $arrReturn= []) {
         $db = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $result = $db->prepare('SELECT child.* FROM tl_gutesio_data_child AS child
+        $model = $this->model;
+        $mode = $model->gutesio_child_data_mode;
+        switch ($mode) {
+            case 0: {
+                $strSql = 'SELECT child.* FROM tl_gutesio_data_child AS child
                     JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
-                Where con.elementId = ?')->execute($element['uuid'])->fetchAllAssoc();
-        $objLogo = FilesModel::findByUuid($element['logo']);
-        $childs = 0;
-        foreach ($result as $value) {
-            $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
-                Where uuid = ?')->execute($value['typeId'])->fetchAssoc();
-            if ($type['type'] === "event") {
-                $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($value['uuid'])->fetchAssoc();
-
-                //Events der nächsten 3 Monate
-                if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*90)))) {
-                    continue;
-                }
-                $timezone = new \DateTimeZone('Europe/London');
-                $beginDateTime = new \DateTime();
-                $beginDateTime->setTimestamp($event['beginDate']);
-                $beginDateTime->setTimezone($timezone);
-                $termin = $beginDateTime->format('d.m.Y');
-
-
-                if ($event['endDate'] && $event['endDate'] !== $event['beginDate']) {
-                    $endDateTime = new \DateTime();
-                    $endDateTime->setTimestamp($event['endDate']);
-                    $endDateTime->setTimezone($timezone);
-                    $termin .=" - " . $endDateTime->format('d.m.Y');
-                }
-                $beginTime = $event['beginTime'] && $event['beginTime'] !== 86400 ? gmdate('H:i', $event['beginTime']) : false;
-                if ($beginTime) {
-                    $termin .= ", " . $beginTime;
-                }
-                $endTime = $event['endTime'] ? gmdate('H:i', $event['endTime']) : false;
-                if ($endTime && $endTime !== $beginTime) {
-                    $termin .= " - " . $endTime;
-                }
-                if ($beginTime) {
-                    $termin .= " Uhr";
-                }
-                if ($event['locationElementId'] && $event['locationElementId'] !== $element['uuid']) {
-                    $location = $db->prepare("SELECT name FROM tl_gutesio_data_element WHERE uuid=?")->execute($event['locationElementId'])->fetchAssoc();
-                    $location = $location['name'];
-                }
-            }
-            $objImage = $value['imageOffer'] && FilesModel::findByUuid($value['imageOffer']) ? FilesModel::findByUuid($value['imageOffer']) : FilesModel::findByUuid($value['image']);
-
-            if ($objImage && $objImage->path && strpos($objImage->path, '/default/')) {
-                continue; //remove events with default images
-            }
-            $detailPage = $type['type'] . "DetailPage";
-            $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($value['uuid'],'{}');
-
-            $singleEle = [
-                'type'  => "event",
-                'image' => [
-                    'src' =>    $objImage->path,
-                    'alt' =>    $value['name'] ?: $objImage->alt
-                ],
-                'dateTime' => $termin,
-                'location' => $location,
-                'title' => $value['name'],
-                'slogan' => $value['shortDescription'],
-                'contact' => $element['name'],
-                'qrcode' => base64_encode($this->generateQrCode($detailRoute))
-            ];
-            if ($objLogo->path) {
-                $singleEle['logo'] = [
-                    'src' => $objLogo->path,
-                    'alt' => $element['name']
-                ];
-            }
-            $arrReturn[] = $singleEle;
-            $childs++;
-            if ($this->model->gutesio_max_childs && ($childs >= $this->model->gutesio_max_childs)) {
+                WHERE con.elementId = ?';
+                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
                 break;
             }
+            case 1: {
+                $arrTypes = unserialize($model->gutesio_child_type);
+                $strSql = "SELECT DISTINCT child.* FROM tl_gutesio_data_child AS child
+                    JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
+                    JOIN tl_gutesio_data_child_type As type ON child.typeId = type.uuid
+                WHERE con.elementId = ? AND type.type IN(";
+                foreach ($arrTypes as $type) {
+                    $strSql .= "'" . $type . "',";
+                }
+                $strSql = trim($strSql, ",") . ")";
+                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
+                break;
+            }
+            case 2: {
+                $arrTypes = unserialize($model->gutesio_child_category);
+                $strSql = "SELECT child.* FROM tl_gutesio_data_child AS child
+                    JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
+                WHERE con.elementId = ? AND child.typeId IN(";
+                foreach ($arrTypes as $type) {
+                    $strSql .= "'" . $type . "',";
+                }
+                $strSql = trim($strSql, ",") . ")";
+                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
+                break;
+            }
+            case 3: {
+                $arrTags = unserialize($model->gutesio_child_tag);
+                $strSql = "SELECT DISTINCT child.* FROM tl_gutesio_data_child AS child
+                    JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
+                    JOIN tl_gutesio_data_child_tag As tag ON child.uuid = tag.childId
+                WHERE con.elementId = ? AND tag.tagId IN(";
+                foreach ($arrTags as $tag) {
+                    $strSql .= "'" . $tag . "',";
+                }
+                $strSql = trim($strSql, ",") . ")";
+                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
+                break;
+            }
+            default: {
+                $arrChilds = [];
+            }
+        }
+        $objLogo = FilesModel::findByUuid($element['logo']);
+        foreach ($arrChilds as $key => $child) {
+            if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
+                break;
+            }
+            $arrReturn = $this->getSlidesForChild($child, $element, $objLogo, $arrReturn);
         }
         $objImage = FilesModel::findByUuid($element['imageShowcase']);
         $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
@@ -211,7 +232,86 @@ class BannerModuleController extends AbstractFrontendModuleController
         return $arrReturn;
 
     }
-    private function generateQrCode ($link) {
+    /**
+     * get the slides for the element and its children
+     * @param array $child
+     * @param array $element
+     * @param FilesModel $objLogo
+     * @param array|null $arrReturn
+     * @return array
+     */
+    private function getSlidesForChild (array $child, array $element, FilesModel $objLogo, ?array $arrReturn = []) {
+        $db = Database::getInstance();
+        $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
+                WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
+        if ($type['type'] === "event") {
+            $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($child['uuid'])->fetchAssoc();
+
+            //Events der nächsten 3 Monate
+            if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*90)))) {
+                return $arrReturn;
+            }
+            $timezone = new \DateTimeZone('Europe/London');
+            $beginDateTime = new \DateTime();
+            $beginDateTime->setTimestamp($event['beginDate']);
+            $beginDateTime->setTimezone($timezone);
+            $termin = $beginDateTime->format('d.m.Y');
+
+
+            if ($event['endDate'] && $event['endDate'] !== $event['beginDate']) {
+                $endDateTime = new \DateTime();
+                $endDateTime->setTimestamp($event['endDate']);
+                $endDateTime->setTimezone($timezone);
+                $termin .=" - " . $endDateTime->format('d.m.Y');
+            }
+            $beginTime = $event['beginTime'] && $event['beginTime'] !== 86400 ? gmdate('H:i', $event['beginTime']) : false;
+            if ($beginTime) {
+                $termin .= ", " . $beginTime;
+            }
+            $endTime = $event['endTime'] ? gmdate('H:i', $event['endTime']) : false;
+            if ($endTime && $endTime !== $beginTime) {
+                $termin .= " - " . $endTime;
+            }
+            if ($beginTime) {
+                $termin .= " Uhr";
+            }
+            if ($event['locationElementId'] && $event['locationElementId'] !== $element['uuid']) {
+                $location = $db->prepare("SELECT name FROM tl_gutesio_data_element WHERE uuid=?")->execute($event['locationElementId'])->fetchAssoc();
+                $location = $location['name'];
+            }
+        }
+        $objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
+
+        if ($objImage && $objImage->path && strpos($objImage->path, '/default/')) {
+            return $arrReturn; //remove events with default images
+        }
+        $detailPage = $type['type'] . "DetailPage";
+        $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($child['uuid'],'{}');
+
+        $singleEle = [
+            'type'  => "event",
+            'image' => [
+                'src' =>    $objImage->path,
+                'alt' =>    $child['name'] ?: $objImage->alt
+            ],
+            'dateTime' => $termin,
+            'location' => $location,
+            'title' => $child['name'],
+            'slogan' => $child['shortDescription'],
+            'contact' => $element['name'],
+            'qrcode' => base64_encode($this->generateQrCode($detailRoute))
+        ];
+        if ($objLogo->path) {
+            $singleEle['logo'] = [
+                'src' => $objLogo->path,
+                'alt' => $element['name']
+            ];
+        }
+        $arrReturn[] = $singleEle;
+        $childs++;
+        return $arrReturn;
+    }
+    private function generateQrCode (String $link) {
         $renderer = new ImageRenderer(
             new RendererStyle(400),
             new ImagickImageBackEnd('png')

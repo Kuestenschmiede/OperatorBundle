@@ -9,8 +9,15 @@
  */
 namespace gutesio\OperatorBundle\Controller;
 
+use BaconQrCode\Renderer\Color\Rgb;
+use BaconQrCode\Renderer\Eye\SquareEye;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
+use BaconQrCode\Renderer\Module\SquareModule;
+use BaconQrCode\Renderer\RendererStyle\EyeFill;
+use BaconQrCode\Renderer\RendererStyle\Fill;
+use BaconQrCode\Renderer\RendererStyle\Gradient;
+use BaconQrCode\Renderer\RendererStyle\GradientType;
 use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use con4gis\CoreBundle\Classes\C4GUtils;
@@ -242,6 +249,7 @@ class BannerModuleController extends AbstractFrontendModuleController
      */
     private function getSlidesForChild (array $child, array $element, FilesModel $objLogo, ?array $arrReturn = []) {
         $db = Database::getInstance();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
         $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
                 WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
         if ($type['type'] === "event") {
@@ -312,10 +320,23 @@ class BannerModuleController extends AbstractFrontendModuleController
         return $arrReturn;
     }
     private function generateQrCode (String $link) {
+        $eye = SquareEye::instance();
+        $squareModule = SquareModule::instance();
+
+        $eyeFill = new EyeFill(new Rgb(0, 155, 233), new Rgb(0, 155, 233));
+        $gradient = new Gradient(new Rgb(13, 59, 93), new Rgb(13, 59, 93), GradientType::HORIZONTAL());
+
         $renderer = new ImageRenderer(
-            new RendererStyle(400),
+            new RendererStyle(
+                400,
+                2,
+                $squareModule,
+                $eye,
+                Fill::withForegroundGradient(new Rgb(255, 255, 255), $gradient, $eyeFill, $eyeFill, $eyeFill)
+            ),
             new ImagickImageBackEnd('png')
         );
+
         $writer = new Writer($renderer);
         $return = $writer->writeString($link);
         return $return;

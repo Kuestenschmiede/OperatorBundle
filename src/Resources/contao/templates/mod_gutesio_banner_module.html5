@@ -78,7 +78,6 @@
                             </div>
 
                         </div>
-
                         <div class="banner__footer-qrcode">
                             <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
                         </div>
@@ -86,6 +85,8 @@
 
                     <div class="banner__footer-sub">
                         Powered by gutes.digital
+                        <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
+                             alt="gutes.digital Logo">
                     </div>
                 </div>
 

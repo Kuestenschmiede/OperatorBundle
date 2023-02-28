@@ -154,7 +154,8 @@ $bg-banner: #e9e9e9;
   }
 
   &__footer-qrcode {
-    flex: 0 0 140px;
+    flex: 0 0 12vw;
+    padding: 1.5rem;
   }
 
   &__footer-text {
@@ -167,6 +168,11 @@ $bg-banner: #e9e9e9;
     padding-bottom: 1rem;
     width: 100%;
     text-align: center;
-    font-size: 0.9vw;
+    font-size: 1.0vw;
+
+    .banner__footer-sub-image {
+        width: 1.2vw;
+        height: auto;
+    }
   }
 }

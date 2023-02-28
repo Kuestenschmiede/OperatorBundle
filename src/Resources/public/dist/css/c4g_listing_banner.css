@@ -384,11 +384,11 @@ template {
   flex: 1
 }
 .banner__footer-logo {
-  flex: 0 0 200px
+  flex: 0 0 14vw
 }
 .banner__footer-qrcode {
-  flex: 0 0 12vw;
-  padding: 1.5rem
+  flex: 0 0 10vw;
+  padding-right: 1.2vw
 }
 .banner__footer-text {
   flex: 1 1 auto;

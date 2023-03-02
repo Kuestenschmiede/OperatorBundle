@@ -99,3 +99,5 @@ $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'Die Auswahl des h-Tags
                     erhalten die Listenelemente darunter jeweils eine h4-Überschrift.';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximale Anzahl an Inhalten pro Schaufenster','Sie können die Anzahl an Angeboten pro Schaufenster einschränken (Standard: 0 = unbegrenzt).'];
+$GLOBALS['TL_LANG']['tl_module']['lazyBanner'] = ['Bilder nachladen','Bilder nachladen statt initial alles zu laden.'];
+$GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Banner automatisch aktualisieren','Banner automatisiert nach einer Stunde neu laden.'];

@@ -6,7 +6,7 @@
 
 <section class="banner-section">
     <div class="banner__tns-container">
-        <?php foreach ($this->arr as $item): ?>
+        <?php foreach ($this->arr as $key => $item): ?>
 
 
             <?php
@@ -14,17 +14,26 @@
             if ($item['type'] == "element") {
                 $slideClass = " slide-element";
             }
+            $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
             ?>
             <div class="banner-slide">
                 <div class="banner__image-wrapper<?= $slideClass ?>">
-                    <img class="banner__image-item" src="<?= $item['image']['src'] ?>"
-                         alt="<?= $item['image']['alt'] ?>">
+                    <?php if ($loadlazy): ?>
+                        <img class="banner__image-item" data-src="<?= $item['image']['src'] ?>"
+                             alt="<?= $item['image']['alt'] ?>">
+                    <?php else: ?>
+                        <img class="banner__image-item" src="<?= $item['image']['src'] ?>"
+                             alt="<?= $item['image']['alt'] ?>">
+                    <?php endif; ?>
                 </div>
 
                 <div class="banner__text-wrapper<?= $slideClass ?>">
 
                     <div class="text-wrapper-inner">
-                        <?php if (($item['type'] == "element") && $item['logo']): ?>
+                        <?php if (($item['type'] == "element") && $item['logo'] && $loadlazy): ?>
+                            <img class="banner__text-wrapper-image" data-src="<?= $item['logo']['src'] ?>"
+                                 alt="<?= $item['logo']['alt'] ?>">
+                        <?php elseif (($item['type'] == "element") && $item['logo']): ?>
                             <img class="banner__text-wrapper-image" src="<?= $item['logo']['src'] ?>"
                                  alt="<?= $item['logo']['alt'] ?>">
                         <?php endif; ?>
@@ -64,8 +73,14 @@
                         <div class="banner__footer-logo-text">
                             <?php if (($item['type'] == "event") && $item['logo']): ?>
                                 <div class="banner__footer-logo">
-                                    <img class="banner__footer-logo-image" src="<?= $item['logo']['src'] ?>"
-                                         alt="<?= $item['logo']['alt'] ?>">
+                                    <?php if ($loadlazy): ?>
+                                        <img class="banner__footer-logo-image" data-src="<?= $item['logo']['src'] ?>"
+                                             alt="<?= $item['logo']['alt'] ?>">
+                                    <?php else: ?>
+                                        <img class="banner__footer-logo-image" src="<?= $item['logo']['src'] ?>"
+                                             alt="<?= $item['logo']['alt'] ?>">
+                                    <?php endif; ?>
+
                                 </div>
                             <?php endif; ?>
 
@@ -79,13 +94,17 @@
 
                         </div>
                         <div class="banner__footer-qrcode">
-                            <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
+                            <?php if ($loadlazy): ?>
+                                <img data-src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
+                            <?php else: ?>
+                                <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
+                            <?php endif; ?>
                         </div>
                     </div>
 
                     <div class="banner__footer-sub">
                         Powered by gutes.digital
-                        <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
+                        <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
                              alt="gutes.digital Logo">
                     </div>
                 </div>
@@ -104,6 +123,10 @@
         items: 1,
         slideBy: 'page',
         speed: 5000,
+        <?php if ($loadlazy): ?>
+        lazyload: true,
+        lazyloadSelector: "banner__image-item",
+        <?php endif; ?>
         autoplayTimeout: 15000,
         autoplay: true,
         // autoplay: false,
@@ -112,4 +135,9 @@
         nav: false,
         autoplayButtonOutput: false
     });
+    <?php if($this->reloadBanner): ?>
+    window.setTimeout(()=> {
+       location.reload();
+    }, 3600000);
+    <?php endif; ?>
 </script>

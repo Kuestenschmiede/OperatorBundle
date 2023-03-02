@@ -71,7 +71,6 @@ class BannerModuleController extends AbstractFrontendModuleController
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_banner.min.css");
 
         $db = Database::getInstance();
-        // TODO verschiedene Ladetypen berücksichtigen
         $mode = $model->gutesio_data_mode;
         switch ($mode) {
             case 0: {
@@ -112,7 +111,8 @@ class BannerModuleController extends AbstractFrontendModuleController
                     $strSql .= "'" . $tag . "',";
                 }
                 $strSql = trim($strSql, ",") . ")";
-                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();                foreach ($tags as $tag) {
+                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
+                foreach ($tags as $tag) {
                     $strSql = 'SELECT elem.* FROM tl_gutesio_data_element AS elem 
                                 JOIN tl_gutesio_data_tag_element AS con ON con.elementId = elem.uuid
                             WHERE elem.displayComply=1 AND con.tagId=?';
@@ -143,6 +143,8 @@ class BannerModuleController extends AbstractFrontendModuleController
         $arrReturn = $arrReturn ?: [];
         shuffle($arrReturn);
         $template->arr = $arrReturn;
+        $template->loadlazy = $model->lazyBanner === "1";
+        $template->reloadBanner = $model->reloadBanner === "1";
         $response = $template->getResponse();
 
         return $response;

@@ -90,3 +90,5 @@ $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'The selection of the h
                     the list elements below it will each have an h4 heading.';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximum number of content per showcase','You can limit the number of offers per showcase (default: 0 = unlimited).'];
+$GLOBALS['TL_LANG']['tl_module']['lazyBanner'] = ['Lazy load images','Lazy load images instead of loading all at once.'];
+$GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Automatically reload banner','Automatically reload banner every hour.'];

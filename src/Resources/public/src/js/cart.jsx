@@ -191,6 +191,9 @@ class Article extends React.Component {
         pricePerUnit: 'Guthaben'
       }
     };
+    this.state = {
+      showOptions: false
+    }
   }
 
   numberFormat(value) {
@@ -209,6 +212,33 @@ class Article extends React.Component {
 
   render() {
     try {
+      let divOptions = null;
+      if (this.state.showOptions && this.props.article.options &&
+      this.props.article.options.length > 0) {
+        divOptions = <div id={"article" + this.props.article.articleId} className={'cart__article-more mt-3'}>
+          {
+            (() => {
+              let options = [];
+              this.props.article.options.forEach(function(element, index) {
+                options.push(
+                    <Option key={index}
+                            label={this.int.options[element.name]}
+                            updateValue={
+                              this.props.updateValue.bind(
+                                  this,
+                                  this.props.vendorKey,
+                                  this.props.articleKey
+                              )
+                            }
+                            defaultValue={this.props.article[element.name]}
+                            {...element}/>
+                );
+              }, this);
+              return options;
+            })()
+          }
+        </div>;
+      }
       return (
         <div key={this.props.index} className={"cart__article-row mb-3"}>
           <div className="card">
@@ -260,10 +290,11 @@ class Article extends React.Component {
                         this.props.article.options &&
                         this.props.article.options.length > 0 &&
                         <button type={'button'} className="btn btn-sm btn-outline-dark"
-                                data-toggle="collapse"
-                                data-target={"#article" + this.props.article.articleId}
-                                aria-expanded="false"
-                                aria-controls={"article" + this.props.article.articleId}>
+                                onClick={() => {
+                                  this.setState({
+                                    showOptions: !this.state.showOptions
+                                  });
+                                }}>
                           {this.int.moreOptions}
                         </button>
                       }
@@ -300,35 +331,10 @@ class Article extends React.Component {
                   </div>
                 </div>
               </div>
-              {
-                this.props.article.options &&
-                this.props.article.options.length > 0 &&
-                <div className="cart__article-row--two">
-                  <div id={"article" + this.props.article.articleId} className={'cart__article-more collapse mt-3'}>
-                    {
-                      (() => {
-                        let options = [];
-                        this.props.article.options.forEach(function(element, index) {
-                          options.push(
-                            <Option key={index}
-                                    label={this.int.options[element.name]}
-                                    updateValue={
-                                      this.props.updateValue.bind(
-                                        this,
-                                        this.props.vendorKey,
-                                        this.props.articleKey
-                                      )
-                                    }
-                                    defaultValue={this.props.article[element.name]}
-                                    {...element}/>
-                          );
-                        }, this);
-                        return options;
-                      })()
-                    }
-                  </div>
-                </div>
-              }
+              <div className="cart__article-row--two">
+                {divOptions}
+              </div>
+
             </div>
           </div>
         </div>);

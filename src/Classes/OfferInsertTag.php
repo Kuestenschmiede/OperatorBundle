@@ -134,6 +134,23 @@ class OfferInsertTag
                                     $showcaseUrl = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
                                     $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $objShowcase['alias'];
                                     $metaDescription = str_replace('IO_SHOWCASE_URL', $url, $metaDescription);
+
+
+
+
+                                    if (strpos($metaDescription,'IO_SHOWCASE_LOCATION_URL')) {
+                                        $locationElement = Database::getInstance()->prepare('SELECT locationElementId FROM tl_gutesio_data_child_event WHERE childId = ?')
+                                            ->execute($arrOffer['uuid'])->fetchAssoc();
+                                        if ($locationElement) {
+                                            $locationElemenObject = Database::getInstance()->prepare('SELECT alias FROM tl_gutesio_data_element WHERE `uuid` = ?')
+                                                ->execute($locationElement['locationElementId'])->fetchAssoc();
+                                            $locationUrl = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $locationElemenObject['alias'];
+                                            $metaDescription = str_replace('IO_SHOWCASE_LOCATION_URL', $locationUrl, $metaDescription);
+                                        }
+
+                                        //without locationElementId same showcase
+                                        $metaDescription = str_replace('IO_SHOWCASE_LOCATION_URL', $url, $metaDescription);
+                                    }
                                 }
                             }
 

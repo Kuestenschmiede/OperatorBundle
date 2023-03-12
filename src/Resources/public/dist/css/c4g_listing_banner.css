@@ -276,9 +276,7 @@ template {
 }
 .banner-section {
   width: 100vw;
-  min-width: 960px;
   height: 100vh;
-  min-height: 540px;
   background-color: #fff;
   background-image: repeating-radial-gradient(circle at 0 0,transparent 0,#fff 10px),repeating-linear-gradient(#dbdbdb55,#dbdbdb)
 }
@@ -305,7 +303,7 @@ template {
   gap: 1rem
 }
 .banner__text-wrapper.slide-element .text-wrapper-inner img {
-  max-width: 200px
+  max-width: 30%
 }
 .banner__text-wrapper.slide-offer {
   position: absolute;
@@ -314,7 +312,7 @@ template {
   padding: 1rem;
   border: 3px solid rgba(0,0,0,.1);
   border-radius: 5px;
-  background: #fff;
+  background: rgba(255,255,255,.9);
   bottom: 50%;
   transform: translate(75%,50%);
   box-shadow: 5px 5px 15px rgba(51,51,51,.3);
@@ -384,24 +382,24 @@ template {
   flex: 1
 }
 .banner__footer-logo {
-  flex: 0 0 14vw
+  flex: 0 0 15vh
 }
 .banner__footer-qrcode {
-  flex: 0 0 10vw;
+  flex: 0 0 15vh;
   padding-right: 1.2vw
 }
 .banner__footer-text {
   flex: 1 1 auto;
-  font-size: clamp(1.5rem,1.2vw,2rem)
+  font-size: clamp(1.5rem,1.2rem,2rem)
 }
 .banner__footer-sub {
   background-color: rgba(255,255,255,.2);
   padding-bottom: 1rem;
   width: 100%;
   text-align: center;
-  font-size: 1vw
+  font-size: 1.2rem
 }
 .banner__footer-sub .banner__footer-sub-image {
-  width: 1.2vw;
+  width: 1.2rem;
   height: auto
 }

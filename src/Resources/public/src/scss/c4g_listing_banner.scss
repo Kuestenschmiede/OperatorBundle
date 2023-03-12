@@ -10,9 +10,7 @@ $bg-banner: #e9e9e9;
 .banner {
   &-section {
     width: 100vw;
-    min-width: 960px;
     height: 100vh;
-    min-height: 540px;
     //background: rgba($bg-banner, 1);
     //background: linear-gradient(147deg, rgba($bg-banner, .3) 0%, rgba($bg-banner, .5) 25%, rgba($bg-banner, .7) 50%, rgba($bg-banner, .8) 75%, rgba($bg-banner, 1) 100%);
     background-color: #ffffff;
@@ -48,7 +46,7 @@ $bg-banner: #e9e9e9;
         gap: 1rem;
 
         img {
-          max-width: 200px;
+          max-width: 30%;
         }
       }
     }
@@ -60,7 +58,7 @@ $bg-banner: #e9e9e9;
       padding: 1rem;
       border: 3px solid rgba(0, 0, 0, .1);
       border-radius: 5px;
-      background: #ffffff;
+      background: rgba(255,255,255,.9);
       bottom: 50%;
       transform: translate(75%, 50%);
       box-shadow: 5px 5px 15px rgba(#333333, .3);
@@ -150,17 +148,17 @@ $bg-banner: #e9e9e9;
   }
 
   &__footer-logo {
-    flex: 0 0 14vw;
+    flex: 0 0 15vh;
   }
 
   &__footer-qrcode {
-    flex: 0 0 10vw;
+    flex: 0 0 15vh;
     padding-right: 1.2vw;
   }
 
   &__footer-text {
     flex: 1 1 auto;
-    font-size: clamp(1.5rem, 1.2vw, 2rem);
+    font-size: clamp(1.5rem, 1.2rem, 2rem);
   }
 
   &__footer-sub {
@@ -168,10 +166,10 @@ $bg-banner: #e9e9e9;
     padding-bottom: 1rem;
     width: 100%;
     text-align: center;
-    font-size: 1.0vw;
+    font-size: 1.2rem;
 
     .banner__footer-sub-image {
-        width: 1.2vw;
+        width: 1.2rem;
         height: auto;
     }
   }

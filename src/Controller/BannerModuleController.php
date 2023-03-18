@@ -261,10 +261,10 @@ class BannerModuleController extends AbstractFrontendModuleController
             if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*90)))) {
                 return $arrReturn;
             }
-            $timezone = new \DateTimeZone('Europe/London');
+            $timezone = new \DateTimeZone('Europe/Berlin');
             $beginDateTime = new \DateTime();
-            $beginDateTime->setTimestamp($event['beginDate']);
             $beginDateTime->setTimezone($timezone);
+            $beginDateTime->setTimestamp($event['beginDate']);
             $termin = $beginDateTime->format('d.m.Y');
 
 

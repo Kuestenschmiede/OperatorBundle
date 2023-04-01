@@ -66,10 +66,13 @@ class OfferLoaderService
         $this->setup();
         $limit = $this->limit;
         $tagIds = $filterData['tagIds'];
+        if (is_array($tagIds) && (count($tagIds) > 0) && strpos($tagIds[0],',')) {
+            $tagIds = explode(',',$tagIds[0]);
+        }
         $categoryIds = $filterData['categoryIds'];
 
-        $tagFilter = $tagIds && count($tagIds) > 0;
-        $categoryFilter = $categoryIds && count($categoryIds) > 0;
+        $tagFilter = $tagIds && (count($tagIds) > 0);
+        $categoryFilter = $categoryIds && (count($categoryIds) > 0);
         $dateFilter = $filterData['filterFrom'] || $filterData['filterUntil'];
         $sortFilter = $filterData['sorting'];
 
@@ -1559,6 +1562,7 @@ class OfferLoaderService
     {
         $result = [];
         $db = Database::getInstance();
+
         $tagString = C4GUtils::buildInString($tagIds);
         foreach ($data as $datum) {
             $sql = 'SELECT * FROM tl_gutesio_data_child_tag WHERE `childId` = ? AND `tagId` ' . $tagString;

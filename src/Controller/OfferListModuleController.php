@@ -22,6 +22,7 @@ use con4gis\FrameworkBundle\Classes\FormFields\HiddenFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\MultiCheckboxWithImageLabelFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RadioGroupFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\RequestTokenFormField;
+use con4gis\FrameworkBundle\Classes\FormFields\SelectFormField;
 use con4gis\FrameworkBundle\Classes\FormFields\TextFormField;
 use con4gis\FrameworkBundle\Classes\Forms\Form;
 use con4gis\FrameworkBundle\Classes\Forms\ToggleableForm;
@@ -50,6 +51,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -154,6 +156,13 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');
+        $requestTypeIds = $request->query->get("types");
+        if ($requestTypeIds === "" || $requestTypeIds === null) {
+            $requestTypeIds = [];
+        } else {
+            $requestTypeIds = explode(",", $requestTypeIds);
+        }
+
         if (count($tagIds) === 1 && $tagIds[0] === "") {
             $tagIds = [];
         }
@@ -161,6 +170,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $filterData = [
             'tagIds' => $tagIds,
+            'categoryIds' => $requestTypeIds,
             'filterFrom' => $request->query->get('filterFrom') ? intval((string)$request->query->get('filterFrom')) : null,
             'filterUntil' => $request->query->get('filterUntil') ? intval((string)$request->query->get('filterUntil')) : null,
             'sorting' => (string)$request->query->get('sorting')
@@ -296,6 +306,27 @@ class OfferListModuleController extends AbstractFrontendModuleController
         return $form;
     }
 
+    private function getCategoryOptions($selectedTypes = [])
+    {
+        if (is_array($selectedTypes) && count($selectedTypes) > 0) {
+            $typeStr = implode("','", $selectedTypes);
+            $database = Database::getInstance();
+            $sql = "SELECT DISTINCT tl_gutesio_data_child_type.uuid AS uuid, tl_gutesio_data_child_type.name AS name FROM tl_gutesio_data_child_type"
+                . " WHERE uuid IN ('" . $typeStr . "') ORDER BY name ASC";
+            $arrTypes = $database->prepare($sql)->execute()->fetchAllAssoc();
+        } else {
+            $arrTypes = GutesioDataChildTypeModel::findAll();
+            $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];
+        }
+
+        $options = [];
+        foreach ($arrTypes as $type) {
+            $options[] = ['value' => $type['uuid'],'label' => $type['name']];
+        }
+
+        return $options;
+    }
+
     protected function getFormFields()
     {
         $fields = [];
@@ -317,7 +348,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $field = new TextFormField();
         $field->setName('search');
-        $field->setLabel(str_replace('&#39;', "'", $this->model->gutesio_child_search_label));
+        $field->setLabel(str_replace('&#39;', "'", $this->model->gutesio_child_search_label) ?: $this->languageRefsFrontend['filter']['searchfilter']['label']);
         $field->setPlaceholder(str_replace('&#39;', "'", $this->model->gutesio_child_search_placeholder));
         $field->setDescription(str_replace('&#39;', "'", $this->model->gutesio_child_search_description));
         $field->setWrappingDiv();
@@ -334,6 +365,22 @@ class OfferListModuleController extends AbstractFrontendModuleController
         }
 
         $fields[] = $field;
+
+        if ($this->model->gutesio_enable_category_filter) {
+            $selectedTypes = unserialize($this->model->gutesio_category_filter_selection);
+            $types = $this->getCategoryOptions($selectedTypes);
+            $typeField = new SelectFormField();
+            $typeField->setName("types");
+            $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
+            $typeField->setClassName("form-view__type-filter");
+            $typeField->setPlaceholder("Kategorie auswählen");
+            $typeField->setOptions($types);
+            $typeField->setMultiple(true);
+            $typeField->setCache(true); //ToDo module switch
+            $typeField->setEntryPoint($this->model->id);
+            $fields[] = $typeField;
+        }
+
 
         $sortFilter = new RadioGroupFormField();
         $sortFilter->setName("sorting");

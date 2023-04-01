@@ -66,10 +66,14 @@ class OfferLoaderService
         $this->setup();
         $limit = $this->limit;
         $tagIds = $filterData['tagIds'];
+        $categoryIds = $filterData['categoryIds'];
+
         $tagFilter = $tagIds && count($tagIds) > 0;
+        $categoryFilter = $categoryIds && count($categoryIds) > 0;
         $dateFilter = $filterData['filterFrom'] || $filterData['filterUntil'];
         $sortFilter = $filterData['sorting'];
-        $hasFilter = $tagFilter || $sortFilter || $dateFilter;
+
+        $hasFilter = $tagFilter || $categoryFilter || $sortFilter || $dateFilter;
         if ($hasFilter) {
             // raise limit and ignore offset temporarily
             $limit = 5000;
@@ -88,6 +92,11 @@ class OfferLoaderService
         if ($tagFilter) {
             // filter using actual limit & offset
             $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, $this->limit);
+        }
+
+        if ($categoryFilter) {
+            // filter using actual limit & offset
+            $results = $this->applyCategoryFilter($results, $categoryIds, $tmpOffset, $this->limit);
         }
 
         if ($dateFilter) {
@@ -1556,6 +1565,23 @@ class OfferLoaderService
             $params = array_merge([$datum['uuid']], $tagIds);
             $tagChildConnections = $db->prepare($sql)->execute($params)->fetchAllAssoc();
             if (count($tagChildConnections) > 0) {
+                $result[] = $datum;
+            }
+        }
+
+        return $result;
+    }
+
+    public function applyCategoryFilter($data, $categoryIds, $offset, $limit)
+    {
+        $result = [];
+        $db = Database::getInstance();
+        $categoryString = C4GUtils::buildInString($categoryIds);
+        foreach ($data as $datum) {
+            $sql = 'SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ? AND `typeId` ' . $categoryString;
+            $params = array_merge([$datum['uuid']], $categoryIds);
+            $categoryChildConnections = $db->prepare($sql)->execute($params)->fetchAllAssoc();
+            if (count($categoryChildConnections) > 0) {
                 $result[] = $datum;
             }
         }

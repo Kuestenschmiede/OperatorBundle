@@ -32,6 +32,16 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_4'] = 'gutesio
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_enable_tag_filter';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_tag_filter'] = 'gutesio_tag_filter_selection';
 
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_enable_type_filter';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_type_filter'] = 'gutesio_type_filter_selection';
+
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_enable_category_filter';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_category_filter'] = 'gutesio_category_filter_selection';
+
+$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_change_layout_filter';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filter'] = 'gutesio_data_layout_filter';
+
+
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page,gutesio_load_klaro_consent;'.
@@ -45,8 +55,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{cart_legend},cart_page;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
-    'gutesio_child_filter,gutesio_data_change_layout_filter;'.
-    '{showcase_tag_filter_legend},gutesio_enable_tag_filter;';
+    'gutesio_child_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter, gutesio_enable_category_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
@@ -62,11 +71,6 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_0'] = ''
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_1'] = 'gutesio_child_type';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_2'] = 'gutesio_child_category';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_3'] = 'gutesio_child_tag';
-
-$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_enable_tag_filter';
-$GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_change_layout_filter';
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_enable_tag_filter'] = 'gutesio_tag_filter_selection';
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filter'] = 'gutesio_data_layout_filter';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_carousel_template;';
@@ -87,6 +91,14 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_type'] = [
+    'exclude'                 => true,
+    'inputType'               => 'select',
+    'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTypeOptions"],
+    'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
+    'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_type_filter_selection'] = [
     'exclude'                 => true,
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTypeOptions"],
@@ -346,6 +358,23 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_type'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_category'] = [
+    'exclude'                 => true,
+    'default'                 => serialize([]),
+    'inputType'               => 'select',
+    'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getCategoryOptions"],
+    'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
+    'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_enable_category_filter'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
+    'sql'                     => "char(1) NOT NULL default '0'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_category_filter_selection'] = [
     'exclude'                 => true,
     'default'                 => serialize([]),
     'inputType'               => 'select',

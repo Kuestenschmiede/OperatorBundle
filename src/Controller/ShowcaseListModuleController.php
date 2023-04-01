@@ -650,12 +650,13 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $blockedTypes = $dataMode == '4' ? unserialize($this->model->gutesio_data_blocked_types) : [];
 
         if ($this->model->gutesio_enable_type_filter) {
+            $selectedTypes = unserialize($this->model->gutesio_type_filter_selection);
             $typeField = new SelectFormField();
             $typeField->setName("types");
             $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
             $typeField->setClassName("form-view__type-filter");
             $typeField->setPlaceholder("Kategorie auswählen");
-            $typeField->setOptions($this->getTypeOptions($types, $blockedTypes));
+            $typeField->setOptions($this->getTypeOptions($selectedTypes ?: $types, $blockedTypes));
             $typeField->setMultiple(true);
             $typeField->setCache(true); //ToDo module switch
             $typeField->setEntryPoint($this->model->id);

@@ -339,9 +339,9 @@ template {
   opacity: 1
 }
 .c4g-listfilter-outer .c4g-form-control:disabled,
-.c4g-listfilter-outer .c4g-form-control[readonly],
 .c4g-listfilter-outer .react-datepicker__input-container input:disabled,
 .c4g-listfilter-outer .react-datepicker__input-container input[readonly],
+.c4g-listfilter-outer [readonly].c4g-form-control,
 .c4g-modal-content input:disabled,
 .c4g-modal-content input[readonly],
 .form-control:disabled,
@@ -353,10 +353,10 @@ template {
 .c4g-listfilter-outer .react-datepicker__input-container input[type=datetime-local],
 .c4g-listfilter-outer .react-datepicker__input-container input[type=month],
 .c4g-listfilter-outer .react-datepicker__input-container input[type=time],
-.c4g-listfilter-outer input.c4g-form-control[type=date],
-.c4g-listfilter-outer input.c4g-form-control[type=datetime-local],
-.c4g-listfilter-outer input.c4g-form-control[type=month],
-.c4g-listfilter-outer input.c4g-form-control[type=time],
+.c4g-listfilter-outer input[type=date].c4g-form-control,
+.c4g-listfilter-outer input[type=datetime-local].c4g-form-control,
+.c4g-listfilter-outer input[type=month].c4g-form-control,
+.c4g-listfilter-outer input[type=time].c4g-form-control,
 .c4g-modal-content input[type=date],
 .c4g-modal-content input[type=datetime-local],
 .c4g-modal-content input[type=month],
@@ -434,8 +434,8 @@ select.form-control:focus::-ms-value {
   line-height: 1.5;
   border-radius: .3rem
 }
-.c4g-listfilter-outer select.c4g-form-control[multiple],
-.c4g-listfilter-outer select.c4g-form-control[size],
+.c4g-listfilter-outer select[multiple].c4g-form-control,
+.c4g-listfilter-outer select[size].c4g-form-control,
 select.form-control[multiple],
 select.form-control[size] {
   height: auto
@@ -1053,8 +1053,8 @@ html {
   max-width: 50%
 }
 .row-cols-3 > * {
-  flex: 0 0 33.33333%;
-  max-width: 33.33333%
+  flex: 0 0 33.3333333333%;
+  max-width: 33.3333333333%
 }
 .row-cols-4 > * {
   flex: 0 0 25%;
@@ -1065,8 +1065,8 @@ html {
   max-width: 20%
 }
 .row-cols-6 > * {
-  flex: 0 0 16.66667%;
-  max-width: 16.66667%
+  flex: 0 0 16.6666666667%;
+  max-width: 16.6666666667%
 }
 .col-auto {
   flex: 0 0 auto;
@@ -1074,48 +1074,48 @@ html {
   max-width: 100%
 }
 .col-1 {
-  flex: 0 0 8.33333%;
-  max-width: 8.33333%
+  flex: 0 0 8.33333333%;
+  max-width: 8.33333333%
 }
 .col-2 {
-  flex: 0 0 16.66667%;
-  max-width: 16.66667%
+  flex: 0 0 16.66666667%;
+  max-width: 16.66666667%
 }
 .col-3 {
   flex: 0 0 25%;
   max-width: 25%
 }
 .col-4 {
-  flex: 0 0 33.33333%;
-  max-width: 33.33333%
+  flex: 0 0 33.33333333%;
+  max-width: 33.33333333%
 }
 .col-5 {
-  flex: 0 0 41.66667%;
-  max-width: 41.66667%
+  flex: 0 0 41.66666667%;
+  max-width: 41.66666667%
 }
 .col-6 {
   flex: 0 0 50%;
   max-width: 50%
 }
 .col-7 {
-  flex: 0 0 58.33333%;
-  max-width: 58.33333%
+  flex: 0 0 58.33333333%;
+  max-width: 58.33333333%
 }
 .col-8 {
-  flex: 0 0 66.66667%;
-  max-width: 66.66667%
+  flex: 0 0 66.66666667%;
+  max-width: 66.66666667%
 }
 .col-9 {
   flex: 0 0 75%;
   max-width: 75%
 }
 .col-10 {
-  flex: 0 0 83.33333%;
-  max-width: 83.33333%
+  flex: 0 0 83.33333333%;
+  max-width: 83.33333333%
 }
 .col-11 {
-  flex: 0 0 91.66667%;
-  max-width: 91.66667%
+  flex: 0 0 91.66666667%;
+  max-width: 91.66666667%
 }
 .col-12 {
   flex: 0 0 100%;
@@ -1167,37 +1167,37 @@ html {
   order: 12
 }
 .offset-1 {
-  margin-left: 8.33333%
+  margin-left: 8.33333333%
 }
 .offset-2 {
-  margin-left: 16.66667%
+  margin-left: 16.66666667%
 }
 .offset-3 {
   margin-left: 25%
 }
 .offset-4 {
-  margin-left: 33.33333%
+  margin-left: 33.33333333%
 }
 .offset-5 {
-  margin-left: 41.66667%
+  margin-left: 41.66666667%
 }
 .offset-6 {
   margin-left: 50%
 }
 .offset-7 {
-  margin-left: 58.33333%
+  margin-left: 58.33333333%
 }
 .offset-8 {
-  margin-left: 66.66667%
+  margin-left: 66.66666667%
 }
 .offset-9 {
   margin-left: 75%
 }
 .offset-10 {
-  margin-left: 83.33333%
+  margin-left: 83.33333333%
 }
 .offset-11 {
-  margin-left: 91.66667%
+  margin-left: 91.66666667%
 }
 @media (min-width:576px) {
   .col-sm {
@@ -1214,8 +1214,8 @@ html {
     max-width: 50%
   }
   .row-cols-sm-3 > * {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.3333333333%;
+    max-width: 33.3333333333%
   }
   .row-cols-sm-4 > * {
     flex: 0 0 25%;
@@ -1226,8 +1226,8 @@ html {
     max-width: 20%
   }
   .row-cols-sm-6 > * {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.6666666667%;
+    max-width: 16.6666666667%
   }
   .col-sm-auto {
     flex: 0 0 auto;
@@ -1235,48 +1235,48 @@ html {
     max-width: 100%
   }
   .col-sm-1 {
-    flex: 0 0 8.33333%;
-    max-width: 8.33333%
+    flex: 0 0 8.33333333%;
+    max-width: 8.33333333%
   }
   .col-sm-2 {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.66666667%;
+    max-width: 16.66666667%
   }
   .col-sm-3 {
     flex: 0 0 25%;
     max-width: 25%
   }
   .col-sm-4 {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.33333333%;
+    max-width: 33.33333333%
   }
   .col-sm-5 {
-    flex: 0 0 41.66667%;
-    max-width: 41.66667%
+    flex: 0 0 41.66666667%;
+    max-width: 41.66666667%
   }
   .col-sm-6 {
     flex: 0 0 50%;
     max-width: 50%
   }
   .col-sm-7 {
-    flex: 0 0 58.33333%;
-    max-width: 58.33333%
+    flex: 0 0 58.33333333%;
+    max-width: 58.33333333%
   }
   .col-sm-8 {
-    flex: 0 0 66.66667%;
-    max-width: 66.66667%
+    flex: 0 0 66.66666667%;
+    max-width: 66.66666667%
   }
   .col-sm-9 {
     flex: 0 0 75%;
     max-width: 75%
   }
   .col-sm-10 {
-    flex: 0 0 83.33333%;
-    max-width: 83.33333%
+    flex: 0 0 83.33333333%;
+    max-width: 83.33333333%
   }
   .col-sm-11 {
-    flex: 0 0 91.66667%;
-    max-width: 91.66667%
+    flex: 0 0 91.66666667%;
+    max-width: 91.66666667%
   }
   .col-sm-12 {
     flex: 0 0 100%;
@@ -1331,37 +1331,37 @@ html {
     margin-left: 0
   }
   .offset-sm-1 {
-    margin-left: 8.33333%
+    margin-left: 8.33333333%
   }
   .offset-sm-2 {
-    margin-left: 16.66667%
+    margin-left: 16.66666667%
   }
   .offset-sm-3 {
     margin-left: 25%
   }
   .offset-sm-4 {
-    margin-left: 33.33333%
+    margin-left: 33.33333333%
   }
   .offset-sm-5 {
-    margin-left: 41.66667%
+    margin-left: 41.66666667%
   }
   .offset-sm-6 {
     margin-left: 50%
   }
   .offset-sm-7 {
-    margin-left: 58.33333%
+    margin-left: 58.33333333%
   }
   .offset-sm-8 {
-    margin-left: 66.66667%
+    margin-left: 66.66666667%
   }
   .offset-sm-9 {
     margin-left: 75%
   }
   .offset-sm-10 {
-    margin-left: 83.33333%
+    margin-left: 83.33333333%
   }
   .offset-sm-11 {
-    margin-left: 91.66667%
+    margin-left: 91.66666667%
   }
 }
 @media (min-width:768px) {
@@ -1379,8 +1379,8 @@ html {
     max-width: 50%
   }
   .row-cols-md-3 > * {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.3333333333%;
+    max-width: 33.3333333333%
   }
   .row-cols-md-4 > * {
     flex: 0 0 25%;
@@ -1391,8 +1391,8 @@ html {
     max-width: 20%
   }
   .row-cols-md-6 > * {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.6666666667%;
+    max-width: 16.6666666667%
   }
   .col-md-auto {
     flex: 0 0 auto;
@@ -1400,48 +1400,48 @@ html {
     max-width: 100%
   }
   .col-md-1 {
-    flex: 0 0 8.33333%;
-    max-width: 8.33333%
+    flex: 0 0 8.33333333%;
+    max-width: 8.33333333%
   }
   .col-md-2 {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.66666667%;
+    max-width: 16.66666667%
   }
   .col-md-3 {
     flex: 0 0 25%;
     max-width: 25%
   }
   .col-md-4 {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.33333333%;
+    max-width: 33.33333333%
   }
   .col-md-5 {
-    flex: 0 0 41.66667%;
-    max-width: 41.66667%
+    flex: 0 0 41.66666667%;
+    max-width: 41.66666667%
   }
   .col-md-6 {
     flex: 0 0 50%;
     max-width: 50%
   }
   .col-md-7 {
-    flex: 0 0 58.33333%;
-    max-width: 58.33333%
+    flex: 0 0 58.33333333%;
+    max-width: 58.33333333%
   }
   .col-md-8 {
-    flex: 0 0 66.66667%;
-    max-width: 66.66667%
+    flex: 0 0 66.66666667%;
+    max-width: 66.66666667%
   }
   .col-md-9 {
     flex: 0 0 75%;
     max-width: 75%
   }
   .col-md-10 {
-    flex: 0 0 83.33333%;
-    max-width: 83.33333%
+    flex: 0 0 83.33333333%;
+    max-width: 83.33333333%
   }
   .col-md-11 {
-    flex: 0 0 91.66667%;
-    max-width: 91.66667%
+    flex: 0 0 91.66666667%;
+    max-width: 91.66666667%
   }
   .col-md-12 {
     flex: 0 0 100%;
@@ -1496,37 +1496,37 @@ html {
     margin-left: 0
   }
   .offset-md-1 {
-    margin-left: 8.33333%
+    margin-left: 8.33333333%
   }
   .offset-md-2 {
-    margin-left: 16.66667%
+    margin-left: 16.66666667%
   }
   .offset-md-3 {
     margin-left: 25%
   }
   .offset-md-4 {
-    margin-left: 33.33333%
+    margin-left: 33.33333333%
   }
   .offset-md-5 {
-    margin-left: 41.66667%
+    margin-left: 41.66666667%
   }
   .offset-md-6 {
     margin-left: 50%
   }
   .offset-md-7 {
-    margin-left: 58.33333%
+    margin-left: 58.33333333%
   }
   .offset-md-8 {
-    margin-left: 66.66667%
+    margin-left: 66.66666667%
   }
   .offset-md-9 {
     margin-left: 75%
   }
   .offset-md-10 {
-    margin-left: 83.33333%
+    margin-left: 83.33333333%
   }
   .offset-md-11 {
-    margin-left: 91.66667%
+    margin-left: 91.66666667%
   }
 }
 @media (min-width:992px) {
@@ -1544,8 +1544,8 @@ html {
     max-width: 50%
   }
   .row-cols-lg-3 > * {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.3333333333%;
+    max-width: 33.3333333333%
   }
   .row-cols-lg-4 > * {
     flex: 0 0 25%;
@@ -1556,8 +1556,8 @@ html {
     max-width: 20%
   }
   .row-cols-lg-6 > * {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.6666666667%;
+    max-width: 16.6666666667%
   }
   .col-lg-auto {
     flex: 0 0 auto;
@@ -1565,48 +1565,48 @@ html {
     max-width: 100%
   }
   .col-lg-1 {
-    flex: 0 0 8.33333%;
-    max-width: 8.33333%
+    flex: 0 0 8.33333333%;
+    max-width: 8.33333333%
   }
   .col-lg-2 {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.66666667%;
+    max-width: 16.66666667%
   }
   .col-lg-3 {
     flex: 0 0 25%;
     max-width: 25%
   }
   .col-lg-4 {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.33333333%;
+    max-width: 33.33333333%
   }
   .col-lg-5 {
-    flex: 0 0 41.66667%;
-    max-width: 41.66667%
+    flex: 0 0 41.66666667%;
+    max-width: 41.66666667%
   }
   .col-lg-6 {
     flex: 0 0 50%;
     max-width: 50%
   }
   .col-lg-7 {
-    flex: 0 0 58.33333%;
-    max-width: 58.33333%
+    flex: 0 0 58.33333333%;
+    max-width: 58.33333333%
   }
   .col-lg-8 {
-    flex: 0 0 66.66667%;
-    max-width: 66.66667%
+    flex: 0 0 66.66666667%;
+    max-width: 66.66666667%
   }
   .col-lg-9 {
     flex: 0 0 75%;
     max-width: 75%
   }
   .col-lg-10 {
-    flex: 0 0 83.33333%;
-    max-width: 83.33333%
+    flex: 0 0 83.33333333%;
+    max-width: 83.33333333%
   }
   .col-lg-11 {
-    flex: 0 0 91.66667%;
-    max-width: 91.66667%
+    flex: 0 0 91.66666667%;
+    max-width: 91.66666667%
   }
   .col-lg-12 {
     flex: 0 0 100%;
@@ -1661,37 +1661,37 @@ html {
     margin-left: 0
   }
   .offset-lg-1 {
-    margin-left: 8.33333%
+    margin-left: 8.33333333%
   }
   .offset-lg-2 {
-    margin-left: 16.66667%
+    margin-left: 16.66666667%
   }
   .offset-lg-3 {
     margin-left: 25%
   }
   .offset-lg-4 {
-    margin-left: 33.33333%
+    margin-left: 33.33333333%
   }
   .offset-lg-5 {
-    margin-left: 41.66667%
+    margin-left: 41.66666667%
   }
   .offset-lg-6 {
     margin-left: 50%
   }
   .offset-lg-7 {
-    margin-left: 58.33333%
+    margin-left: 58.33333333%
   }
   .offset-lg-8 {
-    margin-left: 66.66667%
+    margin-left: 66.66666667%
   }
   .offset-lg-9 {
     margin-left: 75%
   }
   .offset-lg-10 {
-    margin-left: 83.33333%
+    margin-left: 83.33333333%
   }
   .offset-lg-11 {
-    margin-left: 91.66667%
+    margin-left: 91.66666667%
   }
 }
 @media (min-width:1200px) {
@@ -1709,8 +1709,8 @@ html {
     max-width: 50%
   }
   .row-cols-xl-3 > * {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.3333333333%;
+    max-width: 33.3333333333%
   }
   .row-cols-xl-4 > * {
     flex: 0 0 25%;
@@ -1721,8 +1721,8 @@ html {
     max-width: 20%
   }
   .row-cols-xl-6 > * {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.6666666667%;
+    max-width: 16.6666666667%
   }
   .col-xl-auto {
     flex: 0 0 auto;
@@ -1730,48 +1730,48 @@ html {
     max-width: 100%
   }
   .col-xl-1 {
-    flex: 0 0 8.33333%;
-    max-width: 8.33333%
+    flex: 0 0 8.33333333%;
+    max-width: 8.33333333%
   }
   .col-xl-2 {
-    flex: 0 0 16.66667%;
-    max-width: 16.66667%
+    flex: 0 0 16.66666667%;
+    max-width: 16.66666667%
   }
   .col-xl-3 {
     flex: 0 0 25%;
     max-width: 25%
   }
   .col-xl-4 {
-    flex: 0 0 33.33333%;
-    max-width: 33.33333%
+    flex: 0 0 33.33333333%;
+    max-width: 33.33333333%
   }
   .col-xl-5 {
-    flex: 0 0 41.66667%;
-    max-width: 41.66667%
+    flex: 0 0 41.66666667%;
+    max-width: 41.66666667%
   }
   .col-xl-6 {
     flex: 0 0 50%;
     max-width: 50%
   }
   .col-xl-7 {
-    flex: 0 0 58.33333%;
-    max-width: 58.33333%
+    flex: 0 0 58.33333333%;
+    max-width: 58.33333333%
   }
   .col-xl-8 {
-    flex: 0 0 66.66667%;
-    max-width: 66.66667%
+    flex: 0 0 66.66666667%;
+    max-width: 66.66666667%
   }
   .col-xl-9 {
     flex: 0 0 75%;
     max-width: 75%
   }
   .col-xl-10 {
-    flex: 0 0 83.33333%;
-    max-width: 83.33333%
+    flex: 0 0 83.33333333%;
+    max-width: 83.33333333%
   }
   .col-xl-11 {
-    flex: 0 0 91.66667%;
-    max-width: 91.66667%
+    flex: 0 0 91.66666667%;
+    max-width: 91.66666667%
   }
   .col-xl-12 {
     flex: 0 0 100%;
@@ -1826,37 +1826,37 @@ html {
     margin-left: 0
   }
   .offset-xl-1 {
-    margin-left: 8.33333%
+    margin-left: 8.33333333%
   }
   .offset-xl-2 {
-    margin-left: 16.66667%
+    margin-left: 16.66666667%
   }
   .offset-xl-3 {
     margin-left: 25%
   }
   .offset-xl-4 {
-    margin-left: 33.33333%
+    margin-left: 33.33333333%
   }
   .offset-xl-5 {
-    margin-left: 41.66667%
+    margin-left: 41.66666667%
   }
   .offset-xl-6 {
     margin-left: 50%
   }
   .offset-xl-7 {
-    margin-left: 58.33333%
+    margin-left: 58.33333333%
   }
   .offset-xl-8 {
-    margin-left: 66.66667%
+    margin-left: 66.66666667%
   }
   .offset-xl-9 {
     margin-left: 75%
   }
   .offset-xl-10 {
-    margin-left: 83.33333%
+    margin-left: 83.33333333%
   }
   .offset-xl-11 {
-    margin-left: 91.66667%
+    margin-left: 91.66666667%
   }
 }
 .btn,
@@ -2871,10 +2871,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-btn-tagfilter .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__cart-link .badge,
 .c4g-grid-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
-.c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -2885,10 +2885,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__more-link .badge,
 .c4g-grid-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
-.c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -2899,10 +2899,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__notice-link .badge,
 .c4g-grid-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
-.c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -2933,20 +2933,54 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
@@ -2955,6 +2989,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__taglinks-wrapper .tag-filter__filter-item > label .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .btn .c4g-list-element__tag,
@@ -2979,20 +3019,54 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
-.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
@@ -3001,18 +3075,114 @@ a.c4g-badge-tagfilter:hover {
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
 .c4g-grid-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .badge,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .badge,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .badge,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__cart-link .badge,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -3023,10 +3193,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -3037,10 +3207,10 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
@@ -3061,6 +3231,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
@@ -3071,16 +3247,44 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
@@ -3089,6 +3293,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .tag-filter__filter-item > label .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .btn .c4g-list-element__tag,
@@ -3107,6 +3317,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
@@ -3117,16 +3333,44 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
-.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tag,
@@ -3135,8 +3379,104 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .badge,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .badge,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .badge,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-listfilter-button .badge,
 .c4g-listfilter-button .c4g-badge-tagfilter,
 .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3151,6 +3491,14 @@ a.c4g-badge-tagfilter:hover {
 .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .badge,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-badge-tagfilter,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3165,6 +3513,86 @@ a.c4g-badge-tagfilter:hover {
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .badge,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-badge-tagfilter,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .badge,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-badge-tagfilter,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .badge,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-badge-tagfilter,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3179,20 +3607,6 @@ a.c4g-badge-tagfilter:hover {
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-listfilter-outer .c4g-btn .badge,
-.c4g-listfilter-outer .c4g-btn .c4g-badge-tagfilter,
-.c4g-listfilter-outer .c4g-btn .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-listfilter-outer .c4g-btn .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-listfilter-outer .c4g-btn .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-outer .c4g-btn .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-listfilter-outer .c4g-btn .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-listfilter-outer .c4g-btn .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-listfilter-outer .c4g-btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-outer .c4g-btn .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-listfilter-outer .c4g-btn .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-listfilter-outer .c4g-btn .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-listfilter-outer .c4g-btn .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-listfilter-outer .c4g-btn .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-listfilter-outer .c4g-btn-filter .badge,
 .c4g-listfilter-outer .c4g-btn-filter .c4g-badge-tagfilter,
 .c4g-listfilter-outer .c4g-btn-filter .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3207,6 +3621,294 @@ a.c4g-badge-tagfilter:hover {
 .c4g-listfilter-outer .c4g-btn-filter .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-listfilter-outer .c4g-btn-filter .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-listfilter-outer .c4g-btn-filter .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .badge,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .badge,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .badge,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-grid-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .badge,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .badge,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .badge,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-list-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .badge,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .badge,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content button .badge,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-modal-content button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .badge,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .badge,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .badge,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-modal-content .c4g-btn-close .badge,
 .c4g-modal-content .c4g-btn-close .c4g-badge-tagfilter,
 .c4g-modal-content .c4g-btn-close .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3235,6 +3937,68 @@ a.c4g-badge-tagfilter:hover {
 .c4g-modal-content .c4g-btn-top-close .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-modal-content .c4g-btn-top-close .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-modal-content .c4g-btn-top-close .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-top-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-top-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-top-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-top-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer button .badge,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-badge-tagfilter,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-modal-content .c4g-listfilter-outer button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-top-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__taglinks-wrapper button .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-top-close .c4g-list-element__tag,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__tag,
+.c4g-modal-content .c4g-plain-outer .c4g-list-element__tags-wrapper button .c4g-list-element__taglinks,
 .c4g-modal-content button .badge,
 .c4g-modal-content button .c4g-badge-tagfilter,
 .c4g-modal-content button .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3249,48 +4013,60 @@ a.c4g-badge-tagfilter:hover {
 .c4g-modal-content button .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-modal-content button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-modal-content button .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__cart-link .badge,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__cart-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__more-link .badge,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__more-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__notice-link .badge,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__notice-link .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .btn .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .btn .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-btn .c4g-list-element__tag,
@@ -3307,6 +4083,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
@@ -3319,20 +4101,54 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__taglinks-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
@@ -3353,6 +4169,12 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-grid-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
@@ -3365,24 +4187,124 @@ a.c4g-badge-tagfilter:hover {
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-outer .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__tag,
-.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-btn-filter .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-list-outer .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-button-wrapper:not(.react-c4g-listfilter-opened) .c4g-listfilter-button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper button .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-listfilter-outer .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-close .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-btn-top-close .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__tag,
+.c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content .c4g-listfilter-outer button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-modal-content button .c4g-list-element__taglinks,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__tag,
 .c4g-plain-outer .c4g-list-element__tags-wrapper .tag-filter__filter-item > label .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .badge,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-badge-tagfilter,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__cart-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .badge,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-badge-tagfilter,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__more-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .badge,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-badge-tagfilter,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-grid-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__notice-link .c4g-plain-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__cart-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__more-link .c4g-list-element__taglinks,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__tag,
+.c4g-plain-outer .c4g-listfilter-outer .c4g-list-element__tags-wrapper .c4g-list-element__notice-link .c4g-list-element__taglinks,
 .tag-filter__filter-item > label .badge,
 .tag-filter__filter-item > label .c4g-badge-tagfilter,
 .tag-filter__filter-item > label .c4g-grid-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -3785,13 +4707,9 @@ html {
   border-bottom: 1px solid #cdd9d7
 }
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form .c4g-form-control,
-.c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form .c4g-modal-content input,
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form .form-control,
-.c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form .react-datepicker__input-container input,
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form input,
-.c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form label,
-.c4g-listfilter-outer .react-datepicker__input-container .c4g-listfilter-form-wrapper .c4g-listfilter-form input,
-.c4g-modal-content .c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form input {
+.c4g-listfilter-outer .c4g-listfilter-form-wrapper .c4g-listfilter-form label {
   font-size: 1rem
 }
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper .form-view__period {

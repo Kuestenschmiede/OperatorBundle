@@ -278,7 +278,7 @@ template {
   width: 100vw;
   height: 100vh;
   background-color: #fff;
-  background-image: repeating-radial-gradient(circle at 0 0,transparent 0,#fff 10px),repeating-linear-gradient(#dbdbdb55,#dbdbdb)
+  background-image: repeating-radial-gradient(circle at 0 0,transparent 0,#fff 10px),repeating-linear-gradient(rgba(219,219,219,.3333333333),#dbdbdb)
 }
 .banner-section .tns-outer {
   max-height: 100%;
@@ -390,7 +390,7 @@ template {
 }
 .banner__footer-text {
   flex: 1 1 auto;
-  font-size: clamp(1.5rem,1.2rem,2rem)
+  font-size: 1.5rem
 }
 .banner__footer-sub {
   background-color: rgba(255,255,255,.2);

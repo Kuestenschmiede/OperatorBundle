@@ -257,8 +257,9 @@ class BannerModuleController extends AbstractFrontendModuleController
         if ($type['type'] === "event") {
             $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($child['uuid'])->fetchAssoc();
 
-            //Events der nächsten 3 Monate
-            if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*90)))) {
+            //Events der nächsten 3
+            $month = $this->model->loadMonth ?: 6;
+            if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*30*$month)))) { //halbes Jahr im voraus
                 return $arrReturn;
             }
             $timezone = new \DateTimeZone('Europe/Berlin');

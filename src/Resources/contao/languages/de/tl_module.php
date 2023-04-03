@@ -105,3 +105,4 @@ $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'Die Auswahl des h-Tags
 $GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximale Anzahl an Inhalten pro Schaufenster','Sie können die Anzahl an Angeboten pro Schaufenster einschränken (Standard: 0 = unbegrenzt).'];
 $GLOBALS['TL_LANG']['tl_module']['lazyBanner'] = ['Bilder nachladen','Bilder nachladen statt initial alles zu laden.'];
 $GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Banner automatisch aktualisieren','Banner automatisiert nach einer Stunde neu laden.'];
+$GLOBALS['TL_LANG']['tl_module']['loadMonth'] = ['Inhalte der nächsten X Monate','Wie viele Monate sollen die Veranstaltungen im Voraus angezeigt werden (Standard: 6)?'];

@@ -178,6 +178,10 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $module = ModuleModel::findByPk($moduleId);
         if ($module) {
+            if (!$module->gutesio_enable_filter && $module->gutesio_child_sort_by_date) {
+                $filterData['sorting'] = 'date';
+            }
+
             $max = (int) $module->gutesio_data_max_data;
             if ($max !== 0 && $offset >= $max) {
                 return new JsonResponse([]);

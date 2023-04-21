@@ -319,6 +319,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         $clientUuid = $this->checkCookieForClientUuid($request);
+
+        $rowData = [];
         foreach ($data as $key => $row) {
             $types = [];
             if ($clientUuid !== null) {
@@ -335,10 +337,21 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $types[] = $type['label'];
                 $row['types'] = implode(', ', $types);
             }
-            $data[$key] = $row;
+
+            $found = false;
+            foreach ($rowData as $existData) {
+                if ($existData['uuid'] == $row['uuid']) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            if (!$found) {
+                $rowData[$key] = $row;
+            }
         }
 
-        return new JsonResponse($data);
+        return new JsonResponse($rowData);
     }
 
     /**

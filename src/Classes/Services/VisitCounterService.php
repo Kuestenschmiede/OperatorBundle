@@ -18,14 +18,14 @@ class VisitCounterService
      */
     public function __construct()
     {
-        $this->database = Database::getInstance();
     }
 
     public function countShowcaseVisit($showcaseId, $ownerId)
     {
         if ($showcaseId && $ownerId) {
             $date = $this->getTimestampForCurrentDay();
-            $checkResult = $this->database
+            $database = Database::getInstance();
+            $checkResult = $database
                 ->prepare('SELECT * FROM ' . self::SHOWCASE_TABLE_NAME . ' WHERE `showcaseId` = ? AND `date` = ?')
                 ->execute($showcaseId, $date)->fetchAllAssoc();
             if (count($checkResult) > 0) {
@@ -33,10 +33,10 @@ class VisitCounterService
                 $counter = $checkResult[0]['visits'];
                 $counter++;
                 $sql = 'UPDATE ' . self::SHOWCASE_TABLE_NAME . ' SET `visits` = ? WHERE `date` = ? AND `showcaseId` = ?';
-                $this->database->prepare($sql)->execute($counter, $date, $showcaseId);
+                $database->prepare($sql)->execute($counter, $date, $showcaseId);
             } else {
                 $sql = 'INSERT INTO ' . self::SHOWCASE_TABLE_NAME . ' (`uuid`, `showcaseId`, `date`, `visits`, `ownerId`)  VALUES (?, ?, ?, ?, ?)';
-                $this->database->prepare($sql)->execute(
+                $database->prepare($sql)->execute(
                     C4GUtils::getGUID(),
                     $showcaseId,
                     $date,
@@ -49,9 +49,10 @@ class VisitCounterService
 
     public function countOfferVisit($offerId, $ownerId)
     {
+        $database = Database::getInstance();
         if ($offerId && $ownerId) {
             $date = $this->getTimestampForCurrentDay();
-            $checkResult = $this->database
+            $checkResult = $database
                 ->prepare('SELECT * FROM ' . self::OFFER_TABLE_NAME . ' WHERE `offerId` = ? AND `date` = ?')
                 ->execute($offerId, $date)->fetchAllAssoc();
             if (count($checkResult) > 0) {
@@ -59,10 +60,10 @@ class VisitCounterService
                 $counter = $checkResult[0]['visits'];
                 $counter++;
                 $sql = 'UPDATE ' . self::OFFER_TABLE_NAME . ' SET `visits` = ? WHERE `date` = ? AND `offerId` = ?';
-                $this->database->prepare($sql)->execute($counter, $date, $offerId);
+                $database->prepare($sql)->execute($counter, $date, $offerId);
             } else {
                 $sql = 'INSERT INTO ' . self::OFFER_TABLE_NAME . ' (`uuid`, `offerId`, `date`, `visits`, `ownerId`)  VALUES (?, ?, ?, ?, ?)';
-                $this->database->prepare($sql)->execute(
+                $database->prepare($sql)->execute(
                     C4GUtils::getGUID(),
                     $offerId,
                     $date,

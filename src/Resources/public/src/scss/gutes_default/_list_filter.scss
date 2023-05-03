@@ -191,3 +191,133 @@
   }
 }
 
+/** DEFAULT WITHOUT EXTENDED FILTER BUTTON **/
+
+.c4g-listfilter-default {
+
+//  .c4g-listfilter-inner {
+    @include make-container();
+    @extend .container;
+
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: center;
+    grid-gap: .5rem;
+
+    align-items: flex-end;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+
+    @include media-breakpoint-down(md) {
+      flex-direction: column;
+      grid-gap: inherit;
+    }
+
+    .c4g-listfilter-form-wrapper {
+      flex: 1;
+      margin-bottom: 0;
+    }
+
+    //.c4g-listfilter-inner {
+    //  align-items: flex-end;
+    //  margin-top: 1rem;
+    //  margin-bottom: 1rem;
+    //}
+
+    .c4g-listfilter-button-wrapper,
+    .form-view__searchinput,
+    .c4g-panel-buttons {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+
+    //form.c4g-listfilter-form {
+    //  align-items: flex-end;
+    //  margin-bottom: 0;
+    //}
+
+    small.field-description {
+      display: none;
+    }
+
+    > div {
+      @include media-breakpoint-down(md) {
+        width: 100%;
+      }
+
+    }
+//  }
+
+}
+
+.c4g-listfilter-default {
+
+  .c4g-listfilter-button {
+    @extend .c4g-btn;
+    @extend .c4g-btn-primary;
+  }
+}
+
+.c4g-listfilter-default {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+
+
+  .row {
+    display: flex;
+    //align-items: center;
+    //justify-content: flex-start;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+
+    grid-gap: .5rem;
+
+
+    //@include media-breakpoint-down(md) {
+    //  justify-content: center;
+    //  flex-direction: column;
+    //  grid-gap: inherit;
+    //}
+
+    @include media-breakpoint-up(lg) {
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    .form-view__searchinput,
+    .c4g-panel-buttons {
+      border-bottom: none;
+    }
+
+    .c4g-panel-buttons {
+      @include media-breakpoint-down(md) {
+        padding-top: 0;
+      }
+    }
+
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  .form-view__searchinput {
+    width: 100%;
+
+    //.c4g-form-field {
+    //  > label {
+    //    display: none;
+    //  }
+    //}
+  }
+
+  .c4g-btn-filter-wrapper {
+    button {
+      @extend .c4g-btn;
+      @extend .c4g-btn-filter;
+    }
+  }
+}
+

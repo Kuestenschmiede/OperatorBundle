@@ -634,15 +634,25 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     private function buildFilter()
     {
         $arrFilter = [];
-        $form = new ToggleableForm(new Form());
-        $form->setName("filter_" . $this->model->id);
-        $form->setMethod("GET");
-        $form->setContainerRow(true);
-        $form->setToggleableBaseClass('c4g-listfilter');
-        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
-        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
-        $form->setToggleableOnClass('react-c4g-listfilter-opened');
-        $form->setHidden($this->model->gutesio_enable_filter !== '1');
+
+        if ($this->model->gutesio_enable_ext_filter === '1') {
+            $form = new ToggleableForm(new Form());
+            $form->setMethod('GET');
+            $form->setName("filter_" . $this->model->id);
+            $form->setContainerRow(true);
+            $form->setToggleableBaseClass('c4g-listfilter');
+            $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
+            $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
+            $form->setToggleableOnClass('react-c4g-listfilter-opened');
+            $form->setHidden($this->model->gutesio_enable_filter !== '1');
+        } else {
+            $form = new Form();
+            $form->setMethod('POST');
+            $form->setName("filter_" . $this->model->id);
+            $form->setContainerRow(true);
+            $form->setClass('c4g-listfilter-default');
+        }
+
         $arrFilter['form'] = $form;
 
         $fields = [];
@@ -679,7 +689,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();
             $tagFilter->setName("tags");
-            $tagFilter->setLabel($this->languageRefsFrontend['filter']['tagfilter']['label']);
+            $tagFilter->setLabel('');//$this->languageRefsFrontend['filter']['tagfilter']['label']);
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");

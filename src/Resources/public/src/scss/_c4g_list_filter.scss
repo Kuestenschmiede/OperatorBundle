@@ -124,6 +124,116 @@
   padding-right: 0;
 }
 
+/** begin default **/
+.c4g-listfilter-default {
+  @extend .container-fluid;
+
+  // general
+  .c4g {
+    &-form-field {
+      width: 100%;
+    }
+    &-form-control {
+      @extend .form-control;
+    }
+
+    &-form-check {
+      @extend .form-check;
+      display: block;
+    }
+
+    //&-form-check-inline {
+    //  @extend .form-check-inline;
+    //}
+
+    &-img-fluid {
+      @extend .img-fluid;
+    }
+
+    &-btn {
+      @extend .c4g-btn;
+    }
+
+    &-btn-filter {
+      @extend .c4g-btn;
+      //@extend .c4g-btn-sm;
+      @extend .c4g-btn-primary;
+
+      &.executeSubmit {
+        background-color: var(--gutes-tag-filter-border-color-checked);
+        border-color: var(--gutes-tag-filter-border-color-checked);
+      }
+    }
+  }
+
+  .react-datepicker__input-container {
+    input {
+      @extend .form-control;
+    }
+  }
+
+  .c4g-listfilter-form-wrapper {
+    //display: none;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+    .c4g-listfilter-form {
+      > div,
+      > input {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid darken($gutes-element-bgcolor, 10%);
+      }
+
+      input,
+      .form-control,
+      label {
+        font-size: 1rem;
+      }
+    }
+
+    .form-view__period {
+      display: flex;
+      flex-direction: column;
+
+      > label {
+        display: block;
+      }
+
+      small {
+        font-size: .8rem;
+      }
+
+      .c4g-field-description {
+        font-size: .8rem;
+      }
+    }
+
+    .form-view__ascend-descend {
+      display: flex;
+      flex-direction: column;
+    }
+
+  }
+
+    position: flex;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+
+    .c4g-listfilter-form-wrapper {
+      display: block;
+    }
+
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+/** end default **/
+
 .c4g-listfilter-inner {
   text-align: left;
 }

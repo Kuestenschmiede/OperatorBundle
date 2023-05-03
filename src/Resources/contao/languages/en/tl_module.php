@@ -27,6 +27,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_city'] = ['Show location in 
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initial sort', 'Changes the initial sort (default: random).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Activate filter', 'Activates the filter above the list.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_enable_ext_filter'] = ['Activate extended filter button', 'Activates the filter button above the list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_change_layout_filter'] = ['Change layout of the list after filtering', 'Set this checkbox if you want the list to change its layout after a filter input has been made.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layout_filter'] = ['Layout of the list after filtering', 'Determines in which layout the list is displayed after filter input.'];
 

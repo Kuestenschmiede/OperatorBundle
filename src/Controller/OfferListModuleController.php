@@ -296,14 +296,26 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     protected function getForm()
     {
-        $form = new ToggleableForm(new Form());
-        $form->setMethod('POST');
-        $form->setContainerRow(true);
-        $form->setToggleableBaseClass('c4g-listfilter');
-        $form->setToggleableOnLabel($GLOBALS['TL_LANG']['offer_list']['filter']['close_filter']);
-        $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
-        $form->setToggleableOnClass('react-c4g-listfilter-opened');
-        $form->setHidden($this->model->gutesio_enable_filter !== '1');
+        if ($this->model->gutesio_enable_ext_filter === '1') {
+            $form = new ToggleableForm(new Form());
+            $form->setMethod('POST');
+            $form->setContainerRow(true);
+            $form->setToggleableBaseClass('c4g-listfilter');
+            $form->setToggleableOnLabel($GLOBALS['TL_LANG']['offer_list']['filter']['close_filter']);
+            $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
+            $form->setToggleableOnClass('react-c4g-listfilter-opened');
+            $form->setHidden($this->model->gutesio_enable_filter !== '1');
+        } else {
+            $form = new Form();
+            $form->setMethod('POST');
+            $form->setContainerRow(true);
+            $form->setClass('c4g-listfilter-default');
+//            $form->setToggleableOnLabel($GLOBALS['TL_LANG']['offer_list']['filter']['close_filter']);
+//            $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
+//            $form->setToggleableOnClass('react-c4g-listfilter-opened');
+//            $form->setHidden($this->model->gutesio_enable_filter !== '1');
+        }
+
         return $form;
     }
 
@@ -396,7 +408,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setHeadline($this->languageRefs['chooseDateRange']);
             $field->setHeadlineClass("form-view__period-title");
             $field->setClassName("offer-filter__period form-view__period");
-            $field->setDescription($this->languageRefs['chooseDateRange_desc']);
+            //$field->setDescription($this->languageRefs['chooseDateRange_desc']);
             $field->setCache(true); //ToDo module switch
             $field->setEntryPoint($this->model->id);
             $fields[] = $field;
@@ -452,7 +464,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         if ($this->model->gutesio_enable_tag_filter) {
             $tagFilter = new MultiCheckboxWithImageLabelFormField();
             $tagFilter->setName("tags");
-            $tagFilter->setLabel($this->languageRefsFrontend['filter']['tagfilter']['label']);
+            $tagFilter->setLabel('');//$this->languageRefsFrontend['filter']['tagfilter']['label']);
             $tagFilter->setClassName("form-view__tag-filter");
             $tagFilter->setOptions($this->getTagOptions());
             $tagFilter->setOptionClass("tag-filter-item offer tag-filter__filter-item");

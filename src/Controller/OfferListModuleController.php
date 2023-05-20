@@ -121,7 +121,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $conf->setLanguage($objPage->language);
         if ($this->model->gutesio_data_render_searchHtml) {
             $sc = new SearchConfiguration();
-            $sc->addData($this->getSearchLinks(), ['link']);
+            $sc->addData($this->getSearchLinks($model), ['link']);
         }
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
@@ -807,42 +807,59 @@ class OfferListModuleController extends AbstractFrontendModuleController
         ];
     }
 
-    protected function getSearchLinks()
+    protected function getSearchLinks($model)
     {
         $database = Database::getInstance();
         $result = $database->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'where c.published = 1')->execute()->fetchAllAssoc();
         $links = [];
+
+        $childTypes = $model ? StringUtil::deserialize($model->gutesio_child_type, true) : [];
+
         foreach ($result as $row) {
             switch ($row['type']) {
                 case 'product':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
+                    }
                     break;
                 case 'event':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
+                    }
                     break;
                 case 'job':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
+                    }
                     break;
                 case 'arrangement':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
+                    }
                     break;
                 case 'service':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
+                    }
                     break;
                 case 'person':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->personDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->personDetailPage . "}}");
+                    }
                     break;
                 case 'voucher':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->voucherDetailPage . "}}");
+                    if (!count($childTypes) || in_array($row['type'], $childTypes)) {
+                        $objSettings = GutesioOperatorSettingsModel::findSettings();
+                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->voucherDetailPage . "}}");
+                    }
                     break;
                 default:
                     continue 2;

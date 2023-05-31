@@ -1552,7 +1552,9 @@ class OfferLoaderService
         $result = $service->loadByChildId($childId);
 
         foreach ($result as $key => $row) {
-            $result[$key]['types'] = implode(', ', array_column($row['types'], 'label'));
+            if ($row['types']) {
+                $result[$key]['types'] = implode(', ', array_column($row['types'], 'label'));
+            }
         }
 
         return $result;

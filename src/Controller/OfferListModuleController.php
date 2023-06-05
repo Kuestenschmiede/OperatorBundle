@@ -590,6 +590,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setName('typeName');
         $field->setWrapperClass("c4g-list-element__typename-wrapper");
         $field->setClass("c4g-list-element__typename");
+        $field->setGenerateValueClasses(true);
         $fields[] = $field;
 
         $field = new LinkTileField();

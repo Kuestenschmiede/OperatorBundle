@@ -68,8 +68,8 @@ $GLOBALS['TL_LANG'][$strName]['displayType'] = "Kategorie:";
 $GLOBALS['TL_LANG'][$strName]['infoFile_label'] = "Weitere Informationen";
 $GLOBALS['TL_LANG'][$strName]['infoFile_title'] = "Weitere Informationen ansehen";
 $GLOBALS['TL_LANG'][$strName]['offeredBy'] = "Angeboten von folgenden Anbietern";
-$GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Zeitraum auswählen";
-$GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Hier können Sie einen Filterzeitraum auswählen, um die Veranstaltungen einzugrenzen.";
+$GLOBALS['TL_LANG'][$strName]['chooseDateRange'] = "Zeitraum";
+$GLOBALS['TL_LANG'][$strName]['chooseDateRange_desc'] = "Hier können Sie ein Beginn- und/oder Enddatum setzen.";
 
 $GLOBALS['TL_LANG'][$strName]['filterFromPlaceholder'] = "Datum von";
 $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Datum bis";

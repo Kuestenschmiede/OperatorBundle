@@ -93,3 +93,6 @@ $GLOBALS['TL_LANG']['tl_module']['gutes_heading_hint'] = 'The selection of the h
 $GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximum number of content per showcase','You can limit the number of offers per showcase (default: 0 = unlimited).'];
 $GLOBALS['TL_LANG']['tl_module']['lazyBanner'] = ['Lazy load images','Lazy load images instead of loading all at once.'];
 $GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Automatically reload banner','Automatically reload banner every hour.'];
+
+//new translate!
+$GLOBALS['TL_LANG']['tl_module']['gutesio_disable_sorting_filter'] = ['Sortierfilter ausblenden', 'Blendet die Sortiermöglichkeiten aus. sehr Sinnvoll bei einer Veranstaltungsliste.'];

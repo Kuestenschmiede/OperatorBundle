@@ -1611,16 +1611,22 @@ class OfferLoaderService
                     $endTstamp = strtotime($datum['endDate']);
                     if ($filterFrom) {
                         $fromDt = (new \DateTime())->setTimestamp($filterFrom);
-                        $filterFrom = $fromDt->setTime(0, 0, 0)->getTimestamp();
+                        $filterFromFirstMinute = $fromDt->setTime(0, 0, 0)->getTimestamp();
                     }
                     if ($filterUntil) {
-                        $untilDt = (new \DateTime())->setTimestamp($filterUntil + 86400);
-                        $filterUntil = $untilDt->setTime(23, 59, 59)->getTimestamp();
+                        $untilDt = (new \DateTime())->setTimestamp($filterUntil);
+                        $filterUntilLastMinute = $untilDt->setTime(23, 59, 59)->getTimestamp();
                     }
-                    $beginDateMatchesFilter = (!$filterFrom || ($beginTstamp >= $filterFrom))
-                        && (!$filterUntil || ($beginTstamp <= $filterUntil));
-                    $endDateMatchesFilter = !$endTstamp || (!$filterUntil) || ($endTstamp <= $filterUntil);
-                    if ($beginDateMatchesFilter && $endDateMatchesFilter) {
+
+                    $dateMatchesFilter = ($filterFromFirstMinute == NULL && $filterUntilLastMinute == NULL) ? 1 : false;
+                    $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute && $filterUntilLastMinute == NULL && ($beginTstamp >= $filterFromFirstMinute)) ? 2 : $dateMatchesFilter;
+                    $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute && $filterUntilLastMinute == NULL && $endTstamp && ($endTstamp >= $filterFromFirstMinute)) ? 3 : $dateMatchesFilter;
+                    $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute && $filterUntilLastMinute && !$endTstamp && ($beginTstamp >= $filterFromFirstMinute) && ($beginTstamp <= $filterUntilLastMinute)) ? 4 : $dateMatchesFilter;
+                    $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute && $filterUntilLastMinute && $endTstamp && ($beginTstamp >= $filterFromFirstMinute) && ($endTstamp <= $filterUntilLastMinute)) ? 5 : $dateMatchesFilter;
+                    $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute == NULL && $filterUntilLastMinute && ($beginTstamp <= $filterUntilLastMinute)) ? 6 : $dateMatchesFilter;
+                    $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute == NULL && $filterUntilLastMinute && $endTstamp && ($endTstamp <= $filterUntilLastMinute))? 7 : $dateMatchesFilter;
+
+                    if ($dateMatchesFilter) {
                         $result[] = $datum;
                     }
                 }

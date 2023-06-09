@@ -317,7 +317,7 @@ class OfferLoaderService
         $sqlExtendedCategoryTerms = ' OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?';
         $fieldCount++;
 
-        if (empty($types) && empty($categories)) {
+        if (empty($types) || empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
                 for ($i = 0; $i < $fieldCount; $i++) {

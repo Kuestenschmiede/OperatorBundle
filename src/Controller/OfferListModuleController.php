@@ -156,7 +156,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');
-        $requestTypeIds = $request->query->get("types");
+        $requestTypeIds = $request->query->get("types") ?: null;
 
         if ($requestTypeIds === "" || $requestTypeIds === null) {
             $requestTypeIds = [];

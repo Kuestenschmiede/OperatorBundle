@@ -272,19 +272,22 @@ class OfferListModuleController extends AbstractFrontendModuleController
         }
         
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
-        $conf->addForm(
-            $this->getForm(),
-            $this->getFormFields(),
-            $this->getFormButtons(),
-            [
-                'search' => $search,
-                'moduleId' => $this->model->id,
-                'filterFrom' => null,
-                'filterUntil' => null,
-                'sorting' => $filterData['sorting']
-            ]
-        );
-        
+
+        if ($this->model->gutesio_enable_filter === '1') {
+            $conf->addForm(
+                $this->getForm(),
+                $this->getFormFields(),
+                $this->getFormButtons(),
+                [
+                    'search' => $search,
+                    'moduleId' => $this->model->id,
+                    'filterFrom' => null,
+                    'filterUntil' => null,
+                    'sorting' => $filterData['sorting']
+                ]
+            );
+        }
+
         $fullTextData = $this->offerService->getListData($search, 0, $type, $filterData);
         $conf->addTileList(
             $this->getFullTextTileList($search !== ''),
@@ -314,7 +317,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 //            $form->setToggleableOnLabel($GLOBALS['TL_LANG']['offer_list']['filter']['close_filter']);
 //            $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
 //            $form->setToggleableOnClass('react-c4g-listfilter-opened');
-//            $form->setHidden($this->model->gutesio_enable_filter !== '1');
+            $form->setHidden($this->model->gutesio_enable_filter !== '1');
         }
 
         return $form;

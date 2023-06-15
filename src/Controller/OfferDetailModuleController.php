@@ -132,7 +132,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $model->id);
                 $components = $this->getDetailComponents($data, $request);
-                if ($data['type'] === "event") {
+                if ($data['type'] === "event" && !$model->gutesio_without_tiles) {
                     $elementUuid = $components['elements'][2][0]['uuid'];
                     if ($data['locationElementId'] || $elementUuid) {
                         $locationElementData = $this->getLocationElementData($data['locationElementId'] ?: $elementUuid, true);
@@ -142,7 +142,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                             if ($data['locationElementId'] && $elementUuid && ($elementUuid !== $data['locationElementId'])) {
                                 $locationList = $this->getLocationList();
 
-                                if ($locationList) {
+                                if ($locationList && !$model->gutesio_without_tiles) {
                                     $conf->addTileList(
                                         $locationList,
                                         $this->tileItems,
@@ -153,27 +153,30 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                         }
                     }
                 }
-                $conf->addTileList(
-                    $components['elements'][0],
-                    $components['elements'][1],
-                    $components['elements'][2]
-                );
-                $otherChildData = $this->getChildTileData($data, $request);
-                $childList = [];
-                //remove duplicated offers
-                foreach ($otherChildData as $key=>$resultData) {
-                    $childList[$resultData['id']] = $resultData;
-                }
 
-                $otherChildData = array_values($childList);
-
-                if (count($otherChildData) > 0) {
+                if (!$model->gutesio_without_tiles) {
                     $conf->addTileList(
-                        $this->getChildTileList(),
-                        $this->getChildTileFields(),
-                        $otherChildData
+                        $components['elements'][0],
+                        $components['elements'][1],
+                        $components['elements'][2]
                     );
-                    $template->hasOtherChilds = true;
+                    $otherChildData = $this->getChildTileData($data, $request);
+                    $childList = [];
+                    //remove duplicated offers
+                    foreach ($otherChildData as $key=>$resultData) {
+                        $childList[$resultData['id']] = $resultData;
+                    }
+
+                    $otherChildData = array_values($childList);
+
+                    if (count($otherChildData) > 0) {
+                        $conf->addTileList(
+                            $this->getChildTileList(),
+                            $this->getChildTileFields(),
+                            $otherChildData
+                        );
+                        $template->hasOtherChilds = true;
+                    }
                 }
                 $conf->setLanguage($objPage->language);
                 if (!empty($data)) {
@@ -202,6 +205,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         }
         $template->detailData = $data;
         $template->mapData = $this->getMapData();
+        $template->model = $model;
         $page = $model->cart_page ?: 0;
         if ($page !== 0) {
             $page = PageModel::findByPk($page);
@@ -281,8 +285,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $section = new DetailPageSection($this->languageRefs['tags'], true, "detail-view__section-tags", false);
         $sections[] = $section;
 
-        $section = new DetailPageSection($this->languageRefs['contact'], true, "detail-view__section-contact", true);
-        $sections[] = $section;
+        if (!$this->offerService->getModel()->gutesio_without_contact) {
+            $section = new DetailPageSection($this->languageRefs['contact'], true, "detail-view__section-contact", true);
+            $sections[] = $section;
+        }
 
         return $sections;
     }
@@ -535,27 +541,29 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setSection(5);
         $fields[] = $field;
 
-        $contactField = new DetailContactField();
-        $contactField->setSection(6);
-        $contactField->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['contact']);
-        $contactField->setEmailFieldName('email');
-        $contactField->setPhoneFieldName('phone');
-        $contactField->setWebsiteFieldName('website');
-        $contactField->setWebsiteTextFieldName("websiteLabel");
-        $contactField->setOpeningTimesFieldName("opening_hours");
-        $contactField->setAddressFieldnamePrefix("contact");
-        $contactField->setAddressFieldnameFallbackPrefix("location");
-        $contactField->setClass("detail-view__contact-wrapper");
-        $contactField->setWithSocialMedia(true);
-        $fields[] = $contactField;
+        if (!$this->offerService->getModel()->gutesio_without_contact) {
+            $contactField = new DetailContactField();
+            $contactField->setSection(6);
+            $contactField->setLabel($GLOBALS['TL_LANG']['offer_list']['frontend']['details']['contact']);
+            $contactField->setEmailFieldName('email');
+            $contactField->setPhoneFieldName('phone');
+            $contactField->setWebsiteFieldName('website');
+            $contactField->setWebsiteTextFieldName("websiteLabel");
+            $contactField->setOpeningTimesFieldName("opening_hours");
+            $contactField->setAddressFieldnamePrefix("contact");
+            $contactField->setAddressFieldnameFallbackPrefix("location");
+            $contactField->setClass("detail-view__contact-wrapper");
+            $contactField->setWithSocialMedia(true);
+            $fields[] = $contactField;
 
-        $field = new DetailMapLocationField();
-        $field->setSection(6);
-        $field->setClass("detail-view__map-wrapper");
-        $field->setName('mapLocation');
-        $field->setGeoxField('geox');
-        $field->setGeoyField('geoy');
-        $fields[] = $field;
+            $field = new DetailMapLocationField();
+            $field->setSection(6);
+            $field->setClass("detail-view__map-wrapper");
+            $field->setName('mapLocation');
+            $field->setGeoxField('geox');
+            $field->setGeoyField('geoy');
+            $fields[] = $field;
+        }
 
         return $fields;
     }

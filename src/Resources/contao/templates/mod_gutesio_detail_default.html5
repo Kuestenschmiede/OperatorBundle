@@ -260,7 +260,7 @@
                             </div>
                         <?php endif; ?>
 
-                        <?php if (isset($data->locationElementName) && !empty($data->locationElementName)): ?>
+                        <?php if (isset($data->locationElementName) && !empty($data->locationElementName) && (isset($data->model) && !$data->model->gutesio_without_contact)): ?>
                             <div class="col-12">
                                 <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['location'] ?></strong>
                                 <?php if ($data->locationUrl): ?>
@@ -778,6 +778,7 @@
                 </div>
             <?php endif; ?>
 
+            <?php if (isset($data->model) && !$data->model->gutesio_without_contact): ?>
             <div class="detail-view__section-contact-map" id="section-id-contact">
                 <div class="c4g-container">
 
@@ -1009,6 +1010,7 @@
 
                 </div>
             </div>
+            <?php endif; ?>
         </div>
     </div>
 

@@ -51,15 +51,15 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
-    '{load_legend},gutesio_child_data_mode,gutesio_data_limit,gutesio_data_max_data,gutesio_child_sort_by_date,gutesio_disable_sorting_filter;'.
+    '{load_legend},gutesio_child_data_mode,gutesio_data_limit,gutesio_data_max_data,gutesio_child_sort_by_date;'.
     '{cart_legend},cart_page;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_enable_ext_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
-    'gutesio_child_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter, gutesio_enable_category_filter;';
+    'gutesio_child_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter, gutesio_enable_category_filter,gutesio_disable_sorting_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page;{cart_legend},cart_page;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,gutesio_without_contact;{cart_legend},cart_page;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['cart_module'] =
@@ -239,6 +239,22 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_max_data'] = [
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_render_searchHtml'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '0'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_without_tiles'] = [
+    'exclude'                 => true,
+    'default'                 => false,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '0'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_without_contact'] = [
     'exclude'                 => true,
     'default'                 => false,
     'inputType'               => 'checkbox',

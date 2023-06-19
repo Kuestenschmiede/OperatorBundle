@@ -146,7 +146,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                             if ($data['locationElementId'] && $elementUuid && ($elementUuid !== $data['locationElementId'])) {
                                 $locationList = $this->getLocationList();
 
-                                if ($locationList && !$model->gutesio_without_tiles) {
+                                if ($locationList) {
                                     $conf->addTileList(
                                         $locationList,
                                         $this->tileItems,

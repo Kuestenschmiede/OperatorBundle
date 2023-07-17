@@ -287,8 +287,8 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $termin .= " Uhr";
             }
             if ($event['locationElementId'] && $event['locationElementId'] !== $element['uuid']) {
-                $location = $db->prepare("SELECT name FROM tl_gutesio_data_element WHERE uuid=?")->execute($event['locationElementId'])->fetchAssoc();
-                $location = $location['name'];
+                $locationResult = $db->prepare("SELECT name FROM tl_gutesio_data_element WHERE uuid=?")->execute($event['locationElementId'])->fetchAssoc();
+                $location = $locationResult ? $locationResult['name'] : '';
             }
         }
         $objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);

@@ -1009,6 +1009,14 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             }
             
             $row['tagLinks'] = $childRows[$key]['tagLinks'];
+            $tagLinks = [];
+
+            //remove duplicated content
+            foreach ($row['tagLinks'] as $key=>$addedIcons) {
+                $tagLinks[$addIcons['name']] = $addedIcons;
+            }
+
+            $row['tagLinks'] = $tagLinks;
             
             $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
@@ -1016,6 +1024,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 $model = FilesModel::findByUuid($r['image']);
+
+                foreach ($row['tagLinks'] as $addedIcons) {
+                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $model->path)) {
+                        continue(2);
+                    }
+                }
+
                 if ($model !== null) {
                     $icon = [
                         'name' => $r['name'],

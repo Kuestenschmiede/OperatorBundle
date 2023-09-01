@@ -504,6 +504,12 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
                 if ($tag['image']) {
                     $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
+                    foreach ($optionData as $key=>$option) {
+                        if (($option['alt'] == $tag['name']) || ($option['src'] == $objImage->path)) {
+                            continue(2);
+                        }
+                    }
+
                     $optionData[$tag['uuid']] = [
                         'src' => $objImage->path,
                         'alt' => $tag['name']

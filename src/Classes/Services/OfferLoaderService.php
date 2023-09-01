@@ -794,8 +794,17 @@ class OfferLoaderService
             );
             $rows[$key]['tags'] = $tagStmt->execute($rows[$key]['uuid'])->fetchAllAssoc();
 
+            //remove duplicated content
+            $tagLinks = [];
+            foreach ($rows[$key]['tags'] as $tagKey => $tagRow) {
+                $tagLinks[$tagRow['name']] = $tagRow;
+            }
+
+            $rows[$key]['tags'] = $tagLinks;
+
             foreach ($rows[$key]['tags'] as $tagKey => $tagRow) {
                 $imageModel = FilesModel::findByUuid($tagRow['image']);
+
                 if ($imageModel !== null) {
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
@@ -896,6 +905,12 @@ class OfferLoaderService
 
         foreach ($result as $r) {
             $model = FilesModel::findByUuid($r['image']);
+            foreach ($childRows[$key]['tagLinks'] as $addedIcons) {
+                if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $model->path)) {
+                    continue(2);
+                }
+            }
+
             if ($model !== null) {
                 $icon = [
                     'name' => $r['name'],

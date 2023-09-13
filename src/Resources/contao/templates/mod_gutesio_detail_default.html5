@@ -677,10 +677,10 @@
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && (strPos($v->linkHref, 'gutes.digital/booking'))): ?>
+                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital')))): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
-                                                <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
+                                                <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
                                             </div>
                                             <?php if (isset($data->reservationContactEMail) && !empty($data->reservationContactEMail)): ?>
                                                 <div class="bookingButton entry-content email" itemprop="email">
@@ -697,32 +697,30 @@
                                 <?php endforeach; ?>
                                 <div class="detail-field-wrapper__tags">
                                     <?php foreach ($data->tags as $k => $v): ?>
-                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
-
+                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital'))))): ?>                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
                                             <?php if ($v->linkHref): ?>
-
-                                            <a href="<?= $v->linkHref ?>" target="_blank" rel="nofollow noopener"
-                                               title="<?= $v->name ?>"
-                                               class="detail-field-image<?php if ($v->linkHref): ?> detail-field-image__link-item<?php endif; ?>">
-                                                <?php else: ?>
-                                                <div class="detail-field-image">
-                                                    <?php endif; ?>
-                                                    <img class="img-fluid"
-                                                         src="<?= $v->image->src ?>"
-                                                         alt="<?= $v->image->name ?>"
-                                                         data-toggle="tooltip"
-                                                         width="100" height="100"
-                                                         data-content="<?= $v->name ?>"
-                                                         title="<?= $v->name ?>">
-                                                    <?php if (!$v->linkHref): ?>
-                                                </div>
-                                                <?php else: ?>
-                                            </a>
+                                                <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
+                                                   title="<?= $v->name ?>"
+                                                   class="detail-field-image<?php if ($v->linkHref): ?> detail-field-image__link-item<?php endif; ?>">
+                                                    <?php else: ?>
+                                                    <div class="detail-field-image">
+                                                        <?php endif; ?>
+                                                        <img class="img-fluid"
+                                                             src="<?= $v->image->src ?>"
+                                                             alt="<?= $v->image->name ?>"
+                                                             data-toggle="tooltip"
+                                                             width="100" height="100"
+                                                             data-content="<?= $v->name ?>"
+                                                             title="<?= $v->name ?>">
+                                                        <?php if (!$v->linkHref): ?>
+                                                    </div>
+                                                    <?php else: ?>
+                                                </a>
+                                            <?php endif; ?>
+                                                <div class="detail-field-text"><span
+                                                            class="detail-field-text__text"><?= $v->name ?></span></div>
+                                            </div>
                                         <?php endif; ?>
-                                            <div class="detail-field-text"><span
-                                                        class="detail-field-text__text"><?= $v->name ?></span></div>
-                                        </div>
-
                                     <?php endforeach; ?>
                                 </div>
 

@@ -1108,7 +1108,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     if (!$row['tagLinks']) {
                         $row['tagLinks'] = [];
                     }
-                    $row['tagLinks'][] = $icon;
+                    $row['tagLinks'][$icon['linkLabel']] = $icon;
                 }
             }
             

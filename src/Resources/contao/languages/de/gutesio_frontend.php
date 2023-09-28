@@ -13,6 +13,7 @@ $GLOBALS['TL_LANG']['gutesio_frontend']['learnMore'] = 'Mehr';
  * Filter Labels (like in sidebar-filter on listing pages)
  */
 $GLOBALS['TL_LANG'][$strName]['filter']['searchfilter']['label'] = "Suchbegriff";
+$GLOBALS['TL_LANG'][$strName]['filter']['locationfilter']['label'] = "Ort";
 $GLOBALS['TL_LANG'][$strName]['filter']['typefilter']['label'] = "Kategorie(n)";
 $GLOBALS['TL_LANG'][$strName]['filter']['tagfilter']['label'] = "Filtern nach Zusatzinformation";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['label'] = "Sortieren nach:";

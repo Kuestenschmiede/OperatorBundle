@@ -8271,6 +8271,7 @@ html {
   margin-bottom: 0
 }
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__ascend-descend,
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__location-filter,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__period,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__sorting,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__tag-filter,

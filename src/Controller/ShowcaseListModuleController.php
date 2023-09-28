@@ -198,6 +198,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $requestTypeIds = explode(",", $requestTypeIds);
         }
+
+        $requestLocation = $request->query->get("location");
     
         $moduleModel = ModuleModel::findByPk($moduleId);
         $max = (int) $moduleModel->gutesio_data_max_data;
@@ -241,35 +243,52 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } catch(\Throwable $error) {
             $restrictedPostals = [];
         }
+
+        $arrSearchStrings = [];
+
+        if ($requestLocation) {
+            $pattern = '/[0-9]{5}/';
+            preg_match($pattern, $requestLocation, $matches);
+            $foundPostal = false;
+            foreach ($matches as $match) {
+                $restrictedPostals[] = $match;
+                $foundPostal = true;
+            }
+
+            if (!$foundPostal) {
+                $arrSearchStrings[] = $requestLocation;
+            }
+        }
         
         // special handling for umlauts
         $searchString = $params['filter'];
-        if ($searchString !== null && $searchString !== "") {
-            $arrSearchStrings = [];
-            $arrSearchStrings[] = $searchString;
-            if (strpos($searchString, "ß") !== false) {
-                $arrSearchStrings[] = str_replace("ß", "ss", $searchString);
-            }
-            if (strpos($searchString, "ss") !== false) {
-                $arrSearchStrings[] = str_replace("ss", "ß", $searchString);
-            }
-            if (strpos($searchString, "ä") !== false) {
-                $arrSearchStrings[] = str_replace("ä", "ae", $searchString);
-            }
-            if (strpos($searchString, "ae") !== false) {
-                $arrSearchStrings[] = str_replace("ae", "ä", $searchString);
-            }
-            if (strpos($searchString, "ö") !== false) {
-                $arrSearchStrings[] = str_replace("ö", "oe", $searchString);
-            }
-            if (strpos($searchString, "oe") !== false) {
-                $arrSearchStrings[] = str_replace("oe", "ö", $searchString);
-            }
-            if (strpos($searchString, "ü") !== false) {
-                $arrSearchStrings[] = str_replace("ü", "ue", $searchString);
-            }
-            if (strpos($searchString, "ue") !== false) {
-                $arrSearchStrings[] = str_replace("ue", "ü", $searchString);
+        if (count($arrSearchStrings) || ($searchString !== null && $searchString !== "")) {
+            if ($searchString !== null && $searchString !== "") {
+                $arrSearchStrings[] = $searchString;
+                if (strpos($searchString, "ß") !== false) {
+                    $arrSearchStrings[] = str_replace("ß", "ss", $searchString);
+                }
+                if (strpos($searchString, "ss") !== false) {
+                    $arrSearchStrings[] = str_replace("ss", "ß", $searchString);
+                }
+                if (strpos($searchString, "ä") !== false) {
+                    $arrSearchStrings[] = str_replace("ä", "ae", $searchString);
+                }
+                if (strpos($searchString, "ae") !== false) {
+                    $arrSearchStrings[] = str_replace("ae", "ä", $searchString);
+                }
+                if (strpos($searchString, "ö") !== false) {
+                    $arrSearchStrings[] = str_replace("ö", "oe", $searchString);
+                }
+                if (strpos($searchString, "oe") !== false) {
+                    $arrSearchStrings[] = str_replace("oe", "ö", $searchString);
+                }
+                if (strpos($searchString, "ü") !== false) {
+                    $arrSearchStrings[] = str_replace("ü", "ue", $searchString);
+                }
+                if (strpos($searchString, "ue") !== false) {
+                    $arrSearchStrings[] = str_replace("ue", "ü", $searchString);
+                }
             }
             $arrResult = [];
             foreach ($arrSearchStrings as $arrSearchString) {
@@ -667,6 +686,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter->setEntryPoint($this->model->id);
         $fields[] = $textFilter;
 
+        $locationFilter = new TextFormField();
+        $locationFilter->setName("location");
+        $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label']);
+        $locationFilter->setClassName("form-view__location-filter");
+        $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
+        $locationFilter->setCache(true);
+        $locationFilter->setEntryPoint($this->model->id);
+        $fields[] = $locationFilter;
 
         $dataMode = $this->model->gutesio_data_mode;
         $types = $dataMode == '1' ? unserialize($this->model->gutesio_data_type) : [];

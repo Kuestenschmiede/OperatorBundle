@@ -686,14 +686,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $textFilter->setEntryPoint($this->model->id);
         $fields[] = $textFilter;
 
-        $locationFilter = new TextFormField();
-        $locationFilter->setName("location");
-        $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label']);
-        $locationFilter->setClassName("form-view__location-filter");
-        $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
-        $locationFilter->setCache(true);
-        $locationFilter->setEntryPoint($this->model->id);
-        $fields[] = $locationFilter;
+        if ($this->model->gutesio_enable_location_filter) {
+            $locationFilter = new TextFormField();
+            $locationFilter->setName("location");
+            $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label']);
+            $locationFilter->setClassName("form-view__location-filter");
+            $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
+            $locationFilter->setCache(true);
+            $locationFilter->setEntryPoint($this->model->id);
+            $fields[] = $locationFilter;
+        }
 
         $dataMode = $this->model->gutesio_data_mode;
         $types = $dataMode == '1' ? unserialize($this->model->gutesio_data_type) : [];

@@ -583,7 +583,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 }
             }
 
-            $row['tagLinks'] = $childRows[$key]['tagLinks'];
+            $row['tagLinks'] = $childRows[$key]['tagLinks'] ?: [];
 
             $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
@@ -670,8 +670,17 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                     if (!$row['tagLinks']) {
                         $row['tagLinks'] = [];
                     }
-                    $row['tagLinks'][] = $icon;
+
+                    //prevent duplicated entries
+                    $row['tagLinks'][$icon['name']] = $icon;
                 }
+
+                //remove alphanumeric keys
+                $rowTagLinks = [];
+                foreach ($row['tagLinks'] as $tagLink) {
+                    $rowTagLinks[] = $tagLink;
+                }
+                $row['tagLinks'] = $rowTagLinks;
             }
 
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));

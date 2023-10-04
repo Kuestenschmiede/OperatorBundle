@@ -403,3 +403,91 @@ template {
   width: 1.2rem;
   height: auto
 }
+@media screen and (max-width:1080px) {
+  .banner-section {
+    width: 100vw;
+    height: 100vh;
+    background-color: #fff;
+    background-image: repeating-radial-gradient(circle at 0 0,transparent 0,#fff 10px),repeating-linear-gradient(rgba(219,219,219,.3333333333),#dbdbdb);
+    display: flex;
+    justify-content: center;
+    align-items: center
+  }
+  .banner-slide {
+    height: auto;
+    text-align: center;
+    border: 1px solid var(--color-gray-light);
+    display: grid;
+    background: rgba(255,255,255,.9);
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0 0;
+    grid-auto-flow: column;
+    grid-template-areas: "banner__image-wrapper" "banner__text-wrapper" "banner__footer"
+  }
+  .banner__text-wrapper.slide-offer {
+    position: unset;
+    top: unset;
+    right: unset;
+    left: unset;
+    z-index: unset;
+    bottom: unset;
+    transform: unset;
+    grid-area: banner__text-wrapper;
+    padding: 1rem;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255,255,255,.9);
+    max-width: 100%;
+    box-shadow: unset
+  }
+  .banner__image-wrapper.slide-element {
+    height: 100%
+  }
+  .banner__image-wrapper.slide-element img {
+    -o-object-fit: cover;
+    object-fit: cover;
+    height: 100%;
+    width: 100%
+  }
+  .banner__image-wrapper.slide-offer {
+    position: unset;
+    top: unset;
+    left: unset;
+    z-index: unset;
+    grid-area: banner__image-wrapper
+  }
+  .banner__image-wrapper.slide-offer img {
+    width: 100%;
+    height: auto;
+    max-height: 1300px;
+    border: 3px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    box-shadow: 5px 5px 15px rgba(51,51,51,.3)
+  }
+  .banner__footer {
+    position: unset;
+    top: unset;
+    left: unset;
+    z-index: unset;
+    grid-area: banner__footer-wrapper;
+    background-color: rgba(255,255,255,.7)
+  }
+  .banner__footer-logo {
+    flex: 0 0 8vh
+  }
+  .banner__footer-qrcode {
+    flex: 0 0 8vh;
+    padding-right: 1.2vw
+  }
+}
+@media screen and (min-width:1980px) {
+  .banner__image-wrapper.slide-offer img {
+    width: 100%;
+    height: auto;
+    min-width: 33vw;
+    border: 3px solid rgba(0,0,0,.1);
+    border-radius: 5px;
+    box-shadow: 5px 5px 15px rgba(51,51,51,.3)
+  }
+}

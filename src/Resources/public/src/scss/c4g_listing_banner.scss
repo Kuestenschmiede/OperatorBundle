@@ -190,8 +190,11 @@ $bg-banner: #e9e9e9;
     &__text-wrapper {
       &.slide-element {
         padding: 3rem;
+        padding-bottom: 7rem;
         top: 14rem;
         max-width: 80%;
+        min-width: 70%;
+        transform: translateY(-50%);
       }
 
       &.slide-offer {
@@ -207,8 +210,9 @@ $bg-banner: #e9e9e9;
         align-items: center;
         img {
           object-fit: scale-down;
-          min-height: 60vh;
-          max-height: 70vh;
+
+          //min-height: 60vh;
+          //max-height: 70vh;
           width: 100%;
         }
       }

@@ -196,7 +196,7 @@ $bg-banner: #e9e9e9;
 
       &.slide-offer {
         padding: 3rem;
-        transform: translate(75%, 96%);
+        transform: translate(75%,50%);
       }
     }
 
@@ -226,6 +226,7 @@ $bg-banner: #e9e9e9;
         flex-direction: column;
         align-items: center;
         justify-content: space-between;
+        padding: 1.5rem 3rem;
       }
     }
 
@@ -234,8 +235,12 @@ $bg-banner: #e9e9e9;
       flex-direction: row;
     }
 
+    &__footer-logo-image {
+      flex: 0 0 16vh;
+    }
+
     &__footer-logo {
-      flex: 0 0 10vh;
+      flex: 0 0 16vh;
     }
 
     &__footer-text {

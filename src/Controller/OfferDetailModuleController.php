@@ -1108,8 +1108,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     if (!$row['tagLinks']) {
                         $row['tagLinks'] = [];
                     }
-                    $row['tagLinks'][$icon['linkLabel']] = $icon;
+
+                    $row['tagLinks'][] = $icon;
                 }
+
+                array_unique($row['tagLinks']);
             }
             
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));

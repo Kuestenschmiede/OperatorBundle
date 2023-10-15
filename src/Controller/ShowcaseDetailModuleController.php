@@ -671,16 +671,10 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                         $row['tagLinks'] = [];
                     }
 
-                    //prevent duplicated entries
-                    $row['tagLinks'][$icon['name']] = $icon;
+                    $row['tagLinks'][] = $icon;
                 }
 
-                //remove alphanumeric keys
-                $rowTagLinks = [];
-                foreach ($row['tagLinks'] as $tagLink) {
-                    $rowTagLinks[] = $tagLink;
-                }
-                $row['tagLinks'] = $rowTagLinks;
+                array_unique($row['tagLinks']);
             }
 
             $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));

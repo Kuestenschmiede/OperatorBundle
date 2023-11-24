@@ -212,7 +212,7 @@
 
                             <?php
                             $beginString = $data->beginDate;
-                            if (isset($data->beginTime) && !empty($data->beginTime)) $beginString .= ', ' . $data->beginTime;
+                            if (isset($data->beginTime) && !empty($data->beginTime) && ($data->beginTime !== '0')) $beginString .= ', ' . $data->beginTime;
                             ?>
                             <span><?= $beginString ?></span>
                         </div>
@@ -224,7 +224,7 @@
 
                                 <?php
                                 $endString = $data->endDate;
-                                if (isset($data->endTime) && !empty($data->endTime)) $endString .= ', ' . $data->endTime . ' ' . $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'];
+                                if (isset($data->endTime) && !empty($data->endTime) && ($data->endTime !== '0')) $endString .= ', ' . $data->endTime . ' ' . $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'];
                                 ?>
                                 <span><?= $endString ?></span>
                             </div>

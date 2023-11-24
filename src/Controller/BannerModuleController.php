@@ -279,7 +279,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             if ($beginTime) {
                 $termin .= ", " . $beginTime;
             }
-            $endTime = $event['endTime'] ? gmdate('H:i', $event['endTime']) : false;
+            $endTime = (isset($event['endTime']) && !empty($event['endTime']) && ($event['endTime'] !== '0')) ? gmdate('H:i', $event['endTime']) : false;
             if ($endTime && $endTime !== $beginTime) {
                 $termin .= " - " . $endTime;
             }

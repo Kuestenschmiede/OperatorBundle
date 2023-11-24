@@ -45,11 +45,17 @@ class LoadPopupListener
             $objElement = $this->Database->prepare('SELECT * FROM tl_gutesio_data_element WHERE uuid = ?')->execute($reqParams[1])->fetchAssoc();
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
             $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
-            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
+            $scope = $event->getScope();
+            if ($scope === "starboardscope") {
+                $popup = array_merge($this->getReducedPopup($objElement, $url));
+            }
+            else {
+                $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
                                         INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
                                         WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
-            $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
-            $popup = array_merge($this->getPopup($objElement, $url, $arrTags));
+                $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
+                $popup = array_merge($this->getPopup($objElement, $url, $arrTags));
+            }
         }
         $event->setPopup($popup);
     }
@@ -189,6 +195,73 @@ class LoadPopupListener
                         <div class='item contacts'>
                             $contacts
                         </div>
+                    </div>   
+                    <div class='c4g-tile-footer'>
+                        <div class='item alias'>
+                            <span class='entry-content'>
+                                $buttonWishlist
+                                <a class='btn btn-primary' href='$href'>Mehr</a>
+                            </span>
+                        </div>
+                    </div>
+                </div>";
+        $popup = [
+            'async' => false,
+            'content' => $html,
+            'showPopupOnActive' => '',
+            'routing_link' => true,
+        ];
+
+        return $popup;
+    }
+    private function getReducedPopup ($element, $url) {
+        $name = $element['name'];
+        $strQueryTypes = 'SELECT type.name FROM tl_gutesio_data_type AS type 
+                                        INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
+                                        WHERE typeElem.elementId = ?';
+        $arrTypes = $this->Database->prepare($strQueryTypes)->execute($element['uuid'])->fetchAllAssoc();
+        $strTypes = '';
+        foreach ($arrTypes as $type) {
+            $strTypes .= $type['name'] . ', ';
+        }
+        $strTypes = rtrim($strTypes, ', ');
+        $href = $url . '/' . $element['alias'];
+        $clientUuid = $this->requestStack->getCurrentRequest()->cookies->get('clientUuid');
+        if ($clientUuid) {
+            $selectWishlistEntry = 'SELECT * FROM tl_gutesio_data_wishlist WHERE clientUuid = ? AND dataUuid = ?';
+            $wishListEntry = $this->Database->prepare($selectWishlistEntry)->execute($clientUuid, $element['uuid'])->fetchAssoc();
+            $urlAdd = 'gutesio/operator/wishlist/add/showcase/' . $element['uuid'];
+            $urlRemove = 'gutesio/operator/wishlist/remove/' . $element['uuid'];
+            $elementUuid = $element['uuid'];
+            $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).attr(\"class\", \"btn btn-primary put-on-wishlist\");";
+            $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
+
+//            TODO: After jQuery.post we have to trigger the Popup - #ajo
+
+            if (!$wishListEntry) {
+                $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' data-uuid='$elementUuid'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
+            } else {
+                $buttonWishlist = "<a class='btn btn-warning remove-from-wishlist on-wishlist' title='Von Merkzettel entfernen' data-uuid='$elementUuid'>Gemerkt <i class=\"fas fa-heart\"></i></a>"; //ToDo  <i class=\u0022far fa-heart\u0022></i>
+            }
+        }
+
+        if ($element['description']) {
+
+            $desc = C4GUtils::truncate($element['description'], 275);
+        }
+
+        $html = "<div class='showcase-tile c4g-tile'>
+                    <div class='c4g-tile-content'>
+                        <div class='item name'>
+                            <h4>$name</h4>
+                        </div>
+                        <div class='item types'>
+                            <span class='entry-label'>Kategorie(n)</span>
+                            <span class='entry-content'>$strTypes</span>
+                        </div>
+                        <div class='item description'>
+                            <p>$desc</p>
+                        </div>                  
                     </div>   
                     <div class='c4g-tile-footer'>
                         <div class='item alias'>

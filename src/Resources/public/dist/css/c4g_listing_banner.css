@@ -409,14 +409,6 @@ template {
     display: flex;
     flex-direction: column
   }
-  .banner__slogan-wrapper {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    white-space: normal
-  }
   .banner__text-wrapper.slide-element {
     padding: 3rem;
     padding-bottom: 7rem;

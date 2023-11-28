@@ -8,6 +8,7 @@ use con4gis\MapsBundle\Resources\contao\modules\api\SearchApi;
 use Contao\Database;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Contao\PageModel;
 
 class PerformSearchListener
 {
@@ -67,6 +68,21 @@ class PerformSearchListener
             }
             if (!$profile->preventGeosearch) {
                 $arrResults = array_merge($arrResults, $response);
+            }
+            if ($profile->linkGeosearch) {
+                $arrLinks = unserialize($profile->linkGeosearch);
+                $insertPosition = count($arrResults) > 5 ? 3 : count($arrResults) - 2;
+                $insertPosition = $insertPosition < 0 ? 0 : $insertPosition;
+                foreach ($arrLinks as $link) {
+                    $pageModel = PageModel::findByPk($link['link']);
+                    if ($pageModel && $link['linkText']) {
+                        $elementLink = [
+                            'display_name'  => $link['linkText'],
+                            'href'          => $pageModel->getFrontendUrl()
+                        ];
+                        array_splice($arrResults, $insertPosition, 0, [$elementLink]);
+                    }
+                }
             }
             $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
             $event->setResponse($arrResults);

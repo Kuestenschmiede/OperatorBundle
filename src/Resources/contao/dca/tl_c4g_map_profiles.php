@@ -3,7 +3,7 @@ use gutesio\OperatorBundle\Classes\Callback\MapsCallback;
 
 $cbClass = MapsCallback::class;
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace("{locstyle_legend:hide},label_color,resize_locstyles_zoom;", "{locstyle_legend:hide},label_color,resize_locstyles_zoom;{filter_legend},filterType,filterElements,linkFilterElements;", $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
-$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace("{geosearch_legend:hide},geosearch_headline,geosearch_engine,", "{geosearch_legend:hide},geosearch_headline,geosearch_engine,ownGeosearch,preventGeosearch,", $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default'] = str_replace("{geosearch_legend:hide},geosearch_headline,geosearch_engine,", "{geosearch_legend:hide},geosearch_headline,geosearch_engine,ownGeosearch,preventGeosearch,linkGeosearch,", $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['palettes']['default']);
 $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['filterType'] = [
     'exclude'                 => true,
     'default'                 => '0',
@@ -37,4 +37,23 @@ $GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['preventGeosearch'] = [
     'default'                 => false,
     'inputType'               => 'checkbox',
     'sql'                     => "char(1) NOT NULL default ''"
+];
+$GLOBALS['TL_DCA']['tl_c4g_map_profiles']['fields']['linkGeosearch'] = [
+    'exclude'                 => true,
+    'inputType'               => 'multiColumnWizard',
+    'eval'                    => ['mandatory'=>false, 'columnFields'=> [
+        'linkText' => [
+            'label'         => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['linkText'],
+            'exclude'       => true,
+            'inputType'     => 'text',
+            'eval' 			=> ['tl_class'=>'w50']
+        ],
+        'link' => [
+            'label'         => &$GLOBALS['TL_LANG']['tl_c4g_map_profiles']['link'],
+            'exclude'       => true,
+            'inputType'     => 'pageTree',
+            'eval' 			=> ['tl_class'=>'w50']
+        ],
+    ]],
+    'sql'                     => "blob NULL",
 ];

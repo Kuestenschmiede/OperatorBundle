@@ -63,10 +63,13 @@ class PerformSearchListener
                     'lon' => $dBResult['geox'],
                     'display_name' => $address,
                 ];
-                $arrResults = array_merge($arrResults, $response);
-                $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
-                $event->setResponse($arrResults);
+
             }
+            if (!$profile->preventGeosearch) {
+                $arrResults = array_merge($arrResults, $response);
+            }
+            $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
+            $event->setResponse($arrResults);
         }
     }
 }

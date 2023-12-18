@@ -41,9 +41,15 @@ class PerformSearchListener
                 ['name' => 'locationStreet', 'weight' => 5],
                 ['name' => 'locationCity', 'weight' => 5],
                 ['name' => 'locationZip', 'weight' => 5],
+                ['name' => 'tl_gutesio_data_type.name', 'weight' => 40],
+                ['name' => 'tl_gutesio_data_type.extendedSearchTerms', 'weight' => 40],
             ];
-            $whereClause = "(releaseType = 'internal' OR releaseType = 'interregional' OR releaseType = '')";
-            $arrDBResult = SearchApi::searchDatabase($arrParams['q'], $arrColums, 'tl_gutesio_data_element', $this->Database);
+            $arrJoins = [
+                ['table' => "tl_gutesio_data_element_type", 'columnLeft' => "tl_gutesio_data_element.uuid", 'columnRight' =>"tl_gutesio_data_element_type.elementId"],
+                ['table' => "tl_gutesio_data_type", 'columnLeft' => "tl_gutesio_data_element_type.typeId", 'columnRight' =>"tl_gutesio_data_type.uuid"],
+            ];
+            $whereClause = "(releaseType = 'internal' OR releaseType = '')";
+            $arrDBResult = SearchApi::searchDatabase($arrParams['q'], $arrColums, 'tl_gutesio_data_element', $this->Database, $whereClause, $arrJoins);
             $arrResults = [];
             foreach ($arrDBResult as $dBResult) {
                 $address = $dBResult['contactName'] ?: $dBResult['name'];
@@ -60,9 +66,10 @@ class PerformSearchListener
                     $address .= $dBResult['contactCity'] ?: $dBResult['locationCity'];
                 }
                 $arrResults[] = [
-                    'lat' => $dBResult['geoy'],
-                    'lon' => $dBResult['geox'],
-                    'display_name' => $address,
+                    'uuid'          => $dBResult['uuid'],
+                    'lat'           => $dBResult['geoy'],
+                    'lon'           => $dBResult['geox'],
+                    'display_name'  => $address,
                 ];
 
             }
@@ -71,7 +78,7 @@ class PerformSearchListener
             }
             if ($profile->linkGeosearch) {
                 $arrLinks = unserialize($profile->linkGeosearch);
-                $insertPosition = count($arrResults) > 5 ? 3 : count($arrResults) - 2;
+                $insertPosition = count($arrResults) > 5 ? 3 : count($arrResults);
                 $insertPosition = $insertPosition < 0 ? 0 : $insertPosition;
                 foreach ($arrLinks as $link) {
                     $pageModel = PageModel::findByPk($link['link']);

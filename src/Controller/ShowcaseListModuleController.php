@@ -816,10 +816,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 }
                 if ($tag['image']) {
                     $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
-                    $optionData[$tag['uuid']] = [
-                        'src' => $objImage->path,
-                        'alt' => $tag['name']
-                    ];
+                    if ($objImage) {
+                        $optionData[$tag['uuid']] = [
+                            'src' => $objImage->path,
+                            'alt' => $tag['name']
+                        ];
+                    } else {
+                        //ToDo CDN
+                    }
                 } else {
                     $optionData[$tag['uuid']] = [];
                 }

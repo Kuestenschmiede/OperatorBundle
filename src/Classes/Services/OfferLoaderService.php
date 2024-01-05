@@ -65,16 +65,15 @@ class OfferLoaderService
     {
         $this->setup();
         $limit = $this->limit;
-        $tagIds = $filterData['tagIds'];
+        $tagIds = key_exists('tagIds', $filterData) ? $filterData['tagIds'] : [];
         if (is_array($tagIds) && (count($tagIds) > 0) && strpos($tagIds[0],',')) {
             $tagIds = explode(',',$tagIds[0]);
         }
-        $categoryIds = $filterData['categoryIds'];
+        $categoryIds = key_exists('categoryIds', $filterData) ? $filterData['categoryIds'] : [];
 
         $tagFilter = $tagIds && (count($tagIds) > 0);
         $categoryFilter = $categoryIds && (count($categoryIds) > 0);
-        $dateFilter = $filterData['filterFrom'] || $filterData['filterUntil'];
-        $sortFilter = $filterData['sorting'];
+        $dateFilter = (key_exists('filterFrom', $filterData) ? $filterData['filterFrom'] : false) || (key_exists('filterUntil', $filterData) ? $filterData['filterUntil'] : false); $sortFilter = key_exists('sorting', $filterData) ? $filterData['sorting'] : false;
 
         $hasFilter = $tagFilter || $categoryFilter || $sortFilter || $dateFilter;
         if ($hasFilter) {
@@ -282,7 +281,7 @@ class OfferLoaderService
 
     public function getFullTextData(
         array $terms,
-        $offset = 0,
+              $offset = 0,
         string $type = '',
         int $limit = 0,
         bool $dateFilter = false
@@ -385,9 +384,9 @@ class OfferLoaderService
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
                 ORDER BY relevance DESC LIMIT 0, 5000') //Todo ?, ? Hotfix offset error
-                    ->execute(
-                        $parameters
-                    )->fetchAllAssoc();
+                ->execute(
+                    $parameters
+                )->fetchAllAssoc();
             }
         } elseif (empty($categories)) {
             $parameters = $types;
@@ -1099,11 +1098,11 @@ class OfferLoaderService
                         if ($productData['basePriceRequired']) {
                             $productData['basePrice'] = $productData['rawPrice'] && $productData['size'] && $productData['basePriceUnitPerPiece'] ? $productData['rawPrice'] / $productData['size'] * $productData['basePriceUnitPerPiece'] : '';
                             $productData['basePrice'] = number_format(
-                                $productData['basePrice'] ?: 0,
-                                2,
-                                ',',
-                                ''
-                            ) . ' €';
+                                    $productData['basePrice'] ?: 0,
+                                    2,
+                                    ',',
+                                    ''
+                                ) . ' €';
                         }
                         $productData['allergenes'] = $productData['allergenes'] ?: '';
                         $productData['ingredients'] = $productData['ingredients'] ?: '';
@@ -1237,27 +1236,29 @@ class OfferLoaderService
                         WHERE a.childId = ? ORDER BY beginDateTime ASC')
                         ->execute($row['uuid'])->fetchAssoc();
 
-                    $beginDateTime = new \DateTime();
-                    $beginDateTime->setTimestamp($eventData['beginDate']);
-                    // Add one day so events are still shown on the day they expire
-                    $beginDateTime->setDate(
-                        $beginDateTime->format('Y'),
-                        $beginDateTime->format('m'),
-                        (int) $beginDateTime->format('d') + 1
-                    );
-                    $endDateTime = new \DateTime();
-                    $endDateTime->setTimestamp($eventData['endDate']);
+                    if ($eventData) {
+                        $beginDateTime = new \DateTime();
+                        $beginDateTime->setTimestamp($eventData['beginDate']);
+                        // Add one day so events are still shown on the day they expire
+                        $beginDateTime->setDate(
+                            $beginDateTime->format('Y'),
+                            $beginDateTime->format('m'),
+                            (int)$beginDateTime->format('d') + 1
+                        );
+                        $endDateTime = new \DateTime();
+                        $endDateTime->setTimestamp($eventData['endDate']);
 
-                    $eventData['storeBeginDate'] = $eventData['beginDate'];
-                    $eventDate['storeBeginTime'] = $eventData['beginTime'];
+                        $eventData['storeBeginDate'] = $eventData['beginDate'];
+                        $eventData['storeBeginTime'] = $eventData['beginTime'];
+                    };
 
                     //ToDo fix recurring
-                    if ($beginDateTime->getTimestamp() < time()) {
+                    if ($eventData && $beginDateTime->getTimestamp() < time()) {
                         if ($eventData['recurring']) {
                             $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
                             if ($repeatEach && is_array($repeatEach)) {
-                                $times = key_exists('recurrences', $eventDate) && is_int($eventData['recurrences']) ? intval($eventData['recurrences']) : 0;
-                                $value = key_exists('value', $eventDate) && is_int($repeatEach['value']) ? intval($repeatEach['value']) : 0;
+                                $times = key_exists('recurrences', $eventData) && is_int($eventData['recurrences']) ? intval($eventData['recurrences']) : 0;
+                                $value = key_exists('value', $eventData) && is_int($repeatEach['value']) ? intval($repeatEach['value']) : 0;
 
                                 if ($times === 0) {
                                     $times = 100;
@@ -1344,116 +1345,119 @@ class OfferLoaderService
                         }
                     }
 
-                    // remove the extra day added previously
-                    $beginDateTime->setDate(
-                        $beginDateTime->format('Y'),
-                        $beginDateTime->format('m'),
-                        (int) $beginDateTime->format('d') - 1
-                    );
+                    if ($eventData) {
+                        // remove the extra day added previously
+                        $beginDateTime ? $beginDateTime->setDate(
+                            $beginDateTime->format('Y'),
+                            $beginDateTime->format('m'),
+                            (int) $beginDateTime->format('d') - 1
+                        ) : false;
 
-                    $beginDate = $beginDateTime ? $beginDateTime->format('d.m.Y') : false;
-                    $beginDateShort = $beginDateTime ? $beginDateTime->format('d.m') : false;
-                    $endDate = $endDateTime ? $endDateTime->format('d.m.Y') : false;
-                    $nextDate = $nextDateTime ? $nextDateTime->format('d.m.Y') : false;
-                    $beginTime = $eventData['beginTime'] ? gmdate('H:i', $eventData['beginTime']) : false;
-                    $endTime = $eventData['endTime'] ? gmdate('H:i', $eventData['endTime']) : false;
+                        $beginDate = $beginDateTime ? $beginDateTime->format('d.m.Y') : false;
+                        $beginDateShort = $beginDateTime ? $beginDateTime->format('d.m') : false;
+                        $endDate = $endDateTime ? $endDateTime->format('d.m.Y') : false;
+                        $nextDate = $nextDateTime ? $nextDateTime->format('d.m.Y') : false;
+                        $beginTime = $eventData['beginTime'] ? gmdate('H:i', $eventData['beginTime']) : false;
+                        $endTime = $eventData['endTime'] ? gmdate('H:i', $eventData['endTime']) : false;
 
-                    if ($beginDate && $beginDate !== '01.01.1970') {
-                        if ($endDate && ($endDate !== $beginDate) && $endDate !== '01.01.1970') {
-                            if ($beginTime && $endTime && ($beginTime != '00:00')) {
-                                $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
-                                $eventData['endDate'] = '';
-                                $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
-                                $eventData['endTime'] = '';
-                            } else if ($beginTime && ($beginTime != '00:00')) {
-                                $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
-                                $eventData['endDate'] = '';
-                                $eventData['beginTime'] = $beginTime.' Uhr';
-                                $eventData['endTime'] = '';
+                        if ($beginDate && $beginDate !== '01.01.1970') {
+                            if ($endDate && ($endDate !== $beginDate) && $endDate !== '01.01.1970') {
+                                if ($beginTime && $endTime && ($beginTime != '00:00')) {
+                                    $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
+                                    $eventData['endDate'] = '';
+                                    $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
+                                    $eventData['endTime'] = '';
+                                } else if ($beginTime && ($beginTime != '00:00')) {
+                                    $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
+                                    $eventData['endDate'] = '';
+                                    $eventData['beginTime'] = $beginTime.' Uhr';
+                                    $eventData['endTime'] = '';
+                                } else {
+                                    $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
+                                    $eventData['endDate'] = '';
+                                    $eventData['beginTime'] = '';
+                                    $eventData['endTime'] = '';
+                                }
                             } else {
-                                $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
-                                $eventData['endDate'] = '';
-                                $eventData['beginTime'] = '';
-                                $eventData['endTime'] = '';
-                            }
-                        } else {
-                            if ($beginTime && $endTime && ($beginTime != '00:00')) {
-                                $eventData['beginDate'] = $beginDate;
-                                $eventData['endDate'] = '';
-                                $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
-                                $eventData['endTime'] = '';
-                            } else if ($beginTime && ($beginTime != '00:00')) {
-                                $eventData['beginDate'] = $beginDate;
-                                $eventData['endDate'] = '';
-                                $eventData['beginTime'] = $beginTime.' Uhr';
-                                $eventData['endTime'] = '';
-                            } else {
-                                $eventData['beginDate'] = $beginDate;
-                                $eventData['endDate'] = '';
-                                $eventData['beginTime'] = '';
-                                $eventData['endTime'] = '';
-                            }
-                        }
-                    }
-
-                    $entryTime = $eventData['entryTime'] ? gmdate('H:i', $eventData['entryTime']) : false;
-                    if ($entryTime) {
-                        $eventData['entryTime'] = $entryTime.' Uhr';
-                    }
-
-                    $eventPrice = $eventData['eventPrice'] ? number_format(
-                            $eventData['eventPrice'],
-                            2,
-                            ',',
-                            ''
-                        ) . ' €' : false;
-                    if ($eventPrice) {
-                        $eventData['eventPrice'] = $eventPrice;
-                    }
-
-                    if ($eventData['appointmentUponAgreement']) {
-                        $fieldValue = $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreementContent'];
-                        if ($eventData['beginDate']) {
-                            $fieldValue .= ' (';
-                            if (!$eventData['endDate']) {
-                                $fieldValue .= $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreement_startingAt'] . ' ';
-                            }
-                            $fieldValue .= $eventData['beginDate'];
-                            if ($eventData['beginTime']) {
-                                $fieldValue .= ' ' . $eventData['beginTime'];
-                            }
-                            if ($eventData['endDate']) {
-                                $fieldValue .= ' - ' . $eventData['endDate'];
-                                if ($eventData['endTime']) {
-                                    $fieldValue .= ' ' . $eventData['endTime'];
+                                if ($beginTime && $endTime && ($beginTime != '00:00')) {
+                                    $eventData['beginDate'] = $beginDate;
+                                    $eventData['endDate'] = '';
+                                    $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
+                                    $eventData['endTime'] = '';
+                                } else if ($beginTime && ($beginTime != '00:00')) {
+                                    $eventData['beginDate'] = $beginDate;
+                                    $eventData['endDate'] = '';
+                                    $eventData['beginTime'] = $beginTime.' Uhr';
+                                    $eventData['endTime'] = '';
+                                } else {
+                                    $eventData['beginDate'] = $beginDate;
+                                    $eventData['endDate'] = '';
+                                    $eventData['beginTime'] = '';
+                                    $eventData['endTime'] = '';
                                 }
                             }
-                            $fieldValue .= ')';
                         }
-                        $eventData['beginDate'] = '';
-                        $eventData['beginTime'] = '';
-                        $eventData['endDate'] = '';
-                        $eventData['endTime'] = '';
-                        $eventData['appointmentUponAgreement'] = $fieldValue;
-                        $tooOld = false;
-                    } else {
-                        $eventData['appointmentUponAgreement'] = '';
-                    }
 
-                    $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
-                    if ($elementModel !== null) {
-                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
-                    } else {
-                        $elementId = $row['elementId'];
-                        $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
-                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
-                    }
+                        $entryTime = $eventData['entryTime'] ? gmdate('H:i', $eventData['entryTime']) : false;
+                        if ($entryTime) {
+                            $eventData['entryTime'] = $entryTime.' Uhr';
+                        }
 
-                    //hotfix special char
-                    $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
+                        $eventPrice = $eventData['eventPrice'] ? number_format(
+                                $eventData['eventPrice'],
+                                2,
+                                ',',
+                                ''
+                            ) . ' €' : false;
+                        if ($eventPrice) {
+                            $eventData['eventPrice'] = $eventPrice;
+                        }
 
-                    if (!empty($eventData)) {
-                        $childRows[$key] = array_merge($row, $eventData);
+                        if ($eventData['appointmentUponAgreement']) {
+                            $fieldValue = $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreementContent'];
+                            if ($eventData['beginDate']) {
+                                $fieldValue .= ' (';
+                                if (!$eventData['endDate']) {
+                                    $fieldValue .= $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreement_startingAt'] . ' ';
+                                }
+                                $fieldValue .= $eventData['beginDate'];
+                                if ($eventData['beginTime']) {
+                                    $fieldValue .= ' ' . $eventData['beginTime'];
+                                }
+                                if ($eventData['endDate']) {
+                                    $fieldValue .= ' - ' . $eventData['endDate'];
+                                    if ($eventData['endTime']) {
+                                        $fieldValue .= ' ' . $eventData['endTime'];
+                                    }
+                                }
+                                $fieldValue .= ')';
+                            }
+                            $eventData['beginDate'] = '';
+                            $eventData['beginTime'] = '';
+                            $eventData['endDate'] = '';
+                            $eventData['endTime'] = '';
+                            $eventData['appointmentUponAgreement'] = $fieldValue;
+                            $tooOld = false;
+                        } else {
+                            $eventData['appointmentUponAgreement'] = '';
+                        }
+
+                        $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
+                        if ($elementModel !== null) {
+                            $eventData['locationElementName'] = html_entity_decode($elementModel->name);
+                        } else {
+                            $elementId = $row['elementId'];
+                            $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
+                            $eventData['locationElementName'] = html_entity_decode($elementModel->name);
+                        }
+
+                        //hotfix special char
+                        $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
+
+                        if (!empty($eventData)) {
+                            $childRows[$key] = array_merge($row, $eventData);
+                        }
+
                     }
                     if ($dateFilter) {
                         // date filter will be applied later on

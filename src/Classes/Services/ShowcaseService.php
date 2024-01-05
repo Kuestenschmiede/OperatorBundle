@@ -53,6 +53,10 @@ class ShowcaseService
     const FILTER_FIELDS = ['name'=>50,'alias'=>100,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60];
 
     public static function getFilterSQLString() {
+        if(TL_MODE == "BE") {
+            return '';
+        }
+
         $result = '(';
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
             If ($result == '(') {
@@ -91,6 +95,10 @@ class ShowcaseService
 //    }
 
     public static function getFilterSQLStringWeight() {
+        if(TL_MODE == "BE") {
+            return '';
+        }
+
         $result = '';
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
             If ($result == '') {

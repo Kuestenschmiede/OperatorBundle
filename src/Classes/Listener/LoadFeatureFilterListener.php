@@ -33,6 +33,10 @@ class LoadFeatureFilterListener
         $eventName,
         EventDispatcherInterface $eventDispatcher
     ) {
+        if(TL_MODE == "BE") {
+            return [];
+        }
+
         $mapId = $event->getProfileId();
         $modelMaps = C4gMapsModel::findById($mapId); //ToDo
         $modelProfile = C4gMapProfilesModel::findById($modelMaps->profile);
@@ -48,6 +52,11 @@ class LoadFeatureFilterListener
                 foreach ($arrFilterElems as $filterElem) {
                     $strSelect = 'SELECT * FROM tl_gutesio_data_tag WHERE published=1 AND uuid=?';
                     $tag = $this->Database->prepare($strSelect)->execute($filterElem)->fetchAssoc();
+
+                    if (!$tag) {
+                        continue;
+                    }
+
                     $filterObject = new FeatureFilter();
                     $filterObject->setFieldName($tag['name']);
 

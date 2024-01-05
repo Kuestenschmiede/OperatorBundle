@@ -103,14 +103,20 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $this->offerService->setRequest($request);
         $this->request = $request;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
+
+        if (!$model->gutesio_without_contact) {
+            ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
+        }
+
         $this->setupLanguage();
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
 
         if ($model->gutesio_data_layoutType !== "plain") {
             ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
-            ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/phonehours.js|async", ResourceLoader::JAVASCRIPT, "phonehours");
+            if (!$model->gutesio_without_contact) {
+                ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/openinghours.js|async", ResourceLoader::JAVASCRIPT, "openinghours");
+                ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/phonehours.js|async", ResourceLoader::JAVASCRIPT, "phonehours");
+            }
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async", ResourceLoader::JAVASCRIPT, "boostrap-modal");
             ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/c4g_all.js|async|static", ResourceLoader::JAVASCRIPT, "c4g-all");
@@ -209,7 +215,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             throw new RedirectResponseException($pageUrl);
         }
         $template->detailData = $data;
-        $template->mapData = $this->getMapData();
+        if (!$model->gutesio_without_contact) {
+            $template->mapData = $this->getMapData();
+        }
         $template->model = $model;
         $page = $model->cart_page ?: 0;
         if ($page !== 0) {

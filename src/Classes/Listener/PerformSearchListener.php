@@ -6,6 +6,7 @@ use con4gis\MapsBundle\Classes\Events\PerformSearchEvent;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\modules\api\SearchApi;
 use Contao\Database;
+use http\Env\Response;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Contao\PageModel;
@@ -73,7 +74,7 @@ class PerformSearchListener
                 ];
 
             }
-            if (!$profile->preventGeosearch) {
+            if (!$profile->preventGeosearch && $response && is_array($response)) {
                 $arrResults = array_merge($arrResults, $response);
             }
             if ($profile->linkGeosearch) {

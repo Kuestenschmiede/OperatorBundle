@@ -310,10 +310,6 @@ template {
   color: #6c757d;
   opacity: 1
 }
-.form-control:-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1
-}
 .form-control::placeholder {
   color: #6c757d;
   opacity: 1
@@ -1792,7 +1788,6 @@ mark {
   vertical-align: middle;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   background-color: transparent;
   border: 1px solid transparent;
@@ -3587,13 +3582,11 @@ button.bg-dark:hover {
 .user-select-auto {
   -webkit-user-select: auto!important;
   -moz-user-select: auto!important;
-  -ms-user-select: auto!important;
   user-select: auto!important
 }
 .user-select-none {
   -webkit-user-select: none!important;
   -moz-user-select: none!important;
-  -ms-user-select: none!important;
   user-select: none!important
 }
 .overflow-auto {
@@ -5778,7 +5771,6 @@ a.text-dark:hover {
 .modal-dialog-centered::before {
   display: block;
   height: calc(100vh - 1rem);
-  height: -webkit-min-content;
   height: -moz-min-content;
   height: min-content;
   content: ""
@@ -5879,7 +5871,6 @@ a.text-dark:hover {
   }
   .modal-dialog-centered::before {
     height: calc(100vh - 3.5rem);
-    height: -webkit-min-content;
     height: -moz-min-content;
     height: min-content
   }

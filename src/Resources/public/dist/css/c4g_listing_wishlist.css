@@ -314,11 +314,6 @@ template {
   color: #6c757d;
   opacity: 1
 }
-.c4g-modal-content input:-ms-input-placeholder,
-.form-control:-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1
-}
 .c4g-modal-content input::placeholder,
 .form-control::placeholder {
   color: #6c757d;
@@ -916,7 +911,6 @@ html {
   vertical-align: middle;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   background-color: transparent;
   border: 1px solid transparent;

@@ -282,7 +282,7 @@ class LoadLayersListener
         $tags = [];
         $tagUuids = [];
         foreach ($arrTags as $key => $tag) {
-            if ($tag['name']) {
+            if ($tag['name'] && !key_exists($tag['uuid'], $tagUuids)) {
                 $tags[$key] = $tag['name'];
                 $tagUuids[$tag['uuid']] = true;
             }

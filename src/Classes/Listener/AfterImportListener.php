@@ -12,6 +12,7 @@ namespace gutesio\OperatorBundle\Classes\Listener;
 use con4gis\CoreBundle\Classes\Events\AfterImportEvent;
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use Contao\CoreBundle\Crawl\Monolog\CrawlCsvLogHandler;
+use con4gis\MapsBundle\Classes\Caches\C4GMapsAutomator;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
 use Monolog\Handler\GroupHandler;
@@ -95,6 +96,8 @@ class AfterImportListener
                         $this->filesystem->remove($this->rootDir . '/web/robots.txt');
                     }
                 }
+                $automator =  new C4GMapsAutomator();
+                $automator->purgeMapApiCache();
             }
         } catch (\Throwable $e) {
             if ($this->filesystem->exists($this->rootDir . '/web/robots.txt') && $createRobots) {

@@ -61,7 +61,7 @@ class LoadLayersListener
         if (strpos($alias, '?')) {
             $alias = explode('?', $alias)[0];
         }
-
+        $event->setPreventCaching(true);
         if (C4GUtils::isValidGUID($alias)) {
             $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
                 ->execute('{' . strtoupper($alias) . '}')->fetchAllAssoc();

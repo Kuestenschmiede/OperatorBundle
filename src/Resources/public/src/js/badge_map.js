@@ -206,7 +206,9 @@ window.c4gMapsHooks.proxy_fillPopup = window.c4gMapsHooks.proxy_fillPopup || [];
 
 window.c4gMapsHooks.proxy_fillPopup.push(function (params) {
     window.setTimeout(function () {
-        jQuery(".put-on-wishlist").on("click", putOnWishlistCallback);
-        jQuery(".remove-from-wishlist").on("click", removeFromWishlistCallback);
+        jQuery(".put-on-wishlist:not(.isclickable)").on("click", putOnWishlistCallback);
+        jQuery(".put-on-wishlist").addClass("isclickable");
+        jQuery(".remove-from-wishlist:not(.isclickable)").on("click", removeFromWishlistCallback);
+        jQuery(".remove-from-wishlist").addClass("isclickable");
     }, 100);
 });

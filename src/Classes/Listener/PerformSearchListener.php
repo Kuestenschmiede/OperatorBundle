@@ -92,7 +92,9 @@ class PerformSearchListener
                     }
                 }
             }
-            $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
+            if ($profile->geosearch_results) {
+                $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
+            }
             $event->setResponse($arrResults);
         }
     }

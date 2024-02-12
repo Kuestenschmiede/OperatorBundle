@@ -696,7 +696,11 @@
                                     <?php endif; ?>
                                 <?php endforeach; ?>
                                 <div class="detail-field-wrapper__tags">
+                                    <?php $coronaTag = false; $wheelchairTag = false; $familyFriendlyTag = false; ?>
                                     <?php foreach ($data->tags as $k => $v): ?>
+                                        <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
+                                        <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
+                                        <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
                                         <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital'))))): ?>                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
                                             <?php if ($v->linkHref): ?>
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
@@ -725,7 +729,7 @@
                                 </div>
 
                                 <div class="detail-field-wrapper__tag-fields">
-                                    <?php if (isset($data->coronaNotes) && !empty($data->coronaNotes)): ?>
+                                    <?php if ($coronaTag && (isset($data->coronaNotes) && !empty($data->coronaNotes))): ?>
                                         <div class="item coronaNotes tag_corona">
                                             <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['coronanote_title'] ?></div>
                                             <div class="entry-content">
@@ -734,7 +738,7 @@
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes)): ?>
+                                    <?php if ($wheelchairTag && (isset($data->wheelchairNotes) && !empty($data->wheelchairNotes))): ?>
                                         <div class="item wheelchairNotes tag_wheelchair">
                                             <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['accessibility_title'] ?></div>
 
@@ -744,7 +748,7 @@
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (isset($data->familyFriendlyNotes) && !empty($data->familyFriendlyNotes)): ?>
+                                    <?php if ($familyFriendlyTag && (isset($data->familyFriendlyNotes) && !empty($data->familyFriendlyNotes))): ?>
                                         <div class="item familyFriendlyNotes tag_familyFriendly">
                                             <div class="entry-label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['familyFriendlyNotes'] ?></div>
 

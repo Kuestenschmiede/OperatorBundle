@@ -61,11 +61,11 @@ class AdditionalImportProxyDataListener
             [
                 'proxyKey' => 'dataModelVersion',
                 'proxyData' => $dataModelVersion,
-            ],
+            ],/*
             [
                 'proxyKey' => 'missingImportImages',
                 'proxyData' => $missingFiles,
-            ],
+            ],*/
         ];
 
         $event->setProxyData($proxyData);

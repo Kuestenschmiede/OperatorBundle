@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG'][$strName]['map_legend'] = "Map settings";
 $GLOBALS['TL_LANG'][$strName]['page_legend'] = "Page settings";
 $GLOBALS['TL_LANG'][$strName]['notification_legend'] = "Notification settings";
 $GLOBALS['TL_LANG'][$strName]['tax_legend'] = "Tax rates";
+$GLOBALS['TL_LANG'][$strName]['cdnUrl'] = ['URL to CDN', 'Enter the URL to the CDN (mandatory).'];
 $GLOBALS['TL_LANG'][$strName]['gutesIoUrl'] = ['URL for gutes.digital', 'Enter the URL for the gutes.digital communication here (mandatory).'];
 $GLOBALS['TL_LANG'][$strName]['gutesIoKey'] = ['API key for gutes.digital', 'Enter your operator key here (mandatory).'];
 $GLOBALS['TL_LANG'][$strName]['detail_profile'] = ["Map profile for detail view", "Select the map profile to be used in the detail view."];

@@ -32,7 +32,7 @@ $GLOBALS['TL_DCA'][$strName] = [
     ],
     
     'palettes' => [
-        'default' => '{key_legend},gutesIoUrl,gutesIoKey;'.
+        'default' => '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
             'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,cartPage;'
@@ -44,6 +44,12 @@ $GLOBALS['TL_DCA'][$strName] = [
         ],
         'tstamp' => [
             'sql' => 'int unsigned NOT NULL default 0'
+        ],
+        'cdnUrl' =>[
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['mandatory' => true, 'maxlength' => 100, 'doNotSaveEmpty' => true],
+            'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'gutesIoUrl' =>[
             'exclude'                 => true,

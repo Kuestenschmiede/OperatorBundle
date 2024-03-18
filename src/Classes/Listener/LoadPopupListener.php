@@ -177,7 +177,7 @@ class LoadPopupListener
                     </div>";
         }
 
-        $html .= "<div class='c4g-tile-content'>";
+        $html .= !$reduced ? "<div class='c4g-tile-content'>" : "<a class='c4g-tile-content' href='$href'>";
 
         if (in_array('name', $fields) && $name){
             $html .= "<div class='item name'>
@@ -219,8 +219,8 @@ class LoadPopupListener
         $html .= "    
                             </span>
                         </div>
-                    </div>
-                </div>";
+                    </div>";
+        $html .= !$reduced ? "</div>" : "</a>";
         $popup = [
             'async' => false,
             'content' => $html,

@@ -46,21 +46,16 @@ class LoadPopupListener
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
             $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
             $scope = $event->getScope();
-            if ($scope === "starboardscope") {
-                $popup = array_merge($this->getReducedPopup($objElement, $url));
-            }
-            else {
-                $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
-                                        INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
-                                        WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
-                $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
-                $popup = array_merge($this->getPopup($objElement, $url, $arrTags));
-            }
+            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
+                                    INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
+                                    WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
+            $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
+            $popup = array_merge($this->getPopup($objElement, $url, $arrTags, $scope === "starboardscope"));
         }
         $event->setPopup($popup);
     }
 
-    private function getPopup($element, $url, $arrTags)
+    private function getPopup($element, $url, $arrTags, $reduced = false)
     {
         $name = $element['name'];
         $strQueryTypes = 'SELECT type.name FROM tl_gutesio_data_type AS type 
@@ -171,36 +166,57 @@ class LoadPopupListener
 
             $desc = C4GUtils::truncate($element['description'], 275);
         }
-
-        $html = "<div class='showcase-tile c4g-tile'>
-                     <div class='c4g-tile-header'>
+        $settings = GutesioOperatorSettingsModel::findSettings();
+        $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);
+        $html = "<div class='showcase-tile c4g-tile'>";
+        if (in_array('image', $fields) && $image){
+            $html .= "<div class='c4g-tile-header'>
                         <div class='item image'>
                             $image
                         </div>
-                    </div>
-                    <div class='c4g-tile-content'>
-                        <div class='item name'>
+                    </div>";
+        }
+
+        $html .= "<div class='c4g-tile-content'>";
+
+        if (in_array('name', $fields) && $name){
+            $html .= "<div class='item name'>
                             <h4>$name</h4>
-                        </div>
-                        <div class='item types'>
+                        </div>";
+        }
+
+        if (in_array('types', $fields) && $strTypes){
+            $html .= "<div class='item types'>
                             <span class='entry-label'>Kategorie(n)</span>
                             <span class='entry-content'>$strTypes</span>
-                        </div>
-                        <div class='item description'>
+                        </div>";
+        }
+
+        if (in_array('desc', $fields) && $desc){
+            $html .= "<div class='item description'>
                             <p>$desc</p>
-                        </div>
-                        <div class='tags'>
+                        </div>";
+        }
+        if (in_array('tags', $fields) && $tags){
+            $html .= "<div class='tags'>
                             $tags
-                        </div>
-                        <div class='item contacts'>
+                        </div>";
+        }
+        if (in_array('contacts', $fields) && $contacts){
+            $html .= "<div class='item contacts'>
                             $contacts
-                        </div>
-                    </div>   
-                    <div class='c4g-tile-footer'>
+                        </div>";
+        }
+        $html .= "</div><div class='c4g-tile-footer'>
                         <div class='item alias'>
-                            <span class='entry-content'>
-                                $buttonWishlist
-                                <a class='btn btn-primary' href='$href'>Mehr</a>
+                            <span class='entry-content'>";
+        if (in_array('wishlist', $fields) && $buttonWishlist){
+            $html .= $buttonWishlist;
+        }
+        if (in_array('more', $fields)){
+            $html .= "<a class='btn btn-primary' href='$href'>Mehr</a>";
+        }
+        $html .= "    
                             </span>
                         </div>
                     </div>
@@ -250,7 +266,7 @@ class LoadPopupListener
             $desc = C4GUtils::truncate($element['description'], 275);
         }
 
-        $html = "<div class='showcase-tile c4g-tile'>
+        $html = "<a href='$href' class='showcase-tile c4g-tile'>
                     <div class='c4g-tile-content'>
                         <div class='item name'>
                             <h4>$name</h4>
@@ -267,11 +283,10 @@ class LoadPopupListener
                         <div class='item alias'>
                             <span class='entry-content'>
                                 $buttonWishlist
-                                <a class='btn btn-primary' href='$href'>Mehr</a>
                             </span>
                         </div>
                     </div>
-                </div>";
+                </a>";
         $popup = [
             'async' => false,
             'content' => $html,

@@ -34,3 +34,16 @@ $GLOBALS['TL_LANG'][$strName]['voucherDetailPage'] = ["Detailseite Gutschein", "
 $GLOBALS['TL_LANG'][$strName]['cartPage'] = ["Warenkorb Seite", "Die Warenkorb Seite."];
 $GLOBALS['TL_LANG'][$strName]['taxRegular'] = ["Normaler Steuersatz", "Der aktuell gültige normale Steuersatz. Wird in den Details der Inhalte angezeigt, die den normalen Steuersatz gewählt haben."];
 $GLOBALS['TL_LANG'][$strName]['taxReduced'] = ["Ermäßigter Steuersatz", "Der aktuell gültige ermäßigte Steuersatz. Wird in den Details der Inhalte angezeigt, die den ermäßigten Steuersatz gewählt haben."];
+$GLOBALS['TL_LANG'][$strName]['popupFields'] = ['Popup Felder', 'Auswahl der Felder für das Popup.'];
+$GLOBALS['TL_LANG'][$strName]['popupFieldsReduced'] = ['Popup Felder (reduziert)', 'Auswahl der Felder für das reduzierte Popup (Elemente im Kartenausschnitt).'];
+
+$GLOBALS['TL_LANG'][$strName]['popupFieldsRefs'] =[
+    'image'     => 'Bild',
+    'name'      => 'Name',
+    'types'     => 'Kategorien',
+    'desc'      => 'Beschreibung',
+    'tags'      => 'Tags',
+    'contacts'  => 'Kontakt',
+    'wishlist'  => 'Button Wunschliste',
+    'more'      => 'Button mehr'
+];

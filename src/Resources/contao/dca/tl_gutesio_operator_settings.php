@@ -33,7 +33,7 @@ $GLOBALS['TL_DCA'][$strName] = [
     
     'palettes' => [
         'default' => '{key_legend},gutesIoUrl,gutesIoKey;'.
-            '{map_legend},detail_profile,detail_map;'.
+            '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
             'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,cartPage;'
     ],
@@ -67,6 +67,28 @@ $GLOBALS['TL_DCA'][$strName] = [
                                             'submitOnChange' => true, 'alwaysSave' => true],
             'relation'                => ['type'=>'belongsTo', 'load'=>'eager'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
+        ],
+       'popupFields' => [
+            'exclude'                 => true,
+            'inputType'               => 'select',
+            'eval'                    => [
+                'mandatory' => false,
+                'chosen'    => true,
+                'multiple'  => true
+            ],
+            'options'                 => &$GLOBALS['TL_LANG']['tl_gutesio_operator_settings']['popupFieldsRefs'],
+            'sql'                     => "blob NULL",
+        ],
+        'popupFieldsReduced' => [
+            'exclude'                 => true,
+            'inputType'               => 'select',
+            'eval'                    => [
+                'mandatory' => false,
+                'chosen'    => true,
+                'multiple'  => true
+            ],
+            'options'                 => &$GLOBALS['TL_LANG']['tl_gutesio_operator_settings']['popupFieldsRefs'],
+            'sql'                     => "blob NULL",
         ],
         'detail_map' => [
             'exclude'                 => true,

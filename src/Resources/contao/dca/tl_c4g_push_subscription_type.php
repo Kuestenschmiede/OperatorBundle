@@ -10,11 +10,10 @@ if ($packages['gutesio/operator']) {
         ->addField(['notifyUpcomingEvents'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
         ->applyToPalette('default', $str);
 
-
     $GLOBALS['TL_DCA'][$str]['fields']['notifyUpcomingEvents'] = array
     (
         'exclude' => true,
-        'default' => true,
+        'default' => false,
         'inputType' => 'checkbox',
         'eval' => ['tl_class' => 'clr'],
         'sql' => "char(1) NOT NULL default '0'"

@@ -170,18 +170,22 @@ class LoadPopupListener
         $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);
         $html = "<div class='showcase-tile c4g-tile'>";
         if (in_array('image', $fields) && $image){
-            $html .= "<div class='c4g-tile-header'>
+            $html .= !$reduced ? "<div class='c4g-tile-header'>
                         <div class='item image'>
                             $image
                         </div>
+                    </div>" : "<div class='c4g-tile-header'>
+                        <a class='item image' href='$href'>
+                            $image
+                        </a>
                     </div>";
         }
 
-        $html .= !$reduced ? "<div class='c4g-tile-content'>" : "<a class='c4g-tile-content' href='$href'>";
+        $html .= "<div class='c4g-tile-content'>";
 
         if (in_array('name', $fields) && $name){
             $html .= "<div class='item name'>
-                            <h4>$name</h4>
+                            <span>$name</span>
                         </div>";
         }
 
@@ -219,8 +223,8 @@ class LoadPopupListener
         $html .= "    
                             </span>
                         </div>
-                    </div>";
-        $html .= !$reduced ? "</div>" : "</a>";
+                    </div>
+                </div>";
         $popup = [
             'async' => false,
             'content' => $html,

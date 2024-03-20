@@ -98,12 +98,13 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $arrHeadline = StringUtil::deserialize($this->model->headline);
 
         $tileItems = [];
-        $field = new ImageTileField();
-        $field->setName("imageList");
+        $field = new ImageTileField(); //ToDo CDN
+        $field->setName("image");
         $field->setWrapperClass("c4g-carousel__image-wrapper");
         $field->setClass("c4g-carousel__image");
 //        $field->setInnerClass("c4g-item-image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
+        $field->setHrefField("imageCDN");
         $tileItems[] = $field;
 
         $field = new HeadlineTileField();

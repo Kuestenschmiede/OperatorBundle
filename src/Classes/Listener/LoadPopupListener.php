@@ -46,7 +46,7 @@ class LoadPopupListener
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
             $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
             $scope = $event->getScope();
-            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
+            $strQueryTags = 'SELECT tag.uuid, tag.imageCDN, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
                                     INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
                                     WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
             $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
@@ -69,7 +69,7 @@ class LoadPopupListener
         $strTypes = rtrim($strTypes, ', ');
         $imageUuid = StringUtil::binToUuid($element['imagePopup']);
         $file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
-
+        $file = $i
         $strImage = $file->path;
         if ($strImage) {
             $alt = $file->meta && unserialize($file->meta)['de'] ? unserialize($file->meta)['de']['alt'] : $name;

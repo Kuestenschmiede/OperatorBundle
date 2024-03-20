@@ -18,13 +18,15 @@
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageUuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
+<?php if ($imageCDN = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
 
     <?php
-    $image = \Contao\FilesModel::findByUuid($imageUuid);
+    //$image = \Contao\FilesModel::findByUuid($imageUuid);
     $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
     $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
 
+    $imageXL = $imageCDN.'?crop=smart&width=1920&height=1200';
+    $imageXS = $imageCDN.'?crop=smart&width=1024&height=768';
     /**
      * For Contao Users:
      * You can use srcset image url by adding the id of image-size configured in contao backend

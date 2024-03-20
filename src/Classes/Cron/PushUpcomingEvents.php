@@ -70,15 +70,16 @@ class PushUpcomingEvents
 //        $addUuidColumnQuery = "ALTER TABLE tl_calendar_events DROP COLUMN uuid";
 //        $db->query($addUuidColumnQuery);
         // Check if the 'uuid' column exists
-        $checkUuidColumnQuery = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";
-        $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
+//        $checkUuidColumnQuery = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";
+//        $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
 
         // Check if the 'uuid' column exists
         $checkUuidColumnQuery = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";
         $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
+        $missingUuid = $stmtCheckUuidColumn->fetchAssoc() === false;
 
         // If the 'uuid' column doesn't exist, add it to the table
-        if ($stmtCheckUuidColumn->fetchAssoc() === false) {
+        if ($missingUuid) {
             $addUuidColumnQuery = "ALTER TABLE tl_calendar_events ADD COLUMN uuid VARCHAR(255) DEFAULT NULL";
             $db->query($addUuidColumnQuery);
         }
@@ -107,7 +108,7 @@ class PushUpcomingEvents
         foreach ($events as $event) {
             $uuid = $event['uuid'];
 
-            if (in_array($uuid, $existingUuids)) {
+            if (in_array($uuid, $existingUuids) || $missingUuid) {
                 continue;
             }
 

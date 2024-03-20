@@ -11,6 +11,7 @@ namespace gutesio\OperatorBundle\ContaoManager;
 
 use con4gis\CoreBundle\con4gisCoreBundle;
 use con4gis\MapsBundle\con4gisMapsBundle;
+use con4gis\PwaBundle\con4gisPwaBundle;
 use gutesio\DataModelBundle\gutesioDataModelBundle;
 use gutesio\OperatorBundle\gutesioOperatorBundle;
 use Contao\CalendarBundle\ContaoCalendarBundle;
@@ -49,6 +50,7 @@ class Plugin implements RoutingPluginInterface, BundlePluginInterface
                     ContaoCalendarBundle::class,
                     con4gisCoreBundle::class,
                     con4gisMapsBundle::class,
+                    con4gisPwaBundle::class,
                     gutesioDataModelBundle::class
                 ])
         ];

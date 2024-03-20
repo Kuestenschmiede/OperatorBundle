@@ -88,18 +88,28 @@ class PushUpcomingEvents
 
         $stmtInsert = $db->prepare($insertQuery);
 
-        $currentEQuery = "SELECT id FROM tl_calendar_events WHERE pid = ?";
-        $stmtCurrentEvents = $db->prepare($currentEQuery);
-        $stmtCurrentEvents->execute([$cal['id'], $currentDate]);
+        // Get the maximum existing ID from tl_calendar_events
+        $maxIdQuery = "SELECT MAX(id) AS maxId FROM tl_calendar_events";
+        $maxIdResult = $db->query($maxIdQuery);
+        $maxIdRow = $maxIdResult->fetchAssoc();
+        $maxId = $maxIdRow['maxId'];
+        $counter = $maxId ? $maxId + 1 : 1;
+
+        $currentEQuery = "SELECT uuid FROM tl_calendar_events";
+        $result = $db->query($currentEQuery);
+
+        $existingUuids = array();
+        while ($row = $result->fetchAssoc()) {
+            $existingUuids[] = $row['uuid'];
+        }
 
         // Iterate over the events and insert them into the table
         foreach ($events as $event) {
             $uuid = $event['uuid'];
 
-//            // Skip to the next iteration if the UUID already exists in the current events
-//            if (in_array($id, $stmtCurrentEvents)) {
-//                continue;
-//            }
+            if (in_array($uuid, $existingUuids)) {
+                continue;
+            }
 
             $id = $counter;
             $pid = $cal['id'];
@@ -118,10 +128,10 @@ class PushUpcomingEvents
                 $startTime, $description,$teaser, $subscriptionTypes,$sendDoublePn,
                 $pnSendDate, $published, $uuid);
 
-            $counter++; // Increment the counter for the next event
+            $counter++;
         }
 
-        // Delete events that are older than currentDate in current cal
+        // Delete events that are older than currentDate in current calendar
         $this->removePastEvents($db, $currentDate,$events,$cal);
     }
 

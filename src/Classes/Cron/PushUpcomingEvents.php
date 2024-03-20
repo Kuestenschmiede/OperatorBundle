@@ -67,23 +67,21 @@ class PushUpcomingEvents
 
     private function addGutesEvents($db, $currentDate, $events, $cal): void
     {
-//        // Check if the 'uuid' column exists
-//        $checkUuidColumnQuery = "SELECT * FROM tl_calendar_events LIKE uuid";
-//        $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
-////        $uuidColumnExists = $stmtCheckUuidColumn->numRows() > 0;
-//
-//        // If the 'uuid' column doesn't exist, add it to the table
-//        if (!$stmtCheckUuidColumn) {
-//            $addUuidColumnQuery = "ALTER TABLE tl_calendar_events ADD COLUMN uuid VARCHAR(255) NOT NULL";
-//            $db->query($addUuidColumnQuery);
-//        }
+//        $addUuidColumnQuery = "ALTER TABLE tl_calendar_events DROP COLUMN uuid";
+//        $db->query($addUuidColumnQuery);
+        // Check if the 'uuid' column exists
+        $checkUuidColumnQuery = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";
+        $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
 
-        // Get the maximum existing ID from tl_calendar_events
-        $maxIdQuery = "SELECT MAX(id) AS maxId FROM tl_calendar_events";
-        $maxIdResult = $db->query($maxIdQuery);
-        $maxIdRow = $maxIdResult->fetchAssoc();
-        $maxId = $maxIdRow['maxId'];
-        $counter = $maxId ? $maxId + 1 : 1;
+        // Check if the 'uuid' column exists
+        $checkUuidColumnQuery = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";
+        $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
+
+        // If the 'uuid' column doesn't exist, add it to the table
+        if ($stmtCheckUuidColumn->fetchAssoc() === false) {
+            $addUuidColumnQuery = "ALTER TABLE tl_calendar_events ADD COLUMN uuid VARCHAR(255) DEFAULT NULL";
+            $db->query($addUuidColumnQuery);
+        }
 
         $insertQuery = "INSERT INTO tl_calendar_events (id, pid, tstamp, title, startDate,startTime, description,
         teaser, subscriptionTypes,sendDoublePn, pnSendDate, published, uuid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)";

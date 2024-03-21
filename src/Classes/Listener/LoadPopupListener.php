@@ -67,13 +67,12 @@ class LoadPopupListener
             $strTypes .= $type['name'] . ', ';
         }
         $strTypes = rtrim($strTypes, ', ');
-        $imageUuid = StringUtil::binToUuid($element['imagePopup']);
-        $file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
-        $file = $i
-        $strImage = $file->path;
+        $file = $element['imageCDN'];
+        //$file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
+        //$strImage = $file->path;
         if ($strImage) {
-            $alt = $file->meta && unserialize($file->meta)['de'] ? unserialize($file->meta)['de']['alt'] : $name;
-            $image = "<img class='entry-content' src='$strImage' alt='$alt' title='$name'>";
+            $alt = $name;
+            $image = "<img class='entry-content' src='$file' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {

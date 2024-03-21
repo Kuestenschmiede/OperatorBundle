@@ -17,6 +17,12 @@ class PushUpcomingEvents
         $contaoCalendar = $this->checkContaoCalendar($db);
         $subscriptionType = $this->checkSubscription($db);
 
+//        foreach ($subscriptionType as $subscription) {
+//            $subscription['gutesioEventTypes']
+//        }
+//
+//        $categories = $this->getCategories($subscriptionType);
+
         // Check if the conditions are met
 
         foreach ($contaoCalendar as $cal) {
@@ -31,7 +37,6 @@ class PushUpcomingEvents
             }
 
         }
-
     }
 
     private function checkContaoCalendar($db)
@@ -43,35 +48,42 @@ class PushUpcomingEvents
 
     private function checkSubscription($db)
     {
-        return $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE notifyUpcomingEvents = 1')
+        return $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE notifyUpcomingEvents = 1 AND gutesioEventTypes IS NOT NULL')
             ->execute()
             ->fetchAllAssoc();
     }
 
     private function getGutesEvents($db, $currentDate)
     {
-        // Retrieve records from tl_gutesio_data_child_event where beginDate > currentDate and join with tl_gutesio_data_child
+        // Calculate the start and end timestamps for the allowed date range
+        $startDate = strtotime('today');
+        $endDate = strtotime('tomorrow');
 
-        $query = "  SELECT t.type,e.beginDate,e.beginTime,e.uuid, c.name,c.shortDescription,c.description,c.image
-                    FROM tl_gutesio_data_child_event e
-                    JOIN tl_gutesio_data_child c ON e.childId = c.uuid
-                    JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
-                    WHERE e.beginDate > ?
-                    ";
+        // Convert the array of categories to a comma-separated string
+//        $categoryString = implode(',', $categories);
+
+        $query = "SELECT t.type, e.beginDate, e.beginTime, e.uuid, c.name, c.shortDescription, c.description, c.image
+              FROM tl_gutesio_data_child_event e
+              JOIN tl_gutesio_data_child c ON e.childId = c.uuid
+              JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
+              WHERE e.beginDate >= '$startDate' 
+              AND e.beginDate <= '$endDate'";
 
         return $db->prepare($query)
             ->execute($currentDate)
             ->fetchAllAssoc();
-
     }
+
+
+//    private function getCategories($serializedCategories)
+//    {
+//        return unserialize($serializedCategories);
+//    }
 
     private function addGutesEvents($db, $currentDate, $events, $cal): void
     {
 //        $addUuidColumnQuery = "ALTER TABLE tl_calendar_events DROP COLUMN uuid";
-//        $db->query($addUuidColumnQuery);
-        // Check if the 'uuid' column exists
-//        $checkUuidColumnQuery = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";
-//        $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
+//        $db->query($addUuidColumnQuery)
 
         // Check if the 'uuid' column exists
         $checkUuidColumnQuery = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_calendar_events' AND COLUMN_NAME = 'uuid'";

@@ -752,6 +752,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $moduleId->setValue($this->model->id);
         $fields[] = $moduleId;
 
+        $randKeyField = new HiddenFormField();
+        $randKeyField->setName("randKey");
+        $fields[] = $randKeyField;
+
         $arrFilter['fields'] = $fields;
 
         $buttons = [];
@@ -771,19 +775,22 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         if (is_array($types) && count($types) > 0) {
             $typeStr = implode(',',$types);
-            $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type"
-                . " WHERE uuid IN ('".$typeStr."') ORDER BY name ASC";
+            $sql = "SELECT DISTINCT uuid, name FROM tl_gutesio_data_type"
+                . " WHERE uuid ".C4GUtils::buildInString($types)." ORDER BY name ASC";
+            $typeResult = Database::getInstance()->prepare($sql)->execute($types)->fetchAllAssoc();
         } else if (is_array($blockedTypes) && count($blockedTypes) > 0) {
             $typeStr = implode(',',$blockedTypes);
             $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
                 . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
                 . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' AND tl_gutesio_data_type.uuid NOT IN ('".$typeStr."') ORDER BY name ASC";
+            $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
         } else {
             $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
                 . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
                 . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' ORDER BY name ASC";
+            $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
         }
-        $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
+
         $options = [];
         foreach ($typeResult as $result) {
             $options[] = [

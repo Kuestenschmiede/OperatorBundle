@@ -111,6 +111,19 @@ class GutesioModuleCallback
         return $options;
     }
 
+    public function getGutesioEventTypes()
+    {
+        $arrTypes = GutesioDataChildTypeModel::findAll();
+        $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];
+        $options = [];
+        foreach ($arrTypes as $type) {
+            if ($type['type'] == 'event') {
+                $options[$type['uuid']] = $type['name'];
+            }
+        }
+        return $options;
+    }
+
     public function setHeadlineHint(DataContainer $dc)
     {
         $listModuleTypes = [

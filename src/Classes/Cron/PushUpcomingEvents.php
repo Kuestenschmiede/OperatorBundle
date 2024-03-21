@@ -9,7 +9,7 @@ use con4gis\PwaBundle\Classes\Events\PushNotificationEvent;
 class PushUpcomingEvents
 {
     // push gutes events that are within the "upcoming gutes events calendar"
-    public function onHourly()
+    public function onDaily()
     {
         $db = Database::getInstance();
         $currentDate = time();

@@ -133,7 +133,7 @@ class ShowcaseInsertTag
 //                                $uuid = StringUtil::binToUuid($uuid);
 //                            }
 //                            $image = Controller::replaceInsertTags("{{file::$uuid}}");
-                            $image = $arrShowcase['image'];
+                            $image = $arrShowcase['imageCDN'];
                             if ($image && $cdnUrl) {
                                 $imagePath = $cdnUrl . $image;
                                 $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);

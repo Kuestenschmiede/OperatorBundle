@@ -68,11 +68,13 @@ class LoadPopupListener
         }
         $strTypes = rtrim($strTypes, ', ');
         $file = $element['imageCDN'];
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         //$file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
         //$strImage = $file->path;
         if ($strImage) {
             $alt = $name;
-            $image = "<img class='entry-content' src='$file' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='$cdnUrl.$file' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {
@@ -91,15 +93,15 @@ class LoadPopupListener
                     }
                 }
             }
-            $imageTagUuid = StringUtil::binToUuid($tag['image']);
-            $fileTag = FilesModel::findByUuid($imageTagUuid);
+            //$imageTagUuid = StringUtil::binToUuid($tag['image']);
+            $fileTag = $cdnUrl.$tag['imageCDN'];//FilesModel::findByUuid($imageTagUuid);
             if ($link) {
                 $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>
-                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
+                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div></a>";
             } else {
                 $tags .= "<div class='item " . $tag['name'] . "'>
-                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
+                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div>";
             }
         }
@@ -168,7 +170,7 @@ class LoadPopupListener
         $settings = GutesioOperatorSettingsModel::findSettings();
         $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);
         $html = "<div class='showcase-tile c4g-tile'>";
-        if (in_array('image', $fields) && $image){
+        if (in_array('imageCDN', $fields) && $image){
             $html .= "<div class='c4g-tile-header'>
                         <div class='item image'>
                             $image

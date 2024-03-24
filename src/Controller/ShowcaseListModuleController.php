@@ -536,7 +536,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         $field = new ImageTileField();
-        $field->setName("imageList");
+        $field->setName("image");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
@@ -807,6 +807,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $optionData = [];
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
 
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom <= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil >= UNIX_TIMESTAMP())) ";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
@@ -821,16 +824,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                     // TODO until then, it would break the filter if it exists as option
                     continue;
                 }
-                if ($tag['image']) {
-                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
-                    if ($objImage) {
+                if ($tag['imageCDN']) {
+//                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
+//                    if ($objImage) {
                         $optionData[$tag['uuid']] = [
-                            'src' => $objImage->path,
+                            'src' => $cdnUrl.$tag['imageCDN'],
                             'alt' => $tag['name']
                         ];
-                    } else {
-                        //ToDo CDN
-                    }
+//                    } else {
+//                        //ToDo CDN
+//                    }
                 } else {
                     $optionData[$tag['uuid']] = [];
                 }
@@ -872,7 +875,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         foreach ($elements as $key=>$row) {
             $alias = $row['alias'];
             $name  = $row['name'];
-            $image = $row['imageList']['src'];
+            $image = $row['image']['src'];
 
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
                 $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);

@@ -22,8 +22,8 @@
 
     <?php
     //$image = \Contao\FilesModel::findByUuid($imageUuid);
-    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
-    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
+//    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
+//    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
 
     $imageXL = $imageCDN.'?crop=smart&width=1920&height=1200';
     $imageXS = $imageCDN.'?crop=smart&width=1024&height=768';
@@ -36,12 +36,12 @@
 
     <style>
         .detail-hero2 {
-            background-image: url("<?= $imageXS?>");
+            background-image: <?= $imageXS?>
         }
 
         @media screen and (min-width: 901px) {
             .detail-hero2 {
-                background-image: url("<?= $imageXL?>");
+                background-image: <?= $imageXL?>
             }
         }
     </style>
@@ -67,7 +67,7 @@
 
             <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
                 <div class="detail-hero2__logo">
-                    {{showcase::logo}}
+                    <img src="{{showcase::logo}}" width="150" height="150" alt="{{showcase::name}}" class="img-fluid">
                 </div>
             <?php endif ?>
         </div>
@@ -679,7 +679,7 @@
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital')))): ?>
+                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'nordsee.digital/booking')) || (strPos($v->linkHref, 'booking.nordsee.digital')))): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>

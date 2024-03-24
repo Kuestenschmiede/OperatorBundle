@@ -297,7 +297,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
-        $offerSrc = $cdnUrl.$child['imageOffer'];
+        $offerSrc = $cdnUrl.$child['imageCDN'];
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images

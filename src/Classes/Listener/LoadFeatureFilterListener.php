@@ -19,6 +19,7 @@ use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class LoadFeatureFilterListener
@@ -43,6 +44,8 @@ class LoadFeatureFilterListener
         $filterElements = $modelProfile->filterElements;
         $filterHandling = $modelProfile->filterType;
         $currentFilters = $event->getFilters();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
 
         if ($filterHandling == 1) { //Filters with tags
             if ($filterElements) {
@@ -68,10 +71,10 @@ class LoadFeatureFilterListener
                     if ($link) {
                         $filterObject->setLink($link);
                     }
-                    $imageUuid = StringUtil::binToUuid($tag['image']);
-                    $file = FilesModel::findByUuid($imageUuid);
-                    if ($file && $file->path) {
-                        $filterObject->setImage($file->path);
+                    //$imageUuid = StringUtil::binToUuid($tag['image']);
+                    $file = $tag['imageCDN'];//FilesModel::findByUuid($imageUuid);
+                    if ($file) {
+                        $filterObject->setImage($cdnUrl.$file);
                     }
                     if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                         $filterObject->addFilterValue([
@@ -101,10 +104,10 @@ class LoadFeatureFilterListener
                         $filterObject->setLink($tag['link']);
                     }
 
-                    $imageUuid = StringUtil::binToUuid($tag['image']);
-                    $file = FilesModel::findByUuid($imageUuid);
-                    if ($file && $file->path) {
-                        $filterObject->setImage($file->path);
+                    //$imageUuid = StringUtil::binToUuid($tag['image']);
+                    $file = $tag['imageCDN'];//FilesModel::findByUuid($imageUuid);
+                    if ($file) {
+                        $filterObject->setImage($cdnUrl.$file);
                     }
                     if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                         $filterObject->addFilterValue([

@@ -325,7 +325,7 @@ class OfferLoaderService
                 $parameters[] = (int) $offset;
                 $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -360,7 +360,7 @@ class OfferLoaderService
                 $parameters[] = (int) $offset;
                 $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -396,7 +396,7 @@ class OfferLoaderService
 //            $parameters[] = (int) $offset;  //Hotfix offset error
 //            $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -430,7 +430,7 @@ class OfferLoaderService
             $parameters[] = (int) $offset;
             $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -457,19 +457,22 @@ class OfferLoaderService
                 ' ORDER BY relevance DESC LIMIT ?, ?'
             )->execute($parameters)->fetchAllAssoc();
         }
-
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         foreach ($childRows as $key => $row) {
-            $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            if ($imageModel !== null) {
-                list($width, $height) = getimagesize($imageModel->path);
+            $imageCDN = $cdnUrl.$row['imageCDN']/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
+            if ($imageCDN) {
+                list($width, $height) = getimagesize($imageCDN);
                 $childRows[$key]['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'src' => $imageCDN,
+                    'alt' => $row['name'],
                     'width' => $width,
                     'height' => $height,
                 ];
+            } else {
+                unset($childRows[$key]['image']);
             }
-            unset($childRows[$key]['imageOffer']);
+
 
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
@@ -506,7 +509,7 @@ class OfferLoaderService
                 $parameters[] = (int) $offset;
                 $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -536,7 +539,7 @@ class OfferLoaderService
                 $parameters[] = (int) $offset;
                 $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -567,7 +570,7 @@ class OfferLoaderService
             $parameters[] = (int) $offset;
             $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -595,7 +598,7 @@ class OfferLoaderService
             $parameters[] = (int) $offset;
             $parameters[] = $limit;
             $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -619,14 +622,15 @@ class OfferLoaderService
                 ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
             )->execute($parameters)->fetchAllAssoc();
         }
-
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         foreach ($childRows as $key => $row) {
-            $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            if ($imageModel !== null) {
-                list($width, $height) = getimagesize($imageModel->path);
+            $image = $cdnUrl.$row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
+            if ($image !== null) {
+                list($width, $height) = getimagesize($image);
                 $childRows[$key]['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'src' => $image,
+                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'height' => $height,
                     'width' => $width,
                 ];
@@ -665,8 +669,11 @@ class OfferLoaderService
         $database = Database::getInstance();
         $alias = $this->cleanAlias($alias);
 
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.image, a.imageOffer, a.imageGallery, a.imageCredits, a.videoType, a.videoLink, a.videoPreviewImage, a.memberId, a.infoFile, a.offerForSale,' . '
+            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '
@@ -749,30 +756,31 @@ class OfferLoaderService
                 }
             }
 
-            if ($row['imageGallery']) {
-                $images = StringUtil::deserialize($row['imageGallery']);
-                if ($isPreview && $rows[$key]['image']) {
-                    array_unshift($images, StringUtil::binToUuid($rows[$key]['image']));
-                }
+            if ($row['imageGalleryCDN']) {
+
+                $images = StringUtil::deserialize($row['imageGalleryCDN']);
+//                if ($isPreview && $rows[$key]['image']) {
+//                    array_unshift($images, StringUtil::binToUuid($rows[$key]['image']));
+//                }
                 $idx = 0;
                 foreach ($images as $image) {
-                    $model = FilesModel::findByUuid(StringUtil::deserialize($image));
-                    if ($model !== null) {
-                        $size = getimagesize($model->path);
+                    $file = $cdnUrl.$image;
+                    if ($file) {
+                        $size = getimagesize($file);
                         $rows[$key]['imageGallery_' . $idx] = [
-                            'src' => $model->path,
-                            'path' => $model->path,
-                            'uuid' => $model->uuid ? StringUtil::binToUuid($model->uuid) : '',
-                            'alt' => $model->meta && unserialize($model->meta)['de'] ? unserialize($model->meta)['de']['alt'] : $model->name,
-                            'name' => $model->name,
+                            'src' => $file,
+                            'path' => $file,
+                            'uuid' => '',
+                            'alt' => $row['name'],
+                            'name' => $row['name'],
                             'width' => $size[0],
                             'height' => $size[1],
-                            'importantPart' => [
-                                'x' => $model->importantPartX,
-                                'y' => $model->importantPartY,
-                                'width' => $model->importantPartWidth,
-                                'height' => $model->importantPartHeight,
-                            ],
+//                            'importantPart' => [
+//                                'x' => $model->importantPartX,
+//                                'y' => $model->importantPartY,
+//                                'width' => $model->importantPartWidth,
+//                                'height' => $model->importantPartHeight,
+//                            ],
                         ];
                         $idx++;
                     }
@@ -780,7 +788,7 @@ class OfferLoaderService
                 unset($rows[$key]['imageGallery']);
             }
 
-            unset($rows[$key]['imageOffer'], $rows[$key]['image']);
+            unset($rows[$key]['image']);
 
             $tagStmt = $database->prepare(
                 'SELECT tl_gutesio_data_tag.* FROM tl_gutesio_data_tag JOIN tl_gutesio_data_child_tag ON ' .
@@ -802,20 +810,20 @@ class OfferLoaderService
             $rows[$key]['tags'] = $tagLinks;
 
             foreach ($rows[$key]['tags'] as $tagKey => $tagRow) {
-                $imageModel = FilesModel::findByUuid($tagRow['image']);
+                $imageFile = $cdnUrl.$tagRow['imageCDN'];
 
-                if ($imageModel !== null) {
+                if ($imageFile) {
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
-                        'importantPart' => [
-                            'x' => $imageModel->importantPartX,
-                            'y' => $imageModel->importantPartY,
-                            'width' => $imageModel->importantPartWidth,
-                            'height' => $imageModel->importantPartHeight,
-                        ],
-                        'name' => $imageModel->name,
-                        'path' => $imageModel->path,
-                        'src' => $imageModel->path,
+//                        'importantPart' => [
+//                            'x' => $imageModel->importantPartX,
+//                            'y' => $imageModel->importantPartY,
+//                            'width' => $imageModel->importantPartWidth,
+//                            'height' => $imageModel->importantPartHeight,
+//                        ],
+                        'name' => $tagRow['name'],
+                        'path' => $imageFile,
+                        'src' => $imageFile,
                     ];
                 } else {
                     unset($rows[$key]['tags'][$tagKey]['image']);
@@ -893,6 +901,9 @@ class OfferLoaderService
     {
         $database = Database::getInstance();
 
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+
         $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
             'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
             'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
@@ -903,18 +914,19 @@ class OfferLoaderService
             ->execute($uuid)->fetchAllAssoc();
 
         foreach ($result as $r) {
-            $model = FilesModel::findByUuid($r['image']);
+            //$model = FilesModel::findByUuid($r['image']);
+            $file = $cdnUrl.$r['imageCDN'];
             foreach ($childRows[$key]['tagLinks'] as $addedIcons) {
-                if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $model->path)) {
+                if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                     continue(2);
                 }
             }
 
-            if ($model !== null) {
+            if ($file) {
                 $icon = [
                     'name' => $r['name'],
                     'image' => [
-                        'src' => $model->path,
+                        'src' => $file,
                         'alt' => $r['name'],
                         'width' => 100,
                         'height' => 100,

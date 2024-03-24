@@ -960,8 +960,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private function getChildTileData($childData, $request)
     {
         $database = Database::getInstance();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.image, a.imageOffer, a.foreignLink, a.directLink, ' . '
+        a.imageCDN, a.foreignLink, a.directLink, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -986,19 +988,20 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 unset($childRows[$key]);
                 continue;
             }
-            $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            if ($imageModel !== null) {
+            //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
+            $imageFile = $cdnUrl.$row['imageCDN'];
+            if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                    'src' => $imageFile,
+                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                    'src' => $imageFile,
+                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }
-            unset($childRows[$key]['imageOffer']);
-            unset($row['imageOffer']);
+//            unset($childRows[$key]['imageOffer']);
+//            unset($row['imageOffer']);
             
             $clientUuid = $this->checkCookieForClientUuid($request);
             if ($clientUuid !== null) {
@@ -1031,19 +1034,19 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
-                $model = FilesModel::findByUuid($r['image']);
-
+                //$model = FilesModel::findByUuid($r['image']);
+                $file = $cdnUrl.$r['imageCDN'];
                 foreach ($row['tagLinks'] as $addedIcons) {
-                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $model->path)) {
+                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                         continue(2);
                     }
                 }
 
-                if ($model !== null) {
+                if ($file) {
                     $icon = [
                         'name' => $r['name'],
                         'image' => [
-                            'src' => $model->path,
+                            'src' => $file,
                             'alt' => $r['name']
                         ]
                     ];

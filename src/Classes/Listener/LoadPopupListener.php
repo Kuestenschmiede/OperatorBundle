@@ -72,9 +72,9 @@ class LoadPopupListener
         $cdnUrl = $objSettings->cdnUrl;
         //$file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
         //$strImage = $file->path;
-        if ($strImage) {
+        if ($file) {
             $alt = $name;
-            $image = "<img class='entry-content' src='$cdnUrl.$file' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='".$cdnUrl.$file."' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {
@@ -170,7 +170,7 @@ class LoadPopupListener
         $settings = GutesioOperatorSettingsModel::findSettings();
         $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);
         $html = "<div class='showcase-tile c4g-tile'>";
-        if (in_array('imageCDN', $fields) && $image){
+        if (in_array('image', $fields) && $image){
             $html .= "<div class='c4g-tile-header'>
                         <div class='item image'>
                             $image

@@ -23,7 +23,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageCDN', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
@@ -78,6 +78,16 @@ class ShowcaseInsertTag
 
                         return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';
                     case 'image':
+                        //ToDO CDN
+                        //ToDo CDN get params
+                        //?crop=smart&width=400&height=400
+                        $url = $arrShowcase['imageCDN'];
+//                        if (C4GUtils::isBinary($uuid)) {
+//                            $uuid = StringUtil::binToUuid($uuid);
+//                        }
+
+                        return $url ? $cdnUrl.$url : ''; //Further processing in the template
+                    case 'imageCDN':
                         //ToDO CDN
                         //ToDo CDN get params
                         //?crop=smart&width=400&height=400

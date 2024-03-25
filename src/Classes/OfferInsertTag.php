@@ -79,7 +79,7 @@ class OfferInsertTag
 //                            if (C4GUtils::isBinary($uuid)) {
 //                                $uuid = StringUtil::binToUuid($uuid);
 //                            }
-                            $image = $arrOffer['imageOfferCDN']; //ToDO CDN TEST
+                            $image = $arrOffer['imageCDN']; //ToDO CDN TEST
                             if ($image && $cdnUrl) {
                                 //ToDo CDN get params
                                 //?crop=smart&width=400&height=400
@@ -111,7 +111,7 @@ class OfferInsertTag
 //                                    if (C4GUtils::isBinary($uuid)) {
 //                                        $uuid = StringUtil::binToUuid($uuid);
 //                                    }
-                                    $logo = $objShowcase['logo'];//  Controller::replaceInsertTags("{{file::$uuid}}");
+                                    $logo = $objShowcase['logoCDN'];//  Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($logo && $cdnUrl) {
                                         //ToDo CDN get params
                                         //?crop=smart&width=400&height=400

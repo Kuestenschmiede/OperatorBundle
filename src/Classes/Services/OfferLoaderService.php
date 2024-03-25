@@ -759,37 +759,38 @@ class OfferLoaderService
 //                }
             }
 
+            $images = [];
             if ($row['imageGalleryCDN']) {
-
                 $images = StringUtil::deserialize($row['imageGalleryCDN']);
-//                if ($isPreview && $rows[$key]['image']) {
-//                    array_unshift($images, StringUtil::binToUuid($rows[$key]['image']));
-//                }
-                $idx = 0;
-                foreach ($images as $image) {
-                    $file = $image;
-                    if ($file) {
-                        $size = getimagesize($file);
-                        $rows[$key]['imageGallery_' . $idx] = [
-                            'src' => $cdnUrl.$file,
-                            'path' => $cdnUrl.$file,
-                            'uuid' => '',
-                            'alt' => $row['name'],
-                            'name' => $row['name'],
-                            'width' => $size[0],
-                            'height' => $size[1],
+            }
+            if ($rows[$key]['imageCDN']) {
+                array_unshift($images, $rows[$key]['imageCDN']);
+            }
+            $idx = 0;
+            foreach ($images as $image) {
+                $file = $image;
+                if ($file) {
+                    $size = getimagesize($file);
+                    $rows[$key]['imageGallery_' . $idx] = [
+                        'src' => $cdnUrl.$file,
+                        'path' => $cdnUrl.$file,
+                        'uuid' => '',
+                        'alt' => $row['name'],
+                        'name' => $row['name'],
+                        'width' => $size[0],
+                        'height' => $size[1],
 //                            'importantPart' => [
 //                                'x' => $model->importantPartX,
 //                                'y' => $model->importantPartY,
 //                                'width' => $model->importantPartWidth,
 //                                'height' => $model->importantPartHeight,
 //                            ],
-                        ];
-                        $idx++;
-                    }
+                    ];
+                    $idx++;
                 }
-                unset($rows[$key]['imageGallery']);
             }
+//            unset($rows[$key]['imageGallery']);
+// }
 
             unset($rows[$key]['image']);
 

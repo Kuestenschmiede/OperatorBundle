@@ -555,17 +555,17 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
         foreach ($childRows as $key => $row) {
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            $imageFile = $cdnUrl.$row['imageCDN'];
+            $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 list($width, $height) = getimagesize($imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => $imageFile,
+                    'src' => $cdnUrl.$imageFile,
                     'alt' => $row['name'],
                     'width' => $width,
                     'height' => $height,
                 ];
                 $row['image'] = [
-                    'src' => $imageFile,
+                    'src' => $cdnUrl.$imageFile,
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'width' => $width,
                     'height' => $height,
@@ -588,7 +588,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
             $row['tagLinks'] = $childRows[$key]['tagLinks'] ?: [];
 
-            $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+            $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
                 'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();

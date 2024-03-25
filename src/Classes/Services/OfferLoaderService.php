@@ -19,6 +19,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
+use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Classes\TagDetailFieldGenerator;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
@@ -735,25 +736,27 @@ class OfferLoaderService
                 'video' => html_entity_decode($rows[$key]['videoLink']),
             ];
             if ($rows[$key]['videoPreviewImage']) {
-                $model = FilesModel::findByUuid(StringUtil::deserialize($rows[$key]['videoPreviewImage']));
-                if ($model !== null) {
-                    $rows[$key]['videoPreview']['videoPreviewImage'] = $this->createFileDataFromModel($model);
+                //$model = FilesModel::findByUuid(StringUtil::deserialize($rows[$key]['videoPreviewImage']));
+                $file = $rows[$key]['videoPreviewImageCDN'];
+                if ($file) {
+                    $converter = new ShowcaseResultConverter();
+                    $rows[$key]['videoPreview']['videoPreviewImage'] = $converter->createFileDataFromFile($file);
                     $rows[$key]['videoPreviewImage'] = $rows[$key]['videoPreview']['videoPreviewImage'];
                 }
             }
 
-            if ($row['infoFile']) {
-                $infoFile = FilesModel::findByUuid(StringUtil::binToUuid($row['infoFile']));
-                if ($infoFile !== null) {
+            if ($row['infoFileCDN']) {
+//                $infoFile = FilesModel::findByUuid(StringUtil::binToUuid($row['infoFile']));
+                //if ($infoFile !== null) {
                     $rows[$key]['infoFile'] = [
-                        'name' => $infoFile->name,
-                        'path' => $infoFile->path,
+                        'name' => 'Info',
+                        'path' => $cdnUrl.$row['infoFileCDN'],
                         'changed' => false,
                         'data' => [],
                     ];
-                } else {
-                    unset($rows[$key]['infoFile']);
-                }
+//                } else {
+//                    unset($rows[$key]['infoFile']);
+//                }
             }
 
             if ($row['imageGalleryCDN']) {
@@ -764,12 +767,12 @@ class OfferLoaderService
 //                }
                 $idx = 0;
                 foreach ($images as $image) {
-                    $file = $cdnUrl.$image;
+                    $file = $image;
                     if ($file) {
                         $size = getimagesize($file);
                         $rows[$key]['imageGallery_' . $idx] = [
-                            'src' => $file,
-                            'path' => $file,
+                            'src' => $cdnUrl.$file,
+                            'path' => $cdnUrl.$file,
                             'uuid' => '',
                             'alt' => $row['name'],
                             'name' => $row['name'],
@@ -810,7 +813,7 @@ class OfferLoaderService
             $rows[$key]['tags'] = $tagLinks;
 
             foreach ($rows[$key]['tags'] as $tagKey => $tagRow) {
-                $imageFile = $cdnUrl.$tagRow['imageCDN'];
+                $imageFile = $tagRow['imageCDN'];
 
                 if ($imageFile) {
                     $rows[$key]['tags'][$tagKey]['image'] = [
@@ -822,8 +825,8 @@ class OfferLoaderService
 //                            'height' => $imageModel->importantPartHeight,
 //                        ],
                         'name' => $tagRow['name'],
-                        'path' => $imageFile,
-                        'src' => $imageFile,
+                        'path' => $cdnUrl.$imageFile,
+                        'src' => $cdnUrl.$imageFile,
                     ];
                 } else {
                     unset($rows[$key]['tags'][$tagKey]['image']);
@@ -904,7 +907,7 @@ class OfferLoaderService
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
 
-        $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+        $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
             'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
             'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
             ' OR tl_gutesio_data_tag.validFrom IS NULL' .

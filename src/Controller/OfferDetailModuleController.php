@@ -634,7 +634,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $href .= $urlSuffix;
 
         $field = new ImageTileField();
-        $field->setName("imageList");
+        $field->setName("image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
@@ -989,14 +989,14 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 continue;
             }
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            $imageFile = $cdnUrl.$row['imageCDN'];
+            $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $imageFile,
+                    'src' => $cdnUrl.$imageFile,
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => $imageFile,
+                    'src' => $cdnUrl.$imageFile,
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }
@@ -1029,7 +1029,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
             $row['tagLinks'] = $tagLinks;
             
-            $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+            $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
                 'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();

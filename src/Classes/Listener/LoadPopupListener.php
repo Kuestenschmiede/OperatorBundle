@@ -74,7 +74,8 @@ class LoadPopupListener
         //$strImage = $file->path;
         if ($file) {
             $alt = $name;
-            $image = "<img class='entry-content' src='".$cdnUrl.$file."?crop=smart&width=600&height=450' alt='$alt' title='$name'>";
+            //?crop=smart&width=750&height=200
+            $image = "<img class='entry-content' src='".$cdnUrl.$file."' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {
@@ -173,7 +174,7 @@ class LoadPopupListener
         if (in_array('image', $fields) && $image){
             $html .= "<div class='c4g-tile-header'>
                         <div class='item image'>
-                            $image
+                            <a href='$href'>$image</a>
                         </div>
                     </div>";
         }

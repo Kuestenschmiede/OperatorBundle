@@ -74,7 +74,7 @@ class LoadPopupListener
         //$strImage = $file->path;
         if ($file) {
             $alt = $name;
-            $image = "<img class='entry-content' src='".$cdnUrl.$file."' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='".$cdnUrl.$file."?crop=smart&width=600&height=450' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {

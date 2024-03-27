@@ -171,7 +171,8 @@ class LoadPopupListener
         $settings = GutesioOperatorSettingsModel::findSettings();
         $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);
         $html = "<div class='showcase-tile c4g-tile'>";
-        if (in_array('image', $fields) && $image){
+
+        if ((!$fields || in_array('image', $fields)) && $image){
             $html .= "<div class='c4g-tile-header'>
                         <div class='item image'>
                             <a href='$href'>$image</a>
@@ -181,30 +182,30 @@ class LoadPopupListener
 
         $html .= !$reduced ? "<div class='c4g-tile-content'>" : "<a class='c4g-tile-content' href='$href'>";
 
-        if (in_array('name', $fields) && $name){
+        if ((!$fields || in_array('name', $fields)) && $name){
             $html .= "<div class='item name'>
                             <h4>$name</h4>
                         </div>";
         }
 
-        if (in_array('types', $fields) && $strTypes){
+        if ((!$fields || in_array('types', $fields)) && $strTypes){
             $html .= "<div class='item types'>
                             <span class='entry-label'>Kategorie(n)</span>
                             <span class='entry-content'>$strTypes</span>
                         </div>";
         }
 
-        if (in_array('desc', $fields) && $desc){
+        if ((!$fields || in_array('desc', $fields)) && $desc){
             $html .= "<div class='item description'>
                             <p>$desc</p>
                         </div>";
         }
-        if (in_array('tags', $fields) && $tags){
+        if ((!$fields || in_array('tags', $fields)) && $tags){
             $html .= "<div class='tags'>
                             $tags
                         </div>";
         }
-        if (in_array('contacts', $fields) && $contacts){
+        if ((!$fields || in_array('contacts', $fields)) && $contacts){
             $html .= "<div class='item contacts'>
                             $contacts
                         </div>";
@@ -212,10 +213,10 @@ class LoadPopupListener
         $html .= "</div><div class='c4g-tile-footer'>
                         <div class='item alias'>
                             <span class='entry-content'>";
-        if (in_array('wishlist', $fields) && $buttonWishlist){
+        if ((!$fields || in_array('wishlist', $fields)) && $buttonWishlist){
             $html .= $buttonWishlist;
         }
-        if (in_array('more', $fields)){
+        if ((!$fields || in_array('more', $fields))){
             $html .= "<a class='btn btn-primary' href='$href'>Mehr</a>";
         }
         $html .= "    

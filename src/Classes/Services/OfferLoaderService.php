@@ -66,7 +66,7 @@ class OfferLoaderService
     {
         $this->setup();
         $limit = $this->limit;
-        $tagIds = key_exists('tagIds', $filterData) ? $filterData['tagIds'] : [];
+        $tagIds = $filterData && key_exists('tagIds', $filterData) ? $filterData['tagIds'] : [];
         if (is_array($tagIds) && (count($tagIds) > 0) && strpos($tagIds[0],',')) {
             $tagIds = explode(',',$tagIds[0]);
         }

@@ -735,7 +735,7 @@ class OfferLoaderService
                 'videoType' => $rows[$key]['videoType'],
                 'video' => html_entity_decode($rows[$key]['videoLink']),
             ];
-            if ($rows[$key]['videoPreviewImage']) {
+            if ($rows[$key]['videoPreviewImageCDN']) {
                 //$model = FilesModel::findByUuid(StringUtil::deserialize($rows[$key]['videoPreviewImage']));
                 $file = $rows[$key]['videoPreviewImageCDN'];
                 if ($file) {

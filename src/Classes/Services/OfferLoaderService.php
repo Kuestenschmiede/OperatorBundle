@@ -638,7 +638,7 @@ class OfferLoaderService
             } else {
                 unset($childRows[$key]['image']);
             }
-            unset($childRows[$key]['imageOffer']);
+//            unset($childRows[$key]['image']);
 
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 

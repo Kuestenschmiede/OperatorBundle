@@ -883,7 +883,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $href = $this->pageUrl . '/' . $alias;
             }
 
-            $meta .= '{"@type": "ListItem", "name": "'.htmlspecialchars(strip_tags($name)).'", "url": "{{env::url}}/'.$href.'", "image": "{{env::url}}/'.$image.'"}';
+            $meta .= '{"@type": "ListItem", "name": "'.htmlspecialchars(strip_tags($name)).'", "url": "{{env::url}}/'.$href.'", "image": "'.$image.'"}';
 
             if ($key != $last_key) {
                 $meta .= ',';

@@ -919,7 +919,7 @@ class OfferLoaderService
 
         foreach ($result as $r) {
             //$model = FilesModel::findByUuid($r['image']);
-            $file = $cdnUrl.$r['imageCDN'];
+            $file = $r['imageCDN'] ? $cdnUrl.$r['imageCDN'] : false;
             foreach ($childRows[$key]['tagLinks'] as $addedIcons) {
                 if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                     continue(2);

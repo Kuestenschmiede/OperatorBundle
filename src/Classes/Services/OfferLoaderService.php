@@ -463,12 +463,12 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $imageCDN = $cdnUrl.$row['imageCDN']/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
             if ($imageCDN) {
-                list($width, $height) = getimagesize($imageCDN);
+                //list($width, $height) = getimagesize($imageCDN);
                 $childRows[$key]['image'] = [
                     'src' => $imageCDN,
                     'alt' => $row['name'],
-                    'width' => $width,
-                    'height' => $height,
+                    'width' => 600,
+                    'height' => 450,
                 ];
             } else {
                 unset($childRows[$key]['image']);
@@ -626,18 +626,18 @@ class OfferLoaderService
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
         foreach ($childRows as $key => $row) {
-            $image = $cdnUrl.$row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            if ($image !== null) {
-                list($width, $height) = getimagesize($image);
+            $image = $row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
+            if ($image) {
+                //list($width, $height) = getimagesize($cdnUrl.$image);
                 $childRows[$key]['image'] = [
-                    'src' => $image,
+                    'src' => $cdnUrl.$image,
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
-                    'height' => $height,
-                    'width' => $width,
+                    'height' => 600,
+                    'width' => 450,
                 ];
-            } else {
+            }/* else {
                 unset($childRows[$key]['image']);
-            }
+            }*/
 //            unset($childRows[$key]['image']);
 
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
@@ -770,15 +770,15 @@ class OfferLoaderService
             foreach ($images as $image) {
                 $file = $image;
                 if ($file) {
-                    $size = getimagesize($file);
+                    //$size = getimagesize($cdnUrl.$file);
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $cdnUrl.$file,
                         'path' => $cdnUrl.$file,
                         'uuid' => '',
                         'alt' => $row['name'],
                         'name' => $row['name'],
-                        'width' => $size[0],
-                        'height' => $size[1],
+                        'width' => 600,//$size[0],
+                        'height' => 450,//$size[1],
 //                            'importantPart' => [
 //                                'x' => $model->importantPartX,
 //                                'y' => $model->importantPartY,

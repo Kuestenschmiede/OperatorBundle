@@ -557,12 +557,12 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
-                list($width, $height) = getimagesize($imageFile);
+                //list($width, $height) = getimagesize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
                     'src' => $cdnUrl.$imageFile,
                     'alt' => $row['name'],
-                    'width' => $width,
-                    'height' => $height,
+                    'width' => 600,
+                    'height' => 450,
                 ];
                 $row['image'] = [
                     'src' => $cdnUrl.$imageFile,

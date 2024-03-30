@@ -261,7 +261,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         
         // special handling for umlauts
-        $searchString = $params['filter'];
+        $searchString = $params && key_exists('filter', $params) ? $params['filter'] : null;
         if (count($arrSearchStrings) || ($searchString !== null && $searchString !== "")) {
             if ($searchString !== null && $searchString !== "") {
                 $arrSearchStrings[] = $searchString;
@@ -773,6 +773,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     
     private function getTypeOptions($types = [], $blockedTypes = [])
     {
+        $typeResult = [];
         if (is_array($types) && count($types) > 0) {
             $typeStr = implode(',',$types);
             $sql = "SELECT DISTINCT uuid, name FROM tl_gutesio_data_type"
@@ -847,7 +848,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $database = Database::getInstance();
         $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
-        $links = [];
+        $links = false;
         if ($result) {
             foreach ($result as $row) {
                 $alias = is_array($row) && key_exists('alias', $row) ? $row['alias'] : false;

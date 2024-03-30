@@ -703,7 +703,7 @@
                                         <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
-                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital'))))): ?>                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
+                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets'))))): ?>                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
                                             <?php if ($v->linkHref): ?>
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
                                                    title="<?= $v->name ?>"
@@ -1222,7 +1222,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 <div class="detail-view__imprint-row">
     <div class="detail-view__imprint-col">
         <p>
-            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Diese Seite wird erstellt und aktualisiert über <a target="_blank" rel="noopener noreferer" href="https://gutes.digital">gutes.digital</a></span>
+            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Diese Seite wird erstellt und aktualisiert über <a target="_blank" rel="noopener noreferer" href="https://nordsee.digital">nordsee.digital</a></span>
         </p>
     </div>
 </div>

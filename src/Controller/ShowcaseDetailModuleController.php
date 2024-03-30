@@ -594,7 +594,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 //$model = FilesModel::findByUuid($r['image']);
-                $imageFile = $cdnUrl.$r['imageCDN'];
+                $imageFile = $r['imageCDN'] ? $cdnUrl.$r['imageCDN'] : false;
                 if ($imageFile) {
                     $icon = [
                         'name' => $r['name'],

@@ -1222,7 +1222,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 <div class="detail-view__imprint-row">
     <div class="detail-view__imprint-col">
         <p>
-            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Diese Seite wird erstellt und aktualisiert über <a target="_blank" rel="noopener noreferer" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
+            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
         </p>
     </div>
 </div>

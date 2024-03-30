@@ -94,16 +94,18 @@ class LoadPopupListener
                     }
                 }
             }
-            //$imageTagUuid = StringUtil::binToUuid($tag['image']);
-            $fileTag = $cdnUrl.$tag['imageCDN'];//FilesModel::findByUuid($imageTagUuid);
-            if ($link) {
-                $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>
+
+            $fileTag = $tag['imageCDN'] ? $cdnUrl.$tag['imageCDN'] : false;
+            if ($fileTag) {
+                if ($link) {
+                    $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>
                         <img class='entry-content " . $tag['name'] . "' src='" . $fileTag . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div></a>";
-            } else {
-                $tags .= "<div class='item " . $tag['name'] . "'>
+                } else {
+                    $tags .= "<div class='item " . $tag['name'] . "'>
                         <img class='entry-content " . $tag['name'] . "' src='" . $fileTag . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div>";
+                }
             }
         }
         $contacts = '';

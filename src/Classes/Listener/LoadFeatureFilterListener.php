@@ -15,6 +15,7 @@ use con4gis\MapsBundle\Classes\Services\FilterService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use Contao\Controller;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use Contao\Database;
 use Contao\FilesModel;
@@ -74,7 +75,7 @@ class LoadFeatureFilterListener
                     //$imageUuid = StringUtil::binToUuid($tag['image']);
                     $file = $tag['imageCDN'];//FilesModel::findByUuid($imageUuid);
                     if ($file) {
-                        $filterObject->setImage($cdnUrl.$file);
+                        $filterObject->setImage(StringUtils::addUrlToPath($cdnUrl,$file));
                     }
                     if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                         $filterObject->addFilterValue([
@@ -107,7 +108,7 @@ class LoadFeatureFilterListener
                     //$imageUuid = StringUtil::binToUuid($tag['image']);
                     $file = $tag['imageCDN'];//FilesModel::findByUuid($imageUuid);
                     if ($file) {
-                        $filterObject->setImage($cdnUrl.$file);
+                        $filterObject->setImage(StringUtils::addUrlToPath($cdnUrl,$file));
                     }
                     if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                         $filterObject->addFilterValue([

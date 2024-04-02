@@ -20,6 +20,7 @@ use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Classes\TagDetailFieldGenerator;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
@@ -461,7 +462,7 @@ class OfferLoaderService
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
         foreach ($childRows as $key => $row) {
-            $imageCDN = $cdnUrl.$row['imageCDN']/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
+            $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'])/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
             if ($imageCDN) {
                 //list($width, $height) = getimagesize($imageCDN);
                 $childRows[$key]['image'] = [
@@ -630,7 +631,7 @@ class OfferLoaderService
             if ($image) {
                 //list($width, $height) = getimagesize($cdnUrl.$image);
                 $childRows[$key]['image'] = [
-                    'src' => $cdnUrl.$image,
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$image),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'height' => 600,
                     'width' => 450,
@@ -750,7 +751,7 @@ class OfferLoaderService
                 //if ($infoFile !== null) {
                     $rows[$key]['infoFile'] = [
                         'name' => 'Info',
-                        'path' => $cdnUrl.$row['infoFileCDN'],
+                        'path' => StringUtils::addUrlToPath($cdnUrl,$row['infoFileCDN']),
                         'changed' => false,
                         'data' => [],
                     ];
@@ -771,9 +772,10 @@ class OfferLoaderService
                 $file = $image;
                 if ($file) {
                     //$size = getimagesize($cdnUrl.$file);
+                    $url = StringUtils::addUrlToPath($cdnUrl,$file);
                     $rows[$key]['imageGallery_' . $idx] = [
-                        'src' => $cdnUrl.$file,
-                        'path' => $cdnUrl.$file,
+                        'src' => $url,
+                        'path' => $url,
                         'uuid' => '',
                         'alt' => $row['name'],
                         'name' => $row['name'],
@@ -817,6 +819,7 @@ class OfferLoaderService
                 $imageFile = $tagRow['imageCDN'];
 
                 if ($imageFile) {
+                    $url = StringUtils::addUrlToPath($cdnUrl,$imageFile);
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
 //                        'importantPart' => [
@@ -826,8 +829,8 @@ class OfferLoaderService
 //                            'height' => $imageModel->importantPartHeight,
 //                        ],
                         'name' => $tagRow['name'],
-                        'path' => $cdnUrl.$imageFile,
-                        'src' => $cdnUrl.$imageFile,
+                        'path' => $url,
+                        'src' => $url,
                     ];
                 } else {
                     unset($rows[$key]['tags'][$tagKey]['image']);

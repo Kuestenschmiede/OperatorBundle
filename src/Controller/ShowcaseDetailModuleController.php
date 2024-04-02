@@ -41,6 +41,7 @@ use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -559,13 +560,13 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             if ($imageFile) {
                 //list($width, $height) = getimagesize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => $cdnUrl.$imageFile,
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
                     'alt' => $row['name'],
                     'width' => 600,
                     'height' => 450,
                 ];
                 $row['image'] = [
-                    'src' => $cdnUrl.$imageFile,
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'width' => $width,
                     'height' => $height,
@@ -594,7 +595,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 //$model = FilesModel::findByUuid($r['image']);
-                $imageFile = $r['imageCDN'] ? $cdnUrl.$r['imageCDN'] : false;
+                $imageFile = $r['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$r['imageCDN']) : false;
                 if ($imageFile) {
                     $icon = [
                         'name' => $r['name'],

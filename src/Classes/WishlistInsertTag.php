@@ -13,6 +13,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -116,7 +117,7 @@ class WishlistInsertTag
 //            $image = $arrItem['imageOffer'] ? $arrItem['imageOffer'] : $arrItem['image'];
 //        }
 //        $objImage = FilesModel::findByUuid(StringUtil::binToUuid($image));
-        $imagePath = $cdnUrl.$arrItem['imageCDN'];
+        $imagePath = StringUtils::addUrlToPath($cdnUrl,$arrItem['imageCDN']);
 //        if ($objImage !== null) {
 //            $imagePath = $objImage->path;
 //        }

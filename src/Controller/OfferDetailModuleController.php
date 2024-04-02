@@ -51,6 +51,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -992,11 +993,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $cdnUrl.$imageFile,
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => $cdnUrl.$imageFile,
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }
@@ -1035,7 +1036,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 //$model = FilesModel::findByUuid($r['image']);
-                $file = $cdnUrl.$r['imageCDN'];
+                $file = StringUtils::addUrlToPath($cdnUrl,$r['imageCDN']);
                 foreach ($row['tagLinks'] as $addedIcons) {
                     if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                         continue(2);

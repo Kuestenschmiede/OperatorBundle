@@ -15,6 +15,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -75,7 +76,7 @@ class LoadPopupListener
         if ($file) {
             $alt = $name;
             //?crop=smart&width=750&height=200
-            $image = "<img class='entry-content' src='".$cdnUrl.$file."' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='".StringUtils::addUrlToPath($cdnUrl,$file)."' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {
@@ -95,7 +96,8 @@ class LoadPopupListener
                 }
             }
 
-            $fileTag = $tag['imageCDN'] ? $cdnUrl.$tag['imageCDN'] : false;
+
+            $fileTag = $tag['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']) : false;
             if ($fileTag) {
                 if ($link) {
                     $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>

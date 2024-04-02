@@ -13,6 +13,7 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 class OfferInsertTag
@@ -61,7 +62,7 @@ class OfferInsertTag
                     case 'firstGalleryImage':
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
 
-                        $url = $cdnUrl.$arrUrls[0];
+                        $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
@@ -83,7 +84,7 @@ class OfferInsertTag
                             if ($image && $cdnUrl) {
                                 //ToDo CDN get params
                                 //?crop=smart&width=400&height=400
-                                $imagePath = $cdnUrl . $image;
+                                $imagePath = StringUtils::addUrlToPath($cdnUrl ,$image);
                                 $metaDescription = str_replace('IO_OFFER_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_OFFER_IMAGE"', '', $metaDescription);
@@ -115,7 +116,7 @@ class OfferInsertTag
                                     if ($logo && $cdnUrl) {
                                         //ToDo CDN get params
                                         //?crop=smart&width=400&height=400
-                                        $logoPath = $cdnUrl . $logo;
+                                        $logoPath = StringUtils::addUrlToPath($cdnUrl,$logo);
                                         $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
@@ -130,7 +131,7 @@ class OfferInsertTag
                                     if ($image && $cdnUrl) {
                                         //ToDo CDN get params
                                         //?crop=smart&width=400&height=400
-                                        $imagePath = $cdnUrl . $image;
+                                        $imagePath = StringUtils::addUrlToPath($cdnUrl,$image);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

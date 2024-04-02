@@ -43,6 +43,7 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
@@ -212,7 +213,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objLogo = FilesModel::findByUuid($element['logo']);
-        $logoSrc = $cdnUrl.$element['logoCDN'];
+        $logoSrc = StringUtils::addUrlToPath($cdnUrl,$element['logoCDN']);
         foreach ($arrChilds as $key => $child) {
             if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
                 break;
@@ -220,7 +221,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
 
-        $imageSrc = $cdnUrl.$element['imageCDN'];
+        $imageSrc = StringUtils::addUrlToPath($cdnUrl,$element['imageCDN']);
 
         $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
@@ -297,7 +298,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
-        $offerSrc = $cdnUrl.$child['imageCDN'];
+        $offerSrc = StringUtils::addUrlToPath($cdnUrl,$child['imageCDN']);
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images

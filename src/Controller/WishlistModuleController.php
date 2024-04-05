@@ -608,6 +608,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $arrResult = [$arrResult];
         }
         foreach ($arrResult as $key => $showcase) {
+            $types = [];
+
             foreach ($showcase['types'] as $type) {
                 $types[] = $type['label'];
                 $arrResult[$key]['types'] = implode(', ', $types);

@@ -649,7 +649,7 @@
                         <?php if (isset($data->brochureUpload) && !empty($data->brochureUpload)): ?>
                             <div class="detail-field-pdf brochureUpload">
                                 <a class="btn btn-primary"
-                                   href="<?= $data->brochureUpload->path ?>"
+                                   href="<?= $data->brochureUpload ?>"
                                    title="Broschüre öffnen" target="_blank" rel="nofollow noopener">Broschüre
                                     [pdf]</a>
                             </div>
@@ -970,8 +970,7 @@
                                     <?php endif; ?>
                                 </section>
                             </div>
-                        </div>
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
                             <?php $this->block('detailpage_map'); ?>
 
                                     <div id="react__detail-view__map"
@@ -1009,6 +1008,7 @@
                                 </div>
                             <?php endif; ?>
                             <?php $this->endblock(); ?>
+                        </div>
                         </div>
                     </div>
 

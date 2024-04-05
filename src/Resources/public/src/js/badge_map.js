@@ -143,11 +143,9 @@ function addToBadge(event) {
     jQuery(i).addClass("fas fa-heart ml-2");
     element.appendChild(i);
 
-    let badgeVal = getBadgeValue();
+    let badgeVal= String(getBadgeValue() +1);
 
-    badgeVal = badgeVal + 1;
-
-    if (jQuery('.memo-badge').length) {
+    if (jQuery('.memo-badge')) {
         jQuery('.memo-badge').remove();
     }
 
@@ -167,14 +165,13 @@ function removeFromBadge(event) {
     jQuery(i).addClass("far fa-heart ml-2");
     element.appendChild(i);
 
-    let badgeVal = getBadgeValue();
+    let badgeVal = String(getBadgeValue() -1);
 
-    if (jQuery('.memo-badge').length) {
+    if (jQuery('.memo-badge')) {
         jQuery('.memo-badge').remove();
     }
 
     if (badgeVal > 0) {
-        badgeVal = badgeVal - 1;
         var wishlistBadge = '<span class="badge badge-light memo-badge">' + badgeVal + '</span>';
         jQuery(wishlistBadge).appendTo('a.link-memo');
 
@@ -195,8 +192,8 @@ function deleteItemOnGlobalList(event) {
 
 function getBadgeValue() {
     let valBadge = 0;
-    if (jQuery('.memo-badge').length) {
-        valBadge = parseInt(jQuery('.memo-badge').text());
+    if (jQuery('.memo-badge')) {
+        valBadge = parseInt(document.getElementsByClassName('memo-badge')[0].innerHTML);
     }
     return valBadge;
 }

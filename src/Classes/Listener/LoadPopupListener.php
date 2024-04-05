@@ -259,8 +259,7 @@ class LoadPopupListener
             $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).attr(\"class\", \"btn btn-primary put-on-wishlist\");";
             $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
 
-//            TODO: After jQuery.post we have to trigger the Popup - #ajo
-
+            // TODO: After jQuery.post we have to trigger the Popup - #ajo
             if (!$wishListEntry) {
                 $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' data-uuid='$elementUuid'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
             } else {

@@ -61,8 +61,11 @@ class OfferInsertTag
                         return C4GUtils::truncate($arrOffer['description'], 275) ?: '';
                     case 'firstGalleryImage':
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
-
-                        $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
+                        if (count($arrUrls)) {
+                            $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
+                        } else {
+                            $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);
+                        }
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }

@@ -48,7 +48,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['technicalEquipment'] = "Techn
 $GLOBALS['TL_LANG'][$strName]['details']['label']['maxPersons'] = "Maximale Personen:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCredits'] = "Bildnachweis/e";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCreditsOffer'] = "Bildnachweis/e";
-$GLOBALS['TL_LANG'][$strName]['details']['label']['onlineReservationButton'] = "Jetzt Ticket(s) buchen";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['onlineReservationButton'] = "Jetzt buchen";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailReservationButton'] = "Per E-Mail reservieren";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneReservationButton'] = "Telefonisch reservieren";
 

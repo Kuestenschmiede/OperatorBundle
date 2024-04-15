@@ -61,7 +61,7 @@ class OfferInsertTag
                         return C4GUtils::truncate($arrOffer['description'], 275) ?: '';
                     case 'firstGalleryImage':
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
-                        if (count($arrUrls)) {
+                        if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
                             $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
                         } else {
                             $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);

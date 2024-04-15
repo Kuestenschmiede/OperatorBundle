@@ -41,6 +41,7 @@ use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -530,8 +531,10 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     private function getChildTileData($request)
     {
         $database = Database::getInstance();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.image, a.imageOffer, a.foreignLink, a.directLink, a.offerForSale, ' . '
+        a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -552,24 +555,25 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         )->execute($this->alias, $this->alias)->fetchAllAssoc();
 
         foreach ($childRows as $key => $row) {
-            $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            if ($imageModel !== null) {
-                list($width, $height) = getimagesize($imageModel->path);
+            //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
+            $imageFile = $row['imageCDN'];
+            if ($imageFile) {
+                //list($width, $height) = getimagesize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
-                    'width' => $width,
-                    'height' => $height,
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
+                    'alt' => $row['name'],
+                    'width' => 600,
+                    'height' => 450,
                 ];
                 $row['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name'],
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
+                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'width' => $width,
                     'height' => $height,
                 ];
             }
-            unset($childRows[$key]['imageOffer']);
-            unset($row['imageOffer']);
+//            unset($childRows[$key]['imageOffer']);
+//            unset($row['imageOffer']);
 
             $clientUuid = $this->checkCookieForClientUuid($request);
             if ($clientUuid !== null) {
@@ -585,17 +589,18 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
             $row['tagLinks'] = $childRows[$key]['tagLinks'] ?: [];
 
-            $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+            $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
                 'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
-                $model = FilesModel::findByUuid($r['image']);
-                if ($model !== null) {
+                //$model = FilesModel::findByUuid($r['image']);
+                $imageFile = $r['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$r['imageCDN']) : false;
+                if ($imageFile) {
                     $icon = [
                         'name' => $r['name'],
                         'image' => [
-                            'src' => $model->path,
+                            'src' => $imageFile,
                             'alt' => $r['name'],
                             'width' => 100,
                             'height' => 100,
@@ -751,7 +756,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         }
 
         $field = new ImageTileField();
-        $field->setName("imageList");
+        $field->setName("image");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
         $field->setHref($href);

@@ -31,16 +31,25 @@ class LoadImportButtonsListener
             $updateCompatible = false;
         }
 
-        $betreiberdatenImport = $database->prepare("SELECT * FROM tl_c4g_import_data WHERE source='gutesio' && type=? && importVersion!=''")
-            ->execute($import['type'])->fetchAssoc();
-        if ($betreiberdatenImport) {
-            $importCompatible = false;
-        }
+        //hotfix
+        $dataset = $database->prepare("SELECT * FROM tl_c4g_import_data WHERE source='gutesio'")
+            ->execute()->fetchAllAssoc();
+        if ($dataset && count($dataset) > 1) {
+            $dataset = $database->prepare("DELETE FROM tl_c4g_import_data WHERE source='gutesio'")
+                ->execute();
+            return;
+        } else {
+            $betreiberdatenImport = $database->prepare("SELECT * FROM tl_c4g_import_data WHERE source='gutesio' && type=? && importVersion!=''")
+                ->execute($import['type'])->fetchAssoc();
+            if ($betreiberdatenImport) {
+                $importCompatible = false;
+            }
 
-        $event->setVendor($vendor);
-        $event->setImportCompatible($importCompatible);
-        $event->setReleaseCompatible($releaseCompatible);
-        $event->setUpdateCompatible($updateCompatible);
-        $event->setImportType($importType);
+            $event->setVendor($vendor);
+            $event->setImportCompatible($importCompatible);
+            $event->setReleaseCompatible($releaseCompatible);
+            $event->setUpdateCompatible($updateCompatible);
+            $event->setImportType($importType);
+        }
     }
 }

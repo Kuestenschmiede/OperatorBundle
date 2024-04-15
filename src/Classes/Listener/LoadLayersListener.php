@@ -275,7 +275,7 @@ class LoadLayersListener
                                         INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
                                         WHERE typeElem.elementId = ? AND typeElem.rank = 0';
         $objLocstyle = $this->Database->prepare($strQueryLocstyle)->execute($objElement['uuid'])->fetchAssoc();
-        $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name FROM tl_gutesio_data_tag AS tag
+        $strQueryTags = 'SELECT tag.uuid, tag.imageCDN, tag.name FROM tl_gutesio_data_tag AS tag
                                         INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
                                         WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
         $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();

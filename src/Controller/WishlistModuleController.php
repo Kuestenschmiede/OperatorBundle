@@ -299,7 +299,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $fields = [];
     
         $field = new ImageTileField();
-        $field->setName("imageList");
+        $field->setName("image");
         $field->setWrapperClass('c4g-list-element__image-wrapper');
         $field->setClass('c4g-list-element__image');
         $fields[] = $field;
@@ -578,8 +578,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $sql = "SELECT * FROM $table WHERE `uuid` = ?";
             $dataEntry = $db->prepare($sql)->execute($uuid)->fetchAssoc();
             if ($dataEntry) {
-                unset($dataEntry['logo']);
-                unset($dataEntry['imageGallery']);
+//                unset($dataEntry['logoCDN']);
+//                unset($dataEntry['imageGalleryCDN']);
                 if ($table === "tl_gutesio_data_element") {
                     $dataEntry['internal_type'] = "showcase";
                     $arrShowcaseElements[] = $dataEntry;
@@ -608,6 +608,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $arrResult = [$arrResult];
         }
         foreach ($arrResult as $key => $showcase) {
+            $types = [];
+
             foreach ($showcase['types'] as $type) {
                 $types[] = $type['label'];
                 $arrResult[$key]['types'] = implode(', ', $types);
@@ -632,17 +634,18 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $arrOffers = [];
         foreach ($arrOfferElements as $element) {
             $offer = [];
-            if (C4GUtils::isBinary($element['imageOffer'])) {
-                $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
-                if ($model) {
-                    $offer['imageList'] = $converter->createFileDataFromModel($model);
-                }
-            } else if ($element['imageOffer']) {
-                $model = FilesModel::findByUuid($element['imageOffer']);
-                if ($model) {
-                    $offer['imageList'] = $converter->createFileDataFromModel($model);
-                }
-            }
+//            if (C4GUtils::isBinary($element['imageOffer'])) {
+//                $model = FilesModel::findByUuid(StringUtil::binToUuid($element['imageOffer']));
+//                if ($model) {
+//                    $offer['imageList'] = $converter->createFileDataFromModel($model);
+//                }
+//            } else
+              if ($element['imageCDN']) {
+//                $model = FilesModel::findByUuid($element['imageOffer']);
+//                if ($model) {
+                    $offer['image'] = $converter->createFileDataFromFile($element['imageCDN']);
+//                }
+              }
             $vendorUuid = $db->prepare("SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ? LIMIT 1")
                 ->execute($element['uuid'])->fetchAssoc();
 

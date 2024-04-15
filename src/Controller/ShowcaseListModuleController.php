@@ -41,6 +41,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -261,7 +262,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         
         // special handling for umlauts
-        $searchString = $params['filter'];
+        $searchString = $params && key_exists('filter', $params) ? $params['filter'] : null;
         if (count($arrSearchStrings) || ($searchString !== null && $searchString !== "")) {
             if ($searchString !== null && $searchString !== "") {
                 $arrSearchStrings[] = $searchString;
@@ -536,7 +537,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         $field = new ImageTileField();
-        $field->setName("imageList");
+        $field->setName("image");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
@@ -773,6 +774,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     
     private function getTypeOptions($types = [], $blockedTypes = [])
     {
+        $typeResult = [];
         if (is_array($types) && count($types) > 0) {
             $typeStr = implode(',',$types);
             $sql = "SELECT DISTINCT uuid, name FROM tl_gutesio_data_type"
@@ -807,6 +809,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $optionData = [];
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
 
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom <= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil >= UNIX_TIMESTAMP())) ";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
@@ -821,16 +826,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                     // TODO until then, it would break the filter if it exists as option
                     continue;
                 }
-                if ($tag['image']) {
-                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
-                    if ($objImage) {
+                if ($tag['imageCDN']) {
+//                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
+//                    if ($objImage) {
                         $optionData[$tag['uuid']] = [
-                            'src' => $objImage->path,
+                            'src' => StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']),
                             'alt' => $tag['name']
                         ];
-                    } else {
-                        //ToDo CDN
-                    }
+//                    } else {
+//                        //ToDo CDN
+//                    }
                 } else {
                     $optionData[$tag['uuid']] = [];
                 }
@@ -844,7 +849,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $database = Database::getInstance();
         $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
-        $links = [];
+        $links = false;
         if ($result) {
             foreach ($result as $row) {
                 $alias = is_array($row) && key_exists('alias', $row) ? $row['alias'] : false;
@@ -872,7 +877,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         foreach ($elements as $key=>$row) {
             $alias = $row['alias'];
             $name  = $row['name'];
-            $image = $row['imageList']['src'];
+            $image = $row['image']['src'];
 
             if (C4GUtils::endsWith($this->pageUrl, '.html')) {
                 $href = str_replace('.html', '/' . $alias . '.html', $this->pageUrl);
@@ -880,7 +885,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $href = $this->pageUrl . '/' . $alias;
             }
 
-            $meta .= '{"@type": "ListItem", "name": "'.htmlspecialchars(strip_tags($name)).'", "url": "{{env::url}}/'.$href.'", "image": "{{env::url}}/'.$image.'"}';
+            $meta .= '{"@type": "ListItem", "name": "'.htmlspecialchars(strip_tags($name)).'", "url": "{{env::url}}/'.$href.'", "image": "'.$image.'"}';
 
             if ($key != $last_key) {
                 $meta .= ',';

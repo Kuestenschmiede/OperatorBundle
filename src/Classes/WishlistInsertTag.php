@@ -13,6 +13,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -108,16 +109,18 @@ class WishlistInsertTag
 
     private function getImagePath($arrItem)
     {
-        if ($arrItem['internal_type'] === 'showcase') {
-            $image = $arrItem['imageList'] ? $arrItem['imageList'] : $arrItem['image'];
-        } else {
-            $image = $arrItem['imageOffer'] ? $arrItem['imageOffer'] : $arrItem['image'];
-        }
-        $objImage = FilesModel::findByUuid(StringUtil::binToUuid($image));
-        $imagePath = '';
-        if ($objImage !== null) {
-            $imagePath = $objImage->path;
-        }
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+//        if ($arrItem['internal_type'] === 'showcase') {
+//            $image = $arrItem['imageList'] ? $arrItem['imageList'] : $arrItem['image'];
+//        } else {
+//            $image = $arrItem['imageOffer'] ? $arrItem['imageOffer'] : $arrItem['image'];
+//        }
+//        $objImage = FilesModel::findByUuid(StringUtil::binToUuid($image));
+        $imagePath = StringUtils::addUrlToPath($cdnUrl,$arrItem['imageCDN']);
+//        if ($objImage !== null) {
+//            $imagePath = $objImage->path;
+//        }
 
         return $imagePath;
     }

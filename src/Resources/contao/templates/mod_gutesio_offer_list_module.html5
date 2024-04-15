@@ -18,7 +18,7 @@ $last_key = end(array_keys($data));
                     "@type": "ListItem",
                     "name": "<?= htmlspecialchars(strip_tags($v['name'])) ?>",
                     "url": "<?= $v['childLink'] ?>",
-                    "image": "{{env::url}}/<?= $v['image']['src'] ?>"
+                    "image": "<?= $v['image']['src'] ?>"
                 }<?php if ($k != $last_key) echo "," ?>
             <?php endforeach; ?>
         ]

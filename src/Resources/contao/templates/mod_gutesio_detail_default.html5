@@ -136,6 +136,32 @@
                 </div>
             </div>
 
+            <div class="detail-view__section-booking" id="detail-section-booking">
+                <div class="c4g-container">
+                    <?php if ($data->tags): ?>
+                        <?php foreach ($data->tags as $k => $v): ?>
+                            <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')) || (strPos($v->linkHref, 'hotelreservation.expert')))): ?>
+                                <div class="bookingGroup">
+                                    <div class="bookingButton">
+                                        <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
+                                    </div>
+                                    <?php if (isset($data->reservationContactEMail) && !empty($data->reservationContactEMail)): ?>
+                                        <div class="bookingButton entry-content email" itemprop="email">
+                                            <a href="mailto:{{email_url::<?= $data->reservationContactEMail ?>}}?subject=Veranstaltung: <?= str_replace(',','.', $data->name) ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailReservationButton']?></a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if (isset($data->reservationContactPhone) && !empty($data->reservationContactPhone)): ?>
+                                        <div class="bookingButton entry-content phone" itemprop="phone">
+                                            <a href="tel:<?= $data->reservationContactPhone ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?></a>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
             <div class="detail-view__section-gallery" id="detail-section-description-and-gallery">
                 <div class="c4g-container">
                     <div class="c4g-row detaildata-section-description-and-gallery">
@@ -679,7 +705,7 @@
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')))): ?>
+                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')) || (strPos($v->linkHref, 'hotelreservation.expert')))): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
@@ -703,7 +729,8 @@
                                         <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
-                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets'))))): ?>                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
+                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')) || (strPos($v->linkHref, 'hotelreservation.expert'))))): ?>
+                                            <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
                                             <?php if ($v->linkHref): ?>
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
                                                    title="<?= $v->name ?>"

@@ -1899,6 +1899,7 @@ mark {
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
+.detail-view .detail-view__section-booking .bookingButton > a,
 .detail-view__contact-wrapper .email > a,
 .detail-view__contact-wrapper .phone > a,
 .detail-view__contact-wrapper .website > a,
@@ -1940,6 +1941,7 @@ mark {
   .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
   .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
   .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
+  .detail-view .detail-view__section-booking .bookingButton > a,
   .detail-view__contact-wrapper .email > a,
   .detail-view__contact-wrapper .phone > a,
   .detail-view__contact-wrapper .website > a,
@@ -1967,6 +1969,7 @@ mark {
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
+.detail-view .detail-view__section-booking .bookingButton > a:hover,
 .detail-view__contact-wrapper .email > a:hover,
 .detail-view__contact-wrapper .phone > a:hover,
 .detail-view__contact-wrapper .website > a:hover,
@@ -2008,6 +2011,8 @@ mark {
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a.focus,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:focus,
+.detail-view .detail-view__section-booking .bookingButton > a.focus,
+.detail-view .detail-view__section-booking .bookingButton > a:focus,
 .detail-view__contact-wrapper .email > a.focus,
 .detail-view__contact-wrapper .email > a:focus,
 .detail-view__contact-wrapper .phone > a.focus,
@@ -2059,6 +2064,8 @@ mark {
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a.disabled,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:disabled,
+.detail-view .detail-view__section-booking .bookingButton > a.disabled,
+.detail-view .detail-view__section-booking .bookingButton > a:disabled,
 .detail-view__contact-wrapper .email > a.disabled,
 .detail-view__contact-wrapper .email > a:disabled,
 .detail-view__contact-wrapper .phone > a.disabled,
@@ -2095,6 +2102,7 @@ mark {
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:not(:disabled):not(.disabled),
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:not(:disabled):not(.disabled),
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:not(:disabled):not(.disabled),
+.detail-view .detail-view__section-booking .bookingButton > a:not(:disabled):not(.disabled),
 .detail-view__contact-wrapper .email > a:not(:disabled):not(.disabled),
 .detail-view__contact-wrapper .phone > a:not(:disabled):not(.disabled),
 .detail-view__contact-wrapper .website > a:not(:disabled):not(.disabled),
@@ -2125,6 +2133,8 @@ mark {
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields fieldset:disabled .tag_onlineshop > a,
+.detail-view .detail-view__section-booking .bookingButton > a.disabled,
+.detail-view .detail-view__section-booking fieldset:disabled .bookingButton > a,
 .detail-view fieldset:disabled .anchor-menu__list > li > a,
 .detail-view fieldset:disabled .c4g-icon-wrapper > a,
 .detail-view__contact-wrapper .email > a.disabled,
@@ -2154,6 +2164,7 @@ fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_donation >
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 fieldset:disabled .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
+fieldset:disabled .detail-view .detail-view__section-booking .bookingButton > a,
 fieldset:disabled .detail-view__contact-wrapper .email > a,
 fieldset:disabled .detail-view__contact-wrapper .phone > a,
 fieldset:disabled .detail-view__contact-wrapper .website > a,
@@ -2975,6 +2986,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-view__section-booking .bookingButton > a .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view .detail-view__section-booking .bookingButton > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__taglinks-wrapper .detail-view__contact-wrapper .phone > a .c4g-list-element__tag,
@@ -3023,6 +3036,8 @@ a.c4g-badge-tagfilter:hover {
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-element__taglinks,
+.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-view__section-booking .bookingButton > a .c4g-list-element__tag,
+.c4g-list-outer .c4g-list-element__tags-wrapper .detail-view .detail-view__section-booking .bookingButton > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__tag,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .email > a .c4g-list-element__taglinks,
 .c4g-list-outer .c4g-list-element__tags-wrapper .detail-view__contact-wrapper .phone > a .c4g-list-element__tag,
@@ -3107,6 +3122,12 @@ a.c4g-badge-tagfilter:hover {
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
+.detail-view .detail-view__section-booking .bookingButton > a .badge,
+.detail-view .detail-view__section-booking .bookingButton > a .c4g-badge-tagfilter,
+.detail-view .detail-view__section-booking .bookingButton > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
+.detail-view .detail-view__section-booking .bookingButton > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__taglinks,
+.detail-view .detail-view__section-booking .bookingButton > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__tag,
+.detail-view .detail-view__section-booking .bookingButton > a .c4g-list-outer .c4g-list-element__tags-wrapper .c4g-list-element__taglinks,
 .detail-view__contact-wrapper .email > a .badge,
 .detail-view__contact-wrapper .email > a .c4g-badge-tagfilter,
 .detail-view__contact-wrapper .email > a .c4g-list-outer .c4g-list-element__taglinks-wrapper .c4g-list-element__tag,
@@ -6697,6 +6718,7 @@ html {
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a,
+.detail-view .detail-view__section-booking .bookingButton > a,
 .detail-view__contact-wrapper .email > a,
 .detail-view__contact-wrapper .phone > a,
 .detail-view__contact-wrapper .website > a,
@@ -6728,6 +6750,7 @@ html {
 .detail-view .detail-field-wrapper__tag-fields .tag_menu > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_online_reservation > a:hover,
 .detail-view .detail-field-wrapper__tag-fields .tag_onlineshop > a:hover,
+.detail-view .detail-view__section-booking .bookingButton > a:hover,
 .detail-view__contact-wrapper .email > a:hover,
 .detail-view__contact-wrapper .phone > a:hover,
 .detail-view__contact-wrapper .website > a:hover,
@@ -6896,6 +6919,45 @@ html {
 }
 .detail-view > div {
   margin-bottom: 2rem
+}
+.detail-view .detail-view__section-booking .bookingGroup {
+  display: flex
+}
+.detail-view .detail-view__section-booking .bookingButton > a {
+  color: #fff;
+  background-color: #b073d9;
+  border-color: #b073d9;
+  margin-right: 1rem
+}
+.detail-view .detail-view__section-booking .bookingButton > a:hover {
+  color: #fff;
+  background-color: #9f55d1;
+  border-color: #994bce
+}
+.detail-view .detail-view__section-booking .bookingButton > a.focus,
+.detail-view .detail-view__section-booking .bookingButton > a:focus {
+  color: #fff;
+  background-color: #9f55d1;
+  border-color: #994bce;
+  box-shadow: 0 0 0 .2rem rgba(188,136,223,.5)
+}
+.detail-view .detail-view__section-booking .bookingButton > a.disabled,
+.detail-view .detail-view__section-booking .bookingButton > a:disabled {
+  color: #fff;
+  background-color: #b073d9;
+  border-color: #b073d9
+}
+.detail-view .detail-view__section-booking .bookingButton > a:not(:disabled):not(.disabled).active,
+.detail-view .detail-view__section-booking .bookingButton > a:not(:disabled):not(.disabled):active,
+.show > .detail-view .detail-view__section-booking .bookingButton > a.dropdown-toggle {
+  color: #fff;
+  background-color: #994bce;
+  border-color: #9441cb
+}
+.detail-view .detail-view__section-booking .bookingButton > a:not(:disabled):not(.disabled).active:focus,
+.detail-view .detail-view__section-booking .bookingButton > a:not(:disabled):not(.disabled):active:focus,
+.show > .detail-view .detail-view__section-booking .bookingButton > a.dropdown-toggle:focus {
+  box-shadow: 0 0 0 .2rem rgba(188,136,223,.5)
 }
 .detail-view .anchor-menu__inner,
 .detail-view .c4g-container {

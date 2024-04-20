@@ -233,6 +233,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             ],
             'title' => $element['name'],
             'slogan' => $element ['displaySlogan'] ?: $element['shortDescription'],
+            'href' => $detailRoute,
             //'contact' => $value['name'],
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
         ];
@@ -316,6 +317,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             'location' => $location,
             'title' => $child['name'],
             'slogan' => $child['shortDescription'],
+            'href' => $detailRoute,
             'contact' => $element['name'],
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
         ];

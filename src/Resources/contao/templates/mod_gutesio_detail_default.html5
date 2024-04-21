@@ -52,7 +52,7 @@
         <div class="detail-hero2__blur-layer"></div>
         <!--    Image -->
         <div class="detail-hero2__image-wrapper">
-            <img src="<?= $imageCDN ?>" alt="">
+            <img src="<?= $imageXS ?>" alt="">
 
         </div>
 

@@ -36,12 +36,12 @@
 
     <style>
         .detail-hero2 {
-            background-image: <?= $imageXS?>
+            background-image: url(<?= $imageXS?>);
         }
 
         @media screen and (min-width: 901px) {
             .detail-hero2 {
-                background-image: <?= $imageXL?>
+                background-image: url(<?= $imageXL?>);
             }
         }
     </style>
@@ -52,7 +52,8 @@
         <div class="detail-hero2__blur-layer"></div>
         <!--    Image -->
         <div class="detail-hero2__image-wrapper">
-            <img src="<?= $imageCDN ?>" alt="">
+            <img src="<?= $imageXS ?>" alt="">
+
         </div>
 
         <!--    Filter / Overlay -->

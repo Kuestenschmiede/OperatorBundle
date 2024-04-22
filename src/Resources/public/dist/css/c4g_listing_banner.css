@@ -284,6 +284,10 @@ template {
   max-height: 100%;
   overflow: hidden
 }
+.banner-section a {
+  color: #01395d;
+  text-decoration: none
+}
 .banner-slide {
   position: relative;
   height: 100vh

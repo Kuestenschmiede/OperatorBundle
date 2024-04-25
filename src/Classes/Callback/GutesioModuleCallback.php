@@ -116,9 +116,12 @@ class GutesioModuleCallback
         $arrTypes = GutesioDataChildTypeModel::findAll();
         $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];
         $options = [];
+        $options['-'] = "-";
         foreach ($arrTypes as $type) {
             if ($type['type'] == 'event') {
                 $options[$type['uuid']] = $type['name'];
+
+
             }
         }
         return $options;

@@ -18,3 +18,5 @@
 # Miscellaneous
 node_modules
 _backup*
+
+package-lock.json

@@ -221,7 +221,7 @@ class GutesBlogGenerator
             }
 
             if ($fowardingUrl && $imageUrl) {
-                $teaser = '<a href="' . $fowardingUrl . '"><img src="' . $imageUrl . '"></a><br>' ;
+                $teaser = '<a href="' . $fowardingUrl . '"><img src="' . $imageUrl . '"></a><br>' . $event['shortDescription'];
             }
 
 //            $url = $alias . str_replace(['{', '}'], '', unserialize($uuid));

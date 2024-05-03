@@ -12,7 +12,7 @@ if ($packages['con4gis/pwa']) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
         ->addLegend('operator_legend', 'data_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
         ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
-//        ->addField(['notifyUpcomingEvents', 'gutesioEventTypes'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->addField([/*'notifyUpcomingEvents', */'gutesioEventTypes'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
         ->applyToPalette('default', $str);
 
 //    $GLOBALS['TL_DCA'][$str]['fields']['notifyUpcomingEvents'] = array

@@ -37,7 +37,6 @@ class GutesBlogGenerator
             ->execute()
             ->fetchAllAssoc();
 
-
         return $achives;
 
     }

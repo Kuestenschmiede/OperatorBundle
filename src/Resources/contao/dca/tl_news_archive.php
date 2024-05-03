@@ -23,6 +23,7 @@ if ($packages['gutesio/operator']) {
 //            'nextweek',
 //            'thismonth',
         ),
+        'reference'               => &$GLOBALS['TL_LANG'][$str]['references'],
         'eval'                    => array('multiple'=>true, 'tl_class'=>'clr'),
         'sql'                     => "blob NULL"
     );

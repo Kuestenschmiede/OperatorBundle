@@ -7,142 +7,145 @@
 <section class="banner-section">
     <div class="banner__tns-container">
         <?php foreach ($this->arr as $key => $item): ?>
-            <?php
-            $slideClass = " slide-offer";
-            if ($item['type'] == "element") {
-                $slideClass = " slide-element";
-            }
-            $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
-            ?>
-            <div class="banner-slide">
-                <a href="<?= $item['href'] ?>">
-                    <div class="banner__image-wrapper<?= $slideClass ?>">
-                        <?php if ($loadlazy): ?>
-                            <img class="banner__image-item" data-src="<?= $item['image']['src'] ?>"
-                                 alt="<?= $item['image']['alt'] ?>">
-                        <?php else: ?>
-                            <img class="banner__image-item" src="<?= $item['image']['src'] ?>"
-                                 alt="<?= $item['image']['alt'] ?>">
+        <?php
+        $slideClass = " slide-offer";
+        if ($item['type'] == "element") {
+            $slideClass = " slide-element";
+        }
+        $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
+        ?>
+        <div class="banner-slide">
+            <a href="<?= $item['href'] ?>">
+
+                <div class="banner__text-wrapper<?= $slideClass ?>">
+
+                    <div class="text-wrapper-inner">
+                        <?php if (($item['type'] == "element") && $item['logo'] && $loadlazy): ?>
+                            <img class="banner__text-wrapper-image" data-src="<?= $item['logo']['src'] ?>"
+                                 alt="<?= $item['logo']['alt'] ?>">
+                        <?php elseif (($item['type'] == "element") && $item['logo']): ?>
+                            <img class="banner__text-wrapper-image" src="<?= $item['logo']['src'] ?>"
+                                 alt="<?= $item['logo']['alt'] ?>">
                         <?php endif; ?>
-                    </div>
-
-                    <div class="banner__text-wrapper<?= $slideClass ?>">
-
-                        <div class="text-wrapper-inner">
-                            <?php if (($item['type'] == "element") && $item['logo'] && $loadlazy): ?>
-                                <img class="banner__text-wrapper-image" data-src="<?= $item['logo']['src'] ?>"
-                                     alt="<?= $item['logo']['alt'] ?>">
-                            <?php elseif (($item['type'] == "element") && $item['logo']): ?>
-                                <img class="banner__text-wrapper-image" src="<?= $item['logo']['src'] ?>"
-                                     alt="<?= $item['logo']['alt'] ?>">
-                            <?php endif; ?>
-                            <div class="inner-text">
-                                <div class="banner__headline-wrapper">
-                                    <h1 class="banner__headline"><?= $item['title'] ?></h1>
-                                </div>
-
-                                <div class="banner__slogan-wrapper">
-                                    <p>
-                                        <?= $item['slogan'] ?>
-                                    </p>
-                                </div>
+                        <div class="inner-text">
+                            <div class="banner__headline-wrapper">
+                                <h1 class="banner__headline"><?= $item['title'] ?></h1>
                             </div>
 
-                            <?php if ($item['dateTime'] || $item['location']): ?>
-                                <div class="banner__detail-wrapper">
-                                    <?php if ($item['dateTime']): ?>
-                                        <div class="datetime-wrapper">
-                                            <span class="detail-label">Termin:</span><span
-                                                    class="detail-info"><?= $item['dateTime'] ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                    <?php if ($item['location']): ?>
-                                        <div class="location-wrapper">
-                                            <span class="detail-label">Ort: </span><span
-                                                    class="detail-info"><?= $item['location'] ?></span>
-                                        </div>
-                                    <?php endif; ?>
-                                </div>
-                            <?php endif; ?>
+                            <div class="banner__slogan-wrapper">
+                                <p>
+                                    <?= $item['slogan'] ?>
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="banner__footer">
-                        <div class="banner__footer-pre">
-                            <div class="banner__footer-logo-text">
-                                <?php if (($item['type'] == "event") && $item['logo']): ?>
-                                    <div class="banner__footer-logo">
-                                        <?php if ($loadlazy): ?>
-                                            <img class="banner__footer-logo-image" data-src="<?= $item['logo']['src'] ?>"
-                                                 alt="<?= $item['logo']['alt'] ?>">
-                                        <?php else: ?>
-                                            <img class="banner__footer-logo-image" src="<?= $item['logo']['src'] ?>"
-                                                 alt="<?= $item['logo']['alt'] ?>">
-                                        <?php endif; ?>
-
+                        <?php if ($item['dateTime'] || $item['location']): ?>
+                            <div class="banner__detail-wrapper">
+                                <?php if ($item['dateTime']): ?>
+                                    <div class="datetime-wrapper">
+                                        <span class="detail-label">Termin:</span><span
+                                                class="detail-info"><?= $item['dateTime'] ?></span>
                                     </div>
                                 <?php endif; ?>
-
-                                <div class="banner__footer-text">
-                                    <?php if ($item['type'] == "event"): ?>
-                                        <span class="footer-text-label">Angeboten von:</span>
-                                        <br>
-                                    <?php endif; ?>
-                                    <?= $item['contact'] ?>
-                                </div>
-
-                            </div>
-                            <div class="banner__footer-qrcode">
-                                <?php if ($loadlazy): ?>
-                                    <img data-src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
-                                <?php else: ?>
-                                    <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
+                                <?php if ($item['location']): ?>
+                                    <div class="location-wrapper">
+                                        <span class="detail-label">Ort: </span><span
+                                                class="detail-info"><?= $item['location'] ?></span>
+                                    </div>
                                 <?php endif; ?>
                             </div>
-                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
 
-                        <div class="banner__footer-sub">
-                            Powered by Nordsee Digital
-                            <?php if ($loadlazy): ?>
-                                <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
-                                     alt="gutes.digital Logo">
-                            <?php else: ?>
-                                <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
-                                     alt="gutes.digital Logo">
+                <div class="banner__image-wrapper<?= $slideClass ?>">
+                    <?php if ($loadlazy): ?>
+                        <img class="banner__image-item" data-src="<?= $item['image']['src'] ?>"
+                             alt="<?= $item['image']['alt'] ?>">
+                    <?php else: ?>
+                        <img class="banner__image-item" src="<?= $item['image']['src'] ?>"
+                             alt="<?= $item['image']['alt'] ?>">
+                    <?php endif; ?>
+                </div>
+
+
+                <div class="banner__footer">
+                    <div class="banner__footer-pre">
+                        <div class="banner__footer-logo-text">
+
+                            <?php if (($item['type'] == "event") && $item['logo']): ?>
+                                <div class="banner__footer-logo">
+                                    <?php if ($loadlazy): ?>
+                                        <img class="banner__footer-logo-image" data-src="<?= $item['logo']['src'] ?>"
+                                             alt="<?= $item['logo']['alt'] ?>">
+                                    <?php else: ?>
+                                        <img class="banner__footer-logo-image" src="<?= $item['logo']['src'] ?>"
+                                             alt="<?= $item['logo']['alt'] ?>">
+                                    <?php endif; ?>
+
+                                </div>
                             <?php endif; ?>
 
+                            <div class="banner__footer-text">
+                                <?php if ($item['type'] == "event"): ?>
+                                    <span class="footer-text-label">Angeboten von:</span>
+                                    <br>
+                                <?php endif; ?>
+                                <?= $item['contact'] ?>
+                            </div>
+
+                        </div>
+                        <div class="banner__footer-qrcode">
+                            <?php if ($loadlazy): ?>
+                                <img data-src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
+                            <?php else: ?>
+                                <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
+                            <?php endif; ?>
                         </div>
                     </div>
-                </a>
+            </a>
+            <div class="banner__footer-sub">
+                Powered by <a href="https://nordsee.digital/">Nordsee Digital</a>
+                <?php if ($loadlazy): ?>
+                    <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
+                         alt="nordsee.digital Logo">
+                <?php else: ?>
+                    <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
+                         alt="nordsee.digital Logo">
+                <?php endif; ?>
+
             </div>
-        <?php endforeach; ?>
+        </div>
+
+    </div>
+    <?php endforeach; ?>
     </div>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
 
 <script type="module">
-    var slider = tns({
-        container: '.banner__tns-container',
-        mode: 'gallery',
-        items: 1,
-        slideBy: 'page',
-        speed: 5000,
-        <?php if ($loadlazy): ?>
-        lazyload: true,
-        lazyloadSelector: "banner__image-item",
-        <?php endif; ?>
-        autoplayTimeout: 15000,
-        autoplay: true,
-        // autoplay: false,
-        controls: false,
-        mouseDrag: true,
-        nav: false,
-        autoplayButtonOutput: false
-    });
-    <?php if($this->reloadBanner): ?>
-    window.setTimeout(()=> {
-       location.reload();
-    }, 3600000);
-    <?php endif; ?>
+  var slider = tns({
+    container: '.banner__tns-container',
+    mode: 'gallery',
+    items: 1,
+    slideBy: 'page',
+    speed: 5000,
+      <?php if ($loadlazy): ?>
+    lazyload: true,
+    lazyloadSelector: "banner__image-item",
+      <?php endif; ?>
+    autoplayTimeout: 15000,
+    autoplay: true,
+    // autoplay: false,
+    controls: false,
+    mouseDrag: true,
+    nav: false,
+    autoplayButtonOutput: false
+  });
+  <?php if($this->reloadBanner): ?>
+  window.setTimeout(()=> {
+    location.reload();
+  }, 3600000);
+  <?php endif; ?>
 </script>

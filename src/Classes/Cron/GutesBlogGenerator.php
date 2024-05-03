@@ -7,15 +7,6 @@ use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Contao\PageModel;
-//use con4gis\PwaBundle\Classes\Callbacks\PwaConfigurationCallback;
-//use con4gis\PwaBundle\con4gisPwaBundle;
-//use Contao\Controller;
-//use Contao\NewsBundle\ContaoNewsBundle;
-//
-//use Contao\System;
-//use con4gis\PwaBundle\Classes\Events\PushNotificationEvent;
-//use gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback;
-
 
 class GutesBlogGenerator
 {
@@ -27,35 +18,13 @@ class GutesBlogGenerator
 
         $subscriptionTypes = $this->checkSubscriptions($db);
         $gutesNewsArchives = $this->checkArchives($db, $subscriptionTypes);
-//        $types = $this->getGutesioEventTypes();
-
-
-//        //might be completly redundand
-//        $categories = [];
-//        foreach ($subscriptionTypes as $subscriptionType) {
-//            $categories[$subscriptionType['id']] = unserialize($subscriptionType['gutesioEventTypes']);
-//            //prep sql statements to import news for each archive
-//        }
-
-        //todo get only news from the categories picked (problem is do we go through every archive )
-//        $categories = $this->getPickedCategories();
-
-        $gutesNews = $this->getGutesNews($db, $currentDate/*, $categories*/);
 
         //todo is this enough? maybe check the arcives aswell?
         if ($gutesNewsArchives) {
-            //setFowardingLink so we don't have to keep requesting
-//            $dns = $this->getDomain($db);
-            //here we can add different intervals for the pn
+            //todo here we can add different intervals for the pn
             foreach ($gutesNewsArchives as $archive) {
-                $archiveSubs = unserialize($archive['subscriptionTypes']);
-                foreach ($archiveSubs as $archiveSub) {
-                    foreach ($subscriptionTypes as $subscriptionType) {
-                        if (intval($archiveSub) == $subscriptionType['id'])  {
-                            $this->addGutesNews($db, $archive, $currentDate, $gutesNews);
-                        }
-                    }
-                }
+
+                $this->addGutesNews($db, $archive, $currentDate, $subscriptionTypes);
 
                 $this->cleanArchive($archive, $currentDate, $db);
             }
@@ -75,7 +44,7 @@ class GutesBlogGenerator
 
     private function checkSubscriptions($db)
     {
-        $subtypes = $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE notifyUpcomingEvents = 1 AND gutesioEventTypes IS NOT NULL OR gutesioEventTypes != 0')
+        $subtypes = $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE gutesioEventTypes IS NOT NULL OR gutesioEventTypes != 0')
             ->execute()
             ->fetchAllAssoc();
 
@@ -91,27 +60,28 @@ class GutesBlogGenerator
         return $imagePath;
     }
 
-
-    private function getGutesNews($db, $currentDate/*, $categories*/)
+    private function getGutesNews($db, $currentDate, $gutesCategorie)
     {
-        //todo get event news with only with the categories (typeID == category or subtype uuid)
+        $categoryUUID = unserialize($gutesCategorie['gutesioEventTypes']);
+        $cat = $categoryUUID[0];
         //todo only type interval "tmr"
-        //todo currently the push notification is set for 6 am. Maybe add another field to specify time. May where the inter val is already set to "today"
+        //todo [low prio] currently the push notification is set for 6 am. Maybe add another field to specify time. May where the inter val is already set to "today"
+        //todo [performance] is it better to load all tmr events then only select the ones with the category or all events tmr and category in one go then for each archive?
 
         $endDate = strtotime('tomorrow');
-
-        // Retrieve records from tl_gutesio_data_child_event where beginDate > currentDate and join with tl_gutesio_data_child
-//              WHERE e.beginDate >= '$currentDate'
-//              AND e.beginDate <= '$endDate'";
-
-//        WHERE e.beginDate > ?
 
         $query = "  SELECT t.type,e.beginDate,e.beginTime,c.uuid, c.name, c.description, c.shortDescription, c.typeId, c.imageCDN
                         FROM tl_gutesio_data_child_event e
                         JOIN tl_gutesio_data_child c ON e.childId = c.uuid
                         JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
+                        WHERE c.typeId ='$cat'
                         WHERE e.beginDate >= '$currentDate'
-                        AND e.beginDate <= '$endDate'";
+                        AND e.beginDate <= '$endDate'
+                        ";
+        /*
+         *
+         *
+        */
 
         return $db->prepare($query)
             ->execute($currentDate)
@@ -119,23 +89,7 @@ class GutesBlogGenerator
 
     }
 
-    private function getGutesioEventTypes(): array
-    {
-        $arrTypes = GutesioDataChildTypeModel::findAll();
-        $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];
-        $options = [];
-        $options['-'] = "-";
-        foreach ($arrTypes as $type) {
-            if ($type['type'] == 'event') {
-                $options[$type['uuid']] = $type['name'];
-
-
-            }
-        }
-        return $options;
-    }
-
-    private function addGutesNews($db, $archive, $currentDate, $gutesEvents): void
+    private function addGutesNews($db, $archive, $currentDate, $subscriptionTypes): void
     {
         $archiveId = $archive['id'];
         // Check if the 'uuid' column exists
@@ -150,13 +104,10 @@ class GutesBlogGenerator
 
             $db->query($addUuidColumnQuery);
         }
-//        $addUuidColumnQuery = "ALTER TABLE tl_news drop COLUMN `gutesUuid`";
-//        $db->query($addUuidColumnQuery);
 
         $insertQuery = "INSERT INTO tl_news (id, pid, tstamp, headline, date, time, description,
             teaser, /*addImage,*/pnSendDate, source, url, published, gutesUuid) 
             VALUES ( /*?,*/?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
         $stmtInsert = $db->prepare($insertQuery);
 
         // Get the maximum existing ID from tl_news
@@ -178,6 +129,12 @@ class GutesBlogGenerator
             }
         }
 
+        foreach ($subscriptionTypes as $subscriptionType) {
+            if ($subscriptionType['id'] == intval($archive['subscriptionTypes'])){
+                $gutesEvents = $this->getGutesNews($db, $currentDate, $subscriptionType);
+            }
+        }
+
         // Iterate over the events and insert them into the table
         foreach ($gutesEvents as $event) {
             $uuid = $event['uuid'];
@@ -187,20 +144,6 @@ class GutesBlogGenerator
             }
 
             $imageUrl = $this->getImagePath($event);
-//            $addImage = $imageUrl ? 1 : 0;
-//
-//            todo meta-data needs to be filled perhaps?
-
-//            //$logoData = $this->createFileDataFromModel($logoModel);
-//            $logoData = $this->createFileDataFromFile($showcase['logoCDN']);
-//            $logoData['href'] = $showcase['alias'];
-//            $datum['relatedShowcaseLogos'][] = $logoData;
-//            $datum['relatedShowcases'][] = [
-//                'uuid' => $showcase['uuid'],
-//                'foreignLink' => $showcase['foreignLink'],
-//                'releaseType' => $showcase['releaseType'],
-//                'name' => html_entity_decode($showcase['name']),
-//            ];
 
             $id = $counter;
             $pid = $archiveId;
@@ -225,7 +168,6 @@ class GutesBlogGenerator
             }
 
 //            $url = $alias . str_replace(['{', '}'], '', unserialize($uuid));
-
 
             //todo pn send date
             $pnSendDate = $date + 21600; // at 6:00
@@ -261,46 +203,4 @@ class GutesBlogGenerator
 
         return $forwardingUrl;
     }
-
-
-//    private function getDomain($db)
-//    {
-//        $pages = PageModel::findByType('root');
-//
-//        foreach ($pages as $page) {
-//            if ($page->published) {
-//                return $page->dns;
-//            }
-//        }
-//        return '';
-//    }
-
-//    todo Pictures need a better way to be saved
-//    public function createFileDataFromFile($file, $svg = false) : array
-//    {
-//        $objSettings = GutesioOperatorSettingsModel::findSettings();
-//        $cdnUrl = $objSettings->cdnUrl;
-//
-//        if ($svg) {
-//            $width = 100;
-//            $height = 100;
-//        } else {
-//            //ToDo extreme slow
-//            //list($width, $height) = getimagesize(StringUtils::addUrlToPath($cdnUrl,$file));
-//            $width = 600;
-//            $height = 450;
-//        }
-//
-//        $url = StringUtils::addUrlToPath($cdnUrl, $file);
-//
-//        return [
-//            'src' => $url,
-//            'path' => $url,
-//            'uuid' => '',
-//            'alt' => '',
-//            'name' => '',
-//            'height' => $height,
-//            'width' => $width
-//        ];
-//    }
 }

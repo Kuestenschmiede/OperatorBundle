@@ -3146,6 +3146,29 @@ html {
   max-width: 100%;
   height: auto
 }
+.postal-city,
+.street-address {
+  display: block
+}
+.postal-city .postal,
+.street-address .street {
+  margin-right: 5px
+}
+.c4g-modal-content a.btn-warning.remove-from-wishlist.on-wishlist.c4g-btn-close,
+.c4g-modal-content a.btn-warning.remove-from-wishlist.on-wishlist.c4g-btn-top-close,
+.c4g-wishlist-outer a.btn-warning.remove-from-wishlist.on-wishlist.c4g-list-element__cart-link,
+.c4g-wishlist-outer a.btn-warning.remove-from-wishlist.on-wishlist.c4g-list-element__delete-link,
+.c4g-wishlist-outer a.btn-warning.remove-from-wishlist.on-wishlist.c4g-list-element__more-link,
+.wishlist a.btn-warning.remove-from-wishlist.on-wishlist.c4g-list-element__cart-link,
+.wishlist a.btn-warning.remove-from-wishlist.on-wishlist.c4g-list-element__delete-link,
+.wishlist a.btn-warning.remove-from-wishlist.on-wishlist.c4g-list-element__more-link,
+a.btn-warning.remove-from-wishlist.on-wishlist.c4g-btn,
+a.btn-warning.remove-from-wishlist.on-wishlist.c4g-btn-default,
+a.btn-warning.remove-from-wishlist.on-wishlist.c4g-btn-sm,
+a.btn-warning.remove-from-wishlist.on-wishlist.c4g-btn-tagfilter,
+a.btn.btn-warning.remove-from-wishlist.on-wishlist {
+  margin-right: .25em
+}
 .c4g-tile-headline-wrapper {
   text-align: center;
   margin-bottom: 1rem

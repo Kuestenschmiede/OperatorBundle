@@ -28,6 +28,10 @@ html {
   margin-right: 5px;
 }
 
+a.btn.btn-warning.remove-from-wishlist.on-wishlist {
+  margin-right: 0.25em;
+}
+
 .c4g-tile {
   &-headline-wrapper {
     @extend .container;

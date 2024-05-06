@@ -111,11 +111,16 @@ class LoadPopupListener
             }
         }
         $contacts = '';
-        if ($element['phone'] || $element['mobile']) {
-            $phone = $element['phone'] ?: $element['mobile'];
-            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:".str_replace(" ", "", str_replace("/", "", $phone))."'>
-                            <i class='fas fa-phone'></i>
-                        </a>";
+        if ($element['contactPhone'] || $element['phone'] || $element['mobile']) {
+            $phone = $element['contactPhone'] ?: $element['phone'];
+            if (!$phone) {
+                $phone = $element['mobile'];
+            }
+
+            $phone = str_replace(' ', '', str_replace('/', '', $phone));
+            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:$phone'>
+                        <i class='fas fa-phone'></i>
+                    </a>";
         }
         if ($element['email']) {
             $mail = $element['email'];

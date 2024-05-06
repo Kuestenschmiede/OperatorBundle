@@ -19,6 +19,15 @@ html {
   }
 }
 
+.street-address, .postal-city {
+  display: block;
+}
+
+.postal-city .postal,
+.street-address .street {
+  margin-right: 5px;
+}
+
 .c4g-tile {
   &-headline-wrapper {
     @extend .container;

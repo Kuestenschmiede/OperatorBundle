@@ -675,7 +675,7 @@ class OfferLoaderService
         $cdnUrl = $objSettings->cdnUrl;
 
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
+            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '

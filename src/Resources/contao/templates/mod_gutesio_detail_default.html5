@@ -141,7 +141,7 @@
                 <div class="c4g-container">
                     <?php if ($data->tags): ?>
                         <?php foreach ($data->tags as $k => $v): ?>
-                            <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')) || (strPos($v->linkHref, 'hotelreservation.expert')))): ?>
+                            <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation")): ?>
                                 <div class="bookingGroup">
                                     <div class="bookingButton">
                                         <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
@@ -706,7 +706,7 @@
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')) || (strPos($v->linkHref, 'hotelreservation.expert')))): ?>
+                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation")): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
@@ -730,7 +730,7 @@
                                         <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
-                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'mein.nordsee.digital/booking')) || (strPos($v->linkHref, 'nordsee.tickets')) || (strPos($v->linkHref, 'hotelreservation.expert'))))): ?>
+                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && $v->linkHref)): ?>
                                             <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
                                             <?php if ($v->linkHref): ?>
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
@@ -1250,6 +1250,9 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 <div class="detail-view__imprint-row">
     <div class="detail-view__imprint-col">
         <p>
+            <?php if (isset($data->source) && !empty($data->source)): ?>
+                <span class="detail-view_imprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
+            <?php endif; ?>
             <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
         </p>
     </div>

@@ -557,22 +557,34 @@
 
   //  start imprint container
 
-  &__imprint-container, &__imageCredits-container {
+  &__imprint-container, &__imageCredits-container, &__additionalImprint-container {
     @include make-container();
     @extend .container;
   }
 
-  &__imprint-row, &__imageCredits-row {
+  &__imprint-row, &__imageCredits-row, &__additionalImprint-row {
     @include make-row();
     margin-right: auto;
     margin-left: auto;
+    text-align: center;
+    font-style: italic;
+    font-size: $font-size-base;
   }
 
-  &__imprint-col, &__imageCredits-col {
+  &__imprint-col, &__imageCredits-col, &__additionalImprint-col {
     @include make-col-ready();
     @include make-col(12);
   }
+
+  /* DETAILSEITE */
+  &__imprint-inner h3, &__imageCredits-inner h3, &__additionalImprint-inner h3 {
+    padding: 0;
+    margin: 0;
+  }
 }
+
+
+
 
 .detail-view__logos-wrapper {
   display: flex;

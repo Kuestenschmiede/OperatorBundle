@@ -1215,6 +1215,20 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
     </div>
 <?php endif; ?>
 
+<div id="additionalImprint" class="detail-view__additionalImprint-container">
+    <div class="detail-view__additionalImprint-row">
+        <div class="detail-view__additionalImprint-col">
+            <div class="detail-view__additionalImprint-inner">
+                <h3 class="additionalImprint-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imprintAdditionalInfos'] ?></h3>
+                <?php if (isset($data->source) && !empty($data->source)): ?>
+                    <span class="detail-view_additionalImprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
+                <?php endif; ?>
+                <span class="detail-view_additionalImprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
+            </div>
+        </div>
+    </div>
+</div>
+
 <?php if (!isset($this->childId) && isset($data->imageCredits) && !empty($data->imageCredits)): ?>
     <div id="showcase-imageCredits" class="detail-view__imageCredits-container">
         <div class="detail-view__imageCredits-row">
@@ -1246,17 +1260,6 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
         </div>
     </div>
 <?php endif; ?>
-
-<div class="detail-view__imprint-row">
-    <div class="detail-view__imprint-col">
-        <p>
-            <?php if (isset($data->source) && !empty($data->source)): ?>
-                <span class="detail-view_imprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
-            <?php endif; ?>
-            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
-        </p>
-    </div>
-</div>
 
 <?php $this->endblock(); //detailpage_imprint ?>
 

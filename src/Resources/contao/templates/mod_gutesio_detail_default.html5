@@ -1133,7 +1133,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
                     <div class="detail-view__imprint-inner">
 
-                        <h3 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_title'] ?></h3>
+                        <h4 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_title'] ?></h4>
 
                         <p>
                             <strong><?= $addressName ?></strong>
@@ -1215,27 +1215,24 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
     </div>
 <?php endif; ?>
 
+<?php if (isset($data->source) && !empty($data->source)): ?>
 <div id="additionalImprint" class="detail-view__additionalImprint-container">
     <div class="detail-view__additionalImprint-row">
         <div class="detail-view__additionalImprint-col">
             <div class="detail-view__additionalImprint-inner">
-                <h3 class="additionalImprint-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imprintAdditionalInfos'] ?></h3>
-                <?php if (isset($data->source) && !empty($data->source)): ?>
-                    <span class="detail-view_additionalImprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
-                <?php endif; ?>
-                <span class="detail-view_additionalImprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
+                <h4 class="additionalImprint-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imprintAdditionalInfos'] ?></h4>
+                <span class="detail-view_additionalImprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
             </div>
         </div>
     </div>
 </div>
-
+<?php endif; ?>
 <?php if (!isset($this->childId) && isset($data->imageCredits) && !empty($data->imageCredits)): ?>
     <div id="showcase-imageCredits" class="detail-view__imageCredits-container">
         <div class="detail-view__imageCredits-row">
             <div class="detail-view__imageCredits-col">
                 <div class="detail-view__imageCredist-inner">
-                    <h3 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCredits'] ?></h3>
-
+                    <h4 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCredits'] ?></h4>
                     <div class="imageCredits-text">
                         <?= $data->imageCredits ?>
                     </div>
@@ -1250,8 +1247,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
         <div class="detail-view__imageCredits-row">
             <div class="detail-view__imageCredits-col">
                 <div class="detail-view__imageCredist-inner">
-                    <h3 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCreditsOffer'] ?></h3>
-
+                    <h4 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCreditsOffer'] ?></h4>
                     <div class="imageCredits-text">
                         <?= $data->imageCredits ?>
                     </div>
@@ -1260,6 +1256,8 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
         </div>
     </div>
 <?php endif; ?>
+
+<span class="detail-view_additionalImprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
 
 <?php $this->endblock(); //detailpage_imprint ?>
 

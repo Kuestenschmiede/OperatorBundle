@@ -3,6 +3,7 @@
 namespace gutesio\OperatorBundle\Classes\Cron;
 
 use Contao\Database;
+use Symfony\Component\HttpClient\HttpClient;
 
 class SendStatisticDataCron
 {
@@ -20,17 +21,35 @@ class SendStatisticDataCron
         $data = [];
         $data['data'] = $this->getStatisticData();
         $data['domain'] = $_SERVER['SERVER_NAME'];
-        $request = new \Contao\Request();
-        $request->method = 'POST';
-        $request->data = json_encode($data);
+//        $request = new \Contao\Request();
+//        $request->method = 'POST';
+//        $request->data = json_encode($data);
+//        if ($_SERVER['HTTP_REFERER']) {
+//            $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+//        }
+//        if ($_SERVER['HTTP_USER_AGENT']) {
+//            $request->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+//        }
+
+        $headers = [];
         if ($_SERVER['HTTP_REFERER']) {
-            $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
+            $headers['Referer'] = $_SERVER['HTTP_REFERER'];
         }
         if ($_SERVER['HTTP_USER_AGENT']) {
-            $request->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
+            $headers['User-Agent'] = $_SERVER['HTTP_USER_AGENT'];
         }
-        $request->send($statisticUrl);
-        $response = $request->response;
+
+        $client = HttpClient::create([
+            'headers' => $headers,
+            'body'    => json_encode($data)
+        ]);
+        $response = $client->request('POST', $statisticUrl, ['timeout' => 2]);
+        if ($response) {
+            $response = $response->getContent();
+        }
+//
+//        $request->send($statisticUrl);
+//        $response = $request->response;
         $success = json_decode($response, true)['success'];
         if ($success) {
             $db = Database::getInstance();

@@ -854,11 +854,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setClass("c4g-list-element__begintime");
         $fields[] = $field;
 
-        $field = new TextTileField();
-        $field->setName('entryTime');
-        $field->setWrapperClass("c4g-list-element__entrytime-wrapper");
-        $field->setClass("c4g-list-element__entrytime");
-        $fields[] = $field;
+//        $field = new TextTileField();
+//        $field->setName('entryTime');
+//        $field->setWrapperClass("c4g-list-element__entrytime-wrapper");
+//        $field->setClass("c4g-list-element__entrytime");
+//        $fields[] = $field;
         
         $field = new TextTileField();
         $field->setName('maxCredit');

@@ -72,30 +72,32 @@ class PerformSearchListener
                     'lon'           => $dBResult['geox'],
                     'display_name'  => $address,
                 ];
+            }
 
-            }
-            if (!$profile->preventGeosearch && $response && is_array($response)) {
-                $arrResults = array_merge($arrResults, $response);
-            }
-            if ($profile->linkGeosearch) {
-                $arrLinks = unserialize($profile->linkGeosearch);
-                $insertPosition = count($arrResults) > 5 ? 3 : count($arrResults);
-                $insertPosition = $insertPosition < 0 ? 0 : $insertPosition;
-                foreach ($arrLinks as $link) {
-                    $pageModel = PageModel::findByPk($link['link']);
-                    if ($pageModel && $link['linkText']) {
-                        $elementLink = [
-                            'display_name'  => $link['linkText'],
-                            'href'          => $pageModel->getFrontendUrl()
-                        ];
-                        array_splice($arrResults, $insertPosition, 0, [$elementLink]);
+            if (count($arrResults)) {
+                if (!$profile->preventGeosearch && $response && is_array($response)) {
+                    $arrResults = array_merge($arrResults, $response);
+                }
+                if ($profile->linkGeosearch) {
+                    $arrLinks = unserialize($profile->linkGeosearch);
+                    $insertPosition = count($arrResults) > 5 ? 3 : count($arrResults);
+                    $insertPosition = $insertPosition < 0 ? 0 : $insertPosition;
+                    foreach ($arrLinks as $link) {
+                        $pageModel = PageModel::findByPk($link['link']);
+                        if ($pageModel && $link['linkText']) {
+                            $elementLink = [
+                                'display_name'  => $link['linkText'],
+                                'href'          => $pageModel->getFrontendUrl()
+                            ];
+                            array_splice($arrResults, $insertPosition, 0, [$elementLink]);
+                        }
                     }
                 }
+                if ($profile->geosearch_results) {
+                    $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
+                }
+                $event->setResponse($arrResults);
             }
-            if ($profile->geosearch_results) {
-                $arrResults = array_slice($arrResults, 0, $arrParams['limit'] ?: 10);
-            }
-            $event->setResponse($arrResults);
         }
     }
 }

@@ -13,3 +13,6 @@ $GLOBALS['TL_LANG'][$str]['references']['nextWeek'] = ['Next week'];
 $GLOBALS['TL_LANG'][$str]['references']['nextMonth'] = ['Next Month'];
 
 $GLOBALS['TL_LANG'][$str]['operator_legend'] = 'Gutes settings (gutesio/operator)';
+$GLOBALS['TL_LANG'][$str]['gutesBlogTitle'] = ['Gutes push notification title', ' Add the title for the push notification, for example "Look out ~ New Events", this will only be sent if there are any gutes events'];
+$GLOBALS['TL_LANG'][$str]['gutesBlogTeaser'] = ['Gutes short teaser', ' Add a few sentences for the push notification, for example "Check out local events that are happening tomorrow", this will only be sent if there are any gutes events'];
+$GLOBALS['TL_LANG'][$str]['gutesBlogImage'] = ['Notification icon','Here you can store an icon that will be displayed in the notification banner'];

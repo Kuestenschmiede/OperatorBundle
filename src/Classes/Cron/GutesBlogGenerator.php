@@ -10,32 +10,40 @@ use Contao\PageModel;
 
 class GutesBlogGenerator
 {
-
     public function onDaily(): void
     {
         $db = Database::getInstance();
         $currentDate = strtotime('today');
 
         $subscriptionTypes = $this->checkSubscriptions($db);
-        $gutesNewsArchives = $this->checkArchives($db, $subscriptionTypes);
+        $gutesNewsArchives = $this->checkArchives($db);
 
-        //todo is this enough? maybe check the arcives aswell?
+        $gutesNews = $this->getGutesNews($db, $currentDate/*, $categories*/);
+
+        //todo add multiple gutes type for each subType (pwa)
         if ($gutesNewsArchives) {
             //todo here we can add different intervals for the pn
             foreach ($gutesNewsArchives as $archive) {
-
-                $this->addGutesNews($db, $archive, $currentDate, $subscriptionTypes);
+                $archiveSubs = unserialize($archive['subscriptionTypes']);
+                foreach ($archiveSubs as $archiveSub) {
+                    foreach ($subscriptionTypes as $subscriptionType) {
+                        if (intval($archiveSub) == $subscriptionType['id'])  {
+                            $this->addGutesNews($db, $archive, $currentDate, $gutesNews);
+                        }
+                    }
+                }
 
                 $this->cleanArchive($archive, $currentDate, $db);
             }
         }
     }
 
-    private function checkArchives($db, $subtypes)
+    private function checkArchives($db)
     {
         $achives = $db->prepare('SELECT * FROM tl_news_archive WHERE subscriptionTypes IS NOT NULL AND generateGutesBlog IS NOT NULL')
             ->execute()
             ->fetchAllAssoc();
+
 
         return $achives;
 
@@ -43,7 +51,7 @@ class GutesBlogGenerator
 
     private function checkSubscriptions($db)
     {
-        $subtypes = $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE gutesioEventTypes IS NOT NULL OR gutesioEventTypes != 0')
+        $subtypes = $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE notifyUpcomingEvents = 1 AND gutesioEventTypes IS NOT NULL OR gutesioEventTypes != 0')
             ->execute()
             ->fetchAllAssoc();
 
@@ -59,28 +67,18 @@ class GutesBlogGenerator
         return $imagePath;
     }
 
-    private function getGutesNews($db, $currentDate, $gutesCategorie)
-    {
-        $categoryUUID = unserialize($gutesCategorie['gutesioEventTypes']);
-        $cat = $categoryUUID[0];
-        //todo only type interval "tmr"
-        //todo [low prio] currently the push notification is set for 6 am. Maybe add another field to specify time. May where the inter val is already set to "today"
-        //todo [performance] is it better to load all tmr events then only select the ones with the category or all events tmr and category in one go then for each archive?
 
+    private function getGutesNews($db, $currentDate/*, $categories*/)
+    {
+        //todo get event news with only with the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
 
         $query = "  SELECT t.type,e.beginDate,e.beginTime,c.uuid, c.name, c.description, c.shortDescription, c.typeId, c.imageCDN
                         FROM tl_gutesio_data_child_event e
                         JOIN tl_gutesio_data_child c ON e.childId = c.uuid
                         JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
-                        WHERE c.typeId ='$cat'
                         WHERE e.beginDate >= '$currentDate'
-                        AND e.beginDate <= '$endDate'
-                        ";
-        /*
-         *
-         *
-        */
+                        AND e.beginDate <= '$endDate'";
 
         return $db->prepare($query)
             ->execute($currentDate)
@@ -88,25 +86,26 @@ class GutesBlogGenerator
 
     }
 
-    private function addGutesNews($db, $archive, $currentDate, $subscriptionTypes): void
+    private function addGutesNews($db, $archive, $currentDate, $gutesEvents): void
     {
         $archiveId = $archive['id'];
+
         // Check if the 'uuid' column exists
         $checkUuidColumnQuery = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'tl_news' AND COLUMN_NAME = 'gutesUuid'";
         $stmtCheckUuidColumn = $db->query($checkUuidColumnQuery);
-        $missingUuid = $stmtCheckUuidColumn->fetchAssoc() === false;
-//        $missingUuid = $stmtCheckUuidColumn ? $stmtCheckUuidColumn->fetchAssoc()  : 0;
+        $missingUuid = !$stmtCheckUuidColumn->numRows;
 
         // If the 'uuid' column doesn't exist, add it to the table
+        // todo there needs to be a better way to do this
         if ($missingUuid) {
-            $addUuidColumnQuery = "ALTER TABLE tl_news ADD COLUMN `gutesUuid` VARCHAR(255) DEFAULT 0";
-
+            $addUuidColumnQuery = "ALTER TABLE tl_news ADD COLUMN `gutesUuid` VARCHAR(255) DEFAULT '0'";
             $db->query($addUuidColumnQuery);
         }
 
         $insertQuery = "INSERT INTO tl_news (id, pid, tstamp, headline, date, time, description,
-            teaser, /*addImage,*/pnSendDate, source, url, published, gutesUuid) 
-            VALUES ( /*?,*/?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        teaser, stop, pnSendDate, pnSent, source, url, published, gutesUuid) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         $stmtInsert = $db->prepare($insertQuery);
 
         // Get the maximum existing ID from tl_news
@@ -116,23 +115,18 @@ class GutesBlogGenerator
         $maxId = $maxIdRow['maxId'];
         $counter = $maxId ? $maxId + 1 : 1;
 
-        //preventing duplicated entries
+        // Prevent duplicated entries
         $currentEQuery = "SELECT gutesUuid FROM tl_news";
-
         $result = $db->query($currentEQuery);
 
-        $existingUuids = array();
+        $existingUuids = [];
         while ($row = $result->fetchAssoc()) {
             if ($row['gutesUuid'] !== '0') {
                 $existingUuids[] = $row['gutesUuid'];
             }
         }
 
-        foreach ($subscriptionTypes as $subscriptionType) {
-            if ($subscriptionType['id'] == intval($archive['subscriptionTypes'])){
-                $gutesEvents = $this->getGutesNews($db, $currentDate, $subscriptionType);
-            }
-        }
+        $gutesEventExists = false;
 
         // Iterate over the events and insert them into the table
         foreach ($gutesEvents as $event) {
@@ -142,8 +136,9 @@ class GutesBlogGenerator
                 continue;
             }
 
-            $imageUrl = $this->getImagePath($event);
+            $gutesEventExists = true;
 
+            $imageUrl = $this->getImagePath($event);
             $id = $counter;
             $pid = $archiveId;
             $tstamp = $currentDate;
@@ -152,7 +147,6 @@ class GutesBlogGenerator
             $time = $date + $event['beginTime'];
             $description = $event['description'];
 
-            //source
             $source = 'external';
             $fowardingUrl = $this->getFowardingUrl($uuid);
 
@@ -166,19 +160,47 @@ class GutesBlogGenerator
                 $teaser = '<a href="' . $fowardingUrl . '"><img src="' . $imageUrl . '"></a><br>' . $event['shortDescription'];
             }
 
-//            $url = $alias . str_replace(['{', '}'], '', unserialize($uuid));
-
-            //todo pn send date
-            $pnSendDate = $date + 21600; // at 6:00
             $published = 1;
 
-            $stmtInsert->execute($id, $pid, $tstamp, $title, $date,
-                                 $time, $description, $teaser, /*$addImage, $imageUrl,*/ $pnSendDate, $source,
-                                 $fowardingUrl, $published, $uuid);
+            $pnSendDate = 0;
+            $pnSent = 1;
+
+
+            $stmtInsert->execute([$id, $pid, $tstamp, $title, $date,
+                $time, $description, $teaser,  strtotime('tomorrow'), $pnSendDate, $pnSent,
+                $source, $fowardingUrl, $published, $uuid]);
 
             $counter++;
         }
+
+        // Add one pn
+        if ($gutesEventExists && !$this->specialEventExists($db)) {
+            $specialEventId = $counter;
+            $specialTitle = $archive['gutesBlogTitle'];
+            $specialTeaser = $archive['gutesBlogTeaser'];
+            $specialDescription = $specialTeaser;
+            $specialDate = $currentDate;
+            $specialTime = $currentDate;
+            $specialSource = 'external';
+            $specialPublished = 1;
+            $specialUuid = 1;
+            $specialUrl = $this->getFowardingUrl($specialUuid);
+            $specialPnSendDate = $date + 21600;
+            $specialPnSent = 0;
+            $specialUnpublish = $currentDate + 60;
+
+            $stmtInsert->execute([$specialEventId, $archiveId, $currentDate, $specialTitle, $specialDate,
+                $specialTime, $specialDescription, $specialTeaser, $specialUnpublish, $specialPnSendDate, $specialPnSent, $specialSource, $specialUrl, $specialPublished, $specialUuid]);
+        }
     }
+
+    private function specialEventExists($db): bool
+    {
+        $checkSpecialEventQuery = "SELECT 1 FROM tl_news WHERE gutesUuid = 1";
+        $stmtCheckSpecialEvent = $db->query($checkSpecialEventQuery);
+        return $stmtCheckSpecialEvent->numRows > 0;
+    }
+
     private function cleanArchive($archive, $currentDate, $db): void
     {
         $deleteQuery = "DELETE FROM tl_news
@@ -191,8 +213,12 @@ class GutesBlogGenerator
     {
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $detailPageId = $objSettings->eventDetailPage;
-
         $page = PageModel::findById($detailPageId);
+
+        if ($uuid === 1) {
+            $forwardingUrl = '/' . $page->alias;
+            return $forwardingUrl;
+        }
 
         $alias = $page->alias;
 

@@ -10,7 +10,7 @@ use Contao\PageModel;
 
 class GutesBlogGenerator
 {
-    public function onDaily(): void
+    public function onHourly(): void
     {
         $db = Database::getInstance();
         $currentDate = strtotime('today');

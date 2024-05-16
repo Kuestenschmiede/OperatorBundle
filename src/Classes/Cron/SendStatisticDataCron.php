@@ -22,15 +22,6 @@ class SendStatisticDataCron
         $data = [];
         $data['data'] = $this->getStatisticData();
         $data['domain'] = $_SERVER['SERVER_NAME'];
-//        $request = new \Contao\Request();
-//        $request->method = 'POST';
-//        $request->data = json_encode($data);
-//        if ($_SERVER['HTTP_REFERER']) {
-//            $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
-//        }
-//        if ($_SERVER['HTTP_USER_AGENT']) {
-//            $request->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
-//        }
 
         $headers = [];
         if ($_SERVER['HTTP_REFERER']) {
@@ -51,10 +42,6 @@ class SendStatisticDataCron
 
         $response = $response->getContent();
 
-        C4gLogModel::addLogEntry('operator', "Übertragene Daten: \n" . json_encode($data));
-//
-//        $request->send($statisticUrl);
-//        $response = $request->response;
         $responseData = json_decode($response, true);
         $success = $responseData['success'];
         if (json_last_error() !== JSON_ERROR_NONE) {

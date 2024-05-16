@@ -72,8 +72,8 @@ class AfterImportListener
 
                 //Update Search Index
                 if ($c4gSettings['updateSearchIndex'] == 1) {
-                    if (!$this->filesystem->exists($this->rootDir . '/web/robots.txt')) {
-                        $this->filesystem->touch($this->rootDir . '/web/robots.txt');
+                    if (!$this->filesystem->exists($this->rootDir . '/public/robots.txt')) {
+                        $this->filesystem->touch($this->rootDir . '/public/robots.txt');
                         $createRobots = true;
                     }
                     $subscribers = $this->escargotFactory->getSubscriberNames();
@@ -92,16 +92,16 @@ class AfterImportListener
 
                     $this->escargot->crawl();
 
-                    if ($this->filesystem->exists($this->rootDir . '/web/robots.txt') && $createRobots) {
-                        $this->filesystem->remove($this->rootDir . '/web/robots.txt');
+                    if ($this->filesystem->exists($this->rootDir . '/public/robots.txt') && $createRobots) {
+                        $this->filesystem->remove($this->rootDir . '/public/robots.txt');
                     }
                 }
                 $automator =  new C4GMapsAutomator();
                 $automator->purgeMapApiCache();
             }
         } catch (\Throwable $e) {
-            if ($this->filesystem->exists($this->rootDir . '/web/robots.txt') && $createRobots) {
-                $this->filesystem->remove($this->rootDir . '/web/robots.txt');
+            if ($this->filesystem->exists($this->rootDir . '/public/robots.txt') && $createRobots) {
+                $this->filesystem->remove($this->rootDir . '/public/robots.txt');
             }
             $event->setError($GLOBALS['TL_LANG']['import']['error_updating_index']);
             C4gLogModel::addLogEntry('operator', 'Error while crawling: ' . $e);

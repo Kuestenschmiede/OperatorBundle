@@ -2,6 +2,7 @@
 
 namespace gutesio\OperatorBundle\Classes\Cron;
 
+use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use Contao\Database;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -44,13 +45,22 @@ class SendStatisticDataCron
             'body'    => json_encode($data)
         ]);
         $response = $client->request('POST', $statisticUrl, ['timeout' => 2]);
-        if ($response) {
-            $response = $response->getContent();
+        if ($response->getStatusCode() !== 200) {
+            C4gLogModel::addLogEntry('operator', $response->getContent());
         }
+
+        $response = $response->getContent();
+
+        C4gLogModel::addLogEntry('operator', "Übertragene Daten: \n" . json_encode($data));
 //
 //        $request->send($statisticUrl);
 //        $response = $request->response;
-        $success = json_decode($response, true)['success'];
+        $responseData = json_decode($response, true);
+        $success = $responseData['success'];
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $error = json_last_error_msg();
+            C4gLogModel::addLogEntry('operator', $error);
+        }
         if ($success) {
             $db = Database::getInstance();
             if (count($this->offerStatisticIds) > 0) {
@@ -63,6 +73,8 @@ class SendStatisticDataCron
                 $db->prepare('UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN ' . $showcaseStatisticIdString)
                     ->execute();
             }
+        } else {
+            C4gLogModel::addLogEntry('operator', 'Fehler in Proxy-Response mit Response Content: ' . json_encode($responseData) . " \n");
         }
     }
 

@@ -51,7 +51,7 @@ class GutesBlogGenerator
 
     private function checkSubscriptions($db)
     {
-        $subtypes = $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE notifyUpcomingEvents = 1 AND gutesioEventTypes IS NOT NULL OR gutesioEventTypes != 0')
+        $subtypes = $db->prepare('SELECT * FROM tl_c4g_push_subscription_type WHERE gutesioEventTypes IS NOT NULL OR gutesioEventTypes != 0')
             ->execute()
             ->fetchAllAssoc();
 

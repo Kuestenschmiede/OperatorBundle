@@ -139,16 +139,16 @@ class GutesBlogGenerator
             $gutesEventExists = true;
 
             $imageUrl = $this->getImagePath($event);
-            $id = $counter;
-            $pid = $archiveId;
-            $tstamp = $currentDate;
-            $title = $event['name'];
-            $date = $event['beginDate'];
-            $time = $date + $event['beginTime'];
-            $description = $event['description'];
+            $id = $counter ?: 0;
+            $pid = $archiveId ?: 0;
+            $tstamp = $currentDate ?: '';
+            $title = $event['name'] ?: '';
+            $date = $event['beginDate'] ?: '';
+            $time = ($event['beginDate'] ?: 0) + ($event['beginTime'] ?: 0);
+            $description = $event['description'] ?: '';
 
-            $source = 'external';
-            $fowardingUrl = $this->getFowardingUrl($uuid);
+            $source = 'external' ?: '';
+            $fowardingUrl = $this->getFowardingUrl($uuid) ?: '';
 
             if ($imageUrl) {
                 $teaser = '<img src="' . $imageUrl . '">' . $event['shortDescription'];
@@ -165,7 +165,6 @@ class GutesBlogGenerator
             $pnSendDate = 0;
             $pnSent = 1;
 
-
             $stmtInsert->execute([$id, $pid, $tstamp, $title, $date,
                 $time, $description, $teaser,  strtotime('tomorrow'), $pnSendDate, $pnSent,
                 $source, $fowardingUrl, $published, $uuid]);
@@ -175,19 +174,19 @@ class GutesBlogGenerator
 
         // Add one pn
         if ($gutesEventExists && !$this->specialEventExists($db)) {
-            $specialEventId = $counter;
-            $specialTitle = $archive['gutesBlogTitle'];
-            $specialTeaser = $archive['gutesBlogTeaser'];
-            $specialDescription = $specialTeaser;
-            $specialDate = $currentDate;
-            $specialTime = $currentDate;
-            $specialSource = 'external';
-            $specialPublished = 1;
-            $specialUuid = 1;
-            $specialUrl = $this->getFowardingUrl($specialUuid);
-            $specialPnSendDate = $date + 21600;
-            $specialPnSent = 0;
-            $specialUnpublish = $currentDate + 60;
+            $specialEventId = $counter ?: 0;
+            $specialTitle = $archive['gutesBlogTitle'] ?: '';
+            $specialTeaser = $archive['gutesBlogTeaser'] ?: '';
+            $specialDescription = $specialTeaser ?: '';
+            $specialDate = $currentDate ?: 0;
+            $specialTime = $currentDate ?: 0;
+            $specialSource = 'external' ?: '';
+            $specialPublished = 1 ?: 0;
+            $specialUuid = 1 ?: 0;
+            $specialUrl = $this->getFowardingUrl($specialUuid) ?: '';
+            $specialPnSendDate = $date + 21600 ?: 0;
+            $specialPnSent = 0 ?: 0;
+            $specialUnpublish = $currentDate + 60 ?: 0;
 
             $stmtInsert->execute([$specialEventId, $archiveId, $currentDate, $specialTitle, $specialDate,
                 $specialTime, $specialDescription, $specialTeaser, $specialUnpublish, $specialPnSendDate, $specialPnSent, $specialSource, $specialUrl, $specialPublished, $specialUuid]);

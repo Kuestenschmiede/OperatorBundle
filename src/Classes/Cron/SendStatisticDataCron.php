@@ -2,6 +2,7 @@
 
 namespace gutesio\OperatorBundle\Classes\Cron;
 
+use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use Contao\Database;
 use Symfony\Component\HttpClient\HttpClient;
 
@@ -21,15 +22,6 @@ class SendStatisticDataCron
         $data = [];
         $data['data'] = $this->getStatisticData();
         $data['domain'] = $_SERVER['SERVER_NAME'];
-//        $request = new \Contao\Request();
-//        $request->method = 'POST';
-//        $request->data = json_encode($data);
-//        if ($_SERVER['HTTP_REFERER']) {
-//            $request->setHeader('Referer', $_SERVER['HTTP_REFERER']);
-//        }
-//        if ($_SERVER['HTTP_USER_AGENT']) {
-//            $request->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
-//        }
 
         $headers = [];
         if ($_SERVER['HTTP_REFERER']) {
@@ -44,13 +36,18 @@ class SendStatisticDataCron
             'body'    => json_encode($data)
         ]);
         $response = $client->request('POST', $statisticUrl, ['timeout' => 2]);
-        if ($response) {
-            $response = $response->getContent();
+        if ($response->getStatusCode() !== 200) {
+            C4gLogModel::addLogEntry('operator', $response->getContent());
         }
-//
-//        $request->send($statisticUrl);
-//        $response = $request->response;
-        $success = json_decode($response, true)['success'];
+
+        $response = $response->getContent();
+
+        $responseData = json_decode($response, true);
+        $success = $responseData['success'];
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            $error = json_last_error_msg();
+            C4gLogModel::addLogEntry('operator', $error);
+        }
         if ($success) {
             $db = Database::getInstance();
             if (count($this->offerStatisticIds) > 0) {
@@ -63,6 +60,8 @@ class SendStatisticDataCron
                 $db->prepare('UPDATE tl_gutesio_showcase_statistic SET `transferred` = 1 WHERE `id` IN ' . $showcaseStatisticIdString)
                     ->execute();
             }
+        } else {
+            C4gLogModel::addLogEntry('operator', 'Fehler in Proxy-Response mit Response Content: ' . json_encode($responseData) . " \n");
         }
     }
 

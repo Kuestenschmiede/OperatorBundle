@@ -73,14 +73,22 @@ class GutesBlogGenerator
     {
         //todo get event news with only with the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
-//        $currentDate = strtotime('today');
 
-        $query = "  SELECT t.type,e.beginDate,e.beginTime,c.uuid, c.name, c.description, c.shortDescription, c.typeId, c.imageCDN
-                        FROM tl_gutesio_data_child_event e
-                        JOIN tl_gutesio_data_child c ON e.childId = c.uuid
-                        JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
-                        WHERE e.beginDate >= '$currentDate'
-                        AND e.beginDate <= '$endDate'";
+        $query = "SELECT t.type, 
+                 IF(e.beginDate <= '$currentDate' AND e.endDate >= '$currentDate', '$currentDate', e.beginDate) AS beginDate,
+                 e.beginTime,
+                 c.uuid,
+                 c.name,
+                 c.description,
+                 c.shortDescription,
+                 c.typeId,
+                 c.imageCDN
+          FROM tl_gutesio_data_child_event e
+          JOIN tl_gutesio_data_child c ON e.childId = c.uuid
+          JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
+          WHERE e.beginDate >= '$currentDate'
+          AND e.beginDate <= '$endDate'";
+
 
 
 

@@ -27,8 +27,9 @@ class GutesBlogGenerator
                 $archiveSubs = unserialize($archive['subscriptionTypes']);
                 foreach ($archiveSubs as $archiveSub) {
                     foreach ($subscriptionTypes as $subscriptionType) {
+                        $gutesCat = unserialize($subscriptionType['gutesioEventTypes']) ?: $subscriptionType['gutesioEventTypes'] ?: '';
                         if (intval($archiveSub) == $subscriptionType['id'])  {
-                            $this->addGutesNews($db, $archive, $currentDate, $gutesNews);
+                            $this->addGutesNews($db, $archive, $currentDate, $gutesCat, $gutesNews);
                         }
                     }
                 }
@@ -72,6 +73,7 @@ class GutesBlogGenerator
     {
         //todo get event news with only with the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
+//        $currentDate = strtotime('today');
 
         $query = "  SELECT t.type,e.beginDate,e.beginTime,c.uuid, c.name, c.description, c.shortDescription, c.typeId, c.imageCDN
                         FROM tl_gutesio_data_child_event e
@@ -80,13 +82,15 @@ class GutesBlogGenerator
                         WHERE e.beginDate >= '$currentDate'
                         AND e.beginDate <= '$endDate'";
 
+
+
         return $db->prepare($query)
             ->execute($currentDate)
             ->fetchAllAssoc();
 
     }
 
-    private function addGutesNews($db, $archive, $currentDate, $gutesEvents): void
+    private function addGutesNews($db, $archive, $currentDate, $gutesCategories, $gutesEvents): void
     {
         $archiveId = $archive['id'];
 
@@ -130,46 +134,50 @@ class GutesBlogGenerator
 
         // Iterate over the events and insert them into the table
         foreach ($gutesEvents as $event) {
-            $uuid = $event['uuid'];
+            if ((is_array($gutesCategories) && in_array($event['typeId'], $gutesCategories)) ||
+                (!is_array($gutesCategories) && $event['typeId'] === $gutesCategories)) {
 
-            if (in_array($uuid, $existingUuids) || $missingUuid) {
-                continue;
+                $uuid = $event['uuid'];
+
+                if (in_array($uuid, $existingUuids) || $missingUuid) {
+                    continue;
+                }
+
+                $gutesEventExists = true;
+
+                $imageUrl = $this->getImagePath($event);
+                $id = $counter ?: 0;
+                $pid = $archiveId ?: 0;
+                $tstamp = $currentDate ?: '';
+                $title = $event['name'] ?: '';
+                $date = $event['beginDate'] ?: '';
+                $time = ($event['beginDate'] ?: 0) + ($event['beginTime'] ?: 0);
+                $description = $event['description'] ?: '';
+
+                $source = 'external' ?: '';
+                $fowardingUrl = $this->getFowardingUrl($uuid) ?: '';
+
+                if ($imageUrl) {
+                    $teaser = '<img src="' . $imageUrl . '">' . $event['shortDescription'];
+                } else {
+                    $teaser = $event['shortDescription'];
+                }
+
+                if ($fowardingUrl && $imageUrl) {
+                    $teaser = '<a href="' . $fowardingUrl . '"><img src="' . $imageUrl . '"></a><br>' . $event['shortDescription'];
+                }
+
+                $published = 1;
+
+                $pnSendDate = 0;
+                $pnSent = 1;
+
+                $stmtInsert->execute([$id, $pid, $tstamp, $title, $date,
+                    $time, $description, $teaser,  strtotime('tomorrow'), $pnSendDate, $pnSent,
+                    $source, $fowardingUrl, $published, $uuid]);
+
+                $counter++;
             }
-
-            $gutesEventExists = true;
-
-            $imageUrl = $this->getImagePath($event);
-            $id = $counter ?: 0;
-            $pid = $archiveId ?: 0;
-            $tstamp = $currentDate ?: '';
-            $title = $event['name'] ?: '';
-            $date = $event['beginDate'] ?: '';
-            $time = ($event['beginDate'] ?: 0) + ($event['beginTime'] ?: 0);
-            $description = $event['description'] ?: '';
-
-            $source = 'external' ?: '';
-            $fowardingUrl = $this->getFowardingUrl($uuid) ?: '';
-
-            if ($imageUrl) {
-                $teaser = '<img src="' . $imageUrl . '">' . $event['shortDescription'];
-            } else {
-                $teaser = $event['shortDescription'];
-            }
-
-            if ($fowardingUrl && $imageUrl) {
-                $teaser = '<a href="' . $fowardingUrl . '"><img src="' . $imageUrl . '"></a><br>' . $event['shortDescription'];
-            }
-
-            $published = 1;
-
-            $pnSendDate = 0;
-            $pnSent = 1;
-
-            $stmtInsert->execute([$id, $pid, $tstamp, $title, $date,
-                $time, $description, $teaser,  strtotime('tomorrow'), $pnSendDate, $pnSent,
-                $source, $fowardingUrl, $published, $uuid]);
-
-            $counter++;
         }
 
         // Add one pn

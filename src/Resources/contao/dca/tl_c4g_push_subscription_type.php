@@ -26,12 +26,13 @@ if ($packages['con4gis/pwa']) {
 
     $GLOBALS['TL_DCA'][$str]['fields']['gutesioEventTypes'] = array
     (
-        'label' => &$GLOBALS['TL_LANG'][$str]['gutesioEventTypes'],
-        'inputType' => 'select',
-        'default' => '-',
-        'options_callback' => [GutesioModuleCallback::class, 'getGutesioEventTypes'],
-        'eval' => array('mandatory' => false, 'tl_class' => 'clr', 'includeBlankOption' => true, 'multiple' => false, 'chosen' => true),
-        'sql' => "blob NULL",
-        'exclude' => true
+
+        'label'                   => &$GLOBALS['TL_LANG'][$str]['gutesioEventTypes'],
+        'inputType'               => 'select',
+        'exclude'                 => true,
+        'default'                 => '-',
+        'options_callback'        => [GutesioModuleCallback::class, 'getGutesioEventTypes'],
+        'eval'                    => array('chosen'=>true,'mandatory'=>false,'multiple'=>true, 'tl_class'=>'long clr','alwaysSave'=> true),
+        'sql'                     => "blob not NULL"
     );
 }

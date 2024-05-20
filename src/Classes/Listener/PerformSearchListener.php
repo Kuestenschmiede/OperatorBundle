@@ -75,9 +75,9 @@ class PerformSearchListener
             }
 
             if (count($arrResults)) {
-                if (!$profile->preventGeosearch && $response && is_array($response)) {
-                    $arrResults = array_merge($arrResults, $response);
-                }
+//                if (!$profile->preventGeosearch && $response && is_array($response)) {
+//                    $arrResults = array_merge($arrResults, $response);
+//                }
                 if ($profile->linkGeosearch) {
                     $arrLinks = unserialize($profile->linkGeosearch);
                     $insertPosition = count($arrResults) > 5 ? 3 : count($arrResults);

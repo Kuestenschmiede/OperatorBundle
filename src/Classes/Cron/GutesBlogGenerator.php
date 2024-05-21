@@ -68,35 +68,34 @@ class GutesBlogGenerator
         return $imagePath;
     }
 
-
+    //todo get event news with only with the categories (typeID == category or subtype uuid)
     private function getGutesNews($db, $currentDate/*, $categories*/)
     {
-        //todo get event news with only with the categories (typeID == category or subtype uuid)
+        // todo get event news with only the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
 
         $query = "SELECT t.type, 
-                 IF(e.beginDate <= '$currentDate' AND e.endDate >= '$currentDate', '$currentDate', e.beginDate) AS beginDate,
-                 e.beginTime,
-                 c.uuid,
-                 c.name,
-                 c.description,
-                 c.shortDescription,
-                 c.typeId,
-                 c.imageCDN
-          FROM tl_gutesio_data_child_event e
-          JOIN tl_gutesio_data_child c ON e.childId = c.uuid
-          JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
-          WHERE e.beginDate >= '$currentDate'
-          AND e.beginDate <= '$endDate'";
-
-
-
+                     IF(e.beginDate <= '$currentDate' AND e.endDate >= '$currentDate', '$currentDate', e.beginDate) AS beginDate,
+                     e.beginTime,
+                     c.uuid,
+                     c.name,
+                     c.description,
+                     c.shortDescription,
+                     c.typeId,
+                     c.imageCDN
+              FROM tl_gutesio_data_child_event e
+              JOIN tl_gutesio_data_child c ON e.childId = c.uuid
+              JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
+              WHERE ('$currentDate' BETWEEN e.beginDate AND e.endDate)
+              OR (e.beginDate = '$currentDate')
+              OR (e.endDate = '$currentDate')
+              AND e.beginDate <= '$endDate'";
 
         return $db->prepare($query)
-            ->execute($currentDate)
+            ->execute()
             ->fetchAllAssoc();
-
     }
+
 
     private function addGutesNews($db, $archive, $currentDate, $gutesCategories, $gutesEvents): void
     {
@@ -158,7 +157,17 @@ class GutesBlogGenerator
                 $pid = $archiveId ?: 0;
                 $tstamp = $currentDate ?: '';
                 $title = $event['name'] ?: '';
+
+
                 $date = $event['beginDate'] ?: '';
+                $beginDate = intval($event['beginDate']) ?: 0;
+                $endDate = intval($event['endDate']) ?: 0;
+                if ($beginDate && $endDate) {
+                    if ($currentDate >= $beginDate && $currentDate <= $endDate) {
+                        $date = $currentDate;
+                    }
+                }
+
                 $time = ($event['beginDate'] ?: 0) + ($event['beginTime'] ?: 0);
                 $description = $event['description'] ?: '';
 

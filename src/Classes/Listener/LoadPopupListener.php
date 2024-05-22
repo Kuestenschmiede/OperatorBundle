@@ -197,7 +197,7 @@ class LoadPopupListener
 
         if ((!$fields || in_array('name', $fields)) && $name){
             $html .= "<div class='item name'>
-                            <span>$name</span>
+                            <h4>$name</h4>
                         </div>";
         }
 

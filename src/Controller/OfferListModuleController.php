@@ -51,6 +51,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
@@ -493,6 +494,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $optionData = [];
         $arrTagIds = StringUtil::deserialize($this->model->gutesio_tag_filter_selection, true);
 
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom <= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil >= UNIX_TIMESTAMP()))";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
@@ -502,16 +506,17 @@ class OfferListModuleController extends AbstractFrontendModuleController
                     // TODO until then, it would break the filter if it exists as option
                     continue;
                 }
-                if ($tag['image']) {
-                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
+                if ($tag['imageCDN']) {
+                    //$objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
+                    $imageFile = StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']);
                     foreach ($optionData as $key=>$option) {
-                        if (($option['alt'] == $tag['name']) || ($option['src'] == $objImage->path)) {
+                        if (($option['alt'] == $tag['name']) || ($option['src'] == $imageFile)) {
                             continue(2);
                         }
                     }
 
                     $optionData[$tag['uuid']] = [
-                        'src' => $objImage->path,
+                        'src' => $imageFile,
                         'alt' => $tag['name']
                     ];
                 } else {

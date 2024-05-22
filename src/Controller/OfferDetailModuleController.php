@@ -51,6 +51,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -634,7 +635,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $href .= $urlSuffix;
 
         $field = new ImageTileField();
-        $field->setName("imageList");
+        $field->setName("image");
         $field->setRenderSection(TileField::RENDERSECTION_HEADER);
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
@@ -853,11 +854,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setClass("c4g-list-element__begintime");
         $fields[] = $field;
 
-        $field = new TextTileField();
-        $field->setName('entryTime');
-        $field->setWrapperClass("c4g-list-element__entrytime-wrapper");
-        $field->setClass("c4g-list-element__entrytime");
-        $fields[] = $field;
+//        $field = new TextTileField();
+//        $field->setName('entryTime');
+//        $field->setWrapperClass("c4g-list-element__entrytime-wrapper");
+//        $field->setClass("c4g-list-element__entrytime");
+//        $fields[] = $field;
         
         $field = new TextTileField();
         $field->setName('maxCredit');
@@ -960,8 +961,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private function getChildTileData($childData, $request)
     {
         $database = Database::getInstance();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.image, a.imageOffer, a.foreignLink, a.directLink, ' . '
+        a.imageCDN, a.foreignLink, a.directLink, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -986,19 +989,20 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 unset($childRows[$key]);
                 continue;
             }
-            $imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            if ($imageModel !== null) {
+            //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
+            $imageFile = $row['imageCDN'];
+            if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
+                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => $imageModel->path,
-                    'alt' => $imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : $row['name']
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
+                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }
-            unset($childRows[$key]['imageOffer']);
-            unset($row['imageOffer']);
+//            unset($childRows[$key]['imageOffer']);
+//            unset($row['imageOffer']);
             
             $clientUuid = $this->checkCookieForClientUuid($request);
             if ($clientUuid !== null) {
@@ -1026,24 +1030,24 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
             $row['tagLinks'] = $tagLinks;
             
-            $result = $database->prepare('SELECT name, image, technicalKey FROM tl_gutesio_data_tag ' .
+            $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
                 'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
-                $model = FilesModel::findByUuid($r['image']);
-
+                //$model = FilesModel::findByUuid($r['image']);
+                $file = StringUtils::addUrlToPath($cdnUrl,$r['imageCDN']);
                 foreach ($row['tagLinks'] as $addedIcons) {
-                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $model->path)) {
+                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                         continue(2);
                     }
                 }
 
-                if ($model !== null) {
+                if ($file) {
                     $icon = [
                         'name' => $r['name'],
                         'image' => [
-                            'src' => $model->path,
+                            'src' => $file,
                             'alt' => $r['name']
                         ]
                     ];

@@ -274,189 +274,321 @@ template {
 [hidden] {
   display: none!important
 }
-.banner-section {
-  width: 100vw;
-  height: 100vh;
-  background-color: #fff;
-  background-image: repeating-radial-gradient(circle at 0 0,transparent 0,#fff 10px),repeating-linear-gradient(rgba(219,219,219,.3333333333),#dbdbdb)
+@font-face {
+  font-display: swap;
+  font-family: "Maven Pro";
+  font-style: normal;
+  font-weight: 400;
+  src: url(../../fonts/maven-pro-v36-latin-regular.woff2) format("woff2")
 }
-.banner-section .tns-outer {
-  max-height: 100%;
-  overflow: hidden
+@font-face {
+  font-display: swap;
+  font-family: "Maven Pro";
+  font-style: normal;
+  font-weight: 500;
+  src: url(../../fonts/maven-pro-v36-latin-500.woff2) format("woff2")
+}
+@font-face {
+  font-display: swap;
+  font-family: "Maven Pro";
+  font-style: normal;
+  font-weight: 600;
+  src: url(../../fonts/maven-pro-v36-latin-600.woff2) format("woff2")
+}
+@font-face {
+  font-display: swap;
+  font-family: "Maven Pro";
+  font-style: normal;
+  font-weight: 700;
+  src: url(../../fonts/maven-pro-v36-latin-700.woff2) format("woff2")
+}
+@font-face {
+  font-display: swap;
+  font-family: "Maven Pro";
+  font-style: normal;
+  font-weight: 800;
+  src: url(../../fonts/maven-pro-v36-latin-800.woff2) format("woff2")
+}
+@font-face {
+  font-display: swap;
+  font-family: "Maven Pro";
+  font-style: normal;
+  font-weight: 900;
+  src: url(../../fonts/maven-pro-v36-latin-900.woff2) format("woff2")
+}
+.banner-section {
+  background-image: url(../../img/banner_bg_screen.jpg);
+  background-position: center center;
+  background-attachment: fixed;
+  min-height: 100vh
 }
 .banner-slide {
-  position: relative;
   height: 100vh
 }
-.banner__text-wrapper.slide-element {
-  position: absolute;
-  padding: 2rem;
-  top: 2rem;
-  left: 0;
-  background-color: rgba(255,255,255,.8);
-  z-index: 2;
-  max-width: 70%
+a {
+  color: transparent
 }
-.banner__text-wrapper.slide-element .text-wrapper-inner {
-  display: flex;
-  align-items: center;
-  gap: 1rem
-}
-.banner__text-wrapper.slide-element .text-wrapper-inner img {
-  max-width: 30%
-}
-.banner__text-wrapper.slide-offer {
-  position: absolute;
-  right: 50%;
-  max-width: 50vw;
-  padding: 1rem;
-  border: 3px solid rgba(0,0,0,.1);
-  border-radius: 5px;
-  background: rgba(255,255,255,.9);
-  bottom: 50%;
-  transform: translate(75%,50%);
-  box-shadow: 5px 5px 15px rgba(51,51,51,.3);
-  z-index: 3
+a:hover {
+  text-decoration: none
 }
 .banner__headline {
-  font-size: clamp(2rem,2.5vw,4rem)
+  font-size: 2.5rem;
+  font-family: "Maven Pro";
+  font-weight: 600;
+  margin-top: 0
 }
 .banner__slogan-wrapper {
-  font-size: clamp(1.5rem,1.5vw,2rem)
-}
-.banner__image-wrapper.slide-element {
-  height: 100%
-}
-.banner__image-wrapper.slide-element img {
-  -o-object-fit: cover;
-  object-fit: cover;
-  height: 100%;
-  width: 100%
-}
-.banner__image-wrapper.slide-offer {
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  z-index: 2
-}
-.banner__image-wrapper.slide-offer img {
-  width: 100%;
-  height: auto;
-  max-height: 80vh;
-  border: 3px solid rgba(0,0,0,.1);
-  border-radius: 5px;
-  box-shadow: 5px 5px 15px rgba(51,51,51,.3)
+  font-size: 1.5rem;
+  font-family: "Maven Pro";
+  font-weight: 500
 }
 .banner__detail-wrapper {
-  font-size: clamp(1.5rem,1.5vw,2rem)
+  font-size: 2rem;
+  line-height: 2.2rem;
+  padding-top: 1.5rem;
+  font-family: "Maven Pro";
+  font-weight: 500
 }
-.banner__detail-wrapper .detail-label {
-  font-weight: 700;
-  display: inline-block;
-  min-width: 100px
+.detail-label {
+  font-family: "Maven Pro";
+  margin-right: 5px;
+  font-weight: 600
+}
+@media screen and (orientation:landscape) {
+  .banner__text-wrapper.slide-offer {
+    position: absolute;
+    width: 50%;
+    right: 150px;
+    top: 25%
+  }
+  .banner__text-wrapper.slide-offer .text-wrapper-inner {
+    background-color: rgba(255,255,255,.85);
+    color: #003764;
+    padding: 25px;
+    box-shadow: 5px 5px 10px rgba(51,51,51,.3);
+    border-radius: 5px
+  }
+  .banner__image-wrapper.slide-offer img {
+    height: 75vh;
+    margin: 1.5rem;
+    border-radius: 5px;
+    box-shadow: 5px 5px 10px rgba(51,51,51,.3)
+  }
+  .banner__text-wrapper.slide-element {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 25%
+  }
+  .banner__text-wrapper.slide-element .text-wrapper-inner {
+    background-color: rgba(255,255,255,.85);
+    color: #003764;
+    padding: 25px;
+    box-shadow: 5px 5px 10px rgba(51,51,51,.3);
+    border-radius: 5px;
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto
+  }
+  .banner__text-wrapper.slide-element .text-wrapper-inner img {
+    max-height: 120px;
+    margin-bottom: 15px
+  }
+  .banner__image-wrapper.slide-element {
+    height: 100vh
+  }
+  .banner__image-wrapper.slide-element .banner__image-item.loaded.tns-complete {
+    -o-object-fit: cover;
+    object-fit: cover;
+    height: 100%;
+    width: 100%
+  }
+  .banner__footer-pre {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 1.5rem;
+    background-color: rgba(255,255,255,.85)
+  }
+  .banner__footer-logo-text {
+    width: 50%;
+    display: flex;
+    flex-flow: column-reverse;
+    text-align: left
+  }
+  .banner__footer-qrcode {
+    width: 50%;
+    text-align: right
+  }
+  .banner__footer-qrcode img {
+    max-height: 175px
+  }
+  .banner__footer-logo {
+    width: 100%
+  }
+  .banner__footer-logo img {
+    width: auto;
+    max-height: 100px
+  }
+  .banner__footer-text {
+    font-family: "Maven Pro";
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: #003764;
+    width: 100%;
+    text-align: left;
+    padding-bottom: 1.5rem
+  }
+}
+@media screen and (orientation:portrait) {
+  .banner__text-wrapper.slide-offer {
+    position: relative;
+    text-align: center;
+    padding: 0;
+    width: -moz-available
+  }
+  .banner__text-wrapper.slide-offer .text-wrapper-inner {
+    color: #003764;
+    padding: 5rem 2rem 3rem 2rem;
+    border-radius: 0
+  }
+  .banner__image-wrapper.slide-offer {
+    width: 100%
+  }
+  .banner__image-wrapper.slide-offer img {
+    height: auto;
+    border-radius: 0;
+    width: 100%
+  }
+  .banner__text-wrapper.slide-element {
+    position: relative;
+    text-align: center;
+    padding: 0
+  }
+  .banner__text-wrapper.slide-element .text-wrapper-inner {
+    color: #003764;
+    padding: 5rem 2rem 3rem 2rem;
+    border-radius: 0;
+    max-width: 1024px;
+    margin-left: auto;
+    margin-right: auto
+  }
+  .banner__text-wrapper.slide-element .text-wrapper-inner img {
+    max-height: 120px;
+    margin-bottom: 15px
+  }
+  .banner__image-wrapper.slide-element .banner__image-item.loaded.tns-complete {
+    -o-object-fit: contain;
+    object-fit: contain;
+    height: 100%;
+    min-width: 100%
+  }
+  .banner__footer-pre {
+    display: flex;
+    flex-flow: column-reverse
+  }
+  .banner__footer-logo-text {
+    width: 100%;
+    display: flex;
+    flex-flow: row-reverse;
+    background-color: #fff;
+    min-height: 100px
+  }
+  .banner__footer-logo {
+    width: 57%;
+    padding: 1.5rem;
+    text-align: right
+  }
+  .banner__footer-logo img {
+    width: 150px;
+    height: auto
+  }
+  .banner__footer-text {
+    font-family: "Maven Pro";
+    font-weight: 500;
+    font-size: 1.5rem;
+    color: #003764;
+    width: 43%;
+    text-align: left;
+    padding: 1.5rem 2.5rem 1.5rem 1.5rem
+  }
+  .banner__footer-qrcode {
+    width: 100%;
+    text-align: center;
+    position: relative;
+    bottom: -50px
+  }
+  .banner__footer-qrcode img {
+    max-height: 200px
+  }
 }
 .banner__footer {
   position: absolute;
   bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: rgba(255,255,255,.7);
-  z-index: 2
+  width: 100%
 }
-.banner__footer-pre {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding: .5rem 1rem
-}
-.banner__footer img {
-  width: 100%;
-  height: auto
-}
-.banner__footer-logo-text {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  gap: 1rem;
-  flex: 1
-}
-.banner__footer-logo {
-  flex: 0 0 15vh
-}
-.banner__footer-qrcode {
-  flex: 0 0 15vh;
-  padding-right: 1.2vw
-}
-.banner__footer-text {
-  flex: 1 1 auto;
-  font-size: 1.5rem
+.footer-text-label {
+  font-family: "Maven Pro";
+  font-weight: 500
 }
 .banner__footer-sub {
-  background-color: rgba(255,255,255,.2);
-  padding-bottom: 1rem;
-  width: 100%;
   text-align: center;
-  font-size: 1.2rem
+  font-size: 16px;
+  padding: 15px;
+  background-color: #2ea1db;
+  color: #fff;
+  font-family: "Maven Pro";
+  font-weight: 400
 }
-.banner__footer-sub .banner__footer-sub-image {
-  width: 1.2rem;
-  height: auto
+.banner__footer-sub a {
+  color: #fff;
+  margin-right: 5px
 }
-@media screen and (orientation:portrait) {
-  .banner-slide {
-    display: flex;
-    flex-direction: column
+.banner__footer-sub img {
+  max-height: 1rem
+}
+@media screen and (max-width:768px) {
+  .banner__text-wrapper.slide-element .text-wrapper-inner,
+  .banner__text-wrapper.slide-offer .text-wrapper-inner {
+    padding: 40px 15px 20px 15px
   }
-  .banner__text-wrapper.slide-element {
-    padding: 3rem;
-    padding-bottom: 7rem;
-    top: 14rem;
-    max-width: 80%;
-    min-width: 70%;
-    transform: translateY(-50%)
+  .banner__headline {
+    font-size: 1.5rem
   }
-  .banner__text-wrapper.slide-offer {
-    padding: 3rem;
-    transform: translate(75%,50%)
+  .banner__slogan-wrapper {
+    font-size: 1rem
   }
-  .banner__image-wrapper.slide-element {
-    display: flex;
-    justify-content: center;
-    align-items: center
+  .banner__detail-wrapper {
+    font-size: 1rem
   }
-  .banner__image-wrapper.slide-element img {
-    -o-object-fit: scale-down;
-    object-fit: scale-down;
-    width: 100%
-  }
-  .banner__image-wrapper.slide-offer img {
-    min-height: 25vh
+  .banner__detail-wrapper {
+    padding-top: 5px
   }
   .banner__footer-pre {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.5rem 3rem
+    display: block;
+    padding: 15px;
+    background-color: #fff
   }
   .banner__footer-logo-text {
-    display: flex;
-    flex-direction: row
-  }
-  .banner__footer-logo-image {
-    flex: 0 0 16vh
-  }
-  .banner__footer-logo {
-    flex: 0 0 16vh
+    width: 100%;
+    display: block
   }
   .banner__footer-text {
-    text-align: end
+    font-size: 1rem;
+    padding: 0;
+    width: 100%;
+    text-align: center
+  }
+  .banner__footer-logo {
+    padding: 0;
+    width: 100%;
+    text-align: center;
+    padding-bottom: 15px
+  }
+  .banner__footer-logo img {
+    width: 100px;
+    height: auto
   }
   .banner__footer-qrcode {
-    max-width: 20vw;
-    padding-right: 1.2vw;
-    order: -1
+    display: none
   }
 }

@@ -13,6 +13,7 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 /**
@@ -23,7 +24,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageCDN', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
 
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
@@ -46,6 +47,9 @@ class ShowcaseInsertTag
                 $alias = $this->getAlias();
                 $field = $arrTags[1];
             }
+
+            $objSettings = GutesioOperatorSettingsModel::findSettings();
+            $cdnUrl = $objSettings->cdnUrl;
 
             $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ?')
                 ->execute($alias);
@@ -75,35 +79,43 @@ class ShowcaseInsertTag
 
                         return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';
                     case 'image':
-                        $uuid = $arrShowcase['imageShowcase'];
-                        if (C4GUtils::isBinary($uuid)) {
-                            $uuid = StringUtil::binToUuid($uuid);
-                        }
+                        //ToDO CDN
+                        //ToDo CDN get params
+                        //?crop=smart&width=400&height=400
+                        $url = $arrShowcase['imageCDN'];
+//                        if (C4GUtils::isBinary($uuid)) {
+//                            $uuid = StringUtil::binToUuid($uuid);
+//                        }
 
-                        return $uuid ?: ''; //Further processing in the template
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : ''; //Further processing in the template
+                    case 'imageCDN':
+                        //ToDO CDN
+                        //ToDo CDN get params
+                        //?crop=smart&width=400&height=400
+                        $url = $arrShowcase['imageCDN'];
+//                        if (C4GUtils::isBinary($uuid)) {
+//                            $uuid = StringUtil::binToUuid($uuid);
+//                        }
 
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : ''; //Further processing in the template
                     case 'imageList':
-                        $uuid = $arrShowcase['imageList'];
-                        if (C4GUtils::isBinary($uuid)) {
-                            $uuid = StringUtil::binToUuid($uuid);
-                        }
+                        $url = $arrShowcase['imageCDN'];
+//                        if (C4GUtils::isBinary($uuid)) {
+//                            $uuid = StringUtil::binToUuid($uuid);
+//                        }
 
-                        return $uuid ?: ''; //Further processing in the template
-
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : ''; //Further processing in the template
                     case 'previewimage':
-                        $uuid = $arrShowcase['image'];
-                        if (C4GUtils::isBinary($uuid)) {
-                            $uuid = StringUtil::binToUuid($uuid);
-                        }
+                        $url = $arrShowcase['imageCDN'];
 
-                        return $uuid ?: '';//Controller::replaceInsertTags("{{image::$uuid}}");
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : '';//Controller::replaceInsertTags("{{image::$uuid}}");
                     case 'logo':
-                        $uuid = $arrShowcase['logo'];
-                        if (C4GUtils::isBinary($uuid)) {
-                            $uuid = StringUtil::binToUuid($uuid);
-                        }
+                        $url = $arrShowcase['logoCDN'];
+//                        if (C4GUtils::isBinary($uuid)) {
+//                            $uuid = StringUtil::binToUuid($uuid);
+//                        }
 
-                        return Controller::replaceInsertTags("{{image::$uuid?height=150&mode=proportional&class=img-fluid}}");
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url).'?height=150' : '';//Controller::replaceInsertTags("{{image::$uuid?height=150&mode=proportional&class=img-fluid}}");
                     case 'description':
                         return C4GUtils::truncate($arrShowcase['description'], 275);
                     case 'meta':
@@ -112,26 +124,29 @@ class ShowcaseInsertTag
                             $pageURL = \Contao\Controller::replaceInsertTags('{{env::url}}');
 
                             //replace logo dummy
-                            $uuid = $arrShowcase['logo'];
-                            if (C4GUtils::isBinary($uuid)) {
-                                $uuid = StringUtil::binToUuid($uuid);
-                            }
-                            $logo = Controller::replaceInsertTags("{{file::$uuid}}");
-                            if ($logo && $pageURL) {
-                                $logoPath = $pageURL . '/' . $logo;
+//                            $uuid = $arrShowcase['logo'];
+//                            if (C4GUtils::isBinary($uuid)) {
+//                                $uuid = StringUtil::binToUuid($uuid);
+//                            }
+//                            $logo = Controller::replaceInsertTags("{{file::$uuid}}");
+
+                            $logo = $arrShowcase['logoCDN'];
+                            if ($logo && $cdnUrl) {
+                                $logoPath = StringUtils::addUrlToPath($cdnUrl, $logo);
                                 $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
                             }
 
                             //replace image dummy
-                            $uuid = $arrShowcase['imageList'];
-                            if (C4GUtils::isBinary($uuid)) {
-                                $uuid = StringUtil::binToUuid($uuid);
-                            }
-                            $image = Controller::replaceInsertTags("{{file::$uuid}}");
-                            if ($image && $pageURL) {
-                                $imagePath = $pageURL . '/' . $image;
+//                            $uuid = $arrShowcase['imageList'];
+//                            if (C4GUtils::isBinary($uuid)) {
+//                                $uuid = StringUtil::binToUuid($uuid);
+//                            }
+//                            $image = Controller::replaceInsertTags("{{file::$uuid}}");
+                            $image = $arrShowcase['imageCDN'];
+                            if ($image && $cdnUrl) {
+                                $imagePath = StringUtils::addUrlToPath($cdnUrl, $image);
                                 $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

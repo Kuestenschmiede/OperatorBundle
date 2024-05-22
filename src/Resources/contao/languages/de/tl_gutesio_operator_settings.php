@@ -19,6 +19,7 @@ $GLOBALS['TL_LANG'][$strName]['map_legend'] = "Karteneinstellungen";
 $GLOBALS['TL_LANG'][$strName]['page_legend'] = "Seiteneinstellungen";
 $GLOBALS['TL_LANG'][$strName]['notification_legend'] = "Benachrichtigungseinstellungen";
 $GLOBALS['TL_LANG'][$strName]['tax_legend'] = "Steuersätze";
+$GLOBALS['TL_LANG'][$strName]['cdnUrl'] = ['URL zum CDN', 'Geben Sie die URL zum CDN an (zwingend erforderlich).'];
 $GLOBALS['TL_LANG'][$strName]['gutesIoUrl'] = ['URL für gutes.digital', 'Geben Sie hier die URL für die gutes.digital Kommunikation an (zwingend erforderlich).'];
 $GLOBALS['TL_LANG'][$strName]['gutesIoKey'] = ['API-Schlüssel für gutes.digital', 'Geben Sie hier Ihren Betreiberschlüssel an (zwingend erforderlich).'];
 $GLOBALS['TL_LANG'][$strName]['detail_profile'] = ["Kartenprofil für Detailansicht", "Wählen Sie das Kartenprofil aus, welches in der Detailansicht verwendet werden soll."];

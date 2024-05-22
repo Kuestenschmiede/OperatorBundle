@@ -43,6 +43,7 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
@@ -158,6 +159,7 @@ class BannerModuleController extends AbstractFrontendModuleController
     private function getSlidesForElement (array $element, ?array $arrReturn= []) {
         $db = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         $model = $this->model;
         $mode = $model->gutesio_child_data_mode;
         switch ($mode) {
@@ -210,30 +212,34 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $arrChilds = [];
             }
         }
-        $objLogo = FilesModel::findByUuid($element['logo']);
+        //$objLogo = FilesModel::findByUuid($element['logo']);
+        $logoSrc = StringUtils::addUrlToPath($cdnUrl,$element['logoCDN']);
         foreach ($arrChilds as $key => $child) {
             if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
                 break;
             }
-            $arrReturn = $this->getSlidesForChild($child, $element, $objLogo, $arrReturn);
+            $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
-        $objImage = FilesModel::findByUuid($element['imageShowcase']);
+
+        $imageSrc = StringUtils::addUrlToPath($cdnUrl,$element['imageCDN']);
+
         $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
         $singleEle = [
             'type'  => "element",
             'image' => [
-                'src' =>    $objImage->path,
-                'alt' =>    $element['name'] ?: $objImage->alt
+                'src' =>    $imageSrc,
+                'alt' =>    $element['name']
             ],
             'title' => $element['name'],
             'slogan' => $element ['displaySlogan'] ?: $element['shortDescription'],
+            'href' => $detailRoute,
             //'contact' => $value['name'],
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
         ];
-        if ($objLogo->path) {
+        if ($logoSrc) {
             $singleEle['logo'] = [
-                'src' => $objLogo->path,
+                'src' => $logoSrc,
                 'alt' => $element['name']
             ];
         }
@@ -249,9 +255,10 @@ class BannerModuleController extends AbstractFrontendModuleController
      * @param array|null $arrReturn
      * @return array
      */
-    private function getSlidesForChild (array $child, array $element, FilesModel $objLogo, ?array $arrReturn = []) {
+    private function getSlidesForChild (array $child, array $element, $logoSrc, ?array $arrReturn = []) {
         $db = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
         $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
                 WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
         if ($type['type'] === "event") {
@@ -291,9 +298,10 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $location = $locationResult ? $locationResult['name'] : '';
             }
         }
-        $objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
+        //$objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
+        $offerSrc = StringUtils::addUrlToPath($cdnUrl,$child['imageCDN']);
 
-        if ($objImage && $objImage->path && strpos($objImage->path, '/default/')) {
+        if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images
         }
         $detailPage = $type['type'] . "DetailPage";
@@ -302,19 +310,20 @@ class BannerModuleController extends AbstractFrontendModuleController
         $singleEle = [
             'type'  => "event",
             'image' => [
-                'src' =>    $objImage->path,
-                'alt' =>    $child['name'] ?: $objImage->alt
+                'src' =>    $offerSrc,
+                'alt' =>    $child['name']
             ],
             'dateTime' => $termin,
             'location' => $location,
             'title' => $child['name'],
             'slogan' => $child['shortDescription'],
+            'href' => $detailRoute,
             'contact' => $element['name'],
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
         ];
-        if ($objLogo->path) {
+        if ($logoSrc) {
             $singleEle['logo'] = [
-                'src' => $objLogo->path,
+                'src' => $logoSrc,
                 'alt' => $element['name']
             ];
         }

@@ -15,6 +15,7 @@ use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -46,7 +47,7 @@ class LoadPopupListener
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
             $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
             $scope = $event->getScope();
-            $strQueryTags = 'SELECT tag.uuid, tag.image, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
+            $strQueryTags = 'SELECT tag.uuid, tag.imageCDN, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
                                     INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
                                     WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
             $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
@@ -67,13 +68,15 @@ class LoadPopupListener
             $strTypes .= $type['name'] . ', ';
         }
         $strTypes = rtrim($strTypes, ', ');
-        $imageUuid = StringUtil::binToUuid($element['imagePopup']);
-        $file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
-
-        $strImage = $file->path;
-        if ($strImage) {
-            $alt = $file->meta && unserialize($file->meta)['de'] ? unserialize($file->meta)['de']['alt'] : $name;
-            $image = "<img class='entry-content' src='$strImage' alt='$alt' title='$name'>";
+        $file = $element['imageCDN'];
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
+        //$file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
+        //$strImage = $file->path;
+        if ($file) {
+            $alt = $name;
+            //?crop=smart&width=750&height=200
+            $image = "<img class='entry-content' src='".StringUtils::addUrlToPath($cdnUrl,$file)."' alt='$alt' title='$name'>";
         }
         $tags = '';
         foreach ($arrTags as $tag) {
@@ -92,24 +95,32 @@ class LoadPopupListener
                     }
                 }
             }
-            $imageTagUuid = StringUtil::binToUuid($tag['image']);
-            $fileTag = FilesModel::findByUuid($imageTagUuid);
-            if ($link) {
-                $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>
-                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
+
+
+            $fileTag = $tag['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']) : false;
+            if ($fileTag) {
+                if ($link) {
+                    $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>
+                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div></a>";
-            } else {
-                $tags .= "<div class='item " . $tag['name'] . "'>
-                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag->path . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
+                } else {
+                    $tags .= "<div class='item " . $tag['name'] . "'>
+                        <img class='entry-content " . $tag['name'] . "' src='" . $fileTag . "' alt='" . $tag['name'] . "' title='" . $tag['name'] . "'>
                         </div>";
+                }
             }
         }
         $contacts = '';
-        if ($element['phone'] || $element['mobile']) {
-            $phone = $element['phone'] ?: $element['mobile'];
-            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:".str_replace(" ", "", str_replace("/", "", $outputMobilePhone))."'>
-                            <i class='fas fa-phone'></i>
-                        </a>";
+        if ($element['contactPhone'] || $element['phone'] || $element['mobile']) {
+            $phone = $element['contactPhone'] ?: $element['phone'];
+            if (!$phone) {
+                $phone = $element['mobile'];
+            }
+
+            $phone = str_replace(' ', '', str_replace('/', '', $phone));
+            $contacts .= "<a class='entry-content contact-phone' title='$name anrufen' href='tel:$phone'>
+                        <i class='fas fa-phone'></i>
+                    </a>";
         }
         if ($element['email']) {
             $mail = $element['email'];
@@ -169,10 +180,11 @@ class LoadPopupListener
         $settings = GutesioOperatorSettingsModel::findSettings();
         $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);
         $html = "<div class='showcase-tile c4g-tile'>";
-        if (in_array('image', $fields) && $image){
-            $html .= !$reduced ? "<div class='c4g-tile-header'>
+
+        if ((!$fields || in_array('image', $fields)) && $image){
+            $html .= "<div class='c4g-tile-header'>
                         <div class='item image'>
-                            $image
+                            <a href='$href'>$image</a>
                         </div>
                     </div>" : "<div class='c4g-tile-header'>
                         <a class='item image' href='$href'>
@@ -183,30 +195,30 @@ class LoadPopupListener
 
         $html .= "<div class='c4g-tile-content'>";
 
-        if (in_array('name', $fields) && $name){
+        if ((!$fields || in_array('name', $fields)) && $name){
             $html .= "<div class='item name'>
                             <span>$name</span>
                         </div>";
         }
 
-        if (in_array('types', $fields) && $strTypes){
+        if ((!$fields || in_array('types', $fields)) && $strTypes){
             $html .= "<div class='item types'>
                             <span class='entry-label'>Kategorie(n)</span>
                             <span class='entry-content'>$strTypes</span>
                         </div>";
         }
 
-        if (in_array('desc', $fields) && $desc){
+        if ((!$fields || in_array('desc', $fields)) && $desc){
             $html .= "<div class='item description'>
                             <p>$desc</p>
                         </div>";
         }
-        if (in_array('tags', $fields) && $tags){
+        if ((!$fields || in_array('tags', $fields)) && $tags){
             $html .= "<div class='tags'>
                             $tags
                         </div>";
         }
-        if (in_array('contacts', $fields) && $contacts){
+        if ((!$fields || in_array('contacts', $fields)) && $contacts){
             $html .= "<div class='item contacts'>
                             $contacts
                         </div>";
@@ -214,10 +226,10 @@ class LoadPopupListener
         $html .= "</div><div class='c4g-tile-footer'>
                         <div class='item alias'>
                             <span class='entry-content'>";
-        if (in_array('wishlist', $fields) && $buttonWishlist){
+        if ((!$fields || in_array('wishlist', $fields)) && $buttonWishlist){
             $html .= $buttonWishlist;
         }
-        if (in_array('more', $fields)){
+        if ((!$fields || in_array('more', $fields))){
             $html .= "<a class='btn btn-primary' href='$href'>Mehr</a>";
         }
         $html .= "    
@@ -256,8 +268,7 @@ class LoadPopupListener
             $onclickRm = "jQuery.post(\"$urlRemove\");this.innerText = \"Merken\";jQuery(this).attr(\"class\", \"btn btn-primary put-on-wishlist\");";
             $onclickAdd = "jQuery.post(\"$urlAdd\"); this.innerText = \"Gemerkt\";jQuery(this).attr(\"class\", \"btn btn-warning remove-from-wishlist on-wishlist\");";
 
-//            TODO: After jQuery.post we have to trigger the Popup - #ajo
-
+            // TODO: After jQuery.post we have to trigger the Popup - #ajo
             if (!$wishListEntry) {
                 $buttonWishlist = "<a class='btn btn-primary put-on-wishlist' data-uuid='$elementUuid'>Merken <i class=\"far fa-heart\"></i></a>"; //ToDo  <i class=\u0022fas fa-heart\u0022></i>
             } else {

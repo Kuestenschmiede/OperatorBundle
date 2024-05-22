@@ -24,11 +24,10 @@
   },
   "require": {
     "php": ">=8.0",
-    "contao/core-bundle": "^4.9",
-    "gutesio/data-model": "^2.0",
-    "con4gis/core": "^7.0.5",
-    "con4gis/framework": "^1.1",
-    "con4gis/maps": "^8.2",
+    "contao/core-bundle": "^4.13",
+    "gutesio/data-model": "^2.1",
+    "con4gis/framework": "^1.1.21",
+    "con4gis/maps": "^8.3",
     "bacon/bacon-qr-code": "^2.0"
   },
   "conflict": {

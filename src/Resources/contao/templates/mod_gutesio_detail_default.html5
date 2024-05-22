@@ -18,13 +18,15 @@
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageUuid = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
+<?php if ($imageCDN = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
 
     <?php
-    $image = \Contao\FilesModel::findByUuid($imageUuid);
-    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
-    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
+    //$image = \Contao\FilesModel::findByUuid($imageUuid);
+//    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
+//    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
 
+    $imageXL = $imageCDN.'?crop=smart&width=1920&height=1200';
+    $imageXS = $imageCDN.'?crop=smart&width=1024&height=768';
     /**
      * For Contao Users:
      * You can use srcset image url by adding the id of image-size configured in contao backend
@@ -34,12 +36,12 @@
 
     <style>
         .detail-hero2 {
-            background-image: url("<?= $imageXS?>");
+            background-image: url(<?= $imageXS?>);
         }
 
         @media screen and (min-width: 901px) {
             .detail-hero2 {
-                background-image: url("<?= $imageXL?>");
+                background-image: url(<?= $imageXL?>);
             }
         }
     </style>
@@ -51,6 +53,7 @@
         <!--    Image -->
         <div class="detail-hero2__image-wrapper">
             <img src="<?= $imageXS ?>" alt="">
+
         </div>
 
         <!--    Filter / Overlay -->
@@ -65,7 +68,7 @@
 
             <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
                 <div class="detail-hero2__logo">
-                    {{showcase::logo}}
+                    <img src="{{showcase::logo}}" width="150" height="150" alt="{{showcase::name}}" class="img-fluid">
                 </div>
             <?php endif ?>
         </div>
@@ -131,6 +134,32 @@
                                 data-toggle="modal" data-target="#shareModal" title="Teilen"><i
                                     class="fas fa-share-alt"></i></button>
                     </div>
+                </div>
+            </div>
+
+            <div class="detail-view__section-booking" id="detail-section-booking">
+                <div class="c4g-container">
+                    <?php if ($data->tags): ?>
+                        <?php foreach ($data->tags as $k => $v): ?>
+                            <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation")): ?>
+                                <div class="bookingGroup">
+                                    <div class="bookingButton">
+                                        <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
+                                    </div>
+                                    <?php if (isset($data->reservationContactEMail) && !empty($data->reservationContactEMail)): ?>
+                                        <div class="bookingButton entry-content email" itemprop="email">
+                                            <a href="mailto:{{email_url::<?= $data->reservationContactEMail ?>}}?subject=Veranstaltung: <?= str_replace(',','.', $data->name) ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailReservationButton']?></a>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if (isset($data->reservationContactPhone) && !empty($data->reservationContactPhone)): ?>
+                                        <div class="bookingButton entry-content phone" itemprop="phone">
+                                            <a href="tel:<?= $data->reservationContactPhone ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneReservationButton']?></a>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
 
@@ -677,7 +706,7 @@
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital')))): ?>
+                                    <?php if ($v->linkHref && ($v->technicalKey == "tag_online_reservation")): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
@@ -701,7 +730,8 @@
                                         <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
-                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && ((strPos($v->linkHref, 'gutes.digital/booking')) || (strPos($v->linkHref, 'booking.gutes.digital'))))): ?>                                        <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
+                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && $v->linkHref)): ?>
+                                            <div class="tag-entry <?= $v->technicalKey ?><?php if ($v->linkHref): ?> tag-entry__linked<?php endif; ?>">
                                             <?php if ($v->linkHref): ?>
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
                                                    title="<?= $v->name ?>"
@@ -968,8 +998,7 @@
                                     <?php endif; ?>
                                 </section>
                             </div>
-                        </div>
-                        <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
+                            <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
                             <?php $this->block('detailpage_map'); ?>
 
                                     <div id="react__detail-view__map"
@@ -1007,6 +1036,7 @@
                                 </div>
                             <?php endif; ?>
                             <?php $this->endblock(); ?>
+                        </div>
                         </div>
                     </div>
 
@@ -1103,7 +1133,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
                     <div class="detail-view__imprint-inner">
 
-                        <h3 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_title'] ?></h3>
+                        <h4 class="mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['imprint_title'] ?></h4>
 
                         <p>
                             <strong><?= $addressName ?></strong>
@@ -1185,13 +1215,24 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
     </div>
 <?php endif; ?>
 
+<?php if (isset($data->source) && !empty($data->source)): ?>
+<div id="additionalImprint" class="detail-view__additionalImprint-container">
+    <div class="detail-view__additionalImprint-row">
+        <div class="detail-view__additionalImprint-col">
+            <div class="detail-view__additionalImprint-inner">
+                <h4 class="additionalImprint-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imprintAdditionalInfos'] ?></h4>
+                <span class="detail-view_additionalImprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
+            </div>
+        </div>
+    </div>
+</div>
+<?php endif; ?>
 <?php if (!isset($this->childId) && isset($data->imageCredits) && !empty($data->imageCredits)): ?>
     <div id="showcase-imageCredits" class="detail-view__imageCredits-container">
         <div class="detail-view__imageCredits-row">
             <div class="detail-view__imageCredits-col">
                 <div class="detail-view__imageCredist-inner">
-                    <h3 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCredits'] ?></h3>
-
+                    <h4 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCredits'] ?></h4>
                     <div class="imageCredits-text">
                         <?= $data->imageCredits ?>
                     </div>
@@ -1206,8 +1247,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
         <div class="detail-view__imageCredits-row">
             <div class="detail-view__imageCredits-col">
                 <div class="detail-view__imageCredist-inner">
-                    <h3 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCreditsOffer'] ?></h3>
-
+                    <h4 class="imageCredits-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imageCreditsOffer'] ?></h4>
                     <div class="imageCredits-text">
                         <?= $data->imageCredits ?>
                     </div>
@@ -1217,13 +1257,7 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
     </div>
 <?php endif; ?>
 
-<div class="detail-view__imprint-row">
-    <div class="detail-view__imprint-col">
-        <p>
-            <span class="detail-view_imprint-io" style="display: block; text-align: center; font-style: italic;">Diese Seite wird erstellt und aktualisiert über <a target="_blank" rel="noopener noreferer" href="https://gutes.digital">gutes.digital</a></span>
-        </p>
-    </div>
-</div>
+<span class="detail-view_additionalImprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
 
 <?php $this->endblock(); //detailpage_imprint ?>
 

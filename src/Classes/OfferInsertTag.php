@@ -13,6 +13,7 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
+use gutesio\DataModelBundle\Classes\StringUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 class OfferInsertTag
@@ -44,6 +45,9 @@ class OfferInsertTag
                 $field = $arrTags[1];
             }
 
+            $objSettings = GutesioOperatorSettingsModel::findSettings();
+            $cdnUrl = $objSettings->cdnUrl;
+
             $alias = '{' . strtoupper($alias) . '}';
             $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ?')
                 ->execute($alias);
@@ -56,27 +60,34 @@ class OfferInsertTag
                     case 'description':
                         return C4GUtils::truncate($arrOffer['description'], 275) ?: '';
                     case 'firstGalleryImage':
-                        $arrBin = StringUtil::deserialize($arrOffer['imageGallery']);
-
-                        $uuid = $arrBin[0];
-                        if (C4GUtils::isBinary($uuid)) {
-                            $uuid = StringUtil::binToUuid($uuid);
+                        $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
+                        if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
+                            $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
+                        } else {
+                            $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);
                         }
+//                        if (C4GUtils::isBinary($uuid)) {
+//                            $uuid = StringUtil::binToUuid($uuid);
+//                        }
 
-                        return $uuid ?: ''; //Further processing in the template
+                        //ToDo CDN get params
+                        //?crop=smart&width=400&height=400
+                        return $url ?: ''; //Further processing in the template
                     case 'meta':
                         $metaDescription = $arrOffer['metaDescription'];
                         if ($metaDescription) {
                             $pageURL = \Contao\Controller::replaceInsertTags('{{env::url}}');
 
                             //replace image dummy
-                            $uuid = $arrOffer['imageOffer']; //ToDo Test
-                            if (C4GUtils::isBinary($uuid)) {
-                                $uuid = StringUtil::binToUuid($uuid);
-                            }
-                            $image = Controller::replaceInsertTags("{{file::$uuid}}");
-                            if ($image && $pageURL) {
-                                $imagePath = $pageURL . '/' . $image;
+//                            $uuid = $arrOffer['imageOffer']; //ToDo Test
+//                            if (C4GUtils::isBinary($uuid)) {
+//                                $uuid = StringUtil::binToUuid($uuid);
+//                            }
+                            $image = $arrOffer['imageCDN']; //ToDO CDN TEST
+                            if ($image && $cdnUrl) {
+                                //ToDo CDN get params
+                                //?crop=smart&width=400&height=400
+                                $imagePath = StringUtils::addUrlToPath($cdnUrl ,$image);
                                 $metaDescription = str_replace('IO_OFFER_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_OFFER_IMAGE"', '', $metaDescription);
@@ -100,26 +111,30 @@ class OfferInsertTag
 
                                 if ($objShowcase) {
                                     //replace logo dummy
-                                    $uuid = $objShowcase['logo'];
-                                    if (C4GUtils::isBinary($uuid)) {
-                                        $uuid = StringUtil::binToUuid($uuid);
-                                    }
-                                    $logo = Controller::replaceInsertTags("{{file::$uuid}}");
-                                    if ($logo && $pageURL) {
-                                        $logoPath = $pageURL . '/' . $logo;
+//                                    $uuid = $objShowcase['logo'];
+//                                    if (C4GUtils::isBinary($uuid)) {
+//                                        $uuid = StringUtil::binToUuid($uuid);
+//                                    }
+                                    $logo = $objShowcase['logoCDN'];//  Controller::replaceInsertTags("{{file::$uuid}}");
+                                    if ($logo && $cdnUrl) {
+                                        //ToDo CDN get params
+                                        //?crop=smart&width=400&height=400
+                                        $logoPath = StringUtils::addUrlToPath($cdnUrl,$logo);
                                         $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
                                     }
 
                                     //replace image dummy
-                                    $uuid = $objShowcase['imageList'];
-                                    if (C4GUtils::isBinary($uuid)) {
-                                        $uuid = StringUtil::binToUuid($uuid);
-                                    }
-                                    $image = Controller::replaceInsertTags("{{file::$uuid}}");
-                                    if ($image && $pageURL) {
-                                        $imagePath = $pageURL . '/' . $image;
+//                                    $uuid = $objShowcase['imageList'];
+//                                    if (C4GUtils::isBinary($uuid)) {
+//                                        $uuid = StringUtil::binToUuid($uuid);
+//                                    }
+                                    $image = $objShowcase['imageCDN'];//Controller::replaceInsertTags("{{file::$uuid}}");
+                                    if ($image && $cdnUrl) {
+                                        //ToDo CDN get params
+                                        //?crop=smart&width=400&height=400
+                                        $imagePath = StringUtils::addUrlToPath($cdnUrl,$image);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);
@@ -130,13 +145,9 @@ class OfferInsertTag
                                     $metaDescription = str_replace(',"photo":"IO_SHOWCASE_PHOTO"', '', $metaDescription);
 
                                     //replace url dummy
-                                    $objSettings = GutesioOperatorSettingsModel::findSettings();
                                     $showcaseUrl = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
                                     $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $objShowcase['alias'];
                                     $metaDescription = str_replace('IO_SHOWCASE_URL', $url, $metaDescription);
-
-
-
 
                                     if (strpos($metaDescription,'IO_SHOWCASE_LOCATION_URL')) {
                                         $locationElement = Database::getInstance()->prepare('SELECT locationElementId FROM tl_gutesio_data_child_event WHERE childId = ?')

@@ -17,6 +17,8 @@ class LoadMapDataListener
         $mapData = $event->getMapData();
         $profile = C4gMapProfilesModel::findByPk($mapData['profile']);
         if ($profile && $profile->ownGeosearch) {
+            $mapData['geosearch']['own'] = true;
+            $mapData['geosearch']['showOnlyResults'] = $profile->showOnlyResults;
             unset($mapData['geosearch']['url']);
         }
         $event->setMapData($mapData);

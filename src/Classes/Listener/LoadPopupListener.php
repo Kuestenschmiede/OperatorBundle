@@ -182,7 +182,7 @@ class LoadPopupListener
         $html = "<div class='showcase-tile c4g-tile'>";
 
         if ((!$fields || in_array('image', $fields)) && $image){
-            $html .= "<div class='c4g-tile-header'>
+            $html .= !$reduced ? "<div class='c4g-tile-header'>
                         <div class='item image'>
                             <a href='$href'>$image</a>
                         </div>

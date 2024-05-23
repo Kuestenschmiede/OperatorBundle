@@ -49,7 +49,7 @@ class PerformSearchListener
                 ['table' => "tl_gutesio_data_element_type", 'columnLeft' => "tl_gutesio_data_element.uuid", 'columnRight' =>"tl_gutesio_data_element_type.elementId"],
                 ['table' => "tl_gutesio_data_type", 'columnLeft' => "tl_gutesio_data_element_type.typeId", 'columnRight' =>"tl_gutesio_data_type.uuid"],
             ];
-            $whereClause = "(releaseType = 'internal' OR releaseType = '')";
+            $whereClause = "(releaseType = 'internal' OR releaseType = 'interregional' OR releaseType = '')";
             $arrDBResult = SearchApi::searchDatabase($arrParams['q'], $arrColums, 'tl_gutesio_data_element', $this->Database, $whereClause, $arrJoins);
             $arrResults = [];
             foreach ($arrDBResult as $dBResult) {

@@ -148,7 +148,7 @@ class LoadPopupListener
         }
         if ($element['twitter']) {
             $tw = $element['twitter'];
-            $contacts .= "<a class='entry-content contact-tw' title='Twitter von $name' href='$tw' rel='noopener nofollow' target='_blank'>
+            $contacts .= "<a class='entry-content contact-tw' title='X (Twitter) von $name' href='$tw' rel='noopener nofollow' target='_blank'>
                             <i class='fab fa-twitter-square'></i>
                         </a>";
         }

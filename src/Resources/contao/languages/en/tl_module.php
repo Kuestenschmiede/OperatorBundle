@@ -37,6 +37,8 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_tags'] = ['Tags', 'Only showcases
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_tag_filter'] = ['Tag filter', 'Activates the tag selection above this showcase list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_tag_filter_selection'] = ['Tag selection', 'Determines the tags that are available in the tag filter.'];
 
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_elements'] = ['Restrict showcases’, ‘Only the selected showcases are loaded. Default: all.'];
+
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_label'] = ['Label of the search field', 'The label of the search box.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter'] = ['Offer filter', 'Select which filters should be available above the list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_placeholder'] = ['Placeholder of the search field', 'Placeholder of the search field.'];

@@ -16,6 +16,7 @@ use Contao\Message;
 use Contao\ModuleModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTagModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 
@@ -151,4 +152,20 @@ class GutesioModuleCallback
     {
         return Controller::getTemplateGroup('mod_gutesio_showcase_carousel_module_');
     }
+
+    public function loadShowcaseOptions(DataContainer $dc)
+    {
+        $models = GutesioDataElementModel::findAll();
+        $options = [];
+        $id = $dc->activeRecord->id;
+
+        foreach ($models as $model) {
+            if ($model->id !== $id) {
+                $options[$model->uuid] = $model->name;
+            }
+        }
+
+        return $options;
+    }
+
 }

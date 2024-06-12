@@ -43,6 +43,8 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_tag_filter'] = ['Tag-Filter', '
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_location_filter'] = ['Ort-Filter', 'Aktiviert die PLZ- und Orteingabe.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_tag_filter_selection'] = ['Tag-Auswahl', 'Bestimmt die Tags, die im Tag-Filter zur Verfügung stehen.'];
 
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_elements'] = ['Schaufenster einschränken', 'Nur die ausgewählten Schaufenster werden berücksichtigt. Standard: alle.'];
+
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_type_filter'] = ['Kategorie-Filter', 'Aktiviert die Kategorie-Auswahl über dieser Schaufensterliste.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_type_filter_selection'] = ['Kategorie-Auswahl', 'Bestimmt die Kategorien, die im Kategorie-Filter zur Verfügung stehen. Wichtig! Ohne Auswahl werden alle Kategorien zur Auswahl gestellt.'];
 
@@ -89,6 +91,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['1'] = 'Schaufenste
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['2'] = 'Schaufenster nach Verzeichnissen laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['3'] = 'Schaufenster nach Tags laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['4'] = 'Schaufensterkategorien ausschließen';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['5'] = 'Schaufenster auswählen';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Alle Inhalte laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Inhalte nach Typ laden';

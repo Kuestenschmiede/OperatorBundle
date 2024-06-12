@@ -11,9 +11,7 @@ namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
-use Contao\Controller;
 use Contao\Database;
-use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -505,13 +503,48 @@ class OfferLoaderService
             $tags = StringUtil::deserialize($this->model->gutesio_child_tag, true);
         }
 
+        $elements = $this->model->gutesio_data_elements ? StringUtil::deserialize($this->model->gutesio_data_elements, true) : [];
+
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
-                $parameters = $tags;
-                $parameters[] = (int) $offset;
-                $parameters[] = $limit;
-                $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                if (count($elements)) {
+                    $parameters = $tags;
+                    $parameters = array_merge($parameters, $elements);
+                    $parameters[] = (int) $offset;
+                    $parameters[] = $limit;
+                    $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                        'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                        (CASE ' . '
+                            WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                            WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                            WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                            WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+                        ELSE NULL END) AS shortDescription, ' . '
+                        tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
+                        tl_gutesio_data_element.uuid as elementId, ' . '
+                        a.uuid as alias, ' . '
+                        tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
+                        tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
+                        FROM tl_gutesio_data_child a ' . '
+                        LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+                        LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+                        JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                        LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
+                        LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
+                        WHERE a.published = 1 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
+                                ' AND elementId ' . C4GUtils::buildInString($elements) .
+                                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
+                    )->execute($parameters)->fetchAllAssoc();
+                } else {
+                    $parameters = $tags;
+                    $parameters[] = (int) $offset;
+                    $parameters[] = $limit;
+                    $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                        'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -533,11 +566,108 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
+                        ' AND elementId ' . C4GUtils::buildInString($elements) .
+                        ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                        ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
+                    )->execute($parameters)->fetchAllAssoc();
+                }
+            } else {
+                if (count($elements)) {
+                    $parameters = [];
+                    $parameters = array_merge($parameters, $elements);
+                    $parameters[] = (int)$offset;
+                    $parameters[] = $limit;
+                    $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                        'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                (CASE ' . '
+                    WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                    WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                    WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                    WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+                ELSE NULL END) AS shortDescription, ' . '
+                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
+                tl_gutesio_data_element.uuid as elementId, ' . '
+                a.uuid as alias, ' . '
+                tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
+                tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
+                FROM tl_gutesio_data_child a ' . '
+                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+                JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
+                WHERE elementId ' . C4GUtils::buildInString($elements) .' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
+                ORDER BY RAND(' . $this->randomSeed . ') LIMIT ' . $offset . ', ' . $limit)
+                        ->execute(
+                            $parameters
+                        )->fetchAllAssoc();
+                } else {
+                    $parameters = [];
+                    $parameters[] = (int)$offset;
+                    $parameters[] = $limit;
+                    $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                        'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                (CASE ' . '
+                    WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                    WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                    WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                    WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+                ELSE NULL END) AS shortDescription, ' . '
+                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
+                tl_gutesio_data_element.uuid as elementId, ' . '
+                a.uuid as alias, ' . '
+                tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
+                tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
+                FROM tl_gutesio_data_child a ' . '
+                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+                JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
+                WHERE a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
+                ORDER BY RAND(' . $this->randomSeed . ') LIMIT ' . $offset . ', ' . $limit)
+                        ->execute(
+                            $parameters
+                        )->fetchAllAssoc();
+                }
+            }
+        } elseif (empty($categories)) {
+            if (count($elements)) {
+                $parameters = $types;
+                $parameters = array_merge($parameters, $elements);
+                $parameters[] = (int) $offset;
+                $parameters[] = $limit;
+                $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                (CASE ' . '
+                    WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                    WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                    WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                    WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+                ELSE NULL END) AS shortDescription, ' . '
+                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
+                tl_gutesio_data_element.uuid as elementId, ' . '
+                a.uuid as alias, ' . '
+                tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
+                tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
+                FROM tl_gutesio_data_child a ' . '
+                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+                JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+                JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                WHERE a.published = 1 AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types) .
+                    ' AND elementId ' . C4GUtils::buildInString($elements) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
                 )->execute($parameters)->fetchAllAssoc();
             } else {
-                $parameters = [];
+                $parameters = $types;
                 $parameters[] = (int) $offset;
                 $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
@@ -560,47 +690,19 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-                LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
-                WHERE a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
-                ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit)
-                    ->execute(
-                        $parameters
-                    )->fetchAllAssoc();
-            }
-        } elseif (empty($categories)) {
-            $parameters = $types;
-            $parameters[] = (int) $offset;
-            $parameters[] = $limit;
-            $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
-                (CASE ' . '
-                    WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
-                    WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
-                    WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
-                    WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
-                ELSE NULL END) AS shortDescription, ' . '
-                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
-                tl_gutesio_data_element.uuid as elementId, ' . '
-                a.uuid as alias, ' . '
-                tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
-                tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
-                FROM tl_gutesio_data_child a ' . '
-                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
-                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
-                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
-                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
-                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
-                JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_type.type ' . C4GUtils::buildInString($types) .
-                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
-            )->execute($parameters)->fetchAllAssoc();
+                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
+                )->execute($parameters)->fetchAllAssoc();
+            }
         } else {
-            $parameters = $categories;
-            $parameters[] = (int) $offset;
-            $parameters[] = $limit;
-            $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-                'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+            if (count($elements)) {
+                $parameters = $categories;
+                $parameters = array_merge($parameters, $elements);
+                $parameters[] = (int)$offset;
+                $parameters[] = $limit;
+                $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
                     WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                     WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -620,9 +722,39 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
                 WHERE a.published = 1 AND a.typeId ' . C4GUtils::buildInString($categories) .
-                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
-                ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
-            )->execute($parameters)->fetchAllAssoc();
+                    ' AND elementId ' . C4GUtils::buildInString($elements) .
+                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT ' . $offset . ', ' . $limit
+                )->execute($parameters)->fetchAllAssoc();
+            } else {
+                $parameters = $categories;
+                $parameters[] = (int) $offset;
+                $parameters[] = $limit;
+                $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
+                    'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+                (CASE ' . '
+                    WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                    WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                    WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                    WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+                ELSE NULL END) AS shortDescription, ' . '
+                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
+                tl_gutesio_data_element.uuid as elementId, ' . '
+                a.uuid as alias, ' . '
+                tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
+                tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
+                FROM tl_gutesio_data_child a ' . '
+                LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+                LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+                LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+                JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                WHERE a.published = 1 AND a.typeId ' . C4GUtils::buildInString($categories) .
+                    ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
+                    ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
+                )->execute($parameters)->fetchAllAssoc();
+            }
         }
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;

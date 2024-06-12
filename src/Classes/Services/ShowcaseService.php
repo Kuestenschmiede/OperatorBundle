@@ -278,6 +278,7 @@ class ShowcaseService
         $limit = 30,
         $typeIds = [],
         $tagIds = [],
+        $elementIds = [],
         $restrictedPostals = []
     ) {
         $sorting = 'random';
@@ -307,7 +308,7 @@ class ShowcaseService
             if ($sorting) {
                 switch ($sorting) {
                     case 'random':
-                        $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds, $restrictedPostals);
+                        $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds, $elementIds, $restrictedPostals);
                         $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIds);
                         $arrIds = array_slice($arrIds, $offset, $limit);
                         if (count($arrIds) > 0) {
@@ -319,7 +320,7 @@ class ShowcaseService
 
                         break;
                     case 'distance':
-                        $arrIdsWithDistances = $this->generateDistanceSortingMap($position, $searchString, $typeIds, $tagIds, $restrictedPostals);
+                        $arrIdsWithDistances = $this->generateDistanceSortingMap($position, $searchString, $typeIds, $tagIds, $elementIds, $restrictedPostals);
                         $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIdsWithDistances);
                         $arrIdsWithDistances = array_slice($arrIdsWithDistances, $offset, $limit);
                         if (count($arrIdsWithDistances) > 0) {
@@ -337,7 +338,7 @@ class ShowcaseService
                 }
             }
             if ($execQuery) {
-                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
+                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
                 if ($elementIdString !== '()' && $searchString) {
                     $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
                     $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::getFilterSQLString() . ')';
@@ -573,9 +574,10 @@ class ShowcaseService
         $searchString,
         $typeIds = [],
         $tagIds = [],
+        $elementIds = [],
         $restrictedPostals = []
     ) : array {
-        $arrIds = $this->loadByTypes($typeIds, $searchString, $tagIds, $restrictedPostals);
+        $arrIds = $this->loadByTypes($typeIds, $searchString, $tagIds, $elementIds, $restrictedPostals);
         if (!$searchString) {
             shuffle($arrIds);
         }
@@ -583,10 +585,12 @@ class ShowcaseService
         return $arrIds;
     }
 
-    private function loadByTypes($typeIds, $searchString = '', $tagIds = [], $restrictedPostals = [])
+    private function loadByTypes($typeIds, $searchString = '', $tagIds = [], $elementIds = [], $restrictedPostals = [])
     {
         $db = Database::getInstance();
-        $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
+
+        $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
+
         if ($searchString !== '' || $elementIdString === '()') {
             // avoid executing broken query when no search string is given
             if ($searchString === '') {
@@ -652,7 +656,8 @@ class ShowcaseService
     private function createIdStringForElements(
         $typeIds,
         $searchString,
-        $tagIds = []
+        $tagIds = [],
+        $elementIds = []
     ) {
         $db = Database::getInstance();
         $idString = '(';
@@ -685,7 +690,14 @@ class ShowcaseService
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
             $arrElements = $db->prepare($sql)->execute($searchString)->fetchAllAssoc();
         } else {
-            $arrElements = $db->prepare($sql)->execute()->fetchAllAssoc();
+            if (count($elementIds)) {
+                $arrElements = [];
+                foreach ($elementIds as $elementId) {
+                    $arrElements[] = ['elementId' => $elementId];
+                }
+            } else {
+                $arrElements = $db->prepare($sql)->execute()->fetchAllAssoc();
+            }
         }
         // filter tags by name
         $arrTags = $tagIds;
@@ -804,9 +816,9 @@ class ShowcaseService
         return array_unique(array_merge($arrTagIds, $arrTypeIds));
     }
 
-    private function generateDistanceSortingMap($userLocation, $searchString, $typeIds = [], $tagIds = [], $restrictedPostals = [])
+    private function generateDistanceSortingMap($userLocation, $searchString, $typeIds = [], $tagIds = [], $elementIds = [], $restrictedPostals = [])
     {
-        $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds);
+        $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
 
         if ($elementIdString !== '()') {
             if ($searchString) {

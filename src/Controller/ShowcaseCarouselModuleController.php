@@ -137,6 +137,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $tmpLimit = 500;
         $typeIds = $this->getTypeConstraintForModule();
         $tagIds = $this->getTagConstraintForModule();
+        $elementIds = $this->getElementConstraintForModule();
         $postals = $this->model->gutesio_data_restrict_postals;
         if ($postals === "") {
             $arrPostals = [];
@@ -149,6 +150,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
             $tmpLimit,
             $typeIds,
             $tagIds,
+            $elementIds,
             $arrPostals
         );
         $isSingleEntry = (count($data) > 1) && (!$data[0]);
@@ -209,6 +211,17 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $mode = intval($model->gutesio_data_mode);
         if ($mode === 3) {
             return StringUtil::deserialize($model->gutesio_data_tags, true);
+        } else {
+            return [];
+        }
+    }
+
+    private function getElementConstraintForModule()
+    {
+        $model = $this->model;
+        $mode = intval($model->gutesio_data_mode);
+        if ($mode === 5) {
+            return StringUtil::deserialize($model->gutesio_data_elements, true);
         } else {
             return [];
         }

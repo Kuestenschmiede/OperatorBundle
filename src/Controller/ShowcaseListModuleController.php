@@ -99,6 +99,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $data = $this->getInitialData();
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->setLanguage($objPage->language);
+
+
+
         $arrFilter = $this->buildFilter();
         $conf->addForm(
             $arrFilter['form'],
@@ -110,6 +113,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 'tags' => []
             ]
         );
+
         unset($data['randKey']);
 
         $conf->addTileList($tileList, $fields, $data);
@@ -134,7 +138,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         //ToDo load by module settings
         $elements = $this->getAllData($this->model);
 
-        if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_data_render_searchHtml) {
+        if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_data_render_searchHtml && $this->model->gutesio_enable_filter) {
             $sc = new SearchConfiguration();
             $sc->addData($this->getSearchLinks($elements), ['link']);
             $template->searchHTML = $sc->getHTML();
@@ -224,6 +228,12 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tagIds = [];
         }
+
+        if ($mode === 5) {
+            $elementIds = $this->getElementConstraintForModule($moduleModel);
+        } else {
+            $elementIds = [];
+        }
         if (count($tagFilterIds) > 0) {
             // temporarily ignore offset & limit when tag filter is active
             $limit = 5000;
@@ -294,7 +304,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $arrResult = [];
             foreach ($arrSearchStrings as $arrSearchString) {
                 $params['filter'] = $arrSearchString;
-                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
                 if (count($partialResult) > 0 && !$partialResult[0]) {
                     // only one element
                     $partialResult = [$partialResult];
@@ -303,7 +313,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
             $data = $arrResult;
         } else {
-            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $restrictedPostals);
+            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
         }
         
         if ($mode === 4) {
@@ -388,6 +398,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $offset = 0;
         $typeIds = [];
         $tagIds = [];
+        $elementIds = [];
         $limit = 1000;
 
         $mode = intval($moduleModel->gutesio_data_mode);
@@ -397,6 +408,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($mode === 3) {
             $tagIds = $this->getTagConstraintForModule($moduleModel);
         }
+        if ($mode === 5) {
+            $elementIds = $this->getElementConstraintForModule($moduleModel);
+        }
+
 
         try {
             if (!$moduleModel->gutesio_data_restrict_postals || empty($moduleModel->gutesio_data_restrict_postals)) {
@@ -413,7 +428,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
 
         $params['sorting'] = false; //dummy value
-        $data = $this->showcaseService->loadDataChunk($params, $offset, $limit, $typeIds, $tagIds, $restrictedPostals);
+
+        $data = $this->showcaseService->loadDataChunk($params, $offset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
 
         if ($mode === 4) {
             $tmpData = [];
@@ -495,6 +511,17 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             return [];
         }
         $tagUuids = StringUtil::deserialize($moduleModel->gutesio_data_tags, true);
+
+        return $tagUuids;
+    }
+
+    private function getElementConstraintForModule(ModuleModel $moduleModel)
+    {
+        $mode = intval($moduleModel->gutesio_data_mode);
+        if ($mode !== 5) {
+            return [];
+        }
+        $tagUuids = StringUtil::deserialize($moduleModel->gutesio_data_elements, true);
 
         return $tagUuids;
     }
@@ -655,97 +682,106 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $arrFilter = [];
 
-        if ($this->model->gutesio_enable_ext_filter === '1') {
-            $form = new ToggleableForm(new Form());
-            $form->setMethod('GET');
-            $form->setName("filter_" . $this->model->id);
-            $form->setContainerRow(true);
-            $form->setToggleableBaseClass('c4g-listfilter');
-            $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
-            $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
-            $form->setToggleableOnClass('react-c4g-listfilter-opened');
-            $form->setHidden($this->model->gutesio_enable_filter !== '1');
+        if ($this->model->gutesio_enable_filter === '1') {
+            if ($this->model->gutesio_enable_ext_filter === '1') {
+                $form = new ToggleableForm(new Form());
+                $form->setMethod('GET');
+                $form->setName("filter_" . $this->model->id);
+                $form->setContainerRow(true);
+                $form->setToggleableBaseClass('c4g-listfilter');
+                $form->setToggleableOnLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['close_filter']);
+                $form->setToggleableOffLabel($GLOBALS['TL_LANG']['operator_showcase_list']['filter']['open_filter']);
+                $form->setToggleableOnClass('react-c4g-listfilter-opened');
+                $form->setHidden($this->model->gutesio_enable_filter !== '1');
+            } else {
+                $form = new Form();
+                $form->setMethod('POST');
+                $form->setName("filter_" . $this->model->id);
+                $form->setContainerRow(true);
+                $form->setClass('c4g-listfilter-default');
+                $form->setHidden($this->model->gutesio_enable_filter !== '1');
+            }
+
+            $arrFilter['form'] = $form;
+
+            $fields = [];
+            $textFilter = new TextFormField();
+            $textFilter->setName("filter");
+            $textFilter->setLabel($this->languageRefsFrontend['filter']['searchfilter']['label']);
+            $textFilter->setClassName("form-group");
+            $textFilter->setPlaceholder($this->languageRefs['filter_placeholder']);
+            $textFilter->setWrappingDiv(true);
+            $textFilter->setWrappingDivClass("form-view__searchinput");
+            $textFilter->setCache(true); //ToDo module switch
+            $textFilter->setEntryPoint($this->model->id);
+            $fields[] = $textFilter;
+
+            if ($this->model->gutesio_enable_location_filter) {
+                $locationFilter = new TextFormField();
+                $locationFilter->setName("location");
+                $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label']);
+                $locationFilter->setClassName("form-view__location-filter");
+                $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
+                $locationFilter->setCache(true);
+                $locationFilter->setEntryPoint($this->model->id);
+                $fields[] = $locationFilter;
+            }
+
+            $dataMode = $this->model->gutesio_data_mode;
+            $types = $dataMode == '1' ? unserialize($this->model->gutesio_data_type) : [];
+            $blockedTypes = $dataMode == '4' ? unserialize($this->model->gutesio_data_blocked_types) : [];
+
+            if ($this->model->gutesio_enable_type_filter) {
+                $selectedTypes = unserialize($this->model->gutesio_type_filter_selection);
+                $typeField = new SelectFormField();
+                $typeField->setName("types");
+                $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
+                $typeField->setClassName("form-view__type-filter");
+                $typeField->setPlaceholder("Kategorie auswählen");
+                $typeField->setOptions($this->getTypeOptions($selectedTypes ?: $types, $blockedTypes));
+                $typeField->setMultiple(true);
+                $typeField->setCache(true); //ToDo module switch
+                $typeField->setEntryPoint($this->model->id);
+                $fields[] = $typeField;
+            }
+
+            if ($this->model->gutesio_enable_tag_filter) {
+                $tagFilter = new MultiCheckboxWithImageLabelFormField();
+                $tagFilter->setName("tags");
+                $tagFilter->setLabel('');//$this->languageRefsFrontend['filter']['tagfilter']['label']);
+                $tagFilter->setClassName("form-view__tag-filter");
+                $tagFilter->setOptions($this->getTagOptions());
+                $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");
+                $tagFilter->setCache(true); //ToDo module switch
+                $tagFilter->setEntryPoint($this->model->id);
+                $fields[] = $tagFilter;
+            }
+
+            $sortFilter = new RadioGroupFormField();
+            $sortFilter->setName("sorting");
+            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
+            $sortFilter->setOptions([
+                'random' => $this->languageRefs['filter']['sorting']['random'],
+                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+                'tstamp_desc' => $this->languageRefs['filter']['sorting']['tstamp_desc'],
+                'distance' => $this->languageRefs['filter']['sorting']['distance']
+            ]);
+            $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
+            $sortFilter->setChecked($this->model->gutesio_initial_sorting);
+            $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
+            $sortFilter->setCache(true); //ToDo module switch
+            $sortFilter->setEntryPoint($this->model->id);
+            $fields[] = $sortFilter;
         } else {
             $form = new Form();
             $form->setMethod('POST');
             $form->setName("filter_" . $this->model->id);
             $form->setContainerRow(true);
             $form->setClass('c4g-listfilter-default');
+            $form->setHidden($this->model->gutesio_enable_filter !== '1');
+            $arrFilter['form'] = $form;
         }
-
-        $arrFilter['form'] = $form;
-
-        $fields = [];
-        $textFilter = new TextFormField();
-        $textFilter->setName("filter");
-        $textFilter->setLabel($this->languageRefsFrontend['filter']['searchfilter']['label']);
-        $textFilter->setClassName("form-group");
-        $textFilter->setPlaceholder($this->languageRefs['filter_placeholder']);
-        $textFilter->setWrappingDiv(true);
-        $textFilter->setWrappingDivClass("form-view__searchinput");
-        $textFilter->setCache(true); //ToDo module switch
-        $textFilter->setEntryPoint($this->model->id);
-        $fields[] = $textFilter;
-
-        if ($this->model->gutesio_enable_location_filter) {
-            $locationFilter = new TextFormField();
-            $locationFilter->setName("location");
-            $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label']);
-            $locationFilter->setClassName("form-view__location-filter");
-            $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
-            $locationFilter->setCache(true);
-            $locationFilter->setEntryPoint($this->model->id);
-            $fields[] = $locationFilter;
-        }
-
-        $dataMode = $this->model->gutesio_data_mode;
-        $types = $dataMode == '1' ? unserialize($this->model->gutesio_data_type) : [];
-        $blockedTypes = $dataMode == '4' ? unserialize($this->model->gutesio_data_blocked_types) : [];
-
-        if ($this->model->gutesio_enable_type_filter) {
-            $selectedTypes = unserialize($this->model->gutesio_type_filter_selection);
-            $typeField = new SelectFormField();
-            $typeField->setName("types");
-            $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
-            $typeField->setClassName("form-view__type-filter");
-            $typeField->setPlaceholder("Kategorie auswählen");
-            $typeField->setOptions($this->getTypeOptions($selectedTypes ?: $types, $blockedTypes));
-            $typeField->setMultiple(true);
-            $typeField->setCache(true); //ToDo module switch
-            $typeField->setEntryPoint($this->model->id);
-            $fields[] = $typeField;
-        }
-
-        if ($this->model->gutesio_enable_tag_filter) {
-            $tagFilter = new MultiCheckboxWithImageLabelFormField();
-            $tagFilter->setName("tags");
-            $tagFilter->setLabel('');//$this->languageRefsFrontend['filter']['tagfilter']['label']);
-            $tagFilter->setClassName("form-view__tag-filter");
-            $tagFilter->setOptions($this->getTagOptions());
-            $tagFilter->setOptionClass("tag-filter-item showcase tag-filter__filter-item");
-            $tagFilter->setCache(true); //ToDo module switch
-            $tagFilter->setEntryPoint($this->model->id);
-            $fields[] = $tagFilter;
-        }
-
-        $sortFilter = new RadioGroupFormField();
-        $sortFilter->setName("sorting");
-        $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
-        $sortFilter->setOptions([
-            'random' => $this->languageRefs['filter']['sorting']['random'],
-            'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
-            'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
-            'tstamp_desc' => $this->languageRefs['filter']['sorting']['tstamp_desc'],
-            'distance' => $this->languageRefs['filter']['sorting']['distance']
-        ]);
-        $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
-        $sortFilter->setChecked($this->model->gutesio_initial_sorting);
-        $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
-        $sortFilter->setCache(true); //ToDo module switch
-        $sortFilter->setEntryPoint($this->model->id);
-        $fields[] = $sortFilter;
-        
-
 
         // module id field so the id gets transferred when loading data async
         $moduleId = new HiddenFormField();
@@ -758,15 +794,22 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $fields[] = $randKeyField;
 
         $arrFilter['fields'] = $fields;
-
         $buttons = [];
-        $filterButton = new FilterButton();
-        $filterButton->setTargetComponent("tiles");
-        $filterButton->setAsyncUrl(self::FILTER_ROUTE);
-        $filterButton->setCaption($this->languageRefs['filter']['apply_filter']);
-        $filterButton->setClassName("c4g-btn c4g-btn-filter");
-        $filterButton->setOuterClass("c4g-btn-filter-wrapper");
-        $buttons[] = $filterButton;
+        if ($this->model->gutesio_enable_filter === '1') {
+            $filterButton = new FilterButton();
+            $filterButton->setTargetComponent("tiles");
+            $filterButton->setAsyncUrl(self::FILTER_ROUTE);
+            $filterButton->setCaption($this->languageRefs['filter']['apply_filter']);
+            $filterButton->setClassName("c4g-btn c4g-btn-filter");
+            $filterButton->setOuterClass("c4g-btn-filter-wrapper");
+            $buttons[] = $filterButton;
+        } else {
+            $filterButton = new FilterButton();
+            //$filterButton->setTargetComponent("tiles");
+            //$filterButton->setAsyncUrl(self::FILTER_ROUTE);
+            $filterButton->setClassName('hidden');
+            $buttons[] = $filterButton;
+        }
         $arrFilter['buttons'] = $buttons;
 
         return $arrFilter;

@@ -258,6 +258,10 @@
   @extend .c4g-btn-primary;
 }
 
+.c4g-listfilter-default .hidden {
+  visibility: hidden;
+}
+
 .form-view__tag-filter {
   display: flex;
   align-items: center;

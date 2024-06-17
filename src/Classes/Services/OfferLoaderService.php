@@ -1593,7 +1593,7 @@ class OfferLoaderService
                             $eventData['appointmentUponAgreement'] = '';
                         }
 
-                        $elementModel = GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']);
+                        $elementModel = $eventData['locationElementId'] ? GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']) : null;
                         if ($elementModel !== null) {
                             $eventData['locationElementName'] = html_entity_decode($elementModel->name);
                         } else {
@@ -1668,44 +1668,48 @@ class OfferLoaderService
                 $vendor = $database->prepare(
                     'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
                 )->execute($vendorUuid['elementId'])->fetchAssoc();
-                $childRows[$key]['elementName'] = $vendor['name'] ? html_entity_decode($vendor['name']) : '';
 
-                //hotfix special char
-                $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
+                if ($vendor && count($vendor) && $vendor['name'] && $vendor['alias']) {
+                    $childRows[$key]['elementName'] = $vendor['name'] ? html_entity_decode($vendor['name']) : '';
 
-                $objSettings = GutesioOperatorSettingsModel::findSettings();
-                $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
-                if ($elementPage !== null) {
-                    $url = $elementPage->getAbsoluteUrl();
-                    if ($url) {
-                        if (C4GUtils::endsWith($url, '.html')) {
-                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
-                        } else {
-                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                    //hotfix special char
+                    $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
+
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
+                    if ($elementPage !== null) {
+                        $url = $elementPage->getAbsoluteUrl();
+                        if ($url) {
+                            $href = '';
+                            if (C4GUtils::endsWith($url, '.html')) {
+                                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                            } else if ($vendor['alias']) {
+                                $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                            }
+                            $childRows[$key]['elementLink'] = $href ?: '';
                         }
-                        $childRows[$key]['elementLink'] = $href ?: '';
                     }
-                }
-                $childPage = match ($row['type']) {
-                    'product' => PageModel::findByPk($objSettings->productDetailPage),
-                    'jobs' => PageModel::findByPk($objSettings->jobDetailPage),
-                    'event' => PageModel::findByPk($objSettings->eventDetailPage),
-                    'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
-                    'service' => PageModel::findByPk($objSettings->serviceDetailPage),
-                    'person' => PageModel::findByPk($objSettings->personDetailPage),
-                    'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
-                    default => null,
-                };
+                    $childPage = match ($row['type']) {
+                        'product' => PageModel::findByPk($objSettings->productDetailPage),
+                        'jobs' => PageModel::findByPk($objSettings->jobDetailPage),
+                        'event' => PageModel::findByPk($objSettings->eventDetailPage),
+                        'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
+                        'service' => PageModel::findByPk($objSettings->serviceDetailPage),
+                        'person' => PageModel::findByPk($objSettings->personDetailPage),
+                        'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
+                        default => null,
+                    };
 
-                if ($childPage !== null) {
-                    $url = $childPage->getAbsoluteUrl();
-                    if ($url) {
-                        if (C4GUtils::endsWith($url, '.html')) {
-                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
-                        } else {
-                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                    if ($childPage !== null) {
+                        $url = $childPage->getAbsoluteUrl();
+                        if ($url) {
+                            if (C4GUtils::endsWith($url, '.html')) {
+                                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                            } else {
+                                $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                            }
+                            $childRows[$key]['childLink'] = $href ?: '';
                         }
-                        $childRows[$key]['childLink'] = $href ?: '';
                     }
                 }
             } else {

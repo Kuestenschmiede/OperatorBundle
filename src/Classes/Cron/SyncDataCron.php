@@ -21,7 +21,7 @@ class SyncDataCron
         $db = Database::getInstance();
 
         $c4gSettings = $db->prepare('SELECT * FROM tl_c4g_settings')->execute()->fetchAssoc();
-        if ($c4gSettings['syncDataAutomaticly'] == 1) {
+        if (!key_exists('disableImports',$c4gSettings)  && $c4gSettings['syncDataAutomaticly'] == 1) {
             $importData = $db->prepare('SELECT * FROM tl_c4g_import_data WHERE importRunning=1')->execute()->fetchAllAssoc();
             foreach ($importData as $import) {
                 $db->prepare("UPDATE tl_c4g_import_data SET tstamp=?, importRunning='' WHERE tstamp<=? AND importRunning='1' AND id=?")

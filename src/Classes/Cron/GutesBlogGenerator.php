@@ -12,29 +12,32 @@ class GutesBlogGenerator
 {
     public function onHourly(): void
     {
-        $db = Database::getInstance();
-        $currentDate = strtotime('today');
+        $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
+        if (!isset($objSettings->disableImports)) {
+            $db = Database::getInstance();
+            $currentDate = strtotime('today');
 
-        $subscriptionTypes = $this->checkSubscriptions($db);
-        $gutesNewsArchives = $this->checkArchives($db);
+            $subscriptionTypes = $this->checkSubscriptions($db);
+            $gutesNewsArchives = $this->checkArchives($db);
 
-        $gutesNews = $this->getGutesNews($db, $currentDate/*, $categories*/);
+            $gutesNews = $this->getGutesNews($db, $currentDate/*, $categories*/);
 
-        //todo add multiple gutes type for each subType (pwa)
-        if ($gutesNewsArchives) {
-            //todo here we can add different intervals for the pn
-            foreach ($gutesNewsArchives as $archive) {
-                $archiveSubs = unserialize($archive['subscriptionTypes']);
-                foreach ($archiveSubs as $archiveSub) {
-                    foreach ($subscriptionTypes as $subscriptionType) {
-                        $gutesCat = unserialize($subscriptionType['gutesioEventTypes']) ?: $subscriptionType['gutesioEventTypes'] ?: '';
-                        if (intval($archiveSub) == $subscriptionType['id'])  {
-                            $this->addGutesNews($db, $archive, $currentDate, $gutesCat, $gutesNews);
+            //todo add multiple gutes type for each subType (pwa)
+            if ($gutesNewsArchives) {
+                //todo here we can add different intervals for the pn
+                foreach ($gutesNewsArchives as $archive) {
+                    $archiveSubs = unserialize($archive['subscriptionTypes']);
+                    foreach ($archiveSubs as $archiveSub) {
+                        foreach ($subscriptionTypes as $subscriptionType) {
+                            $gutesCat = unserialize($subscriptionType['gutesioEventTypes']) ?: $subscriptionType['gutesioEventTypes'] ?: '';
+                            if (intval($archiveSub) == $subscriptionType['id']) {
+                                $this->addGutesNews($db, $archive, $currentDate, $gutesCat, $gutesNews);
+                            }
                         }
                     }
-                }
 
-                $this->cleanArchive($archive, $currentDate, $db);
+                    $this->cleanArchive($archive, $currentDate, $db);
+                }
             }
         }
     }

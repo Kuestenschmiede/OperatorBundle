@@ -2,6 +2,7 @@
 
 namespace gutesio\OperatorBundle\Classes\Listener;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\MapsBundle\Classes\Events\PerformSearchEvent;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Resources\contao\modules\api\SearchApi;
@@ -31,25 +32,83 @@ class PerformSearchListener
         $profileId = $event->getProfileId();
         $arrParams = $event->getArrParams();
         $response = $event->getResponse();
+
+        $resitrictedPostal = false;
+
+        if ($arrParams && $arrParams['q']) {
+            $pattern = '/[0-9]{5}/';
+            preg_match($pattern, $arrParams['q'], $matches);
+            $foundPostal = false;
+            foreach ($matches as $match) {
+                $restrictedPostal = $match;
+                $foundPostal = true;
+                break;
+            }
+        }
+
         $profile = C4gMapProfilesModel::findByPk($profileId);
         if ($profile && $profile->ownGeosearch) {
-            $arrColums = [
-                ['name' => 'name', 'weight' => 50],
-                ['name' => 'description', 'weight' => 20],
-                ['name' => 'contactName', 'weight' => 20],
-                ['name' => 'contactStreet', 'weight' => 5],
-                ['name' => 'contactCity', 'weight' => 5],
-                ['name' => 'locationStreet', 'weight' => 5],
-                ['name' => 'locationCity', 'weight' => 5],
-                ['name' => 'locationZip', 'weight' => 5],
-                ['name' => 'tl_gutesio_data_type.name', 'weight' => 40],
-                ['name' => 'tl_gutesio_data_type.extendedSearchTerms', 'weight' => 40],
-            ];
+            if ($resitrictedPostal) {
+                $arrColums = [
+                    ['name' => 'name', 'weight' => 50],
+                    ['name' => 'description', 'weight' => 20],
+                    ['name' => 'contactName', 'weight' => 20],
+                    ['name' => 'contactStreet', 'weight' => 5],
+                    ['name' => 'contactCity', 'weight' => 5],
+                    ['name' => 'locationStreet', 'weight' => 10],
+                    ['name' => 'locationCity', 'weight' => 50],
+                    ['name' => 'tl_gutesio_data_type.name', 'weight' => 40],
+                    ['name' => 'tl_gutesio_data_type.extendedSearchTerms', 'weight' => 40],
+                ];
+            } else {
+                $arrColums = [
+                    ['name' => 'name', 'weight' => 50],
+                    ['name' => 'description', 'weight' => 20],
+                    ['name' => 'contactName', 'weight' => 20],
+                    ['name' => 'contactStreet', 'weight' => 5],
+                    ['name' => 'contactCity', 'weight' => 5],
+                    ['name' => 'locationStreet', 'weight' => 10],
+                    ['name' => 'locationCity', 'weight' => 50],
+                    ['name' => 'locationZip', 'weight' => 50],
+                    ['name' => 'tl_gutesio_data_type.name', 'weight' => 40],
+                    ['name' => 'tl_gutesio_data_type.extendedSearchTerms', 'weight' => 40],
+                ];
+            }
+
             $arrJoins = [
                 ['table' => "tl_gutesio_data_element_type", 'columnLeft' => "tl_gutesio_data_element.uuid", 'columnRight' =>"tl_gutesio_data_element_type.elementId"],
                 ['table' => "tl_gutesio_data_type", 'columnLeft' => "tl_gutesio_data_element_type.typeId", 'columnRight' =>"tl_gutesio_data_type.uuid"],
             ];
-            $whereClause = "(releaseType = 'internal' OR releaseType = 'interregional' OR releaseType = '')";
+
+            $resitrictedPostal = false;
+
+            if ($arrParams['q']) {
+                $pattern = '/[0-9]{5}/';
+                preg_match($pattern, $arrParams['q'], $matches);
+                foreach ($matches as $match) {
+                    $restrictedPostal = $match;
+                    $pos = strpos($arrParams['q'], $match);
+                    if ($pos !== false) {
+                        if ($pos == 0) {
+                            $arrParams['q'] = trim(substr($arrParams['q'],5));
+                        } else {
+                            if ($pos < strlen($arrParams['q'])-1) {
+                                $arrParams['q'] = trim(substr($arrParams['q'],0,$pos)).' '.trim(substr($arrParams['q'],$pos+5));
+                            } else {
+                                $arrParams['q'] = trim(substr($arrParams['q'],0,$pos));
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+
+            if ($restrictedPostal) {
+                $whereClause = "((releaseType = 'internal' OR releaseType = 'interregional' OR 'releaseType' = '') AND (tl_gutesio_data_element.locationZip LIKE '%" . $restrictedPostal ."%'))";
+            } else {
+                $whereClause = "(releaseType = 'internal' OR releaseType = 'interregional' OR 'releaseType' = '')";
+            }
+
             $arrDBResult = SearchApi::searchDatabase($arrParams['q'], $arrColums, 'tl_gutesio_data_element', $this->Database, $whereClause, $arrJoins);
             $arrResults = [];
             foreach ($arrDBResult as $dBResult) {

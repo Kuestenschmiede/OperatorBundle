@@ -273,7 +273,7 @@ class LoadLayersListener
     {
         $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type 
                                         INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
-                                        WHERE typeElem.elementId = ? AND typeElem.rank = 0';
+                                        WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1';'//AND typeElem.rank = 0';
         $objLocstyle = $this->Database->prepare($strQueryLocstyle)->execute($objElement['uuid'])->fetchAssoc();
         $strQueryTags = 'SELECT tag.uuid, tag.imageCDN, tag.name FROM tl_gutesio_data_tag AS tag
                                         INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid

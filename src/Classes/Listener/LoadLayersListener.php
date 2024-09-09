@@ -38,6 +38,16 @@ class LoadLayersListener
         $this->Database = Database::getInstance();
         $this->strPublished = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
     }
+
+    /**
+     * Handles the loading of layers and loads elements based on the event data.
+     *
+     * @param LoadLayersEvent $event The event that triggered the layer loading.
+     * @param string $eventName The name of the event.
+     * @param EventDispatcherInterface $eventDispatcher The event dispatcher interface.
+     *
+     * @return void
+     */
     public function onLoadLayersLoadElement(
         LoadLayersEvent $event,
         $eventName,
@@ -102,6 +112,14 @@ class LoadLayersListener
         $dataLayer['childs'][] = $this->addArea($elem, $dataLayer);
         $event->setLayerData($dataLayer);
     }
+
+    /**
+     * Handles the LoadLayersEvent and processes layer data based on specific conditions.
+     *
+     * @param LoadLayersEvent $event The event instance containing layer data.
+     * @param string $eventName The name of the event.
+     * @param EventDispatcherInterface $eventDispatcher The event dispatcher interface.
+     */
     public function onLoadLayersLoadPart(
         LoadLayersEvent $event,
         $eventName,
@@ -132,6 +150,7 @@ class LoadLayersListener
             $objTypes = GutesioDataTypeModel::findAll($arrOptions);
         }
         $types = [];
+        $sameElements = [];
         foreach ($objTypes as $objType) {
             $type = $objType->row();
             $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
@@ -143,15 +162,16 @@ class LoadLayersListener
             $elements = [];
             foreach ($arrElems as $elem) {
                 $childElements = [];
+                $sameElements[$elem['uuid']][] = $elem;
                 if ($elem['showcaseIds'] && $type['showLinkedElements']) {
                     foreach (unserialize($elem['showcaseIds']) as $showcaseId) {
                         $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
                                                 WHERE elem.uuid = ?' . $strPublishedElem;
                         $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
-                        $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true);
+                        $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
                     }
                 }
-                $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true);
+                $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
             }
             $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
             $singleType = [
@@ -169,6 +189,14 @@ class LoadLayersListener
         $dataLayer['childs'] = $types;
         $event->setLayerData($dataLayer);
     }
+
+    /**
+     * Handles the loading of layer directories during a LoadLayersEvent.
+     *
+     * @param LoadLayersEvent $event The event triggering the load action.
+     * @param string $eventName The name of the event.
+     * @param EventDispatcherInterface $eventDispatcher The event dispatcher interface.
+     */
     public function onLoadLayersLoadDirectories(
         LoadLayersEvent $event,
         $eventName,
@@ -201,6 +229,7 @@ class LoadLayersListener
             $objDirectories = GutesioDataDirectoryModel::findAll($arrOptions);
         }
         $directories = [];
+        $sameElements = [];
         foreach ($objDirectories as $directory) {
             $strQueryTypes = 'SELECT type.* FROM tl_gutesio_data_type AS type
                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
@@ -221,15 +250,16 @@ class LoadLayersListener
                 $elements = [];
                 foreach ($arrElems as $elem) {
                     $childElements = [];
+                    $sameElements[$elem['uuid']][] = $elem;
                     if ($elem['showcaseIds'] && $type['showLinkedElements']) {
                         foreach (unserialize($elem['showcaseIds']) as $showcaseId) {
                             $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
                                                 WHERE elem.uuid = ?' . $strPublishedElem;
                             $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
-                            $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true);
+                            $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
                         }
                     }
-                    $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true);
+                    $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
                 }
                 $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
                 $singleType = [
@@ -269,7 +299,20 @@ class LoadLayersListener
         $event->setLayerData($dataLayer);
     }
 
-    private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false)
+    /**
+     * Creates an element for the data layer based on the given parameters.
+     *
+     * @param array $objElement The object element data.
+     * @param array $dataLayer The data layer details.
+     * @param array $parent The parent element data.
+     * @param array $childElements The child elements associated with the parent element.
+     * @param bool $withPopup Flag indicating whether to include popup information.
+     * @param bool $layerStyle Flag indicating whether to use the layer style from dataLayer.
+     * @param array $sameElements List of elements that are the same.
+     *
+     * @return array The constructed element with its properties.
+     */
+    private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false, $sameElements = [])
     {
         $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type 
                                         INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
@@ -297,10 +340,12 @@ class LoadLayersListener
             ];
         }
 
+        $link = count($sameElements) > 1;
+
         $element = [
             'pid' => $parent['uuid'],
             'id' => $objElement['uuid'],
-            'key' => $objElement['uuid'],
+            'key' => $objElement['uuid'].$parent['uuid'],
             'type' => 'GeoJSON',
             'tags' => $tags,
             'childs' => $childElements,
@@ -311,6 +356,7 @@ class LoadLayersListener
             'hideInStarboard' => false,
             'zoomTo' => true,
         ];
+
         if (($objElement['geox'] && $objElement['geoy']) || $objElement['geojson']) {
             $properties = array_merge([
                 'projection' => 'EPSG:4326',
@@ -363,6 +409,19 @@ class LoadLayersListener
 
         return $element;
     }
+
+    /**
+     * Adds an area to the map layer based on surrounding postal codes and location style from database.
+     *
+     * Retrieves surrounding postal codes associated with the given element and constructs an Overpass API query
+     * to fetch geospatial data. Sends the query to the Overpass API and processes the response to generate
+     * a map area configuration.
+     *
+     * @param array $objElement The element object containing necessary identifiers.
+     * @param array $layer The map layer configuration.
+     *
+     * @return array|bool Returns the map area configuration or false if no surrounding postal codes are found.
+     */
     private function addArea ($objElement, $layer) {
         $settings = C4gMapSettingsModel::findOnly();
         $url = $settings->con4gisIoUrl;

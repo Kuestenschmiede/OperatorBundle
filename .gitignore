@@ -20,3 +20,9 @@ node_modules
 _backup*
 
 package-lock.json
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/

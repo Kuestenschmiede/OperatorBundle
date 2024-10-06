@@ -13,6 +13,6 @@ class LoadMapResourcesListener
         $eventName,
         EventDispatcherInterface $eventDispatcher
     ) {
-        ResourceLoader::loadJavaScriptResource('/bundles/gutesiooperator/dist/js/badge_map.js|async|static');
+        ResourceLoader::loadJavaScriptResource('/bundles/gutesiooperator/dist/js/badge_map.js|static');
     }
 }

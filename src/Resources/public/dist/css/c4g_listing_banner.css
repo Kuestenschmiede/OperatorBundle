@@ -323,7 +323,8 @@ template {
   min-height: 100vh
 }
 .banner-slide {
-  height: 100vh
+  /*height: 100vh*/
+  height: calc(100vh - 54px);
 }
 a {
   color: transparent
@@ -436,7 +437,8 @@ a:hover {
     color: #003764;
     width: 100%;
     text-align: left;
-    padding-bottom: 1.5rem
+    padding-bottom: 1.5rem;
+    padding-left: 10px
   }
 }
 @media screen and (orientation:portrait) {

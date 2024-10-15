@@ -3,6 +3,7 @@
 } ?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
 <section class="banner-section">
     <div class="banner__tns-container">
@@ -104,7 +105,7 @@
                         </div>
                     </div>
             </a>
-            <div class="banner__footer-sub">
+            <!--<div class="banner__footer-sub">
                 Powered by <a href="https://nordsee.digital/">Nordsee Digital</a>
                 <?php if ($loadlazy): ?>
                     <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
@@ -114,11 +115,22 @@
                          alt="nordsee.digital Logo">
                 <?php endif; ?>
 
-            </div>
+            </div>-->
         </div>
 
     </div>
     <?php endforeach; ?>
+    </div>
+    <div class="banner__footer-sub">
+        Powered by <a href="https://nordsee.digital/">Nordsee Digital</a>
+        <?php if ($loadlazy): ?>
+            <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
+                 alt="nordsee.digital Logo">
+        <?php else: ?>
+            <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
+                 alt="nordsee.digital Logo">
+        <?php endif; ?>
+
     </div>
 </section>
 
@@ -130,7 +142,10 @@
     mode: 'gallery',
     items: 1,
     slideBy: 'page',
-    speed: 5000,
+    animateIn: 'animate__backInLeft',
+    animateOut: 'animate__backOutRight',
+    //speed: 5000,
+    speed: 2000,
       <?php if ($loadlazy): ?>
     lazyload: true,
     lazyloadSelector: "banner__image-item",

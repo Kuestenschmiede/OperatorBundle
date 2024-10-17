@@ -14,6 +14,11 @@
             $slideClass = " slide-element";
         }
         $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
+
+        // Image Orientation
+        list($width, $height) = getimagesize($item['image']['src']);
+        $orientation = ( $width != $height ? ( $width > $height ? 'landscape' : 'portrait' ) : 'square' );
+
         ?>
         <div class="banner-slide">
             <a href="<?= $item['href'] ?>">
@@ -61,10 +66,10 @@
 
                 <div class="banner__image-wrapper<?= $slideClass ?>">
                     <?php if ($loadlazy): ?>
-                        <img class="banner__image-item" data-src="<?= $item['image']['src'] ?>"
+                        <img class="banner__image-item <?= $orientation ?>" data-src="<?= $item['image']['src'] ?>"
                              alt="<?= $item['image']['alt'] ?>">
                     <?php else: ?>
-                        <img class="banner__image-item" src="<?= $item['image']['src'] ?>"
+                        <img class="banner__image-item <?= $orientation ?>" src="<?= $item['image']['src'] ?>"
                              alt="<?= $item['image']['alt'] ?>">
                     <?php endif; ?>
                 </div>

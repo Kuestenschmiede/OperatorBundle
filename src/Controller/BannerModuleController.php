@@ -133,6 +133,12 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
                 break;
             }
+            case 5: {
+                $elementUuidArr = StringUtil::deserialize($model->gutesio_data_elements, true);
+                $elementUuids = implode("','",$elementUuidArr);
+                $arrElements = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE displayComply=1 AND uuid IN ('" . $elementUuids . "')")->execute()->fetchAllAssoc();
+                break;
+            }
             default: {
                 $arrElements = [];
                 break;

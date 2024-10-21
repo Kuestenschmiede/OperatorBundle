@@ -110,17 +110,6 @@
                         </div>
                     </div>
             </a>
-            <!--<div class="banner__footer-sub">
-                Powered by <a href="https://nordsee.digital/">Nordsee Digital</a>
-                <?php if ($loadlazy): ?>
-                    <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
-                         alt="nordsee.digital Logo">
-                <?php else: ?>
-                    <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
-                         alt="nordsee.digital Logo">
-                <?php endif; ?>
-
-            </div>-->
         </div>
 
     </div>
@@ -128,14 +117,8 @@
     </div>
     <div class="banner__footer-sub">
         Powered by <a href="https://nordsee.digital/">Nordsee Digital</a>
-        <?php if ($loadlazy): ?>
-            <img class="banner__footer-sub-image" data-src="bundles/gutesiooperator/img/gutes_digital.svg"
-                 alt="nordsee.digital Logo">
-        <?php else: ?>
-            <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
-                 alt="nordsee.digital Logo">
-        <?php endif; ?>
-
+        <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
+             alt="nordsee.digital Logo">
     </div>
 </section>
 

@@ -948,14 +948,6 @@
                                         </div>
                                     <?php endif; ?>
 
-                                    <?php if (isset($data->twitter) && !empty($data->twitter)): ?>
-                                        <div class="social-media-link c4g-icon-wrapper icon-twitter">
-                                            <a href="<?= $data->twitter ?>" target="_blank"
-                                               rel="nofollow noopener"
-                                               title="Twitter">Twitter</a>
-                                        </div>
-                                    <?php endif; ?>
-
                                     <?php if (isset($data->whatsapp) && !empty($data->whatsapp)): ?>
                                         <div class="social-media-link c4g-icon-wrapper icon-whatsapp"><a
                                                     href="<?= $data->whatsapp ?>" target="_blank"
@@ -1283,7 +1275,6 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                     $shareEnvRequest = \Contao\Controller::replaceInsertTags("{{env::request}}");
 
                     $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
-                    $shareTwitterUrl = "http://www.twitter.com/share?url=" . $shareEnvUrl . $shareEnvRequest;
                     $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;
                     $shareEmailUrl = "mailto:?subject=&body=Schau Dir das folgende Schaufenster an: " . $shareEnvUrl . $shareEnvRequest;
 
@@ -1293,10 +1284,6 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
                            title="<?= $data->name; ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                        <a rel="noopener" href="<?= $shareTwitterUrl ?>"
-                           title="<?= $data->name; ?>"
-                           class="nav-link btn btn-block btn-light share-modal__link"
-                           target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
                         <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>

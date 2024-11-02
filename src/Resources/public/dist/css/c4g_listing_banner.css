@@ -115,7 +115,7 @@ a {
   background-color: transparent
 }
 a:hover {
-  color: #0056b3;
+  color: rgb(0,86.1,178.5);
   text-decoration: underline
 }
 a:not([href]):not([class]) {
@@ -323,8 +323,7 @@ template {
   min-height: 100vh
 }
 .banner-slide {
-  /*height: 100vh*/
-  height: calc(100vh - 54px);
+  height: calc(100vh - 54px)
 }
 a {
   color: transparent
@@ -360,7 +359,7 @@ a:hover {
     position: absolute;
     width: 50%;
     right: 150px;
-    top: 25%
+    bottom: 30%
   }
   .banner__text-wrapper.slide-offer .text-wrapper-inner {
     background-color: rgba(255,255,255,.85);

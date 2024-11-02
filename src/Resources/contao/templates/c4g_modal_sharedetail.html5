@@ -18,7 +18,6 @@
                 $shareEnvRequest = \Contao\Controller::replaceInsertTags("{{env::request}}");
 
                 $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
-                $shareTwitterUrl = "http://www.twitter.com/share?url=" . $shareEnvUrl . $shareEnvRequest;
                 $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;
                 $shareEmailUrl = "mailto:?subject=&body=" . $shareEnvUrl . $shareEnvRequest;
 
@@ -26,8 +25,6 @@
                 <nav class="nav flex-column">
                     <a rel="noopener" href="<?= $shareFacebookUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                    <a rel="noopener" href="<?= $shareTwitterUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
-                       target="_blank"><i class="fab fa-twitter"></i> Twitter</a>
                     <a rel="noopener" href="<?= $shareWhatsappUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"
                        target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
                     <a rel="noopener" href="<?= $shareEmailUrl ?>" class="nav-link btn btn-block btn-light share-modal__link"

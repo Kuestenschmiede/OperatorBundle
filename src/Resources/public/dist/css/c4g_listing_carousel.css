@@ -115,7 +115,7 @@ a {
   background-color: transparent
 }
 a:hover {
-  color: #05111c;
+  color: rgb(4.7706422018,17.2935779817,27.7293577982);
   text-decoration: underline
 }
 a:not([href]):not([class]) {

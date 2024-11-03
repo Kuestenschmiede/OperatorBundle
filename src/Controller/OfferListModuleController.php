@@ -324,11 +324,16 @@ class OfferListModuleController extends AbstractFrontendModuleController
         return $form;
     }
 
-    private function getCategoryOptions($selectedTypes = [])
+    private function getCategoryOptions($selectedTypes = [], $selectedOfferTypes = [])
     {
-        if (is_array($selectedTypes) && count($selectedTypes) > 0) {
+        $database = Database::getInstance();
+        if ((is_array($selectedOfferTypes) && count($selectedOfferTypes) > 0) && !(is_array($selectedTypes) && count($selectedTypes) > 0)) {
+            $typeStr = implode("','", $selectedOfferTypes);
+            $sql = "SELECT DISTINCT tl_gutesio_data_child_type.uuid AS uuid, tl_gutesio_data_child_type.name AS name, tl_gutesio_data_child_type.type AS type FROM tl_gutesio_data_child_type"
+                . " WHERE type IN ('" . $typeStr . "') ORDER BY name ASC";
+            $arrTypes = $database->prepare($sql)->execute()->fetchAllAssoc();
+        } else if (is_array($selectedTypes) && count($selectedTypes) > 0) {
             $typeStr = implode("','", $selectedTypes);
-            $database = Database::getInstance();
             $sql = "SELECT DISTINCT tl_gutesio_data_child_type.uuid AS uuid, tl_gutesio_data_child_type.name AS name FROM tl_gutesio_data_child_type"
                 . " WHERE uuid IN ('" . $typeStr . "') ORDER BY name ASC";
             $arrTypes = $database->prepare($sql)->execute()->fetchAllAssoc();
@@ -386,7 +391,13 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         if ($this->model->gutesio_enable_category_filter) {
             $selectedTypes = unserialize($this->model->gutesio_category_filter_selection);
-            $types = $this->getCategoryOptions($selectedTypes);
+            $selectedOfferTypes = [];
+
+            if ($this->model->gutesio_child_data_mode === "1") {
+                $selectedOfferTypes = $this->model ? StringUtil::deserialize($this->model->gutesio_child_type, true) : [];
+            }
+
+            $types = $this->getCategoryOptions($selectedTypes, $selectedOfferTypes);
             $typeField = new SelectFormField();
             $typeField->setName("types");
             $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);

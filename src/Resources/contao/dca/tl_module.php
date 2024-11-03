@@ -331,7 +331,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_data_mode'] = [
     'inputType'               => 'radio',
     'options'                 => ['0', '1', '2', '3'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option'],
-    'sql'                     => "char(1) NOT NULL default '1'",
+    'sql'                     => "char(1) NOT NULL default '0'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
 ];
 

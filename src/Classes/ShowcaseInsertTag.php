@@ -24,7 +24,7 @@ class ShowcaseInsertTag
 {
     const TAG = 'showcase';
 
-    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageCDN', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical'];
+    const TAG_PAYLOAD = ['name', 'longitude', 'latitude', 'city', 'link', 'image', 'imageCDN', 'imageList', 'logo', 'previewimage', 'description', 'meta', 'canonical', 'count'];
 
     /**
      * Replaces Insert tags for showcases. The insert tag is expected to have the following format:
@@ -46,6 +46,10 @@ class ShowcaseInsertTag
             } else {
                 $alias = $this->getAlias();
                 $field = $arrTags[1];
+                if ($field == 'count') {
+                    $rows = Database::getInstance()->prepare('SELECT COUNT(*) AS rowCount FROM tl_gutesio_data_element')->execute()->fetchAssoc();
+                    return strval($rows['rowCount']);
+                }
             }
 
             $objSettings = GutesioOperatorSettingsModel::findSettings();

@@ -232,7 +232,11 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
     private function getDetailData(Request $request): array
     {
-        $detailData = $this->showcaseService->loadByAlias($this->alias) ?: [];
+        $typeIds = [];
+        if ($this->model->gutesio_data_mode == '1') {
+            $typeIds = unserialize($this->model->gutesio_data_type);
+        }
+        $detailData = $this->showcaseService->loadByAlias($this->alias, $typeIds) ?: [];
         if (count($detailData) === 0) {
             return [];
         }
@@ -568,8 +572,8 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 $row['image'] = [
                     'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
-                    'width' => $width,
-                    'height' => $height,
+                    'width' => 600,
+                    'height' => 450,
                 ];
             }
 //            unset($childRows[$key]['imageOffer']);

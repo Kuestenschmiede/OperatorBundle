@@ -509,12 +509,32 @@ class ShowcaseService
         return $arrResult;
     }
 
-    public function loadByAlias($alias) : array
+    private function checkTypes($elementId, $typeIds) {
+        $idString = '(';
+        foreach ($typeIds as $key => $id) {
+            $idString .= "\"$id\"";
+            if (array_key_last($typeIds) !== $key) {
+                $idString .= ',';
+            }
+        }
+        $idString .= ')';
+        $arrResult = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element_type ' .
+                'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->fetchAllAssoc();
+                
+        return ($arrResult && count($arrResult) > 0);
+    }
+
+    public function loadByAlias($alias, $typeIds = []) : array
     {
         $arrResult = Database::getInstance()
             ->prepare('SELECT * FROM tl_gutesio_data_element ' .
                 "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND alias = ?")
             ->execute($alias)->fetchAllAssoc();
+
+        if (!$arrResult || (count($typeIds) && !$this->checkTypes($arrResult['uuid'], $typeIds))) {
+            return [];
+        }
+
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
         $tags = $returnData['tags'];
         foreach ($tags as $key => $tag) {

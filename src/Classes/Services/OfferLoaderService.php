@@ -781,9 +781,9 @@ class OfferLoaderService
         return $this->getAdditionalData($childRows, $dateFilter);
     }
 
-    public function getDetailData($alias)
+    public function getDetailData($alias, $typeKeys)
     {
-        $dataset = $this->getSingleDataset($alias, true);
+        $dataset = $this->getSingleDataset($alias, true, false, $typeKeys);
         if ($dataset) {
             $this->visitCounter->countOfferVisit($dataset['uuid'], $dataset['memberId']);
         }
@@ -798,7 +798,7 @@ class OfferLoaderService
         return $previewData;
     }
 
-    public function getSingleDataset($alias, $published, $isPreview = false)
+    public function getSingleDataset($alias, $published, $isPreview = false, $typeKeys = [])
     {
         $database = Database::getInstance();
         $alias = $this->cleanAlias($alias);
@@ -806,7 +806,36 @@ class OfferLoaderService
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
 
-        $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+        if (is_array($typeKeys) && count($typeKeys) > 0) {
+            $keyString = '(';
+            foreach ($typeKeys as $key => $id) {
+                $keyString .= "\"$id\"";
+                if (array_key_last($typeKeys) !== $key) {
+                    $keyString .= ',';
+                }
+            }
+            $keyString .= ')';
+
+            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
+            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
+            (CASE ' . '
+                WHEN a.description IS NOT NULL THEN a.description ' . '
+                WHEN b.description IS NOT NULL THEN b.description ' . '
+                WHEN c.description IS NOT NULL THEN c.description ' . '
+                WHEN d.description IS NOT NULL THEN d.description ' . '
+            ELSE NULL END) AS description, ' . '
+            tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, 
+            tl_gutesio_data_element.uuid as elementId, 
+            tl_gutesio_data_child_type.extendedSearchTerms as extendedSearchTerms FROM tl_gutesio_data_child a ' . '
+            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
+            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+            WHERE a.uuid = ? AND tl_gutesio_data_child_type.type IN '.$keyString;
+        } else {
+            $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
             a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
@@ -824,6 +853,8 @@ class OfferLoaderService
             LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE a.uuid = ?';
+        }
+
         if ($published) {
             $sql .= ' AND a.published = 1';
         }

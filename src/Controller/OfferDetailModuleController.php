@@ -131,7 +131,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         }
 
         if ($this->alias !== "") {
-            $data = $this->offerService->getDetailData($this->alias);
+            $typeKeys = [];
+            if ($model->gutesio_child_data_mode == '1') {
+                $typeKeys = unserialize($model->gutesio_child_type);
+            }
+            $data = $this->offerService->getDetailData($this->alias, $typeKeys) ?: [];
             $template->loggedIn = FrontendUser::getInstance()->id > 0;
             $template->offerForSale = $data['offerForSale'];
             $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
@@ -1025,7 +1029,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
 
             //remove duplicated content
             foreach ($row['tagLinks'] as $key=>$addedIcons) {
-                $tagLinks[$addIcons['name']] = $addedIcons;
+                $tagLinks[$addedIcons['name']] = $addedIcons;
             }
 
             $row['tagLinks'] = $tagLinks;

@@ -44,7 +44,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page,gutesio_load_klaro_consent;'.
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page,gutesio_load_klaro_consent,gutesio_data_mode;'.
     '{cart_legend},cart_page'
 ;
 
@@ -59,7 +59,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,gutesio_without_contact;{cart_legend},cart_page;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,gutesio_without_contact,gutesio_child_data_mode;{cart_legend},cart_page;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['cart_module'] =

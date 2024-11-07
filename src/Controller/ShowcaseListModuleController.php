@@ -217,9 +217,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         $params = $request->query->all();
         $mode = intval($moduleModel->gutesio_data_mode);
-        if ($mode === 1 || $mode === 2 || $mode === 4) {
+        if (!count($requestTypeIds) && ($mode === 1 || $mode === 2 || $mode === 4)) {
             $typeIds = $this->getTypeConstraintForModule($moduleModel);
-            $typeIds = array_merge($requestTypeIds, $typeIds);
+            //$typeIds = array_merge($requestTypeIds, $typeIds);
         } else {
             $typeIds = $requestTypeIds;
         }

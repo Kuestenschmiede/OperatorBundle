@@ -160,7 +160,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_blocked_types'] = [
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_layoutType'] = [
     'exclude'                 => true,
     'inputType'               => 'select',
-    'default'                 => 'classic',
+    'default'                 => 'grid',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getLayoutOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => false, 'tl_class' => 'clr'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType']['options'],

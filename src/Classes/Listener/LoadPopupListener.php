@@ -64,7 +64,13 @@ class LoadPopupListener
                                         WHERE typeElem.elementId = ?';
         $arrTypes = $this->Database->prepare($strQueryTypes)->execute($element['uuid'])->fetchAllAssoc();
         $strTypes = '';
-        foreach ($arrTypes as $type) {
+
+        $arrUniqueType = [];
+        foreach ($arrTypes as $key => $type) {
+            $arrUniqueType[$type['name']] = $type;
+        }
+
+        foreach ($arrUniqueType as $type) {
             $strTypes .= $type['name'] . ', ';
         }
         $strTypes = rtrim($strTypes, ', ');
@@ -76,10 +82,16 @@ class LoadPopupListener
         if ($file) {
             $alt = $name;
             //?crop=smart&width=750&height=200
-            $image = "<img class='entry-content' src='".StringUtils::addUrlToPath($cdnUrl,$file)."' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='" . StringUtils::addUrlToPath($cdnUrl, $file) . "' alt='$alt' title='$name'>";
         }
         $tags = '';
-        foreach ($arrTags as $tag) {
+
+        $arrUniqueTags = [];
+        foreach ($arrTags as $key => $tag) {
+            $arrUniqueTags[$tag['uuid']] = $tag;
+        }
+
+        foreach ($arrUniqueTags as $tag) {
             $link = '';
             if ($tag['technicalKey']) {
                 $tagFieldName = TagFieldUtil::getFieldnameForTechnicalKey($tag['technicalKey']);
@@ -253,7 +265,11 @@ class LoadPopupListener
                                         WHERE typeElem.elementId = ?';
         $arrTypes = $this->Database->prepare($strQueryTypes)->execute($element['uuid'])->fetchAllAssoc();
         $strTypes = '';
-        foreach ($arrTypes as $type) {
+        $arrUniqueType = [];
+        foreach ($arrTypes as $key => $type) {
+            $arrUniqueType[$type['name']] = $type;
+        }
+        foreach ($arrUniqueType as $type) {
             $strTypes .= $type['name'] . ', ';
         }
         $strTypes = rtrim($strTypes, ', ');

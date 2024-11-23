@@ -269,8 +269,6 @@ class BannerModuleController extends AbstractFrontendModuleController
                 WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
         if ($type['type'] === "event") {
             $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($child['uuid'])->fetchAssoc();
-
-            //Events der nächsten 3
             $month = $this->model->loadMonth ?: 6;
             if (($event['beginDate'] + $event['beginTime'] < time()) || ($event['beginDate'] + $event['beginTime'] > (time()+(86400*30*$month)))) { //halbes Jahr im voraus
                 return $arrReturn;
@@ -334,7 +332,6 @@ class BannerModuleController extends AbstractFrontendModuleController
             ];
         }
         $arrReturn[] = $singleEle;
-        $childs++;
         return $arrReturn;
     }
     private function generateQrCode (String $link) {

@@ -61,17 +61,28 @@ class OfferInsertTag
                         return C4GUtils::truncate($arrOffer['description'], 275) ?: '';
                     case 'firstGalleryImage':
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
+
                         if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
                             $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
                         } else {
                             $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);
                         }
-//                        if (C4GUtils::isBinary($uuid)) {
-//                            $uuid = StringUtil::binToUuid($uuid);
-//                        }
+                        list($width, $height) = getimagesize($url);
 
-                        //ToDo CDN get params
-                        //?crop=smart&width=400&height=400
+                        if ($width > $height) {
+                            $width = 1040;
+                            $height = 690;
+                        } else {
+                            $width = 690;
+                            $height = 1040;
+                        }
+
+                        if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
+                            $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0], $width, $height);
+                        } else {
+                            $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN'], $width, $height);
+                        }
+
                         return $url ?: ''; //Further processing in the template
                     case 'meta':
                         $metaDescription = $arrOffer['metaDescription'];
@@ -85,9 +96,7 @@ class OfferInsertTag
 //                            }
                             $image = $arrOffer['imageCDN']; //ToDO CDN TEST
                             if ($image && $cdnUrl) {
-                                //ToDo CDN get params
-                                //?crop=smart&width=400&height=400
-                                $imagePath = StringUtils::addUrlToPath($cdnUrl ,$image);
+                                $imagePath = StringUtils::addUrlToPath($cdnUrl ,$image, 1200, 630);
                                 $metaDescription = str_replace('IO_OFFER_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_OFFER_IMAGE"', '', $metaDescription);
@@ -118,7 +127,6 @@ class OfferInsertTag
                                     $logo = $objShowcase['logoCDN'];//  Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($logo && $cdnUrl) {
                                         //ToDo CDN get params
-                                        //?crop=smart&width=400&height=400
                                         $logoPath = StringUtils::addUrlToPath($cdnUrl,$logo);
                                         $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                                     } else {
@@ -132,9 +140,7 @@ class OfferInsertTag
 //                                    }
                                     $image = $objShowcase['imageCDN'];//Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($image && $cdnUrl) {
-                                        //ToDo CDN get params
-                                        //?crop=smart&width=400&height=400
-                                        $imagePath = StringUtils::addUrlToPath($cdnUrl,$image);
+                                        $imagePath = StringUtils::addUrlToPath($cdnUrl,$image, 1200, 630);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

@@ -117,7 +117,7 @@ class WishlistInsertTag
 //            $image = $arrItem['imageOffer'] ? $arrItem['imageOffer'] : $arrItem['image'];
 //        }
 //        $objImage = FilesModel::findByUuid(StringUtil::binToUuid($image));
-        $imagePath = StringUtils::addUrlToPath($cdnUrl,$arrItem['imageCDN']);
+        $imagePath = StringUtils::addUrlToPath($cdnUrl,$arrItem['imageCDN'],600,450);
 //        if ($objImage !== null) {
 //            $imagePath = $objImage->path;
 //        }

@@ -462,12 +462,23 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'])/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
             if ($imageCDN) {
-                //list($width, $height) = getimagesize($imageCDN);
+//                list($width, $height) = getimagesize($imageCDN);
+//
+//                if ($width > $height) {
+                    $width = 1040;
+                    $height = 690;
+//                } else {
+//                    $width = 690;
+//                    $height = 1040;
+//                }
+
+                $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'],$width,$height);
+
                 $childRows[$key]['image'] = [
                     'src' => $imageCDN,
                     'alt' => $row['name'],
-                    'width' => 600,
-                    'height' => 450,
+                    'width' => $width,
+                    'height' => $height,
                 ];
             } else {
                 unset($childRows[$key]['image']);
@@ -761,12 +772,24 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $image = $row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($image) {
-                //list($width, $height) = getimagesize($cdnUrl.$image);
+//                $imageCDN = StringUtils::addUrlToPath($cdnUrl,$image);
+//                list($width, $height) = getimagesize($imageCDN);
+//
+//                if ($width > $height) {
+                    $width = 1040;
+                    $height = 690;
+//                } else {
+//                    $width = 690;
+//                    $height = 1040;
+//                }
+
+                $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'],$width,$height);
+
                 $childRows[$key]['image'] = [
-                    'src' => StringUtils::addUrlToPath($cdnUrl,$image),
+                    'src' => $imageCDN,
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
-                    'height' => 600,
-                    'width' => 450,
+                    'height' => $height,
+                    'width' => $width,
                 ];
             }/* else {
                 unset($childRows[$key]['image']);
@@ -910,17 +933,12 @@ class OfferLoaderService
             }
 
             if ($row['infoFileCDN']) {
-//                $infoFile = FilesModel::findByUuid(StringUtil::binToUuid($row['infoFile']));
-                //if ($infoFile !== null) {
-                    $rows[$key]['infoFile'] = [
-                        'name' => 'Info',
-                        'path' => StringUtils::addUrlToPath($cdnUrl,$row['infoFileCDN']),
-                        'changed' => false,
-                        'data' => [],
-                    ];
-//                } else {
-//                    unset($rows[$key]['infoFile']);
-//                }
+                $rows[$key]['infoFile'] = [
+                    'name' => 'Info',
+                    'path' => StringUtils::addUrlToPath($cdnUrl,$row['infoFileCDN']),
+                    'changed' => false,
+                    'data' => [],
+                ];
             }
 
             $images = [];
@@ -934,28 +952,30 @@ class OfferLoaderService
             foreach ($images as $image) {
                 $file = $image;
                 if ($file) {
-                    //$size = getimagesize($cdnUrl.$file);
-                    $url = StringUtils::addUrlToPath($cdnUrl,$file);
+                    $imageCDN = StringUtils::addUrlToPath($cdnUrl,$file);
+                    list($width, $height) = getimagesize($imageCDN);
+
+                    if ($width > $height) {
+                        $width = 1040;
+                        $height = 690;
+                    } else {
+                        $width = 690;
+                        $height = 1040;
+                    }
+
+                    $url = StringUtils::addUrlToPath($cdnUrl,$file,$width,$height);
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $url,
                         'path' => $url,
                         'uuid' => '',
                         'alt' => $row['name'],
                         'name' => $row['name'],
-                        'width' => 600,//$size[0],
-                        'height' => 450,//$size[1],
-//                            'importantPart' => [
-//                                'x' => $model->importantPartX,
-//                                'y' => $model->importantPartY,
-//                                'width' => $model->importantPartWidth,
-//                                'height' => $model->importantPartHeight,
-//                            ],
+                        'width' => $width,
+                        'height' => $height,
                     ];
                     $idx++;
                 }
             }
-//            unset($rows[$key]['imageGallery']);
-// }
 
             unset($rows[$key]['image']);
 

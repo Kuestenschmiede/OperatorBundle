@@ -91,28 +91,25 @@ class ShowcaseInsertTag
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : ''; //Further processing in the template
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
                     case 'imageCDN':
-                        //ToDO CDN
-                        //ToDo CDN get params
-                        //?crop=smart&width=400&height=400
                         $url = $arrShowcase['imageCDN'];
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : ''; //Further processing in the template
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,2400,660) : ''; //Further processing in the template
                     case 'imageList':
                         $url = $arrShowcase['imageCDN'];
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : ''; //Further processing in the template
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
                     case 'previewimage':
                         $url = $arrShowcase['imageCDN'];
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url) : '';//Controller::replaceInsertTags("{{image::$uuid}}");
+                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,2400,660) : '';//Controller::replaceInsertTags("{{image::$uuid}}");
                     case 'logo':
                         $url = $arrShowcase['logoCDN'];
 //                        if (C4GUtils::isBinary($uuid)) {
@@ -150,7 +147,7 @@ class ShowcaseInsertTag
 //                            $image = Controller::replaceInsertTags("{{file::$uuid}}");
                             $image = $arrShowcase['imageCDN'];
                             if ($image && $cdnUrl) {
-                                $imagePath = StringUtils::addUrlToPath($cdnUrl, $image);
+                                $imagePath = StringUtils::addUrlToPath($cdnUrl, $image, 1200, 630);
                                 $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

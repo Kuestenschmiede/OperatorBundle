@@ -564,13 +564,13 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             if ($imageFile) {
                 //list($width, $height) = getimagesize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
                     'alt' => $row['name'],
                     'width' => 600,
                     'height' => 450,
                 ];
                 $row['image'] = [
-                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile),
+                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'width' => 600,
                     'height' => 450,

@@ -81,8 +81,7 @@ class LoadPopupListener
         //$strImage = $file->path;
         if ($file) {
             $alt = $name;
-            //?crop=smart&width=750&height=200
-            $image = "<img class='entry-content' src='" . StringUtils::addUrlToPath($cdnUrl, $file) . "' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='" . StringUtils::addUrlToPath($cdnUrl, $file, 600, 300) . "' alt='$alt' title='$name'>";
         }
         $tags = '';
 
@@ -109,7 +108,7 @@ class LoadPopupListener
             }
 
 
-            $fileTag = $tag['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']) : false;
+            $fileTag = $tag['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN'], 600, 300) : false;
             if ($fileTag) {
                 if ($link) {
                     $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>

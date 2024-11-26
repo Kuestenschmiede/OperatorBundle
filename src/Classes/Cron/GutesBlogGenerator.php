@@ -3,7 +3,7 @@
 namespace gutesio\OperatorBundle\Classes\Cron;
 
 use Contao\Database;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Contao\PageModel;
@@ -66,7 +66,7 @@ class GutesBlogGenerator
     {
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
-        $imagePath = StringUtils::addUrlToPath($cdnUrl,$arrItem['imageCDN']);
+        $imagePath = FileUtils::addUrlToPath($cdnUrl,$arrItem['imageCDN']);
 
         return $imagePath;
     }

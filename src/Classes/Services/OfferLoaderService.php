@@ -18,7 +18,7 @@ use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Classes\TagDetailFieldGenerator;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
@@ -460,9 +460,9 @@ class OfferLoaderService
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
         foreach ($childRows as $key => $row) {
-            $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'])/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
+            $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN'])/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
             if ($imageCDN) {
-//                list($width, $height) = getimagesize($imageCDN);
+//                list($width, $height) = FileUtils::getImageSize($imageCDN);
 //
 //                if ($width > $height) {
                     $width = 1040;
@@ -472,7 +472,7 @@ class OfferLoaderService
 //                    $height = 1040;
 //                }
 
-                $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'],$width,$height);
+                $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN'],$width,$height);
 
                 $childRows[$key]['image'] = [
                     'src' => $imageCDN,
@@ -772,8 +772,8 @@ class OfferLoaderService
         foreach ($childRows as $key => $row) {
             $image = $row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($image) {
-//                $imageCDN = StringUtils::addUrlToPath($cdnUrl,$image);
-//                list($width, $height) = getimagesize($imageCDN);
+//                $imageCDN = FileUtils::addUrlToPath($cdnUrl,$image);
+//                list($width, $height) = FileUtils::getImageSize($imageCDN);
 //
 //                if ($width > $height) {
                     $width = 1040;
@@ -783,7 +783,7 @@ class OfferLoaderService
 //                    $height = 1040;
 //                }
 
-                $imageCDN = StringUtils::addUrlToPath($cdnUrl,$row['imageCDN'],$width,$height);
+                $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN'],$width,$height);
 
                 $childRows[$key]['image'] = [
                     'src' => $imageCDN,
@@ -935,7 +935,7 @@ class OfferLoaderService
             if ($row['infoFileCDN']) {
                 $rows[$key]['infoFile'] = [
                     'name' => 'Info',
-                    'path' => StringUtils::addUrlToPath($cdnUrl,$row['infoFileCDN']),
+                    'path' => FileUtils::addUrlToPath($cdnUrl,$row['infoFileCDN']),
                     'changed' => false,
                     'data' => [],
                 ];
@@ -952,10 +952,10 @@ class OfferLoaderService
             foreach ($images as $image) {
                 $file = $image;
                 if ($file) {
-                    $imageCDN = StringUtils::addUrlToPath($cdnUrl,$file);
-                    list($width, $height) = getimagesize($imageCDN);
+                    $imageCDN = FileUtils::addUrlToPath($cdnUrl,$file);
+                    $result = FileUtils::getImageSizeAndOrientation($imageCDN);
 
-                    if ($width > $height) {
+                    if ($result && $result[1] !== 'portrait') {
                         $width = 1040;
                         $height = 690;
                     } else {
@@ -963,7 +963,7 @@ class OfferLoaderService
                         $height = 1040;
                     }
 
-                    $url = StringUtils::addUrlToPath($cdnUrl,$file,$width,$height);
+                    $url = FileUtils::addUrlToPath($cdnUrl,$file,$width,$height);
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $url,
                         'path' => $url,
@@ -1002,7 +1002,7 @@ class OfferLoaderService
                 $imageFile = $tagRow['imageCDN'];
 
                 if ($imageFile) {
-                    $url = StringUtils::addUrlToPath($cdnUrl,$imageFile);
+                    $url = FileUtils::addUrlToPath($cdnUrl,$imageFile);
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
 //                        'importantPart' => [

@@ -13,7 +13,7 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 /**
@@ -91,32 +91,32 @@ class ShowcaseInsertTag
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
+                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
                     case 'imageCDN':
                         $url = $arrShowcase['imageCDN'];
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,2400,660) : ''; //Further processing in the template
+                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,2400,660) : ''; //Further processing in the template
                     case 'imageList':
                         $url = $arrShowcase['imageCDN'];
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
+                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
                     case 'previewimage':
                         $url = $arrShowcase['imageCDN'];
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url,2400,660) : '';//Controller::replaceInsertTags("{{image::$uuid}}");
+                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,2400,660) : '';//Controller::replaceInsertTags("{{image::$uuid}}");
                     case 'logo':
                         $url = $arrShowcase['logoCDN'];
 //                        if (C4GUtils::isBinary($uuid)) {
 //                            $uuid = StringUtil::binToUuid($uuid);
 //                        }
 
-                        return $url ? StringUtils::addUrlToPath($cdnUrl,$url).'?height=150' : '';//Controller::replaceInsertTags("{{image::$uuid?height=150&mode=proportional&class=img-fluid}}");
+                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url).'?height=150' : '';//Controller::replaceInsertTags("{{image::$uuid?height=150&mode=proportional&class=img-fluid}}");
                     case 'description':
                         return C4GUtils::truncate($arrShowcase['description'], 275);
                     case 'meta':
@@ -133,7 +133,7 @@ class ShowcaseInsertTag
 
                             $logo = $arrShowcase['logoCDN'];
                             if ($logo && $cdnUrl) {
-                                $logoPath = StringUtils::addUrlToPath($cdnUrl, $logo);
+                                $logoPath = FileUtils::addUrlToPath($cdnUrl, $logo);
                                 $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
@@ -147,7 +147,7 @@ class ShowcaseInsertTag
 //                            $image = Controller::replaceInsertTags("{{file::$uuid}}");
                             $image = $arrShowcase['imageCDN'];
                             if ($image && $cdnUrl) {
-                                $imagePath = StringUtils::addUrlToPath($cdnUrl, $image, 1200, 630);
+                                $imagePath = FileUtils::addUrlToPath($cdnUrl, $image, 1200, 630);
                                 $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

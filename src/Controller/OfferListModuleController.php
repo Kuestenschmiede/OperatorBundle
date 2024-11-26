@@ -51,7 +51,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
@@ -519,7 +519,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
                 if ($tag['imageCDN']) {
                     //$objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
-                    $imageFile = StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']);
+                    $imageFile = FileUtils::addUrlToPath($cdnUrl,$tag['imageCDN']);
                     foreach ($optionData as $key=>$option) {
                         if (($option['alt'] == $tag['name']) || ($option['src'] == $imageFile)) {
                             continue(2);

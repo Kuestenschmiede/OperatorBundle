@@ -16,9 +16,9 @@
         $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
 
         // Image Orientation
-        list($width, $height) = getimagesize($item['image']['src']);
-        $orientation = ( $width != $height ? ( $width > $height ? 'landscape' : 'portrait' ) : 'square' );
-
+        $result = gutesio\DataModelBundle\Classes\FileUtils::getImageSizeAndOrientation($item['image']['src']);
+        //list($width, $height) = $result[0];
+        $orientation = $result[1];
         ?>
         <div class="banner-slide">
             <a href="<?= $item['href'] ?>">

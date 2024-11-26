@@ -41,7 +41,7 @@ use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -873,7 +873,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 //                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
 //                    if ($objImage) {
                         $optionData[$tag['uuid']] = [
-                            'src' => StringUtils::addUrlToPath($cdnUrl,$tag['imageCDN']),
+                            'src' => FileUtils::addUrlToPath($cdnUrl,$tag['imageCDN']),
                             'alt' => $tag['name']
                         ];
 //                    } else {

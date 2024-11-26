@@ -41,7 +41,7 @@ use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\System;
 use Contao\Template;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -562,15 +562,15 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
-                //list($width, $height) = getimagesize($cdnUrl.$imageFile);
+                //list($width, $height) = FileUtils::getImageSize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
+                    'src' => FileUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
                     'alt' => $row['name'],
                     'width' => 600,
                     'height' => 450,
                 ];
                 $row['image'] = [
-                    'src' => StringUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
+                    'src' => FileUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'width' => 600,
                     'height' => 450,
@@ -599,7 +599,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 //$model = FilesModel::findByUuid($r['image']);
-                $imageFile = $r['imageCDN'] ? StringUtils::addUrlToPath($cdnUrl,$r['imageCDN']) : false;
+                $imageFile = $r['imageCDN'] ? FileUtils::addUrlToPath($cdnUrl,$r['imageCDN']) : false;
                 if ($imageFile) {
                     $icon = [
                         'name' => $r['name'],

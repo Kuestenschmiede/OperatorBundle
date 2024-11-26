@@ -43,7 +43,7 @@ use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
@@ -219,7 +219,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objLogo = FilesModel::findByUuid($element['logo']);
-        $logoSrc = StringUtils::addUrlToPath($cdnUrl,$element['logoCDN']);
+        $logoSrc = FileUtils::addUrlToPath($cdnUrl,$element['logoCDN']);
         foreach ($arrChilds as $key => $child) {
             if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
                 break;
@@ -227,7 +227,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
 
-        $imageSrc = StringUtils::addUrlToPath($cdnUrl,$element['imageCDN']);
+        $imageSrc = FileUtils::addUrlToPath($cdnUrl,$element['imageCDN']);
 
         $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
@@ -303,7 +303,18 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
-        $offerSrc = StringUtils::addUrlToPath($cdnUrl,$child['imageCDN']);
+        $offerSrc = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']);
+//        list($width, $height) = FileUtils::getImageSize($offerSrc);
+//
+//        if ($width > $height) {
+////            $width = 1040;
+////            $height = 690;
+//        } else {
+////            $width = 690;
+////            $height = 1040;
+//        }
+
+        //        //$offerSrc = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']); //,$width, $height = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']); //,$width, $height
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images

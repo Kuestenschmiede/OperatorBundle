@@ -13,7 +13,7 @@ use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\StringUtil;
-use gutesio\DataModelBundle\Classes\StringUtils;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 class OfferInsertTag
@@ -63,13 +63,14 @@ class OfferInsertTag
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
 
                         if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
-                            $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
+                            $url = FileUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
                         } else {
-                            $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);
+                            $url = FileUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);
                         }
-                        list($width, $height) = getimagesize($url);
+                        $result = FileUtils::getImageSizeAndOrientation($url);
+                        $orientation = $result[1];
 
-                        if ($width > $height) {
+                        if ($orientation === 'landscape') {
                             $width = 1040;
                             $height = 690;
                         } else {
@@ -78,9 +79,9 @@ class OfferInsertTag
                         }
 
                         if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
-                            $url = StringUtils::addUrlToPath($cdnUrl,$arrUrls[0], $width, $height);
+                            $url = FileUtils::addUrlToPath($cdnUrl,$arrUrls[0], $width, $height);
                         } else {
-                            $url = StringUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN'], $width, $height);
+                            $url = FileUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN'], $width, $height);
                         }
 
                         return $url ?: ''; //Further processing in the template
@@ -96,7 +97,7 @@ class OfferInsertTag
 //                            }
                             $image = $arrOffer['imageCDN']; //ToDO CDN TEST
                             if ($image && $cdnUrl) {
-                                $imagePath = StringUtils::addUrlToPath($cdnUrl ,$image, 1200, 630);
+                                $imagePath = FileUtils::addUrlToPath($cdnUrl ,$image, 1200, 630);
                                 $metaDescription = str_replace('IO_OFFER_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_OFFER_IMAGE"', '', $metaDescription);
@@ -127,7 +128,7 @@ class OfferInsertTag
                                     $logo = $objShowcase['logoCDN'];//  Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($logo && $cdnUrl) {
                                         //ToDo CDN get params
-                                        $logoPath = StringUtils::addUrlToPath($cdnUrl,$logo);
+                                        $logoPath = FileUtils::addUrlToPath($cdnUrl,$logo);
                                         $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
@@ -140,7 +141,7 @@ class OfferInsertTag
 //                                    }
                                     $image = $objShowcase['imageCDN'];//Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($image && $cdnUrl) {
-                                        $imagePath = StringUtils::addUrlToPath($cdnUrl,$image, 1200, 630);
+                                        $imagePath = FileUtils::addUrlToPath($cdnUrl,$image, 1200, 630);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

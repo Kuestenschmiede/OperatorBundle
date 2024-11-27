@@ -519,10 +519,10 @@ class ShowcaseService
             }
         }
         $idString .= ')';
-        $arrResult = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element_type ' .
-                'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->fetchAllAssoc();
+        $count = Database::getInstance()->prepare('SELECT COUNT(1) AS rowCount FROM tl_gutesio_data_element_type ' .
+                'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->rowCount;
                 
-        return ($arrResult && count($arrResult) > 0);
+        return ($count && $count > 0);
     }
 
     public function loadByAlias($alias, $typeIds = []) : array

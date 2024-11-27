@@ -234,13 +234,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $this->get('contao.framework')->initialize();
         $clientUuid = $this->checkCookieForClientUuid($request);
         $db = Database::getInstance();
-        $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ?";
-        $count = $db->prepare($sql)->execute($clientUuid)->count();
-        
+        $sql = "SELECT COUNT(1) AS rowCount FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ?";
+        $count = $db->prepare($sql)->execute($clientUuid)->rowCount;
         $response = new JsonResponse(['count' => $count]);
         // save cookie for 30 days
         $response = $this->addCookieToResponse($response, $request, $clientUuid);
-        
+
         return $response;
     }
     

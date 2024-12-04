@@ -3,6 +3,7 @@ $data = $this->itemListElement[0];
 $count = $this->itemListElement[1];
 ?>
 
+<?php if ($count): ?>
 <script type="application/ld+json">
     {
         "@context": "https://schema.org",
@@ -14,6 +15,7 @@ $count = $this->itemListElement[1];
         ]
     }
 </script>
+<?php endif; ?>
 
 <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
     <script>

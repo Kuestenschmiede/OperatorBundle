@@ -51,6 +51,8 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_showcase_link'] = ['Link to the 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Types to be displayed', 'Only the selected type is displayed.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Categories to display', 'Only the selected categories are displayed.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Tags to be displayed', 'Only offers that have been assigned at least one of these tags will be displayed.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Sort initially by date', 'Sorts the contents initially by their start date. Attention: Only taken into account if only events are displayed in the list.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_determine_orientation'] = ['Determine orientation', 'The orientation of the list screens should be determined. Attention! Time-consuming.'];
 
 $GLOBALS['TL_LANG']['tl_module']['cart_payment_url'] = ['Link to payment page', 'The page where the payment process is performed.'];
 $GLOBALS['TL_LANG']['tl_module']['cart_no_items_text'] = ['Text when cart is empty', 'This text will be displayed when the cart is empty.'];

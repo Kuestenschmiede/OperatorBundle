@@ -64,6 +64,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_type'] = ['Anzuzeigende Typen', 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_category'] = ['Anzuzeigende Kategorien', 'Nur der gewählte Kategorien werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_tag'] = ['Anzuzeigende Tags', 'Nur Inhalte, denen mindestens eines dieser Tags zugeordnet wurde, werden angezeigt.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_sort_by_date'] = ['Initial nach Datum sortieren', 'Sortiert die Inhalte initial nach ihrem Beginndatum. Achtung: Wird nur beachtet, wenn nur Veranstaltungen in der Liste dargestellt werden.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_determine_orientation'] = ['Orientierung ermitteln', 'Bei den Listenbildern soll die Orientierung ermittelt werden. Achtung! Zeitintensiv.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_disable_sorting_filter'] = ['Sortierfilter ausblenden', 'Blendet die Sortiermöglichkeiten aus. sehr Sinnvoll bei einer Veranstaltungsliste.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_without_tiles'] = ['Kacheln unterhalb ausblenden','Alle Kacheln unterhalb der Details werden ausgeblendet.'];

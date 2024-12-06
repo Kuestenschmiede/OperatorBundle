@@ -39,6 +39,7 @@ use Contao\FilesModel;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
+use Contao\StringUtil;
 use Contao\System;
 use Contao\Template;
 use gutesio\DataModelBundle\Classes\FileUtils;
@@ -91,9 +92,17 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     {
         $this->model = $model;
         global $objPage;
-        $this->setAlias();
+
+        $elementUuid = 0;
+        $elementUuids = StringUtil::deserialize($this->model->gutesio_data_elements, true);
+        if ($this->model->gutesio_data_mode == "5" && count($elementUuids) && count($elementUuids) == 1) {
+            $elementUuid = $elementUuids[0];
+        } else {
+            $this->setAlias();
+        }
+
         $redirectPage = $model->gutesio_showcase_list_page;
-        $redirectUrl = $this->generator->generate("tl_page." . $redirectPage);
+        $redirectUrl = $redirectPage ? $this->generator->generate("tl_page." . $redirectPage) : '';
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
@@ -110,18 +119,19 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         System::loadLanguageFile("gutesio_frontend");
         $this->languageRefs = $GLOBALS['TL_LANG']["operator_showcase_list"];
 
-        if ($this->alias !== '') {
+        if ($this->alias !== '' || $elementUuid) {
             MapsResourceLoader::loadResources(["router" => true], ['router_enable' => true]);
             $conf = new FrontendConfiguration('entrypoint_' . $model->id);
-            $detailData = $this->getDetailData($request);
+            $detailData = $this->getDetailData($request, $elementUuid);
+            $request->getSession()->set('gutesio_element_alias', $detailData['alias']);
             $objPage->pageTitle = $detailData['name'];
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
-                $childData = $this->getChildTileData($request);
+                $childData = $this->getChildTileData($request, $elementUuid);
                 if (count($childData) > 0) {
                     $template->hasOffers = true;
                 }
-                if ($detailData['imprintData']) {
+                if (key_exists('imprintData', $detailData) && $detailData['imprintData']) {
                     $template->hasImprint = true;
                 }
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
@@ -162,7 +172,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $template->loadKlaro = true;
         }
 
-        if ($detailData['imprintData']) {
+        if (key_exists('imprintData', $detailData) && $detailData['imprintData']) {
             $template->imprintData = $detailData['imprintData'];
         }
 
@@ -199,17 +209,21 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $strPublishedElem = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
         $strPublishedElem = str_replace('{{table}}', 'elem', $strPublishedElem);
         $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
-        $alias = $_SERVER['HTTP_REFERER'];
-        $strC = substr_count($alias, '/');
-        $arrUrl = explode('/', $alias);
+        $alias = $request->getSession()->get('gutesio_element_alias', '');
 
-        if (strpos($arrUrl[$strC], '.html')) {
-            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
-        } else {
-            $alias = $arrUrl[$strC];
-        }
-        if (strpos($alias, '?')) {
-            $alias = explode('?', $alias)[0];
+        if (!$alias) {
+            $alias = $_SERVER['HTTP_REFERER'];
+            $strC = substr_count($alias, '/');
+            $arrUrl = explode('/', $alias);
+
+            if (strpos($arrUrl[$strC], '.html')) {
+                $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
+            } else {
+                $alias = $arrUrl[$strC];
+            }
+            if (strpos($alias, '?')) {
+                $alias = explode('?', $alias)[0];
+            }
         }
 
         if (C4GUtils::isValidGUID($alias)) {
@@ -230,13 +244,18 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         return new JsonResponse($mapData);
     }
 
-    private function getDetailData(Request $request): array
+    private function getDetailData(Request $request, $elementUuid = 0): array
     {
         $typeIds = [];
         if ($this->model->gutesio_data_mode == '1') {
             $typeIds = unserialize($this->model->gutesio_data_type);
         }
-        $detailData = $this->showcaseService->loadByAlias($this->alias, $typeIds) ?: [];
+        if ($elementUuid) {
+            $detailData = $this->showcaseService->loadByUuid($elementUuid) ?: [];
+        } else {
+            $detailData = $this->showcaseService->loadByAlias($this->alias, $typeIds) ?: [];
+        }
+
         if (count($detailData) === 0) {
             return [];
         }
@@ -263,7 +282,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             }
         }
         $detailData['displayType'] = $strTypes;
-        if ($detailData['relatedShowcaseLogos'] && is_array($detailData['relatedShowcaseLogos'])) {
+        if (key_exists('relatedShowcaseLogos', $detailData) && is_array($detailData['relatedShowcaseLogos'])) {
             $relatedShowcases = $detailData['relatedShowcases'];
             foreach ($detailData['relatedShowcaseLogos'] as $key => $relatedShowcaseLogo) {
                 if ($relatedShowcases[$key]['releaseType'] === "external") {
@@ -532,13 +551,15 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         ];
     }
 
-    private function getChildTileData($request)
+    private function getChildTileData($request, $elementUuid = 0)
     {
         $database = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
-        $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+
+        if ($elementUuid) {
+            $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
+            a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -546,7 +567,28 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
             ELSE NULL END) AS shortDescription, ' . '
             tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.uuid as elementId, e.ownerMemberId '.
-            'FROM tl_gutesio_data_child a ' . '
+                'FROM tl_gutesio_data_child a ' . '
+            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
+            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
+            JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
+            LEFT JOIN tl_gutesio_data_child_event v ON a.uuid = v.childId ' . '
+            JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId OR e.uuid = v.locationElementId ' . '
+            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+            WHERE e.uuid = ?'
+                . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC'
+            )->execute($elementUuid)->fetchAllAssoc();
+        } else {
+            $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
+            a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+            (CASE ' . '
+                WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
+                WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
+                WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
+                WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
+            ELSE NULL END) AS shortDescription, ' . '
+            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName, e.uuid as elementId, e.ownerMemberId '.
+                'FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
             LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
@@ -555,8 +597,10 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId OR e.uuid = v.locationElementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.alias = ?'
-            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC'
-        )->execute($this->alias, $this->alias)->fetchAllAssoc();
+                . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC'
+            )->execute($this->alias)->fetchAllAssoc();
+        }
+
 
         foreach ($childRows as $key => $row) {
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);

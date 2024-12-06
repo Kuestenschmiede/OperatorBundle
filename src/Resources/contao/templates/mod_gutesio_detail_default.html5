@@ -4,8 +4,12 @@
     {{offer::meta}}
 <?php $this->endblock();//detailpage_offer_meta ?>
 
+<?php
+$data = json_decode(json_encode($this->detailData));
+?>
+
 <?php $this->block('detailpage_showcase_meta'); ?>
-    {{showcase::meta}}
+    {{showcase::<?=$data->alias?>::meta}}
 <?php $this->endblock(); //detailpage_showcase_meta ?>
 
 
@@ -18,13 +22,9 @@
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageCDN = \Contao\Controller::replaceInsertTags("{{showcase::image}}")): ?>
+<?php if ($imageCDN = \Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::image}}")): ?>
 
     <?php
-    //$image = \Contao\FilesModel::findByUuid($imageUuid);
-//    $imageXL = $this->getImage($image->path, 1920, 1200, 'proportional');
-//    $imageXS = $this->getImage($image->path, 1024, 768, 'proportional');
-
     $imageXL = $imageCDN.'?crop=smart&width=1920&height=1200';
     $imageXS = $imageCDN.'?crop=smart&width=1024&height=768';
     /**
@@ -36,16 +36,15 @@
 
     <style>
         .detail-hero2 {
-            background-image: url(<?= $imageXS?>);
+            background-image: url(<?= $imageXS ?>);
         }
 
         @media screen and (min-width: 901px) {
             .detail-hero2 {
-                background-image: url(<?= $imageXL?>);
+                background-image: url(<?= $imageXL ?>);
             }
         }
     </style>
-<?php endif; ?>
 
     <div class="detail-hero2">
 
@@ -60,24 +59,21 @@
         <div class="detail-hero2__inner-overlay"></div>
 
         <div class="detail-hero2__inner-wrapper">
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::name}}")): ?>
+            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::name}}")): ?>
                 <div class="detail-hero2__title">
                     <h1>{{showcase::name}}</h1>
                 </div>
             <?php endif; ?>
 
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::logo}}")): ?>
+            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::logo}}")): ?>
                 <div class="detail-hero2__logo">
-                    <img src="{{showcase::logo}}" width="150" height="150" alt="{{showcase::name}}" class="img-fluid">
+                    <img src="{{showcase::<?=$data->alias?>::logo}}" width="150" height="150" alt="{{showcase::<?=$data->alias?>::name}}" class="img-fluid">
                 </div>
             <?php endif ?>
         </div>
     </div>
+<?php endif; ?>
 <?php $this->endblock(); //detailpage_headerimage ?>
-
-<?php
-  $data = json_decode(json_encode($this->detailData));
-?>
 
     <script>
         window.detailData = window.detailData || {};
@@ -101,7 +97,7 @@
             <div id="anchor-menu">
                 <div class="anchor-menu__inner">
                     <ul class="anchor-menu__list">
-                        <?php if ($data->imageGallery_0): ?>
+                        <?php if (property_exists($data, 'imageGallery_0') && $data->imageGallery_0): ?>
                             <li>
                                 <a href="{{env::request}}#section-id-gallery">Bildergalerie</a>
                             </li>
@@ -173,7 +169,7 @@
                         </div>
                         <div id="section-id-gallery" class="detail-view__image-gallery">
                             <div class="detail-view__image-gallery-inner">
-                                <?php if ($data->imageGallery_0): ?>
+                                <?php if (property_exists($data, 'imageGallery_0') && $data->imageGallery_0): ?>
                                     <a data-fancybox="gallery_imageGallery"
                                        href="<?= $data->imageGallery_0->path ?>"
                                        class="imageGallery-item first"><img
@@ -184,7 +180,7 @@
                                                 height="<?= $data->imageGallery_0->height ?>"></a>
                                 <?php endif; ?>
 
-                                <?php if ($data->imageGallery_1): ?>
+                                <?php if (property_exists($data, 'imageGallery_1') && $data->imageGallery_1): ?>
                                     <a data-fancybox="gallery_imageGallery"
                                        href="<?= $data->imageGallery_1->path ?>"
                                        class="imageGallery-item"><img
@@ -195,7 +191,7 @@
                                                 height="<?= $data->imageGallery_1->height ?>"></a>
                                 <?php endif; ?>
 
-                                <?php if ($data->imageGallery_2): ?>
+                                <?php if (property_exists($data, 'imageGallery_2') && $data->imageGallery_2): ?>
                                     <a data-fancybox="gallery_imageGallery"
                                        href="<?= $data->imageGallery_2->path ?>"
                                        class="imageGallery-item"><img
@@ -589,7 +585,7 @@
 
                         <?php // check if types exist - it's a difference between previewpage and detailpage
                         $onlyTypes = [];
-                        if (isset($data->types) && !empty($data->types)) {
+                        if (isset($data->types) && is_array($data->types)) {
                             foreach ($data->types as $type) {
                                 $onlyTypes[] = $type->label;
                             }
@@ -1045,7 +1041,7 @@ try {
     \con4gis\CoreBundle\Resources\contao\models\C4gLogModel::addLogEntry('operator', $typeError->getMessage());
     throw new \Contao\CoreBundle\Exception\PageNotFoundException();
 }
-$newArr["detailData"]["openingHours"] = $newArr["components"]["detail"]["data"]["opening_hours"];
+$newArr["detailData"]["openingHours"] = key_exists('detail', $newArr["components"]) ? $newArr["components"]["detail"]["data"]["opening_hours"] : '';
 unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);
 ?>
@@ -1073,32 +1069,34 @@ $newConfiguration = json_encode($newArr);
 //      noImprintRequired-> Sonstiges (z.B. Sehenswürdigkeit, Bahnhof, Engagement, ...)
 
 $imprintData = $this->imprintData;
-$imprintType = $imprintData["imprintType"];
-$imprintLink = $imprintData["imprintLink"];
-$addressName = $imprintData["addressName"];
-$addressStreet = $imprintData["addressStreet"];
-$addressStreetNumber = $imprintData["addressStreetNumber"];
-$addressZipcode = $imprintData["addressZipcode"];
-$addressCity = $imprintData["addressCity"];
-$addressCountry = $imprintData["addressCountry"];
+if ($imprintData) {
+    $imprintType = $imprintData["imprintType"];
+    $imprintLink = $imprintData["imprintLink"];
+    $addressName = $imprintData["addressName"];
+    $addressStreet = $imprintData["addressStreet"];
+    $addressStreetNumber = $imprintData["addressStreetNumber"];
+    $addressZipcode = $imprintData["addressZipcode"];
+    $addressCity = $imprintData["addressCity"];
+    $addressCountry = $imprintData["addressCountry"];
 
-$fundStatement = $imprintData["fundStatement"]; //Angaben zum Kapital
-$inspectorate = $imprintData["inspectorate"]; //Aufsichtsbehörde
-$standeskammer = $imprintData["standeskammer"]; //Standeskammer
-$liquidation = $imprintData["liquidation"]; //Liquidation / Auflösung
+    $fundStatement = $imprintData["fundStatement"]; //Angaben zum Kapital
+    $inspectorate = $imprintData["inspectorate"]; //Aufsichtsbehörde
+    $standeskammer = $imprintData["standeskammer"]; //Standeskammer
+    $liquidation = $imprintData["liquidation"]; //Liquidation / Auflösung
 
-$owner = $imprintData["owner"];
-$contactEmail = $imprintData["contactEmail"];
-$contactPhone = $imprintData["contactPhone"];
-$contactFax = $imprintData["contactFax"];
-$tradeID = $imprintData["tradeID"];
-$registryCourt = $imprintData["registryCourt"];
-$registerNumber = $imprintData["registerNumber"];
-$responsibleName = $imprintData["responsibleName"];
-$responsibleStreet = $imprintData["responsibleStreet"];
-$responsibleStreetNumber = $imprintData["responsibleStreetNumber"];
-$responsibleZipcode = $imprintData["responsibleZipcode"];
-$responsibleCity = $imprintData["responsibleCity"];
+    $owner = $imprintData["owner"];
+    $contactEmail = $imprintData["contactEmail"];
+    $contactPhone = $imprintData["contactPhone"];
+    $contactFax = $imprintData["contactFax"];
+    $tradeID = $imprintData["tradeID"];
+    $registryCourt = $imprintData["registryCourt"];
+    $registerNumber = $imprintData["registerNumber"];
+    $responsibleName = $imprintData["responsibleName"];
+    $responsibleStreet = $imprintData["responsibleStreet"];
+    $responsibleStreetNumber = $imprintData["responsibleStreetNumber"];
+    $responsibleZipcode = $imprintData["responsibleZipcode"];
+    $responsibleCity = $imprintData["responsibleCity"];
+}
 
 // custom strings
 $addressStreetAll = $addressStreet . " " . $addressStreetNumber;

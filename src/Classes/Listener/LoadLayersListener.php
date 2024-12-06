@@ -14,6 +14,7 @@ namespace gutesio\OperatorBundle\Classes\Listener;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use Contao\Request;
+use Contao\System;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use con4gis\MapsBundle\Classes\Events\LoadLayersEvent;
 use con4gis\MapsBundle\Classes\Services\LayerService;
@@ -59,17 +60,22 @@ class LoadLayersListener
         }
         $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
         $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
-        $alias = $_SERVER['HTTP_REFERER'];
-        $strC = substr_count($alias, '/');
-        $arrUrl = explode('/', $alias);
 
-        if (strpos($arrUrl[$strC], '.html')) {
-            $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
-        } else {
-            $alias = $arrUrl[$strC];
-        }
-        if (strpos($alias, '?')) {
-            $alias = explode('?', $alias)[0];
+        $alias = System::getContainer()->get('request_stack')->getSession()->get('gutesio_element_alias', '');
+
+        if (!$alias) {
+            $alias = $_SERVER['HTTP_REFERER'];
+            $strC = substr_count($alias, '/');
+            $arrUrl = explode('/', $alias);
+
+            if (strpos($arrUrl[$strC], '.html')) {
+                $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
+            } else {
+                $alias = $arrUrl[$strC];
+            }
+            if (strpos($alias, '?')) {
+                $alias = explode('?', $alias)[0];
+            }
         }
         $event->setPreventCaching(true);
         if (C4GUtils::isValidGUID($alias)) {

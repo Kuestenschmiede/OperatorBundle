@@ -24,10 +24,14 @@ class GutesioModuleCallback
 {
     public function getMapContentElements()
     {
-        $maps = \ContentModel::findBy('type', 'c4g_maps');
+        $maps = \Contao\ContentModel::findBy('type', 'c4g_maps');
         $resultList = [];
         foreach ($maps as $map) {
-            $map->name = C4gMapsModel::findByPk($map->c4g_map_id)->name;
+            if ($map->c4g_map_id !== '') {
+                $mapLoad = C4gMapsModel::findByPk($map->c4g_map_id);
+                $map->name = $mapLoad->name;
+            }
+
             if ($map->name) {
                 $resultList[$map->id] = $map->name;
             }

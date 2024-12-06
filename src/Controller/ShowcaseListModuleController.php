@@ -521,9 +521,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($mode !== 5) {
             return [];
         }
-        $tagUuids = StringUtil::deserialize($moduleModel->gutesio_data_elements, true);
+        $elementUuids = StringUtil::deserialize($moduleModel->gutesio_data_elements, true);
 
-        return $tagUuids;
+        return $elementUuids;
     }
 
     private function applyTagFilter(array $tagIds, array $data)

@@ -557,6 +557,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $database = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
+        $fileUtils = new FileUtils();
 
         if ($elementUuid) {
             $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
@@ -725,7 +726,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                         $row['tagLinks'] = [];
                     }
 
-                    $row['tagLinks'][] = $icon;
+                    $row['tagLinks'][$r['name']] = $icon;
                 }
 
                 array_unique($row['tagLinks']);

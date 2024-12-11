@@ -31,6 +31,7 @@ class OfferInsertTag
     public function replaceShowcaseTags(string $insertTag)
     {
         $arrTags = explode('::', $insertTag);
+        $fileUtils = new FileUtils();
 
         if (
             (count($arrTags) === 2 && ($arrTags[0] === self::TAG) && (in_array($arrTags[1], self::TAG_PAYLOAD)) ) ||
@@ -63,11 +64,11 @@ class OfferInsertTag
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
 
                         if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
-                            $url = FileUtils::addUrlToPath($cdnUrl,$arrUrls[0]);
+                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrUrls[0]);
                         } else {
-                            $url = FileUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN']);
+                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrOffer['imageCDN']);
                         }
-                        $result = FileUtils::getImageSizeAndOrientation($url);
+                        $result = $fileUtils->getImageSizeAndOrientation($url);
                         $orientation = $result[1];
 
                         if ($orientation === 'landscape') {
@@ -79,9 +80,9 @@ class OfferInsertTag
                         }
 
                         if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
-                            $url = FileUtils::addUrlToPath($cdnUrl,$arrUrls[0], $width, $height);
+                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrUrls[0], $width, $height);
                         } else {
-                            $url = FileUtils::addUrlToPath($cdnUrl,$arrOffer['imageCDN'], $width, $height);
+                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrOffer['imageCDN'], $width, $height);
                         }
 
                         return $url ?: ''; //Further processing in the template
@@ -97,7 +98,7 @@ class OfferInsertTag
 //                            }
                             $image = $arrOffer['imageCDN']; //ToDO CDN TEST
                             if ($image && $cdnUrl) {
-                                $imagePath = FileUtils::addUrlToPath($cdnUrl ,$image, 1200, 630);
+                                $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl ,$image, 1200, 630);
                                 $metaDescription = str_replace('IO_OFFER_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_OFFER_IMAGE"', '', $metaDescription);
@@ -128,7 +129,7 @@ class OfferInsertTag
                                     $logo = $objShowcase['logoCDN'];//  Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($logo && $cdnUrl) {
                                         //ToDo CDN get params
-                                        $logoPath = FileUtils::addUrlToPath($cdnUrl,$logo);
+                                        $logoPath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$logo);
                                         $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
@@ -141,7 +142,7 @@ class OfferInsertTag
 //                                    }
                                     $image = $objShowcase['imageCDN'];//Controller::replaceInsertTags("{{file::$uuid}}");
                                     if ($image && $cdnUrl) {
-                                        $imagePath = FileUtils::addUrlToPath($cdnUrl,$image, 1200, 630);
+                                        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$image, 1200, 630);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

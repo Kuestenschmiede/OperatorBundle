@@ -855,6 +855,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
 
+        $fileUtils = new FileUtils();
+
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom <= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil >= UNIX_TIMESTAMP())) ";
             $tag = Database::getInstance()->prepare($strSelect)->execute($arrTagId)->fetchAssoc();
@@ -873,7 +875,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 //                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
 //                    if ($objImage) {
                         $optionData[$tag['uuid']] = [
-                            'src' => FileUtils::addUrlToPath($cdnUrl,$tag['imageCDN']),
+                            'src' => $fileUtils->addUrlToPath($cdnUrl,$tag['imageCDN']),
                             'alt' => $tag['name']
                         ];
 //                    } else {

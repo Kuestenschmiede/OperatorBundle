@@ -507,6 +507,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
+        $fileUtils = new FileUtils();
 
         foreach ($arrTagIds as $arrTagId) {
             $strSelect = "SELECT * FROM tl_gutesio_data_tag WHERE published = 1 AND uuid = ? AND (validFrom IS NULL OR validFrom = 0 OR validFrom <= UNIX_TIMESTAMP() AND (validUntil IS NULL OR validUntil = 0 OR validUntil >= UNIX_TIMESTAMP()))";
@@ -519,7 +520,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
                 if ($tag['imageCDN']) {
                     //$objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
-                    $imageFile = FileUtils::addUrlToPath($cdnUrl,$tag['imageCDN']);
+                    $imageFile = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$tag['imageCDN']);
                     foreach ($optionData as $key=>$option) {
                         if (($option['alt'] == $tag['name']) || ($option['src'] == $imageFile)) {
                             continue(2);

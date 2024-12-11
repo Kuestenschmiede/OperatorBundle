@@ -967,6 +967,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $database = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
+        $fileUtils = new FileUtils();
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
         a.imageCDN, a.foreignLink, a.directLink, ' . '
             (CASE ' . '
@@ -997,11 +998,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => FileUtils::addUrlToPath($cdnUrl,$imageFile, 600, 450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600, 450),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => FileUtils::addUrlToPath($cdnUrl,$imageFile, 600,450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600,450),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }
@@ -1040,7 +1041,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 //$model = FilesModel::findByUuid($r['image']);
-                $file = FileUtils::addUrlToPath($cdnUrl,$r['imageCDN']);
+                $file = $fileUtils->addUrlToPath($cdnUrl,$r['imageCDN']);
                 foreach ($row['tagLinks'] as $addedIcons) {
                     if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                         continue(2);

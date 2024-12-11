@@ -74,8 +74,9 @@ class LoadFeatureFilterListener
                     }
                     //$imageUuid = StringUtil::binToUuid($tag['image']);
                     $file = $tag['imageCDN'];//FilesModel::findByUuid($imageUuid);
+                    $fileUtils = new FileUtils();
                     if ($file) {
-                        $filterObject->setImage(FileUtils::addUrlToPath($cdnUrl,$file));
+                        $filterObject->setImage($fileUtils->addUrlToPath($cdnUrl,$file));
                     }
                     if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                         $filterObject->addFilterValue([
@@ -108,7 +109,7 @@ class LoadFeatureFilterListener
                     //$imageUuid = StringUtil::binToUuid($tag['image']);
                     $file = $tag['imageCDN'];//FilesModel::findByUuid($imageUuid);
                     if ($file) {
-                        $filterObject->setImage(FileUtils::addUrlToPath($cdnUrl,$file));
+                        $filterObject->setImage($fileUtils->addUrlToPath($cdnUrl,$file));
                     }
                     if ($tag['technicalKey'] === 'tag_opening_hours' || $tag['technicalKey'] === 'tag_phone_hours') {
                         $filterObject->addFilterValue([

@@ -29,7 +29,8 @@
     "con4gis/framework": "^1.1.21",
     "con4gis/maps": "^8 || ^9",
     "con4gis/pwa": "^2.5",
-    "bacon/bacon-qr-code": "^2.0"
+    "bacon/bacon-qr-code": "^2.0",
+    "guzzlehttp/guzzle": "^7"
   },
   "conflict": {
     "contao/core": "*",

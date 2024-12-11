@@ -219,7 +219,8 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objLogo = FilesModel::findByUuid($element['logo']);
-        $logoSrc = FileUtils::addUrlToPath($cdnUrl,$element['logoCDN']);
+        $fileUtils = new FileUtils();
+        $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN']);
         foreach ($arrChilds as $key => $child) {
             if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
                 break;
@@ -227,7 +228,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
 
-        $imageSrc = FileUtils::addUrlToPath($cdnUrl,$element['imageCDN']);
+        $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], 2400);
 
         $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
@@ -265,6 +266,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         $db = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
+        $fileUtils = new FileUtils();
         $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
                 WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
         if ($type['type'] === "event") {
@@ -303,7 +305,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
         //$objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
-        $offerSrc = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']);
+        $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$child['imageCDN']);
 //        list($width, $height) = FileUtils::getImageSize($offerSrc);
 //
 //        if ($width > $height) {
@@ -314,7 +316,7 @@ class BannerModuleController extends AbstractFrontendModuleController
 ////            $height = 1040;
 //        }
 
-        //        //$offerSrc = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']); //,$width, $height = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']); //,$width, $height
+        //        //$offerSrc = FileUtils::addUrlToPathAndGetImage($cdnUrl,$child['imageCDN']); //,$width, $height = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']); //,$width, $height
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images

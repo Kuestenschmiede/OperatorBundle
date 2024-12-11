@@ -79,9 +79,10 @@ class LoadPopupListener
         $cdnUrl = $objSettings->cdnUrl;
         //$file = FilesModel::findByUuid($imageUuid) ? FilesModel::findByUuid($imageUuid) : FilesModel::findByUuid(StringUtil::binToUuid($element['image']));
         //$strImage = $file->path;
+        $fileUtils = new FileUtils();
         if ($file) {
             $alt = $name;
-            $image = "<img class='entry-content' src='" . FileUtils::addUrlToPath($cdnUrl, $file, 600, 300) . "' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='" . $fileUtils->addUrlToPathAndGetImage($cdnUrl, $file, 600, 300) . "' alt='$alt' title='$name'>";
         }
         $tags = '';
 
@@ -108,7 +109,7 @@ class LoadPopupListener
             }
 
 
-            $fileTag = $tag['imageCDN'] ? FileUtils::addUrlToPath($cdnUrl,$tag['imageCDN'], 600, 300) : false;
+            $fileTag = $tag['imageCDN'] ? $fileUtils->addUrlToPath($cdnUrl,$tag['imageCDN'], 600, 300) : false;
             if ($fileTag) {
                 if ($link) {
                     $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>

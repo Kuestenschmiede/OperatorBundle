@@ -1,4 +1,6 @@
-<?php if ($_GET['dev'] == 1) {
+<?php use gutesio\DataModelBundle\Classes\FileUtils;
+
+if ($_GET['dev'] == 1) {
     $this->dumpTemplateVars();
 } ?>
 
@@ -16,7 +18,8 @@
         $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
 
         // Image Orientation
-        $result = gutesio\DataModelBundle\Classes\FileUtils::getImageSizeAndOrientation($item['image']['src']);
+        $fileUtils = new FileUtils();
+        $result = $fileUtils->getImageSizeAndOrientation($item['image']['src']);
         //list($width, $height) = $result[0];
         $orientation = $result[1];
         ?>

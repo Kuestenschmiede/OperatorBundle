@@ -348,6 +348,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
         $detailLinks = $this->getOfferDetailLinks();
         $urlSuffix = Config::get('urlSuffix');
+        $fileUtils = new FileUtils();
         foreach ($detailLinks as $key => $value) {
             $field = new ImageTileField();
             $field->setWrapperClass("c4g-list-element__image-wrapper");
@@ -606,15 +607,15 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
-                //list($width, $height) = FileUtils::getImageSize($cdnUrl.$imageFile);
+                //list($width, $height) = $fileUtils->getImageSize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => FileUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile,600,450),
                     'alt' => $row['name'],
                     'width' => 600,
                     'height' => 450,
                 ];
                 $row['image'] = [
-                    'src' => FileUtils::addUrlToPath($cdnUrl,$imageFile,600,450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile,600,450),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
                     'width' => 600,
                     'height' => 450,
@@ -643,7 +644,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
                 //$model = FilesModel::findByUuid($r['image']);
-                $imageFile = $r['imageCDN'] ? FileUtils::addUrlToPath($cdnUrl,$r['imageCDN']) : false;
+                $imageFile = $r['imageCDN'] ? $fileUtils->addUrlToPath($cdnUrl,$r['imageCDN']) : false;
                 if ($imageFile) {
                     $icon = [
                         'name' => $r['name'],

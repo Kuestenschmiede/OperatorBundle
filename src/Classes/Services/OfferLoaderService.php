@@ -460,12 +460,12 @@ class OfferLoaderService
         }
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
+        $fileUtils = new FileUtils();
         foreach ($childRows as $key => $row) {
-            //$imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN'])/* && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image'])*/;
             if ($row['imageCDN']) {
                 if ($determineOrientation) {
-                    $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN']);
-                    $result = FileUtils::getImageSizeAndOrientation($imageCDN);
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN']);
+                    $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
                       $width = 841;
@@ -474,12 +474,12 @@ class OfferLoaderService
                         $width = 594;
                         $height = 841;
                     }
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width, $height);
                 } else {
                     $width = 841;
                     $height = 594;
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width);
                 }
-
-                $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN'], $width, $height);
 
                 $childRows[$key]['image'] = [
                     'src' => $imageCDN,
@@ -520,6 +520,8 @@ class OfferLoaderService
         } elseif ($childDataMode == '3') {
             $tags = StringUtil::deserialize($this->model->gutesio_child_tag, true);
         }
+
+        $fileUtils = new FileUtils();
 
         $elements = $this->model->gutesio_data_elements ? StringUtil::deserialize($this->model->gutesio_data_elements, true) : [];
 
@@ -780,8 +782,8 @@ class OfferLoaderService
             $image = $row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($image) {
                 if ($determineOrientation) {
-                    $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN']);
-                    $result = FileUtils::getImageSizeAndOrientation($imageCDN);
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN']);
+                    $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
                         $width = 841;
@@ -790,12 +792,12 @@ class OfferLoaderService
                         $width = 594;
                         $height = 841;
                     }
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width, $height);
                 } else {
                     $width = 841;
                     $height = 594;
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width);
                 }
-
-                $imageCDN = FileUtils::addUrlToPath($cdnUrl,$row['imageCDN'], $width, $height);
 
                 $childRows[$key]['image'] = [
                     'src' => $imageCDN,
@@ -840,6 +842,7 @@ class OfferLoaderService
 
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
+        $fileUtils = new FileUtils();
 
         if (is_array($typeKeys) && count($typeKeys) > 0) {
             $keyString = '(';
@@ -947,7 +950,7 @@ class OfferLoaderService
             if ($row['infoFileCDN']) {
                 $rows[$key]['infoFile'] = [
                     'name' => 'Info',
-                    'path' => FileUtils::addUrlToPath($cdnUrl,$row['infoFileCDN']),
+                    'path' => $fileUtils->addUrlToPath($cdnUrl,$row['infoFileCDN']),
                     'changed' => false,
                     'data' => [],
                 ];
@@ -964,8 +967,8 @@ class OfferLoaderService
             foreach ($images as $image) {
                 $file = $image;
                 if ($file) {
-                    $imageCDN = FileUtils::addUrlToPath($cdnUrl,$file);
-                    $result = FileUtils::getImageSizeAndOrientation($imageCDN);
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file);
+                    $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
                         $width = 841;
@@ -975,7 +978,7 @@ class OfferLoaderService
                         $height = 841;
                     }
 
-                    $url = FileUtils::addUrlToPath($cdnUrl,$file,$width,$height);
+                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,$width,$height);
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $url,
                         'path' => $url,
@@ -1014,7 +1017,7 @@ class OfferLoaderService
                 $imageFile = $tagRow['imageCDN'];
 
                 if ($imageFile) {
-                    $url = FileUtils::addUrlToPath($cdnUrl,$imageFile);
+                    $url = $fileUtils->addUrlToPath($cdnUrl,$imageFile);
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
 //                        'importantPart' => [

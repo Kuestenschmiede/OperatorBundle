@@ -60,6 +60,8 @@ class ShowcaseInsertTag
             $objSettings = GutesioOperatorSettingsModel::findSettings();
             $cdnUrl = $objSettings->cdnUrl;
 
+            $fileUtils = new FileUtils();
+
             $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ?')
                 ->execute($alias);
             $arrShowcase = $objShowcase->fetchAssoc();
@@ -89,33 +91,33 @@ class ShowcaseInsertTag
                         return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';
                     case 'image':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,600,450) : ''; //Further processing in the template
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,600,450) : ''; //Further processing in the template
                     case 'imageCDN':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,2400,660) : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,2400,660) : '';
                     case 'imageList':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,600,450) : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,600,450) : '';
                     case 'previewimage':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url,2400,660) : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,2400,660) : '';
                     case 'logo':
                         $url = $arrShowcase['logoCDN'];
-                        return $url ? FileUtils::addUrlToPath($cdnUrl,$url).'?height=150' : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url).'?height=150' : '';
                         return C4GUtils::truncate($arrShowcase['description'], 275);
                     case 'meta':
                         $metaDescription = $arrShowcase['metaDescription'];
                         if ($metaDescription) {
                             $logo = $arrShowcase['logoCDN'];
                             if ($logo && $cdnUrl) {
-                                $logoPath = FileUtils::addUrlToPath($cdnUrl, $logo);
+                                $logoPath = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $logo);
                                 $metaDescription = str_replace('IO_SHOWCASE_LOGO', $logoPath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"logo":"IO_SHOWCASE_LOGO"', '', $metaDescription);
                             }
                             $image = $arrShowcase['imageCDN'];
                             if ($image && $cdnUrl) {
-                                $imagePath = FileUtils::addUrlToPath($cdnUrl, $image, 1200, 630);
+                                $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $image, 1200, 630);
                                 $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

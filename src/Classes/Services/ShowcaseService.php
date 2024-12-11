@@ -15,6 +15,7 @@ use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Classes\Services\AreaService;
 use Contao\Database;
 use Contao\StringUtil;
+use Contao\System;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Classes\TagDetailFieldGenerator;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
@@ -44,6 +45,7 @@ class ShowcaseService
      * @var VisitCounterService
      */
     private $visitCounter = null;
+
 
 
     private $filterConnector = 'AND';
@@ -287,7 +289,7 @@ class ShowcaseService
             $searchString = key_exists('filter', $params) ? $params['filter'] : '';
             $sorting = key_exists('sorting',$params) ? $params['sorting'] : 'random';
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
-            $position = key_exists('pos',$params) ? explode(',', $params['pos']) : '';
+            $position = key_exists('pos',$params) && str_contains($params['pos'], ",") ? explode(',', $params['pos']) : '';
         }
         $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
         if ($this->checkForCacheFile($key)) {
@@ -430,12 +432,12 @@ class ShowcaseService
         if (!$distanceInMeters) {
             return $distanceInMeters;
         }
-        $unit = ' km';
-        if ($distanceInMeters < 1) {
-            $distanceInMeters = $distanceInMeters * 1000;
-            $unit = ' m';
+        $unit = ' m';
+        if ($distanceInMeters >= 1000) {
+            $distanceInMeters = round($distanceInMeters / 1000, 3);
+            $unit = ' km';
         } else {
-            $distanceInMeters = number_format($distanceInMeters, 2);
+            $distanceInMeters = number_format($distanceInMeters, 2, ",", ".");
         }
 
         return $distanceInMeters . $unit;
@@ -914,12 +916,13 @@ class ShowcaseService
 
         $arrIds = [];
         $arrLocations = [];
+
         $arrLocations[] = [
             floatval($userLocation[0]),
             floatval($userLocation[1]),
         ];
         foreach ($arrResult as $item) {
-            if ($item['geox'] && $item['geoy'] && $item['releaseType'] !== 'interregional') {
+            if ($item['geox'] && $item['geoy']) {
                 $arrIds[] = ['id' => $item['id']];
                 $arrLocations[] = [
                     floatval($item['geox']),
@@ -932,39 +935,30 @@ class ShowcaseService
             }
         }
 
-        $areaService = new AreaService();
-        $settings = GutesioOperatorSettingsModel::findSettings();
-        $mapsProfileId = $settings->detail_profile;
-        $mapsProfile = C4gMapProfilesModel::findByPk($mapsProfileId);
-        $matrixResponse = $areaService->performMatrix($mapsProfile, 'driving', $arrLocations);
+        if (is_array($userLocation)) {
+            $areaService = new AreaService();
+            $distances = [];
 
-        try {
-            $distanceResult = \GuzzleHttp\json_decode($matrixResponse);
-        } catch (\Exception $exception) {
-            C4gLogModel::addLogEntry('operator', "Fehler beim json_decode der Matrix-Response '$matrixResponse'.");
-
-            return $arrIds;
-        }
-        $distances = $distanceResult->sources_to_targets;
-        $distances = $distances[0];
-        foreach ($distances as $key => $distance) {
-//            if ($key === 0) {
-//                // start point
-//                $arrIds[$key]['distance'] = 0;
-//                continue;
-//            }
-            $arrIds[$key]['distance'] = floatval($distance->distance);
-        }
-
-        usort($arrIds, function ($a, $b) {
-            if ($a['distance'] > $b['distance']) {
-                return 1;
-            } elseif ($a['distance'] < $b['distance']) {
-                return -1;
+            $startPoint = $arrLocations[0];
+            for ($i = 1; $i < count($arrLocations); $i++) {
+                $distances[] = $areaService->calculateDistance($startPoint, $arrLocations[$i]);
             }
 
-            return 0;
-        });
+            foreach ($distances as $key => $distance) {
+                $arrIds[$key]['distance'] = floatval($distance);
+            }
+
+            usort($arrIds, function ($a, $b) {
+                if ($a['distance'] > $b['distance']) {
+                    return 1;
+                } elseif ($a['distance'] < $b['distance']) {
+                    return -1;
+                }
+
+                return 0;
+            });
+        }
+
         foreach ($missingIds as $missingId) {
             $arrIds[] = $missingId;
         }

@@ -20,7 +20,6 @@ if ($_GET['dev'] == 1) {
         // Image Orientation
         $fileUtils = new FileUtils();
         $result = $fileUtils->getImageSizeAndOrientation($item['image']['src']);
-        //list($width, $height) = $result[0];
         $orientation = $result[1];
         ?>
         <div class="banner-slide">

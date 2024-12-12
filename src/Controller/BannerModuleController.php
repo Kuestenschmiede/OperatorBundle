@@ -220,7 +220,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         }
         //$objLogo = FilesModel::findByUuid($element['logo']);
         $fileUtils = new FileUtils();
-        $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN']);
+        $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN'],0, 0, 86400);
         foreach ($arrChilds as $key => $child) {
             if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
                 break;
@@ -228,7 +228,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
 
-        $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], 2400);
+        $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], 2400, 86400);
 
         $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
@@ -304,19 +304,8 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $location = $locationResult ? $locationResult['name'] : '';
             }
         }
-        //$objImage = $child['imageOffer'] && FilesModel::findByUuid($child['imageOffer']) ? FilesModel::findByUuid($child['imageOffer']) : FilesModel::findByUuid($child['image']);
-        $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$child['imageCDN']);
-//        list($width, $height) = FileUtils::getImageSize($offerSrc);
-//
-//        if ($width > $height) {
-////            $width = 1040;
-////            $height = 690;
-//        } else {
-////            $width = 690;
-////            $height = 1040;
-//        }
 
-        //        //$offerSrc = FileUtils::addUrlToPathAndGetImage($cdnUrl,$child['imageCDN']); //,$width, $height = FileUtils::addUrlToPath($cdnUrl,$child['imageCDN']); //,$width, $height
+        $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$child['imageCDN'],0,0,86400);
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images

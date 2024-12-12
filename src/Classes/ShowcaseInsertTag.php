@@ -103,7 +103,7 @@ class ShowcaseInsertTag
                         return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,2400,660) : '';
                     case 'logo':
                         $url = $arrShowcase['logoCDN'];
-                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url).'?height=150' : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url) : '';
                         return C4GUtils::truncate($arrShowcase['description'], 275);
                     case 'meta':
                         $metaDescription = $arrShowcase['metaDescription'];

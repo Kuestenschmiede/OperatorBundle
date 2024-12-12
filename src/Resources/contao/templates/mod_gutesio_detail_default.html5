@@ -67,7 +67,7 @@ $data = json_decode(json_encode($this->detailData));
 
             <?php if (\Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::logo}}")): ?>
                 <div class="detail-hero2__logo">
-                    <img src="{{showcase::<?=$data->alias?>::logo}}" width="150" height="150" alt="{{showcase::<?=$data->alias?>::name}}" class="img-fluid">
+                    <img src="{{showcase::<?=$data->alias?>::logo}}" height="150" alt="{{showcase::<?=$data->alias?>::name}}" class="img-fluid">
                 </div>
             <?php endif ?>
         </div>

@@ -120,6 +120,7 @@ html {
     &__name {
       font-size: var(--gutes-font-size-title);
       font-weight: var(--gutes-font-weight-title);
+      hyphens: auto;
     }
 
     &__types-wrapper,

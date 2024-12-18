@@ -372,6 +372,22 @@ class WishlistModuleController extends AbstractFrontendModuleController
             $field->setConditionValue(["0"]);
             $fields[] = $field;
 
+            $field = new PhoneTileField();
+            $field->setName("contactMobile");
+            $field->setWrapperClass("c4g-list-element__contact-mobile-wrapper");
+            $field->setClass("c4g-list-element__phone");
+            $field->setConditionField(['contactable']);
+            $field->setConditionValue(["1"]);
+            $fields[] = $field;
+
+            $field = new PhoneTileField();
+            $field->setName("mobile");
+            $field->setWrapperClass("c4g-list-element__contact-mobile-wrapper");
+            $field->setClass("c4g-list-element__phone");
+            $field->setConditionField(['contactable']);
+            $field->setConditionValue(["0"]);
+            $fields[] = $field;
+
             $field = new OSMOpeningHoursTileField();
             $field->setName("phoneHours");
             $field->setWrapperClass("c4g-list-element__contact-phonehours-wrapper");

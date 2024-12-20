@@ -806,7 +806,9 @@ class ShowcaseService
         $arrTagIds = [];
         if (count($parameters) > 0) {
             $arrTagIds = Database::getInstance()->prepare($sql)->execute($parameters)->fetchAllAssoc();
-            $arrTagIds = array_values($arrTagIds);
+            if (is_array($arrTagIds) && count($arrTagIds)) {
+                $arrTagIds = array_values($arrTagIds);
+            }
         }
         $sql = 'SELECT `elementId` FROM tl_gutesio_data_type_element_values';
         $ctr = 0;
@@ -833,7 +835,9 @@ class ShowcaseService
         $arrTypeIds = [];
         if (count($parameters) > 0) {
             $arrTypeIds = Database::getInstance()->prepare($sql)->execute($parameters)->fetchAllAssoc();
-            $arrTypeIds = array_values($arrTypeIds);
+            if (is_array($arrTypeIds) && count($arrTypeIds)) {
+                $arrTypeIds = array_values($arrTypeIds);
+            }
         }
 
         return array_unique(array_merge($arrTagIds, $arrTypeIds));

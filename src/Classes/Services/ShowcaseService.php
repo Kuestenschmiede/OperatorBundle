@@ -22,6 +22,8 @@ use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\DataModelBundle\Classes\TypeFieldUtil;
 use gutesio\OperatorBundle\Classes\Cache\ShowcaseListApiCache;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use Org\Heigl\Hyphenator\Hyphenator;
+use Org\Heigl\Hyphenator\Options;
 
 class ShowcaseService
 {
@@ -52,7 +54,7 @@ class ShowcaseService
 
 
     //ToDo AND search to find exact results
-    const FILTER_FIELDS = ['name'=>50,'alias'=>100,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60];
+    const FILTER_FIELDS = ['name_'=>1000,'alias_'=>1000,'name'=>60,'alias'=>60,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60];
 
     public static function getFilterSQLString() {
         if(TL_MODE == "BE") {
@@ -60,11 +62,21 @@ class ShowcaseService
         }
 
         $result = '(';
+        //1. entry, 2. part left, 3. part right
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
-            If ($result == '(') {
-                $result .= 'UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+            if ($weight == 1000) {
+                $key = str_replace('_','',$key);
+                If ($result == '(') {
+                    $result .= 'UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?';
+                } else {
+                    $result .= ' OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?';
+                }
             } else {
-                $result .= ' OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+                If ($result == '(') {
+                    $result .= 'UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+                } else {
+                    $result .= ' OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+                }
             }
         }
         $result .= ')';
@@ -102,36 +114,70 @@ class ShowcaseService
         }
 
         $result = '';
+        //1. entry, 2. part left, 3. part right
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
-            If ($result == '') {
-                $result .= 'IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+            if ($weight == 1000) {
+                $key = str_replace('_','',$key);
+                If ($result == '') {
+                    $result .= 'IF (UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?, '.$weight.', 0)';
+                } else {
+                    $result .= ' + IF (UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?, '.$weight.', 0)';
+                }
             } else {
-                $result .= ' + IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+                If ($result == '') {
+                    $result .= 'IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+                } else {
+                    $result .= ' + IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+                }
             }
         }
         $result .= ' AS weight';
+
         return $result; //self::getFilterSQLStringRelevance($result);
     }
 
     public static function getFilterSQLValueSet($filterString, $withoutWeight = false) {
-        $count = count(ShowcaseService::FILTER_FIELDS);
-//        $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
+        //        $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
 //        if (count($strParts) <= 1) {
 //            $strParts = explode(',', (trim(str_replace('%',' ', $filterString))));
 //        }
-        $strParts = explode(',', (trim(str_replace('%',' ', $filterString))));
+        $newFilterString = trim(str_replace('%',' ', $filterString));
+        $strParts = explode(',', $newFilterString);
         if (count($strParts) <= 1) {
-            $strParts = explode(';', (trim(str_replace('%',' ', $filterString))));
+            $strParts = explode(';', $newFilterString);
         }
         if (count($strParts) <= 1) {
-            $strParts = explode('#', (trim(str_replace('%',' ', $filterString))));
+            $strParts = explode('#', $newFilterString);
         }
         if (count($strParts) <= 1) {
-            $strParts = explode('+', (trim(str_replace('%',' ', $filterString))));
+            $strParts = explode('+', $newFilterString);
         }
         if (count($strParts) <= 1) {
-            $strParts = explode('-', (trim(str_replace('%',' ', $filterString))));
+            $strParts = explode('-', $newFilterString);
         }
+        if (count($strParts) <= 1 && (strpos($newFilterString, ' ') !== false)) {
+            $strParts = explode(' ', $newFilterString);
+        }
+        if (count($strParts) <= 1 && (strpos($newFilterString, ' ') === false)) {
+            $hyphenatorOptions = new Options();
+            $hyphenatorOptions->setHyphen('-')
+                ->setDefaultLocale('de_DE')
+                ->setRightMin(5)
+                ->setLeftMin(5)
+                ->setWordMin(5)
+                ->setFilters('NonStandard')
+                ->setTokenizers(['Whitespace', 'Punctuation']);
+            $hyphenator = new Hyphenator();
+            $hyphenator->setOptions($hyphenatorOptions);
+            $hyphenatorResults = $hyphenator->hyphenate($newFilterString);
+            if ($hyphenatorResults && count($hyphenatorResults) > 0) {
+                foreach($hyphenatorResults as $result) {
+                    $strParts = explode('-',$result);
+                    break; //Todo more parts
+                }
+            }
+        }
+
         $partArr = [];
         foreach($strParts as $part) {
             $part = trim($part);
@@ -144,23 +190,39 @@ class ShowcaseService
             }
         }
 
-        $filterString = $partArr[0];
-        $extraFilterString = count($partArr) > 1 ? $partArr[1] : $partArr[0];
+        $filterString = $newFilterString;
+        $extraFilterString1 = $partArr[0];
+        $extraFilterString2 = count($partArr) > 1 ? $partArr[1] : $partArr[0];
 
         $likeArr = [];
         $weightArr = [];
         $relevanceArr = [];
-        for ($i=0;$i<$count;$i++) {
-            $likeArr[] = '%'.$filterString.'%';
-            $likeArr[] = '%'.$extraFilterString.'%';
+        foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+               if ($weight == 1000) {
+                    $likeArr[] = $filterString;
+                    $likeArr[] = $extraFilterString1;
+                    $likeArr[] = $extraFilterString2;
 
-            if (!$withoutWeight) {
-                $weightArr[] = '%'.$filterString.'%';
-                $weightArr[] = '%'.$extraFilterString.'%';
-            }
+                    if (!$withoutWeight) {
+                        $weightArr[] = $filterString;
+                        $weightArr[] = $extraFilterString1;
+                        $weightArr[] = $extraFilterString2;
+                    }
+                } else {
+                   $likeArr[] = '%'.$filterString.'%';
+                   $likeArr[] = '%'.$extraFilterString1.'%';
+                   $likeArr[] = '%'.$extraFilterString2.'%';
 
-            //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
+                   if (!$withoutWeight) {
+                       $weightArr[] = '%'.$filterString.'%';
+                       $weightArr[] = '%'.$extraFilterString1.'%';
+                       $weightArr[] = '%'.$extraFilterString2.'%';
+                   }
+                }
+
+                //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
         }
+
 
         $resultArr = array_merge($likeArr, $weightArr, $relevanceArr);
         //C4gLogModel::addLogEntry('operator', "Result: ".implode(',',$resultArr));

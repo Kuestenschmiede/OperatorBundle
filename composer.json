@@ -30,7 +30,8 @@
     "con4gis/maps": "^9.0.11",
     "con4gis/pwa": "^2.6",
     "bacon/bacon-qr-code": "^2.0",
-    "guzzlehttp/guzzle": "^7"
+    "guzzlehttp/guzzle": "^7",
+    "org_heigl/hyphenator": "^v3.1.0"
   },
   "conflict": {
     "contao/core": "*",

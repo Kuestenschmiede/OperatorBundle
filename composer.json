@@ -24,11 +24,11 @@
   },
   "require": {
     "php": ">=8.0",
-    "contao/core-bundle": "^4.13",
-    "gutesio/data-model": "^2.1.14",
-    "con4gis/framework": "^1.1.26",
-    "con4gis/maps": "^9.0.11",
-    "con4gis/pwa": "^2.6",
+    "contao/core-bundle": "^4.13 || ^5.0",
+    "gutesio/data-model": "^2.2",
+    "con4gis/framework": "^2.0",
+    "con4gis/maps": "^10.0",
+    "con4gis/pwa": "^2.7",
     "bacon/bacon-qr-code": "^2.0",
     "guzzlehttp/guzzle": "^7",
     "org_heigl/hyphenator": "^v3.1.0"
@@ -57,7 +57,7 @@
   "extra": {
     "contao-manager-plugin": "gutesio\\OperatorBundle\\ContaoManager\\Plugin",
     "branch-alias": {
-      "dev-main": "2.0.x-dev"
+      "dev-main": "2.2.x-dev"
     }
   }
 }

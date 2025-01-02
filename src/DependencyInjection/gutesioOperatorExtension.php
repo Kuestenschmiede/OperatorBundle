@@ -32,9 +32,5 @@ class gutesioOperatorExtension extends Extension
         );
         $loader->load('services.yml');
     }
-//    
-//    public function getAlias()
-//    {
-//        return "gutesio_operator";
-//    }
+
 }

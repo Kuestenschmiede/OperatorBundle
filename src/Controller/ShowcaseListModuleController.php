@@ -33,9 +33,8 @@ use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
-use Contao\Controller;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
-use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\PageModel;
 use Contao\StringUtil;
@@ -60,25 +59,23 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     private array $languageRefs = [];
     private array $languageRefsFrontend = [];
 
-    private ShowcaseService $showcaseService;
 
     public const AJAX_GET_ROUTE = '/gutesio/operator/showcase_tile_list_data/{offset}';
     public const FILTER_ROUTE = '/gutesio/operator/showcase_tile_list/filter';
     public const TYPE = 'showcase_list_module';
     public const COOKIE_WISHLIST = "clientUuid";
 
-    public function __construct(ShowcaseService $showcaseService)
+    public function __construct(private ShowcaseService $showcaseService, private ContaoFramework $framework)
     {
-        $this->showcaseService = $showcaseService;
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         global $objPage;
         $this->model = $model;
         $this->setAlias();
         $redirectPage = $model->gutesio_data_redirect_page;
-        $redirectUrl = Controller::replaceInsertTags("{{link_url::$redirectPage}}");
+        $redirectUrl = C4GUtils::replaceInsertTags("{{link_url::$redirectPage}}");
         if ($redirectPage && $redirectUrl) {
             if (!C4GUtils::endsWith($this->pageUrl, $redirectUrl)) {
                 $this->pageUrl = $redirectUrl;
@@ -99,9 +96,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $data = $this->getInitialData();
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $conf->setLanguage($objPage->language);
-
-
-
+        
         $arrFilter = $this->buildFilter();
         $conf->addForm(
             $arrFilter['form'],
@@ -186,7 +181,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
      */
     public function getDataAction(Request $request, int $offset)
     {
-        $this->get('contao.framework')->initialize(true);
+        $this->framework->initialize(true);
         System::loadLanguageFile("field_translations", "de");
         System::loadLanguageFile("operator_showcase_list", "de");
         System::loadLanguageFile("form_tag_fields", "de");
@@ -390,7 +385,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
      */
     public function getAllData($moduleModel)
     {
-        $this->get('contao.framework')->initialize(true);
+        $this->framework->initialize(true);
         System::loadLanguageFile("field_translations", "de");
         System::loadLanguageFile("operator_showcase_list", "de");
         System::loadLanguageFile("form_tag_fields", "de");
@@ -707,7 +702,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $fields = [];
             $textFilter = new TextFormField();
             $textFilter->setName("filter");
-            $textFilter->setLabel($this->languageRefsFrontend['filter']['searchfilter']['label']);
+            $textFilter->setLabel($this->languageRefsFrontend['filter']['searchfilter']['label'] ?: '');
             $textFilter->setClassName("form-group");
             $textFilter->setPlaceholder($this->languageRefs['filter_placeholder']);
             $textFilter->setWrappingDiv(true);
@@ -719,7 +714,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             if ($this->model->gutesio_enable_location_filter) {
                 $locationFilter = new TextFormField();
                 $locationFilter->setName("location");
-                $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label']);
+                $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label'] ?: '');
                 $locationFilter->setClassName("form-view__location-filter");
                 $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
                 $locationFilter->setCache(true);
@@ -735,7 +730,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $selectedTypes = unserialize($this->model->gutesio_type_filter_selection);
                 $typeField = new SelectFormField();
                 $typeField->setName("types");
-                $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
+                $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label'] ?: '');
                 $typeField->setClassName("form-view__type-filter");
                 $typeField->setPlaceholder("Kategorie auswählen");
                 $typeField->setOptions($this->getTypeOptions($selectedTypes ?: $types, $blockedTypes));
@@ -759,7 +754,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
             $sortFilter = new RadioGroupFormField();
             $sortFilter->setName("sorting");
-            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label']);
+            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label'] ?: '');
             $sortFilter->setOptions([
                 'random' => $this->languageRefs['filter']['sorting']['random'],
                 'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
@@ -799,7 +794,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $filterButton = new FilterButton();
             $filterButton->setTargetComponent("tiles");
             $filterButton->setAsyncUrl(self::FILTER_ROUTE);
-            $filterButton->setCaption($this->languageRefs['filter']['apply_filter']);
+            $filterButton->setCaption($this->languageRefs['filter']['apply_filter'] ?: '');
             $filterButton->setClassName("c4g-btn c4g-btn-filter");
             $filterButton->setOuterClass("c4g-btn-filter-wrapper");
             $buttons[] = $filterButton;
@@ -962,13 +957,13 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
                 continue;
             }
-            $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+            $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
             if (C4GUtils::endsWith($url, '.html')) {
                 $url = str_replace('.html', '/' . $res['alias'] . '.html', $url);
             } else {
                 $url = $url . '/' . $res['alias'];
             }
-            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
+            $pages[] = C4GUtils::replaceInsertTags("{{env::url}}") . '/' . $url;
         }
 
         return $pages;

@@ -1,4 +1,6 @@
 <?php
+
+use con4gis\CoreBundle\Classes\C4GVersionProvider;
 use con4gis\PwaBundle\Classes\Callbacks\PushNotificationCallback;
 use con4gis\PwaBundle\Classes\Callbacks\PwaConfigurationCallback;
 
@@ -6,8 +8,7 @@ use con4gis\PwaBundle\Classes\Callbacks\PwaConfigurationCallback;
 $str = 'tl_news_archive';
 //Palettes
 // only add field if operator is installed
-$packages = \Contao\System::getContainer()->getParameter('kernel.packages');
-if ($packages['gutesio/operator']) {
+if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
         ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
         ->addField(['generateGutesBlog', 'gutesBlogTitle', 'gutesBlogTeaser'/*, 'gutesBlogImage'*/], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)

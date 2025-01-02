@@ -45,7 +45,7 @@ class LoadPopupListener
         if ($reqParams[0] === 'showcase' && $reqParams[1]) {
             $objElement = $this->Database->prepare('SELECT * FROM tl_gutesio_data_element WHERE uuid = ?')->execute($reqParams[1])->fetchAssoc();
             $objSettingsModel = GutesioOperatorSettingsModel::findSettings();
-            $url = Controller::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
+            $url = C4GUtils::replaceInsertTags('{{link_url::' . $objSettingsModel->showcaseDetailPage . '}}');
             $scope = $event->getScope();
             $strQueryTags = 'SELECT tag.uuid, tag.imageCDN, tag.name, tag.technicalKey FROM tl_gutesio_data_tag AS tag
                                     INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid

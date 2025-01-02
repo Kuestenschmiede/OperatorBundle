@@ -31,7 +31,7 @@ class CartModuleController extends AbstractFrontendModuleController
         $this->serverService = $serverService;
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         ResourceLoader::loadJavaScriptResource(
             'bundles/gutesiooperator/dist/js/cart.js',

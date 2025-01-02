@@ -13,13 +13,15 @@
  *
  */
 
+use Contao\DC_Table;
+
 $strName = "tl_gutesio_operator_settings";
 $cbClass = \gutesio\OperatorBundle\Classes\Callback\GutesioOperatorSettingCallback::class;
 
 $GLOBALS['TL_DCA'][$strName] = [
     'config' => [
         'label' => &$GLOBALS['TL_LANG']['MOD'][$strName][0],
-        'dataContainer' => 'Table',
+        'dataContainer' => DC_Table::class,
         'enableVersioning' => false,
         'notDeletable' => true,
         'notCopyable' => true,

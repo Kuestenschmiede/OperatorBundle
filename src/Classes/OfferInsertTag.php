@@ -89,7 +89,7 @@ class OfferInsertTag
                     case 'meta':
                         $metaDescription = $arrOffer['metaDescription'];
                         if ($metaDescription) {
-                            $pageURL = \Contao\Controller::replaceInsertTags('{{env::url}}');
+                            $pageURL = C4GUtils::replaceInsertTags('{{env::url}}');
 
                             //replace image dummy
 //                            $uuid = $arrOffer['imageOffer']; //ToDo Test
@@ -126,7 +126,7 @@ class OfferInsertTag
 //                                    if (C4GUtils::isBinary($uuid)) {
 //                                        $uuid = StringUtil::binToUuid($uuid);
 //                                    }
-                                    $logo = $objShowcase['logoCDN'];//  Controller::replaceInsertTags("{{file::$uuid}}");
+                                    $logo = $objShowcase['logoCDN'];//  C4GUtils::replaceInsertTags("{{file::$uuid}}");
                                     if ($logo && $cdnUrl) {
                                         //ToDo CDN get params
                                         $logoPath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$logo);
@@ -140,7 +140,7 @@ class OfferInsertTag
 //                                    if (C4GUtils::isBinary($uuid)) {
 //                                        $uuid = StringUtil::binToUuid($uuid);
 //                                    }
-                                    $image = $objShowcase['imageCDN'];//Controller::replaceInsertTags("{{file::$uuid}}");
+                                    $image = $objShowcase['imageCDN'];//C4GUtils::replaceInsertTags("{{file::$uuid}}");
                                     if ($image && $cdnUrl) {
                                         $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$image, 1200, 630);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
@@ -153,7 +153,7 @@ class OfferInsertTag
                                     $metaDescription = str_replace(',"photo":"IO_SHOWCASE_PHOTO"', '', $metaDescription);
 
                                     //replace url dummy
-                                    $showcaseUrl = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
+                                    $showcaseUrl = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
                                     $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $objShowcase['alias'];
                                     $metaDescription = str_replace('IO_SHOWCASE_URL', $url, $metaDescription);
 

@@ -25,13 +25,12 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 
 class MiniWishlistModuleController extends AbstractFrontendModuleController
 {
     public const TYPE = 'mini_wishlist_module';
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $list = $this->getList();
         $fields = $this->getListFields();

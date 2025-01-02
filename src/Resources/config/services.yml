@@ -4,6 +4,7 @@ services:
       autoconfigure: true
 
     gutesio\OperatorBundle\Controller\ShowcaseListModuleController:
+        class: gutesio\OperatorBundle\Controller\ShowcaseListModuleController
         public: true
         tags:
             - {name: contao.frontend_module,
@@ -12,6 +13,7 @@ services:
                    template: mod_gutesio_showcase_list_module}
 
     gutesio\OperatorBundle\Controller\ShowcaseDetailModuleController:
+      class: gutesio\OperatorBundle\Controller\ShowcaseDetailModuleController
       public: true
       tags:
         - { name: contao.frontend_module,
@@ -20,14 +22,16 @@ services:
             template: mod_gutesio_showcase_detail_module }
 
     gutesio\OperatorBundle\Controller\OfferListModuleController:
-        public: true
-        tags:
-            - {name: contao.frontend_module,
-                   category: gutesio,
-                   renderer: forward,
-                   template: mod_gutesio_offer_list_module}
+      class: gutesio\OperatorBundle\Controller\OfferListModuleController
+      public: true
+      tags:
+          - {name: contao.frontend_module,
+                 category: gutesio,
+                 renderer: forward,
+                 template: mod_gutesio_offer_list_module}
 
     gutesio\OperatorBundle\Controller\OfferDetailModuleController:
+      class: gutesio\OperatorBundle\Controller\OfferDetailModuleController
       public: true
       tags:
         - { name: contao.frontend_module,
@@ -37,20 +41,23 @@ services:
 
 
     gutesio\OperatorBundle\Controller\ShowcaseCarouselModuleController:
-        tags:
-            - {name: contao.frontend_module,
-                   category: gutesio,
-                   renderer: forward,
-                   template: mod_gutesio_showcase_carousel_module}
+      class: gutesio\OperatorBundle\Controller\ShowcaseCarouselModuleController
+      tags:
+          - {name: contao.frontend_module,
+                 category: gutesio,
+                 renderer: forward,
+                 template: mod_gutesio_showcase_carousel_module}
 
     gutesio\OperatorBundle\Controller\WishlistModuleController:
-        tags:
-            - { name: contao.frontend_module,
-                   category: gutesio,
-                   renderer: forward,
-                   template: mod_gutesio_wishlist_module }
+      class: gutesio\OperatorBundle\Controller\WishlistModuleController
+      tags:
+          - { name: contao.frontend_module,
+                 category: gutesio,
+                 renderer: forward,
+                 template: mod_gutesio_wishlist_module }
 
     gutesio\OperatorBundle\Controller\MiniWishlistModuleController:
+      class: gutesio\OperatorBundle\Controller\MiniWishlistModuleController
       tags:
             - { name: contao.frontend_module,
                     category: gutesio,
@@ -58,6 +65,7 @@ services:
                     template: mod_gutesio_mini_wishlist_module }
 
     gutesio\OperatorBundle\Controller\BannerModuleController:
+      class: gutesio\OperatorBundle\Controller\BannerModuleController
       tags:
         - { name: contao.frontend_module,
             category: gutesio,
@@ -65,6 +73,7 @@ services:
             template: mod_gutesio_banner_module }
 
     gutesio\OperatorBundle\Controller\CartModuleController:
+      class: gutesio\OperatorBundle\Controller\CartModuleController
       public: true
       tags:
             - { name: contao.frontend_module,
@@ -144,7 +153,7 @@ services:
     gutesio.onAfterImportGutesData:
       class: gutesio\OperatorBundle\Classes\Listener\AfterImportListener
       arguments:
-        - "@contao.crawl.escargot_factory"
+        - "@contao.crawl.escargot.factory"
         - "@filesystem"
       tags:
         - { name: kernel.event_listener, event: con4gis.import.basedata.after, method: afterImportBaseData, priority: 1000 }

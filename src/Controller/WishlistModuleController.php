@@ -28,10 +28,9 @@ use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use Contao\Config;
-use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
-use Contao\FilesModel;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
@@ -57,13 +56,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
 
     public const TYPE = 'wishlist_module';
 
-    public function __construct(OfferLoaderService $offerLoaderService, ServerService $serverService)
+    public function __construct(OfferLoaderService $offerLoaderService, ServerService $serverService, ContaoFramework $contaoFramework)
     {
         $this->offerLoaderService = $offerLoaderService;
         $this->serverService = $serverService;
+        $this->contaoFramework = $contaoFramework;
     }
     
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $this->model = $model;
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
@@ -109,7 +109,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
      */
     public function addToWishlist(Request $request, $type, $uuid)
     {
-        $this->get('contao.framework')->initialize();
+        $this->contaoFramework->initialize();
         $clientUuid = $this->checkCookieForClientUuid($request);
         $table = $type === "showcase" ? "tl_gutesio_data_element" : "tl_gutesio_data_child";
         $db = Database::getInstance();
@@ -150,12 +150,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
      */
     public function removeFromWishlist(Request $request, $uuid)
     {
-        $this->get('contao.framework')->initialize();
+        $this->contaoFramework->initialize();
         $clientUuid = $this->checkCookieForClientUuid($request);
         if (strpos($uuid, "{") === false) {
             $uuid = "{" . $uuid . "}";
         }
-        $table = ($type === "showcase") ? "tl_gutesio_data_element" : "tl_gutesio_data_child";
         $db = Database::getInstance();
         $sql = "DELETE FROM tl_gutesio_data_wishlist WHERE `dataUuid` = ? AND `clientUuid` = ?";
         try {
@@ -186,12 +185,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
      */
     public function removeWithResultFromWishlist(Request $request, $uuid)
     {
-        $this->get('contao.framework')->initialize();
+        $this->contaoFramework->initialize();
         $clientUuid = $this->checkCookieForClientUuid($request);
         if (strpos($uuid, "{") === false) {
             $uuid = "{" . $uuid . "}";
         }
-        $table = $type === "showcase" ? "tl_gutesio_data_element" : "tl_gutesio_data_child";
         $db = Database::getInstance();
         $sql = "DELETE FROM tl_gutesio_data_wishlist WHERE `dataUuid` = ? AND `clientUuid` = ?";
         try {
@@ -231,7 +229,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
      */
     public function getItemCount(Request $request)
     {
-        $this->get('contao.framework')->initialize();
+        $this->contaoFramework->initialize();
         $clientUuid = $this->checkCookieForClientUuid($request);
         $db = Database::getInstance();
         $sql = "SELECT COUNT(1) AS rowCount FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ?";
@@ -250,7 +248,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
      */
     public function clearWishList(Request $request)
     {
-        $this->get('contao.framework')->initialize();
+        $this->contaoFramework->initialize();
         $clientUuid = $this->checkCookieForClientUuid($request);
         $db = Database::getInstance();
         $deletedItems = $db->prepare("DELETE FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ?")
@@ -397,14 +395,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
         }
 
         $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $showcaseUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->showcaseDetailPage."}}");
-        $productUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->productDetailPage."}}");
-        $eventUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}");
-        $jobUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
-        $serviceUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->serviceDetailPage."}}");
-        $arrangementUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
-        $personUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->personDetailPage."}}");
-        $voucherUrl = Controller::replaceInsertTags("{{link_url::".$objSettings->voucherDetailPage."}}");
+        $showcaseUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->showcaseDetailPage."}}");
+        $productUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->productDetailPage."}}");
+        $eventUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->eventDetailPage."}}");
+        $jobUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->jobDetailPage."}}");
+        $serviceUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->serviceDetailPage."}}");
+        $arrangementUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->arrangementDetailPage."}}");
+        $personUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->personDetailPage."}}");
+        $voucherUrl = C4GUtils::replaceInsertTags("{{link_url::".$objSettings->voucherDetailPage."}}");
     
         $urlSuffix = Config::get('urlSuffix');
         

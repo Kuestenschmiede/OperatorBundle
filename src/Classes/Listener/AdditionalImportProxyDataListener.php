@@ -9,6 +9,7 @@
  */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
+use Composer\InstalledVersions;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\Events\AdditionalImportProxyDataEvent;
 use Contao\Database;
@@ -21,9 +22,14 @@ class AdditionalImportProxyDataListener
 {
     public function importProxyData(AdditionalImportProxyDataEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
-        $installedPackages = System::getContainer()->getParameter('kernel.packages');
-        $operatorVersion = $installedPackages['gutesio/operator'];
-        $dataModelVersion = $installedPackages['gutesio/data-model'];
+        if (System::getContainer()->hasParameter('kernel.packages')) {
+            $installedPackages = System::getContainer()->getParameter('kernel.packages');
+            $operatorVersion = $installedPackages['gutesio/operator'];
+            $dataModelVersion = $installedPackages['gutesio/data-model'];
+        } else {
+            $operatorVersion = InstalledVersions::getVersion('gutesio/operator');
+            $dataModelVersion = InstalledVersions::getVersion('gutesio/data-model');
+        }
 
         $proxyData = [
             [

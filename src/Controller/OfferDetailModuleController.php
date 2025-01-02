@@ -40,11 +40,9 @@ use con4gis\MapsBundle\Classes\MapDataConfigurator;
 use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
-use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\Database;
-use Contao\FilesModel;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
@@ -54,8 +52,8 @@ use Contao\Template;
 use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Classes\TypeDetailFieldGenerator;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
-use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
+use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,7 +88,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $this->serverService = $serverService;
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         global $objPage;
         $this->offerService->setModel($model);
@@ -154,7 +152,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                         $locationElementData = $this->getLocationElementData($data['locationElementId'] ?: $elementUuid, true);
                         if ($locationElementData && is_array($locationElementData) && key_exists('name', $locationElementData) && $locationElementData['name']) {
                             $objSettings = GutesioOperatorSettingsModel::findSettings();
-                            $data['locationUrl'] = $objSettings->showcaseDetailPage ? Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}") . '/' . $locationElementData['alias'] : '';
+                            $data['locationUrl'] = $objSettings->showcaseDetailPage ? C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}") . '/' . $locationElementData['alias'] : '';
                             if ($data['locationElementId'] && $elementUuid && ($elementUuid !== $data['locationElementId'])) {
                                 $locationList = $this->getLocationList();
 
@@ -632,7 +630,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     protected function getElementFields(): array
     {
         $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
         $href = $url . '/alias';
         $urlSuffix = Config::get('urlSuffix');
         $href = str_replace($urlSuffix, "", $href);

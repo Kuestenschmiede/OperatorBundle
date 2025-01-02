@@ -1,10 +1,10 @@
 <?php
 //Palettes
 // only add field if operator is installed
+use con4gis\CoreBundle\Classes\C4GVersionProvider;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 
-$packages = \Contao\System::getContainer()->getParameter('kernel.packages');
-if ($packages['gutesio/operator']) {
+if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
         ->applyToPalette('default', 'tl_c4g_import_data');
 

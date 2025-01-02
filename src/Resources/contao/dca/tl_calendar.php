@@ -1,11 +1,12 @@
 <?php
+
+use con4gis\CoreBundle\Classes\C4GVersionProvider;
 use con4gis\PwaBundle\Classes\Callbacks\PushNotificationCallback;
 
 $str = 'tl_calendar';
 //Palettes
 // only add field if operator is installed
-$packages = \Contao\System::getContainer()->getParameter('kernel.packages');
-if ($packages['gutesio/operator']) {
+if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
         ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
         ->addField(['pushUpcomingEvents','subscriptionTypes'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)

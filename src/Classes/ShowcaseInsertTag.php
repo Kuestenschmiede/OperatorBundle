@@ -85,7 +85,7 @@ class ShowcaseInsertTag
                         return $arrShowcase['locationCity'];
                     case 'link':
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $showcaseUrl = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
+                        $showcaseUrl = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}');
                         $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $alias;
 
                         return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';

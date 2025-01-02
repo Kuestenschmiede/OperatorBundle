@@ -19,7 +19,6 @@ use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
 use con4gis\FrameworkBundle\Classes\TileFields\TileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
-use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\Database;
 use Contao\FrontendTemplate;
@@ -47,7 +46,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $this->showcaseService = ShowcaseService::getInstance();
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $this->model = $model;
         if ($model->gutesio_carousel_template) {
@@ -126,7 +125,7 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
 
     private function getData()
     {
-        $redirectPage = Controller::replaceInsertTags("{{link_url::{$this->model->gutesio_data_redirect_page}}}");
+        $redirectPage = C4GUtils::replaceInsertTags("{{link_url::{$this->model->gutesio_data_redirect_page}}}");
         if (C4GUtils::endsWith($redirectPage, '.html')) {
             $href = str_replace('.html', '/alias.html', $redirectPage);
         } else {

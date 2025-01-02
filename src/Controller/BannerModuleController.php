@@ -22,29 +22,13 @@ use BaconQrCode\Renderer\RendererStyle\RendererStyle;
 use BaconQrCode\Writer;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\ResourceLoader;
-use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
-use con4gis\FrameworkBundle\Classes\FrontendConfiguration;
-use con4gis\FrameworkBundle\Classes\TileFields\AddressTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\HeadlineTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\ImageTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\OSMOpeningHoursTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\PhoneTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TagTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\TextTileField;
-use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
-use con4gis\FrameworkBundle\Classes\TileLists\TileList;
-use Contao\Config;
-use Contao\Controller;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\Database;
 use Contao\FilesModel;
 use Contao\ModuleModel;
 use Contao\StringUtil;
-use Contao\System;
 use Contao\Template;
-use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use gutesio\DataModelBundle\Classes\FileUtils;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use gutesio\OperatorBundle\Classes\Services\OfferLoaderService;
 use gutesio\OperatorBundle\Classes\Services\ServerService;
@@ -66,7 +50,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         $this->serverService = $serverService;
     }
     
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $this->model = $model;
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_banner.min.css");
@@ -230,7 +214,7 @@ class BannerModuleController extends AbstractFrontendModuleController
 
         $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], 2400, 86400);
 
-        $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
+        $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
 
         $singleEle = [
             'type'  => "element",
@@ -311,7 +295,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             return $arrReturn; //remove events with default images
         }
         $detailPage = $type['type'] . "DetailPage";
-        $detailRoute =  Controller::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($child['uuid'],'{}');
+        $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($child['uuid'],'{}');
 
         $singleEle = [
             'type'  => "event",

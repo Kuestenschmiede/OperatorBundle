@@ -9,6 +9,7 @@
  */
 namespace gutesio\OperatorBundle\Classes;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Controller;
 use Contao\Database;
 use Contao\FilesModel;
@@ -138,7 +139,7 @@ class WishlistInsertTag
         $arrItem['uuid'] = str_replace(['{', '}'], ['', ''], $arrItem['uuid']);
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         if ($arrItem['internal_type'] === 'product') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->productDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->productDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
@@ -164,7 +165,7 @@ class WishlistInsertTag
         } elseif ($arrItem['internal_type'] === 'showcase') {
             $postal = $arrItem['contactZip'] ? $arrItem['contactZip'] : $arrItem['locationZip'];
             $city = $arrItem['contactCity'] ? $arrItem['contactCity'] : $arrItem['locationCity'];
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}') . '/' . $arrItem['alias'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '}}') . '/' . $arrItem['alias'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
@@ -186,7 +187,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         } elseif ($arrItem['internal_type'] === 'job') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->jobDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->jobDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product img-fluid"
@@ -209,7 +210,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         } elseif ($arrItem['internal_type'] === 'event') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->eventDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->eventDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product event img-fluid"
@@ -232,7 +233,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         } elseif ($arrItem['internal_type'] === 'arrangement') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->arrangementDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->arrangementDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product arrangement img-fluid"
@@ -255,7 +256,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         } elseif ($arrItem['internal_type'] === 'service') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->serviceDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->serviceDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product service img-fluid"
@@ -278,7 +279,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         } elseif ($arrItem['internal_type'] === 'person') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->personDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->personDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product person img-fluid"
@@ -301,7 +302,7 @@ class WishlistInsertTag
                 </div>
             </div>';
         } elseif ($arrItem['internal_type'] === 'voucher') {
-            $detailRoute = Controller::replaceInsertTags('{{link_url::' . $objSettings->voucherDetailPage . '}}') . '/' . $arrItem['uuid'];
+            $detailRoute = C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->voucherDetailPage . '}}') . '/' . $arrItem['uuid'];
             $resultHtml = '<div class="row mt-4 wishlistItem">
                 <div class="col-4">
                     <img class="product voucher img-fluid"

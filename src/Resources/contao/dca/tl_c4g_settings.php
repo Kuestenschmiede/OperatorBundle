@@ -2,8 +2,9 @@
 
 //Palettes
 // only add field if operator is installed
-$packages = \Contao\System::getContainer()->getParameter('kernel.packages');
-if ($packages['gutesio/operator']) {
+use con4gis\CoreBundle\Classes\C4GVersionProvider;
+
+if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
         ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
         ->addField(['syncDataAutomaticly', 'updateSearchIndex', 'deleteSearchIndex'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)

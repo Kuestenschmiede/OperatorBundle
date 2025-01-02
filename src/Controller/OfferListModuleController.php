@@ -44,7 +44,6 @@ use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
-use Contao\FilesModel;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
@@ -90,7 +89,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $this->serverService = $serverService;
     }
 
-    protected function getResponse(Template $template, ModuleModel $model, Request $request): ?Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         global $objPage;
         $this->model = $model;
@@ -855,43 +854,43 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 case 'product':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
                     }
                     break;
                 case 'event':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
                     }
                     break;
                 case 'job':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
                     }
                     break;
                 case 'arrangement':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
                     }
                     break;
                 case 'service':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
                     }
                     break;
                 case 'person':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->personDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->personDetailPage . "}}");
                     }
                     break;
                 case 'voucher':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
                         $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $url = Controller::replaceInsertTags("{{link_url::" . $objSettings->voucherDetailPage . "}}");
+                        $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->voucherDetailPage . "}}");
                     }
                     break;
                 default:
@@ -970,7 +969,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             } else {
                 $url = $url . '/' . $alias;
             }
-            $pages[] = Controller::replaceInsertTags("{{env::url}}") . '/' . $url;
+            $pages[] = C4GUtils::replaceInsertTags("{{env::url}}") . '/' . $url;
         }
 
         return $pages;

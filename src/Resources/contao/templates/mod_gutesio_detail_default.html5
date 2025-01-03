@@ -1,4 +1,6 @@
-<?php $this->block('detailpage_default'); ?>
+<?php use con4gis\CoreBundle\Classes\C4GUtils;
+
+$this->block('detailpage_default'); ?>
 
 <?php $this->block('detailpage_offer_meta'); ?>
     {{offer::meta}}
@@ -22,7 +24,7 @@ $data = json_decode(json_encode($this->detailData));
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageCDN = \Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::image}}")): ?>
+<?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$data->alias."::image}}")): ?>
 
     <?php
     $imageXL = $imageCDN.'?crop=smart&width=1920&height=1200';
@@ -59,13 +61,13 @@ $data = json_decode(json_encode($this->detailData));
         <div class="detail-hero2__inner-overlay"></div>
 
         <div class="detail-hero2__inner-wrapper">
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::name}}")): ?>
+            <?php if (C4GUtils::replaceInsertTags("{{showcase::".$data->alias."::name}}")): ?>
                 <div class="detail-hero2__title">
                     <h1>{{showcase::name}}</h1>
                 </div>
             <?php endif; ?>
 
-            <?php if (\Contao\Controller::replaceInsertTags("{{showcase::".$data->alias."::logo}}")): ?>
+            <?php if (C4GUtils::replaceInsertTags("{{showcase::".$data->alias."::logo}}")): ?>
                 <div class="detail-hero2__logo">
                     <img src="{{showcase::<?=$data->alias?>::logo}}" height="150" alt="{{showcase::<?=$data->alias?>::name}}" class="img-fluid">
                 </div>
@@ -1050,8 +1052,8 @@ $newConfiguration = json_encode($newArr);
         <script>
             window.frameworkData = window.frameworkData || [];
             window.frameworkData.push(<?php echo $newConfiguration; ?>);
-            //window.frameworkData.push(<?php //echo $this->configuration; ?>//);
         </script>
+
         <div style="display: none">
             <?php echo $this->searchHTML; ?>
         </div>
@@ -1269,8 +1271,8 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
 
                     <?php
-                    $shareEnvUrl = \Contao\Controller::replaceInsertTags("{{env::path}}");
-                    $shareEnvRequest = \Contao\Controller::replaceInsertTags("{{env::request}}");
+                    $shareEnvUrl = C4GUtils::replaceInsertTags("{{env::path}}");
+                    $shareEnvRequest = C4GUtils::replaceInsertTags("{{env::request}}");
 
                     $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
                     $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;

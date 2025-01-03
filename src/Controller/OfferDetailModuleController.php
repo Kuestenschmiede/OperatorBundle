@@ -42,6 +42,7 @@ use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
@@ -69,6 +70,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private ?OfferLoaderService $offerService;
     private ShowcaseService $showcaseService;
     private ServerService $serverService;
+    private ?ContaoFramework $framework;
 
     public const COOKIE_WISHLIST = "clientUuid";
 
@@ -79,10 +81,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
      * @param ServerService $serverService
      */
     public function __construct(
+        ContaoFramework $framework,
         ?OfferLoaderService $offerService,
         ShowcaseService $showcaseService,
-        ServerService $serverService
+        ServerService $serverService,
     ) {
+        $this->framework = $framework;
         $this->offerService = $offerService;
         $this->showcaseService = $showcaseService;
         $this->serverService = $serverService;
@@ -91,8 +95,9 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         global $objPage;
+        $this->framework->initialize();
         $this->offerService->setModel($model);
-        $this->setAlias();
+        $this->setAlias($request);
         $pageUrl = "";
         $page = PageModel::findByPk($model->gutesio_offer_list_page);
         if ($page) {
@@ -138,7 +143,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $template->offerForSale = $data['offerForSale'];
             $cartPage = GutesioOperatorSettingsModel::findSettings()->cartPage;
             $cartPage = PageModel::findByPk($cartPage);
-            $template->cartPageUrl = $cartPage ? $cartPage->getFrontendUrl() : '';
+            $template->cartPageUrl = $cartPage ? $cartPage->getAbsoluteUrl() : '';
             $template->addToCartUrl = $this->serverService->getMainServerURL().'/gutesio/main/cart/add';
             $template->childId = $data['uuid'];
             $template->elementId = $data['elementId'];
@@ -950,13 +955,13 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $personPageModel = PageModel::findByPk($objSettings->personDetailPage);
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
-            'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
-            'event' => $eventPageModel ? $eventPageModel->getFrontendUrl() : '',
-            'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
-            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
-            'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
-            'person' => $personPageModel ? $personPageModel->getFrontendUrl() : '',
-            'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
+            'product' => $productPageModel ? $productPageModel->getAbsoluteUrl() : '',
+            'event' => $eventPageModel ? $eventPageModel->getAbsoluteUrl() : '',
+            'job' => $jobPageModel ? $jobPageModel->getAbsoluteUrl() : '',
+            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getAbsoluteUrl() : '',
+            'service' => $servicePageModel ? $servicePageModel->getAbsoluteUrl() : '',
+            'person' => $personPageModel ? $personPageModel->getAbsoluteUrl() : '',
+            'voucher' => $voucherPageModel ? $voucherPageModel->getAbsoluteUrl() : '',
         ];
     }
     

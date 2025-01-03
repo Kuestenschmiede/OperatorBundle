@@ -16,10 +16,10 @@ services:
       class: gutesio\OperatorBundle\Controller\ShowcaseDetailModuleController
       public: true
       tags:
-        - { name: contao.frontend_module,
-            category: gutesio,
-            renderer: forward,
-            template: mod_gutesio_showcase_detail_module }
+            - {name: contao.frontend_module,
+                  category: gutesio,
+                  renderer: forward,
+                  template: mod_gutesio_showcase_detail_module}
 
     gutesio\OperatorBundle\Controller\OfferListModuleController:
       class: gutesio\OperatorBundle\Controller\OfferListModuleController

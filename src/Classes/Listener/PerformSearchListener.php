@@ -146,7 +146,7 @@ class PerformSearchListener
                         if ($pageModel && $link['linkText']) {
                             $elementLink = [
                                 'display_name'  => $link['linkText'],
-                                'href'          => $pageModel->getFrontendUrl()
+                                'href'          => $pageModel->getAbsoluteUrl()
                             ];
                             array_splice($arrResults, $insertPosition, 0, [$elementLink]);
                         }

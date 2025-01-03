@@ -14,8 +14,11 @@
 
 
                 <?php
-                $shareEnvUrl = \Contao\Controller::replaceInsertTags("{{env::path}}");
-                $shareEnvRequest = \Contao\Controller::replaceInsertTags("{{env::request}}");
+
+                use con4gis\CoreBundle\Classes\C4GUtils;
+
+                $shareEnvUrl = C4GUtils::replaceInsertTags("{{env::path}}");
+                $shareEnvRequest = C4GUtils::replaceInsertTags("{{env::request}}");
 
                 $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
                 $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;

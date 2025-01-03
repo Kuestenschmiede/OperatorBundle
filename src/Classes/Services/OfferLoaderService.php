@@ -11,6 +11,7 @@ namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\ModuleModel;
 use Contao\PageModel;
@@ -624,8 +625,8 @@ class OfferLoaderService
                             $parameters
                         )->fetchAllAssoc();
                 } else {
-                    $parameters = [];
-                    $parameters[] = (int)$offset;
+//                    $parameters = [];
+//                    $parameters[] = (int)$offset;
                     $parameters[] = $limit;
                     $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                         'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
@@ -650,9 +651,7 @@ class OfferLoaderService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 WHERE a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
                 ORDER BY RAND(' . $this->randomSeed . ') LIMIT ' . $offset . ', ' . $limit)
-                        ->execute(
-                            $parameters
-                        )->fetchAllAssoc();
+                        ->execute()->fetchAllAssoc();
                 }
             }
         } elseif (empty($categories)) {
@@ -1570,12 +1569,12 @@ class OfferLoaderService
                             (int) $beginDateTime->format('d') - 1
                         ) : false;
 
-                        $beginDate = $beginDateTime ? $beginDateTime->format('d.m.Y') : false;
-                        $beginDateShort = $beginDateTime ? $beginDateTime->format('d.m') : false;
-                        $endDate = $endDateTime ? $endDateTime->format('d.m.Y') : false;
-                        $nextDate = $nextDateTime ? $nextDateTime->format('d.m.Y') : false;
-                        $beginTime = $eventData['beginTime'] ? gmdate('H:i', $eventData['beginTime']) : false;
-                        $endTime = $eventData['endTime'] ? gmdate('H:i', $eventData['endTime']) : false;
+                        $beginDate = isset($beginDateTime) ? $beginDateTime->format('d.m.Y') : false;
+                        $beginDateShort = isset($beginDateTime) ? $beginDateTime->format('d.m') : false;
+                        $endDate = isset($endDateTime) ? $endDateTime->format('d.m.Y') : false;
+                        $nextDate = isset($nextDateTime) ? $nextDateTime->format('d.m.Y') : false;
+                        $beginTime = isset($eventData['beginTime']) ? gmdate('H:i', $eventData['beginTime']) : false;
+                        $endTime = isset($eventData['endTime']) ? gmdate('H:i', $eventData['endTime']) : false;
 
                         if ($beginDate && $beginDate !== '01.01.1970') {
                             if ($endDate && ($endDate !== $beginDate) && $endDate !== '01.01.1970') {

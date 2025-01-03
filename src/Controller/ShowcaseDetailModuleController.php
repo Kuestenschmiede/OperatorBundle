@@ -52,16 +52,11 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ShowcaseDetailModuleController extends AbstractFrontendModuleController
+class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
     private array $languageRefs = [];
-
-    private ShowcaseService $showcaseService;
-    private UrlGeneratorInterface $generator;
-    private OfferLoaderService $offerLoaderService;
-    private ServerService $serverService;
 
     private ModuleModel $model;
 
@@ -74,30 +69,28 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
      * @param UrlGeneratorInterface $generator
      * @param OfferLoaderService $offerLoaderService
      * @param ServerService $serverService
+     * @param ContaoFramework $framework
      */
     public function __construct(
-        ShowcaseService $showcaseService,
-        UrlGeneratorInterface $generator,
-        OfferLoaderService $offerLoaderService,
-        ServerService $serverService
+        private ShowcaseService $showcaseService,
+        private UrlGeneratorInterface $generator,
+        private OfferLoaderService $offerLoaderService,
+        private ServerService $serverService,
+        private ContaoFramework $framework
     ) {
-        $this->showcaseService = $showcaseService;
-        $this->generator = $generator;
-        $this->offerLoaderService = $offerLoaderService;
-        $this->serverService = $serverService;
+
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $this->model = $model;
         global $objPage;
-
         $elementUuid = 0;
         $elementUuids = StringUtil::deserialize($this->model->gutesio_data_elements, true);
         if ($this->model->gutesio_data_mode == "5" && count($elementUuids) && count($elementUuids) == 1) {
             $elementUuid = $elementUuids[0];
         } else {
-            $this->setAlias();
+            $this->setAlias($request);
         }
 
         $redirectPage = $model->gutesio_showcase_list_page;
@@ -246,6 +239,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     private function getDetailData(Request $request, $elementUuid = 0): array
     {
         $typeIds = [];
+        $this->framework->initialize();
         if ($this->model->gutesio_data_mode == '1') {
             $typeIds = unserialize($this->model->gutesio_data_type);
         }
@@ -305,11 +299,13 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 
         if ($types && is_array($types)) {
             foreach ($types as $type) {
-                $typeParameters[] = $type['value'];
+                if ($type['uuid']) {
+                    $typeParameters[] = $type['uuid'];
+                }
             }
-            $typeInString = C4GUtils::buildInString($types);
-            $sql = "SELECT `extendedSearchTerms` FROM tl_gutesio_data_type WHERE `id` " . $typeInString;
-            $arrSearchTerms = $db->prepare($sql)->execute($typeParameters)->fetchAllAssoc();
+            $typeInString = C4GUtils::buildInString($typeParameters);
+            $sql = "SELECT `extendedSearchTerms` FROM tl_gutesio_data_type WHERE `uuid` " . $typeInString;
+            $arrSearchTerms = $db->prepare($sql)->execute(...$typeParameters)->fetchAllAssoc();
             $strSearchTerms = "";
             foreach ($arrSearchTerms as $searchTerm) {
                 $strSearchTerms .= $searchTerm['extendedSearchTerms'] . ",";
@@ -541,13 +537,13 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $personPageModel = PageModel::findByPk($objSettings->personDetailPage);
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
         return [
-            'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
-            'event' => $eventPageModel ? $eventPageModel->getFrontendUrl() : '',
-            'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
-            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
-            'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
-            'person' => $personPageModel ? $personPageModel->getFrontendUrl() : '',
-            'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
+            'product' => $productPageModel ? $productPageModel->getAbsoluteUrl() : '',
+            'event' => $eventPageModel ? $eventPageModel->getAbsoluteUrl() : '',
+            'job' => $jobPageModel ? $jobPageModel->getAbsoluteUrl() : '',
+            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getAbsoluteUrl() : '',
+            'service' => $servicePageModel ? $servicePageModel->getAbsoluteUrl() : '',
+            'person' => $personPageModel ? $personPageModel->getAbsoluteUrl() : '',
+            'voucher' => $voucherPageModel ? $voucherPageModel->getAbsoluteUrl() : '',
         ];
     }
 

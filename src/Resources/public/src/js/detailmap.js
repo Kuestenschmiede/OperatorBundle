@@ -8,7 +8,9 @@ jQuery(document).ready(() => {
     .then(data => {
       mapDiv.id += "-" + data.mapId;
       data.mapDiv = mapDiv.id;
-      document.querySelector("#react__detail-view__map").appendChild(mapDiv);
+      if (document.querySelector("#react__detail-view__map")) {
+        document.querySelector("#react__detail-view__map").appendChild(mapDiv);
+      }
       let mapData = {};
       mapData[data.mapId] = data;
       window.initMaps(mapData);

@@ -73,7 +73,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         global $objPage;
         $this->model = $model;
-        $this->setAlias();
+        $this->setAlias($request);
         $redirectPage = $model->gutesio_data_redirect_page;
         $redirectUrl = C4GUtils::replaceInsertTags("{{link_url::$redirectPage}}");
         if ($redirectPage && $redirectUrl) {

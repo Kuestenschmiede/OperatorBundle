@@ -71,8 +71,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
     private array $languageRefs = [];
     private array $languageRefsFrontend = [];
 
-    private ?OfferLoaderService $offerService;
-    private ServerService $serverService;
+    private $initialDateSort = false;
 
     public const COOKIE_WISHLIST = "clientUuid";
 
@@ -82,11 +81,8 @@ class OfferListModuleController extends AbstractFrontendModuleController
      * @param OfferLoaderService|null $offerService
      * @param ServerService $serverService
      */
-    public function __construct(ContaoFramework $framework, ?OfferLoaderService $offerService, ServerService $serverService)
+    public function __construct(private ContaoFramework $framework, private ?OfferLoaderService $offerService, private ServerService $serverService)
     {
-        $framework->initialize();
-        $this->offerService = $offerService;
-        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
@@ -94,7 +90,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         global $objPage;
         $this->model = $model;
         $this->offerService->setModel($model);
-        $this->setAlias();
+        $this->setAlias($request);
         $pageUrl = $this->pageUrl;
         if ($this->alias !== '') {
             throw new RedirectResponseException($this->pageUrl);
@@ -150,8 +146,8 @@ class OfferListModuleController extends AbstractFrontendModuleController
      */
     public function getFilteredListDataAjax(Request $request, $offset)
     {
-        $this->setAlias();
-        $this->initializeContaoFramework();
+        $this->setAlias($request);
+        $this->framework->initialize(true);
         System::loadLanguageFile("offer_list", "de"); 
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
@@ -205,7 +201,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
             return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
         $type = $request->getSession()->get('gutesio_child_type', '');
-        $this->get('contao.framework')->initialize(true);
         $results = $this->offerService->getListData($search, $offset, $type, $filterData);
         $clientUuid = $this->checkCookieForClientUuid($request);
         foreach ($results as $key => $row) {
@@ -829,13 +824,13 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
 
         return [
-            'product' => $productPageModel ? $productPageModel->getFrontendUrl() : '',
-            'event' => $eventPageModel ? $eventPageModel->getFrontendUrl() : '',
-            'job' => $jobPageModel ? $jobPageModel->getFrontendUrl() : '',
-            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getFrontendUrl() : '',
-            'service' => $servicePageModel ? $servicePageModel->getFrontendUrl() : '',
-            'person' => $personPageModel ? $personPageModel->getFrontendUrl() : '',
-            'voucher' => $voucherPageModel ? $voucherPageModel->getFrontendUrl() : '',
+            'product' => $productPageModel ? $productPageModel->getAbsoluteUrl() : '',
+            'event' => $eventPageModel ? $eventPageModel->getAbsoluteUrl() : '',
+            'job' => $jobPageModel ? $jobPageModel->getAbsoluteUrl() : '',
+            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getAbsoluteUrl() : '',
+            'service' => $servicePageModel ? $servicePageModel->getAbsoluteUrl() : '',
+            'person' => $personPageModel ? $personPageModel->getAbsoluteUrl() : '',
+            'voucher' => $voucherPageModel ? $voucherPageModel->getAbsoluteUrl() : '',
         ];
     }
 

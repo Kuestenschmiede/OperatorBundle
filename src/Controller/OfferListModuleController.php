@@ -134,21 +134,21 @@ class OfferListModuleController extends AbstractFrontendModuleController
     }
 
     /**
-     * @Route(
-     *     "/gutesio/operator/showcase_child_list_data/{offset}",
-     *     name="showcase_child_list_data_ajax",
-     *     methods={"GET"},
-     *     requirements={"offset"="\d+"}
-     *     )
      * @param Request $request
      * @param $offset
      * @return JsonResponse
      */
+    #[Route(
+        path: '/gutesio/operator/showcase_child_list_data/{offset}',
+        name: 'showcase_child_list_data_ajax',
+        methods: ['GET'],
+        requirements: ['offset' => '\d+']
+    )]
     public function getFilteredListDataAjax(Request $request, $offset)
     {
-        $this->setAlias($request);
         $this->framework->initialize(true);
-        System::loadLanguageFile("offer_list", "de"); 
+        $this->setAlias($request);
+        System::loadLanguageFile("offer_list", "de");
         $search = (string)$request->query->get('search');
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');
@@ -228,7 +228,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
     private function checkCookieForClientUuid(Request $request)
     {
-        $clientUuidCookie = $request->cookies->get(self::COOKIE_WISHLIST);
+        $clientUuidCookie = $request && $request->cookies ? $request->cookies->get(self::COOKIE_WISHLIST) : null;
         return $clientUuidCookie === null ? null : $clientUuidCookie;
     }
 

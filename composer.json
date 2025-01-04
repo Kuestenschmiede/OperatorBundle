@@ -23,8 +23,8 @@
     "source": "https://github.com/Kuestenschmiede/OperatorBundle"
   },
   "require": {
-    "php": ">=8.0",
-    "contao/core-bundle": "^4.13 || ^5.0",
+    "php": ">=8.1",
+    "contao/core-bundle": "^4.13 || ^5.3",
     "gutesio/data-model": "^2.2",
     "con4gis/framework": "^2.0",
     "con4gis/maps": "^10.0",

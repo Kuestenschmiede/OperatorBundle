@@ -163,8 +163,10 @@ class OfferInsertTag
                                         if ($locationElement) {
                                             $locationElemenObject = Database::getInstance()->prepare('SELECT alias FROM tl_gutesio_data_element WHERE `uuid` = ?')
                                                 ->execute($locationElement['locationElementId'])->fetchAssoc();
-                                            $locationUrl = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $locationElemenObject['alias'];
-                                            $metaDescription = str_replace('IO_SHOWCASE_LOCATION_URL', $locationUrl, $metaDescription);
+                                            if ($locationElemenObject && key_exists('alias', $locationElemenObject) && !empty($locationElemenObject['alias'])) {
+                                                $locationUrl = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . '/' . $showcaseUrl . '/' . $locationElemenObject['alias'];
+                                                $metaDescription = str_replace('IO_SHOWCASE_LOCATION_URL', $locationUrl, $metaDescription);
+                                            }
                                         }
 
                                         //without locationElementId same showcase

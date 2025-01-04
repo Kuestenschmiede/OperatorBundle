@@ -57,7 +57,7 @@ class ShowcaseService
     const FILTER_FIELDS = ['name_'=>1000,'alias_'=>1000,'name'=>60,'alias'=>60,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60];
 
     public static function getFilterSQLString() {
-        if(TL_MODE == "BE") {
+        if(C4GUtils::isBackend()) {
             return '';
         }
 
@@ -109,7 +109,7 @@ class ShowcaseService
 //    }
 
     public static function getFilterSQLStringWeight() {
-        if(TL_MODE == "BE") {
+        if(C4GUtils::isBackend()) {
             return '';
         }
 
@@ -137,10 +137,6 @@ class ShowcaseService
     }
 
     public static function getFilterSQLValueSet($filterString, $withoutWeight = false) {
-        //        $strParts = explode(' ', (trim(str_replace('%',' ', $filterString))));
-//        if (count($strParts) <= 1) {
-//            $strParts = explode(',', (trim(str_replace('%',' ', $filterString))));
-//        }
         $newFilterString = trim(str_replace('%',' ', $filterString));
         $strParts = explode(',', $newFilterString);
         if (count($strParts) <= 1) {
@@ -709,8 +705,9 @@ class ShowcaseService
                 //$searchString = strtoupper($searchString);
                 //$sql .= ' ORDER BY weight DESC';
                 $sql .= ' HAVING weight > 2.5 ORDER BY weight DESC';
+                $values = self::getFilterSQLValueSet($searchString);
                 $arrResult = $db->prepare($sql)
-                    ->execute(self::getFilterSQLValueSet($searchString))->fetchAllAssoc();
+                    ->execute(...$values)->fetchAllAssoc();
                 // search for type name matches
                 $typeResult = $db->prepare('SELECT `tl_gutesio_data_element`.`id` FROM `tl_gutesio_data_element` ' .
                     'JOIN `tl_gutesio_data_element_type` ON `tl_gutesio_data_element_type`.`elementId` = `tl_gutesio_data_element`.`uuid` ' .
@@ -769,6 +766,7 @@ class ShowcaseService
             // no id constraint, but search constraint -> do not load everything
 //            $arrElements = [];
             $searchString = $this->updateSearchStringForNonExactSearch($searchString);
+            $sql .= ' AND UPPER(e.`name`) LIKE ?';
             $arrElements = $db->prepare($sql)->execute($searchString)->fetchAllAssoc();
         } elseif ($idString !== '()' && $searchString !== '') {
             // id constraint & search constraint
@@ -853,7 +851,7 @@ class ShowcaseService
                 $sql .= ' WHERE ';
                 $addWhere = false;
             }
-            $sql .= "(`tagFieldKey` = '$tagFieldName' AND `tagFieldValue` LIKE ?)";
+            $sql .= "(`tagFieldKey` = '".$tagFieldName."' AND UPPER(`tagFieldValue`) LIKE ?)";
             if (array_key_last($tagFieldNames) !== $key) {
                 $sql .= ' OR ';
             }
@@ -861,13 +859,12 @@ class ShowcaseService
         }
         $parameters = [];
         for ($i = 0; $i < $ctr; $i++) {
-//            $parameters[] = '%' . $searchString . '%';
-            $parameters[] = $this->updateSearchStringForNonExactSearch($searchString);
+            $parameters[] = $searchString;
         }
 
         $arrTagIds = [];
         if (count($parameters) > 0) {
-            $arrTagIds = Database::getInstance()->prepare($sql)->execute($parameters)->fetchAllAssoc();
+            $arrTagIds = Database::getInstance()->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
             if (is_array($arrTagIds) && count($arrTagIds)) {
                 $arrTagIds = array_values($arrTagIds);
             }
@@ -890,13 +887,12 @@ class ShowcaseService
         }
         $parameters = [];
         for ($i = 0; $i < $ctr; $i++) {
-//            $parameters[] = '%' . $searchString . '%';
-            $parameters[] = $this->updateSearchStringForNonExactSearch($searchString);
+            $parameters[] = $searchString;
         }
 
         $arrTypeIds = [];
         if (count($parameters) > 0) {
-            $arrTypeIds = Database::getInstance()->prepare($sql)->execute($parameters)->fetchAllAssoc();
+            $arrTypeIds = Database::getInstance()->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
             if (is_array($arrTypeIds) && count($arrTypeIds)) {
                 $arrTypeIds = array_values($arrTypeIds);
             }

@@ -32,8 +32,11 @@ use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\Routing\Page\DynamicRouteInterface;
+use Contao\CoreBundle\Routing\Page\PageRoute;
 use Contao\Database;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
@@ -52,7 +55,12 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
+
+//[AsPage(type: 'showcase_detail_module', path: '{alias}')]
+//, contentComposition: false
+
+//[AsPage(type: 'showcase_detail_module', path: 'detail/{parameters}', contentComposition: false)]
+class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
@@ -64,6 +72,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
     public const COOKIE_WISHLIST = "clientUuid";
 
     /**
+     *
      * ShowcaseDetailModuleController constructor.
      * @param ShowcaseService $showcaseService
      * @param UrlGeneratorInterface $generator
@@ -78,13 +87,12 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
         private ServerService $serverService,
         private ContaoFramework $framework
     ) {
-
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
-        $this->model = $model;
         global $objPage;
+        $this->model = $model;
         $elementUuid = 0;
         $elementUuids = StringUtil::deserialize($this->model->gutesio_data_elements, true);
         if ($this->model->gutesio_data_mode == "5" && count($elementUuids) && count($elementUuids) == 1) {
@@ -95,6 +103,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
 
         $redirectPage = $model->gutesio_showcase_list_page;
         $redirectUrl = $redirectPage ? $this->generator->generate("tl_page." . $redirectPage) : '';
+
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
         ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
@@ -178,11 +187,11 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
     }
 
     /**
-     * @Route("/gutesio/operator/showcase_detail_get_map_data", name="showcase_detail_get_map_data", methods={"GET"})
      * @param Request $request
      * @param ContaoFramework $framework
      * @return JsonResponse
      */
+    #[Route('/gutesio/operator/showcase_detail_get_map_data', name: ShowcaseDetailModuleController::class, methods: ['GET'])]
     public function getMapData(Request $request, ContaoFramework $framework)
     {
         $framework->initialize();
@@ -632,7 +641,7 @@ class ShowcaseDetailModuleController extends \Contao\CoreBundle\Controller\Front
                 }
             }
 
-            $row['tagLinks'] = $childRows[$key]['tagLinks'] ?: [];
+            $row['tagLinks'] = key_exists('tagLinks', $childRows) ? $childRows[$key]['tagLinks'] : [];
 
             $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .

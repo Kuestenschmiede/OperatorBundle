@@ -8,10 +8,11 @@ $this->block('detailpage_default'); ?>
 
 <?php
 $data = json_decode(json_encode($this->detailData));
+$alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
 ?>
 
 <?php $this->block('detailpage_showcase_meta'); ?>
-    {{showcase::<?=$data->alias?>::meta}}
+    echo <?php C4GUtils::replaceInsertTags("{{showcase::<?=$alias?>::meta}}"); ?>
 <?php $this->endblock(); //detailpage_showcase_meta ?>
 
 
@@ -24,7 +25,7 @@ $data = json_decode(json_encode($this->detailData));
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$data->alias."::image}}")): ?>
+<?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}")): ?>
 
     <?php
     $imageXL = $imageCDN.'?crop=smart&width=1920&height=1200';
@@ -61,15 +62,15 @@ $data = json_decode(json_encode($this->detailData));
         <div class="detail-hero2__inner-overlay"></div>
 
         <div class="detail-hero2__inner-wrapper">
-            <?php if (C4GUtils::replaceInsertTags("{{showcase::".$data->alias."::name}}")): ?>
+            <?php if (C4GUtils::replaceInsertTags("{{showcase::".$alias."::name}}")): ?>
                 <div class="detail-hero2__title">
                     <h1>{{showcase::name}}</h1>
                 </div>
             <?php endif; ?>
 
-            <?php if (C4GUtils::replaceInsertTags("{{showcase::".$data->alias."::logo}}")): ?>
+            <?php if (C4GUtils::replaceInsertTags("{{showcase::".$alias."::logo}}")): ?>
                 <div class="detail-hero2__logo">
-                    <img src="{{showcase::<?=$data->alias?>::logo}}" height="150" alt="{{showcase::<?=$data->alias?>::name}}" class="img-fluid">
+                    <img src="{{showcase::<?=$alias?>::logo}}" height="150" alt="{{showcase::<?=$alias?>::name}}" class="img-fluid">
                 </div>
             <?php endif ?>
         </div>
@@ -817,27 +818,27 @@ $data = json_decode(json_encode($this->detailData));
                             <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 detail-field-contact detail-view__contact-wrapper">
                             	<h2>Kontakt</h2>
                                 <div>
-                                    <?php if ($data->contactable && !empty($data->contactName)): ?>
+                                    <?php if (property_exists($data, 'contactable') && $data->contactable && !empty($data->contactName)): ?>
                                         <h3 class="entry-content name"><?= $data->contactName ?></h3>
                                     <?php else: ?>
                                         <h3 class="entry-content name"><?= $data->contactName ?></h3>
                                     <?php endif; ?>
 
-                                    <?php if ($data->contactable && !empty($data->contactAdditionalName)): ?>
+                                    <?php if (property_exists($data, 'contactable') && $data->contactable && !empty($data->contactAdditionalName)): ?>
                                         <span class="entry-content additionalName"><?= $data->contactAdditionalName ?></span>
                                     <?php endif; ?>
 
-                                    <?php if ($data->contactable && !empty($data->contactStreet)): ?>
+                                    <?php if (property_exists($data, 'contactable') && $data->contactable && !empty($data->contactStreet)): ?>
                                         <div class="contact-info streetname"><?= $data->contactStreet ?> <?= $data->contactStreetNumber ?></div>
                                     <?php else: ?>
                                         <div class="contact-info streetname"><?= $data->locationStreet ?> <?= $data->locationStreetNumber ?></div>
                                     <?php endif; ?>
 
-                                    <?php if ($data->locationStreetSuffix && !empty($data->locationStreetSuffix)): ?>
+                                    <?php if (property_exists($data, 'locationStreetSuffix') && $data->locationStreetSuffix && !empty($data->locationStreetSuffix)): ?>
                                         <div class="contact-info street-suffix"><?= $data->locationStreetSuffix ?></div>
                                     <?php endif; ?>
 
-                                    <?php if ($data->contactable && !empty($data->contactZip)): ?>
+                                    <?php if (property_exists($data, 'contactable') && $data->contactable && !empty($data->contactZip)): ?>
                                         <div class="contact-info zip-city"><?= $data->contactZip ?> <?= $data->contactCity ?></div>
                                     <?php else: ?>
                                         <div class="contact-info zip-city"><?= $data->locationZip ?> <?= $data->locationCity ?></div>
@@ -846,10 +847,10 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php // Output phone number
                                 $outputPhone = '';
-                                if ($data->phone && !empty($data->phone))
+                                if (property_exists($data, 'phone') && $data->phone && !empty($data->phone))
                                     $outputPhone = $data->phone;
 
-                                if ($data->contactPhone && !empty($data->contactPhone))
+                                if (property_exists($data, 'contactPhone') && $data->contactPhone && !empty($data->contactPhone))
                                     $outputPhone = $data->contactPhone;
                                 ?>
 
@@ -862,10 +863,10 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php // Output mobile phone number
                                 $outputMobilePhone = '';
-                                if ($data->mobile && !empty($data->mobile))
+                                if (property_exists($data, 'mobile') && $data->mobile && !empty($data->mobile))
                                     $outputMobilePhone = $data->mobile;
 
-                                if ($data->contactMobile && !empty($data->contactMobile))
+                                if (property_exists($data, 'contactMobile') && $data->contactMobile && !empty($data->contactMobile))
                                     $outputMobilePhone = $data->contactMobile;
                                 ?>
 
@@ -879,10 +880,10 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php // Output fax number
                                 $outputFax = '';
-                                if ($data->fax && !empty($data->fax))
+                                if (property_exists($data, 'fax') && $data->fax && !empty($data->fax))
                                     $outputFax = $data->fax;
 
-                                if ($data->contactFax && !empty($data->contactFax))
+                                if (property_exists($data, 'contactFax') && $data->contactFax && !empty($data->contactFax))
                                     $outputFax = $data->contactFax;
                                 ?>
 
@@ -895,10 +896,10 @@ $data = json_decode(json_encode($this->detailData));
 
                                 <?php // Output email
                                 $outputEmail = '';
-                                if ($data->email && !empty($data->email))
+                                if (property_exists($data, 'email') && $data->email && !empty($data->email))
                                     $outputEmail = $data->email;
 
-                                if ($data->contactEmail && !empty($data->contactEmail))
+                                if (property_exists($data, 'contactEmail') && $data->contactEmail && !empty($data->contactEmail))
                                     $outputEmail = $data->contactEmail;
                                 ?>
 
@@ -1072,39 +1073,39 @@ $newConfiguration = json_encode($newArr);
 
 $imprintData = $this->imprintData;
 if ($imprintData) {
-    $imprintType = $imprintData["imprintType"];
-    $imprintLink = $imprintData["imprintLink"];
-    $addressName = $imprintData["addressName"];
-    $addressStreet = $imprintData["addressStreet"];
-    $addressStreetNumber = $imprintData["addressStreetNumber"];
-    $addressZipcode = $imprintData["addressZipcode"];
-    $addressCity = $imprintData["addressCity"];
-    $addressCountry = $imprintData["addressCountry"];
+    $imprintType = $imprintData["imprintType"] ?: '';
+    $imprintLink = $imprintData["imprintLink"] ?: '';
+    $addressName = $imprintData["addressName"] ?: '';
+    $addressStreet = $imprintData["addressStreet"] ?: '';
+    $addressStreetNumber = $imprintData["addressStreetNumber"] ?: '';
+    $addressZipcode = $imprintData["addressZipcode"] ?: '';
+    $addressCity = $imprintData["addressCity"] ?: '';
+    $addressCountry = $imprintData["addressCountry"] ?: '';
 
-    $fundStatement = $imprintData["fundStatement"]; //Angaben zum Kapital
-    $inspectorate = $imprintData["inspectorate"]; //Aufsichtsbehörde
-    $standeskammer = $imprintData["standeskammer"]; //Standeskammer
-    $liquidation = $imprintData["liquidation"]; //Liquidation / Auflösung
+    $fundStatement = $imprintData["fundStatement"] ?: ''; //Angaben zum Kapital
+    $inspectorate = $imprintData["inspectorate"] ?: ''; //Aufsichtsbehörde
+    $standeskammer = $imprintData["standeskammer"] ?: ''; //Standeskammer
+    $liquidation = $imprintData["liquidation"] ?: ''; //Liquidation / Auflösung
 
-    $owner = $imprintData["owner"];
-    $contactEmail = $imprintData["contactEmail"];
-    $contactPhone = $imprintData["contactPhone"];
-    $contactFax = $imprintData["contactFax"];
-    $tradeID = $imprintData["tradeID"];
-    $registryCourt = $imprintData["registryCourt"];
-    $registerNumber = $imprintData["registerNumber"];
-    $responsibleName = $imprintData["responsibleName"];
-    $responsibleStreet = $imprintData["responsibleStreet"];
-    $responsibleStreetNumber = $imprintData["responsibleStreetNumber"];
-    $responsibleZipcode = $imprintData["responsibleZipcode"];
-    $responsibleCity = $imprintData["responsibleCity"];
+    $owner = $imprintData["owner"] ?: '';
+    $contactEmail = $imprintData["contactEmail"] ?: '';
+    $contactPhone = $imprintData["contactPhone"] ?: '';
+    $contactFax = $imprintData["contactFax"] ?: '';
+    $tradeID = $imprintData["tradeID"] ?: '';
+    $registryCourt = $imprintData["registryCourt"] ?: '';
+    $registerNumber = $imprintData["registerNumber"] ?: '';
+    $responsibleName = $imprintData["responsibleName"] ?: '';
+    $responsibleStreet = $imprintData["responsibleStreet"] ?: '';
+    $responsibleStreetNumber = $imprintData["responsibleStreetNumber"] ?: '';
+    $responsibleZipcode = $imprintData["responsibleZipcode"] ?: '';
+    $responsibleCity = $imprintData["responsibleCity"] ?: '';
+
+    // custom strings
+    $addressStreetAll = $addressStreet . " " . $addressStreetNumber;
+    $addressCityAll = $addressZipcode . " " . $addressCity;
+    $responsibleStreetAll = $responsibleStreet . " " . $responsibleStreetNumber;
+    $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 }
-
-// custom strings
-$addressStreetAll = $addressStreet . " " . $addressStreetNumber;
-$addressCityAll = $addressZipcode . " " . $addressCity;
-$responsibleStreetAll = $responsibleStreet . " " . $responsibleStreetNumber;
-$responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
 ?>
 <?php if (isset($this->imprintData) && !empty($this->imprintData)): ?>
@@ -1303,13 +1304,13 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
 
 <?php $this->block('detailpage_previewpage_actionbar'); ?>
 
-<?php if ($data->isOperator): ?>
+<?php if (property_exists($data, 'isOperator') && $data->isOperator): ?>
     <div class="detail-footer-field-wrapper">
         <div class="text-center detail-footer-inner-info">
             <p class="mb-2 mt-2">Sie befinden sich auf der Vorschau-Seite.</p>
         </div>
         <div class="text-center detail-footer-buttons">
-            <a class="btn back-to-list" href="<?= $data->redirectBackLink ?>">Zurück zur Liste</a>
+            <a class="btn back-to-list" href="<?= property_exists($data, 'redirectBackLink') ? $data->redirectBackLink : '' ?>">Zurück zur Liste</a>
         </div>
     </div>
 <?php else: ?>
@@ -1318,8 +1319,8 @@ $responsibleCityAll = $responsibleZipcode . " " . $responsibleCity;
             <p class="mb-2 mt-2">Sie befinden sich auf der Vorschau-Seite.</p>
         </div>
         <div class="text-center detail-footer-buttons">
-            <a class="btn back-to-form" href="<?= $data->redirectBackLink ?>">Zurück
-                zum Formular</a><a class="btn back-to-list" href="<?= $data->redirectBackLinkMember ?>">Zurück zur
+            <a class="btn back-to-form" href="<?= property_exists($data, 'redirectBackLink') ? $data->redirectBackLink : '' ?>">Zurück
+                zum Formular</a><a class="btn back-to-list" href="<?= property_exists($data, 'redirectBackLinkMember') ? $data->redirectBackLinkMember : '' ?>">Zurück zur
                 Liste</a>
         </div>
     </div>

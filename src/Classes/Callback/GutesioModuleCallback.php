@@ -161,6 +161,11 @@ class GutesioModuleCallback
     {
         $models = GutesioDataElementModel::findAll();
         $options = [];
+
+        if (!$dc->activeRecord) {
+            return [];
+        }
+
         $id = $dc->activeRecord->id;
 
         foreach ($models as $model) {

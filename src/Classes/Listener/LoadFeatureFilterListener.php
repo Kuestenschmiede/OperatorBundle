@@ -9,6 +9,7 @@
  */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\MapsBundle\Classes\Events\LoadFeatureFiltersEvent;
 use con4gis\MapsBundle\Classes\Filter\FeatureFilter;
 use con4gis\MapsBundle\Classes\Services\FilterService;
@@ -35,7 +36,7 @@ class LoadFeatureFilterListener
         $eventName,
         EventDispatcherInterface $eventDispatcher
     ) {
-        if(TL_MODE == "BE") {
+        if(C4GUtils::isBackend()) {
             return [];
         }
 

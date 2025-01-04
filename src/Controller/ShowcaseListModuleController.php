@@ -174,11 +174,16 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     }
 
     /**
-     * @Route("/gutesio/operator/showcase_tile_list_data/{offset}", name="showcase_tile_list_data", methods={"GET"}, requirements={"offset"="\d+"})
      * @param Request $request
      * @param $offset
      * @return JsonResponse
      */
+    #[Route(
+    path: '/gutesio/operator/showcase_tile_list_data/{offset}',
+    name: 'showcase_tile_list_data',
+    methods: ['GET'],
+    requirements: ['offset' => '\d+']
+    )]
     public function getDataAction(Request $request, int $offset)
     {
         $this->framework->initialize(true);

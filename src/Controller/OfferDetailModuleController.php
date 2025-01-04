@@ -760,9 +760,12 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     $row['not_on_wishlist'] = "1";
                 }
             }
-            foreach ($row['types'] as $type) {
-                $types[] = $type['label'];
-                $row['types'] = implode(', ', $types);
+
+            if (is_array($row['types']) && count($row['types']) > 0) {
+                foreach ($row['types'] as $type) {
+                    $types[] = $type['label'];
+                    $row['types'] = implode(', ', $types);
+                }
             }
 
             $results[$key] = $row;
@@ -1024,11 +1027,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 }
             }
 
-            if (!$row['tagLinks']) {
+            if (!key_exists('tagLinks', $row)) {
                 $row['tagLinks'] = [];
             }
             
-            $row['tagLinks'] = $childRows[$key]['tagLinks'];
+            $row['tagLinks'] = key_exists('tagLinks',$childRows[$key]) ? $childRows[$key]['tagLinks'] : $row['tagLinks'];
             $tagLinks = [];
 
             //remove duplicated content

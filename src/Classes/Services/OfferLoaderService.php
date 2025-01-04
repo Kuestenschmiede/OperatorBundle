@@ -911,7 +911,7 @@ class OfferLoaderService
             $rows[$key]['email'] = $result['email'];
             $rows[$key]['phone'] = html_entity_decode($result['phone']);
             $rows[$key]['website'] = $result['website'];
-            $rows[$key]['websiteLabel'] = $result['websiteLabel'];
+            $rows[$key]['websiteLabel'] = key_exists('websiteLabel', $result) ? $result['websiteLabel'] : '';
             $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
             $rows[$key]['deviatingPhoneHours'] = $result['deviatingPhoneHours'];
             $rows[$key]['phoneHours'] = html_entity_decode($result['phoneHours']);
@@ -922,8 +922,8 @@ class OfferLoaderService
             $rows[$key]['contactStreetNumber'] = $result['contactStreetNumber'];
             $rows[$key]['contactZip'] = $result['contactZip'];
             $rows[$key]['contactCity'] = $result['contactCity'];
-            $rows[$key]['locationName'] = $result['locationName'];
-            $rows[$key]['locationAdditionalName'] = $result['locationAdditionalName'];
+            $rows[$key]['locationName'] = key_exists('locationName', $result) ? $result['locationName'] : '';
+            $rows[$key]['locationAdditionalName'] = key_exists('locationAdditionalName', $result) ? $result['locationAdditionalName'] : '';
             $rows[$key]['locationStreet'] = $result['locationStreet'];
             $rows[$key]['locationStreetNumber'] = $result['locationStreetNumber'];
             $rows[$key]['locationZip'] = $result['locationZip'];
@@ -1120,9 +1120,11 @@ class OfferLoaderService
         foreach ($result as $r) {
             //$model = FilesModel::findByUuid($r['image']);
             $file = $r['imageCDN'] ? $cdnUrl.$r['imageCDN'] : false;
-            foreach ($childRows[$key]['tagLinks'] as $addedIcons) {
-                if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
-                    continue(2);
+            if ($childRows && is_array($childRows) && key_exists($key, $childRows) && key_exists('tagLinks', $childRows[$key])) {
+                foreach ($childRows[$key]['tagLinks'] as $addedIcons) {
+                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
+                        continue(2);
+                    }
                 }
             }
 
@@ -1141,87 +1143,118 @@ class OfferLoaderService
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagLink = $stmt->execute(
+                        $tagResult = $stmt->execute(
                             $uuid,
                             'deliveryServiceLink'
-                        )->fetchAssoc()['tagFieldValue'];
-                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        )->fetchAssoc();
+                        if ($tagResult) {
+                            $tagLink = $tagResult['tagFieldValue'];
+                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        }
 
                         break;
                     case 'tag_online_reservation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagLink = $stmt->execute(
+                        $tagResult = $stmt->execute(
                             $uuid,
                             'onlineReservationLink'
-                        )->fetchAssoc()['tagFieldValue'];
+                        )->fetchAssoc();
 
-                        if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
-                            if (strpos($tagLink, 'mailto:') !== 0) {
-                                $tagLink = 'mailto:' . $tagLink;
+                        if ($tagResult) {
+                            $tagLink = $tagResult['tagFieldValue'];
+                            if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
+                                if (strpos($tagLink, 'mailto:') !== 0) {
+                                    $tagLink = 'mailto:' . $tagLink;
+                                }
+                            } else {
+                                $tagLink = C4GUtils::addProtocolToLink($tagLink);
                             }
-                        } else {
-                            $tagLink = C4GUtils::addProtocolToLink($tagLink);
-                        }
 
-                        $icon['linkHref'] = $tagLink;
+                            $icon['linkHref'] = $tagLink;
+                        }
 
                         break;
                     case 'tag_clicknmeet':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagLink = $stmt->execute(
+                        $tagResult = $stmt->execute(
                             $uuid,
                             'clicknmeetLink'
-                        )->fetchAssoc()['tagFieldValue'];
-                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        )->fetchAssoc();
+
+                        if ($tagResult) {
+                            $tagLink = $tagResult['tagFieldValue'];
+                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        }
 
                         break;
                     case 'tag_table_reservation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagLink = $stmt->execute(
+                        $tagResult = $stmt->execute(
                             $uuid,
                             'tableReservationLink'
-                        )->fetchAssoc()['tagFieldValue'];
-                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        )->fetchAssoc();
+
+                        if ($tagResult) {
+                            $tagLink = $tagResult['tagFieldValue'];
+                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        }
 
                         break;
                     case 'tag_onlineshop':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagLink = $stmt->execute(
+                        $tagResult = $stmt->execute(
                             $uuid,
                             'onlineShopLink'
-                        )->fetchAssoc()['tagFieldValue'];
-                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        )->fetchAssoc();
+
+                        if ($tagResult) {
+                            $tagLink = $tagResult['tagFieldValue'];
+                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        }
 
                         break;
                     case 'tag_donation':
                         $stmt = $database->prepare(
                             'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
                             'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagLink = $stmt->execute(
+                        $tagResult = $stmt->execute(
                             $uuid,
                             'donationLink'
-                        )->fetchAssoc()['tagFieldValue'];
-                        $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        )->fetchAssoc();
+
+                        if ($tagResult) {
+                            $tagLink = $tagResult['tagFieldValue'];
+                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                        }
 
                         break;
                     default:
                         break;
                 }
-                $icon['class'] .= $r['technicalKey'];
 
-                if (!$childRows[$key]['tagLinks']) {
-                    $childRows[$key]['tagLinks'] = [];
+                if ($icon) {
+                    if (key_exists('class', $icon)) {
+                        $icon['class'] .= $r['technicalKey'];
+                    } else {
+                        $icon['class'] = $r['technicalKey'];
+                    }
+
+                    if (key_exists($key,$childRows)) {
+                        if (!key_exists('tagLinks',$childRows[$key])) {
+                            $childRows[$key]['tagLinks'] = [];
+                        }
+
+                        $childRows[$key]['tagLinks'][] = $icon;
+                    }
                 }
-
-                $childRows[$key]['tagLinks'][] = $icon;
             }
         }
 
@@ -1248,6 +1281,8 @@ class OfferLoaderService
     public function getAdditionalData($childRows, $dateFilter = false, $checkEventTime = true)
     {
         $database = Database::getInstance();
+        System::loadLanguageFile('tl_gutesio_data_child');
+        System::loadLanguageFile('offer_list');
         foreach ($childRows as $key => $row) {
             $tooOld = false;
             switch ($row['type']) {
@@ -1630,11 +1665,11 @@ class OfferLoaderService
                         }
 
                         if ($eventData['appointmentUponAgreement']) {
-                            $fieldValue = $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreementContent'];
+                            $fieldValue = $GLOBALS['TL_LANG']['offer_list']['appointmentUponAgreementContent'];
                             if ($eventData['beginDate']) {
                                 $fieldValue .= ' (';
                                 if (!$eventData['endDate']) {
-                                    $fieldValue .= $GLOBALS['TL_LANG']['tl_gutesio_data_child']['appointmentUponAgreement_startingAt'] . ' ';
+                                    $fieldValue .= $GLOBALS['TL_LANG']['offer_list']['appointmentUponAgreement_startingAt'] . ' ';
                                 }
                                 $fieldValue .= $eventData['beginDate'];
                                 if ($eventData['beginTime']) {
@@ -1662,13 +1697,19 @@ class OfferLoaderService
                         if ($elementModel !== null) {
                             $eventData['locationElementName'] = html_entity_decode($elementModel->name);
                         } else {
-                            $elementId = $row['elementId'];
-                            $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
-                            $eventData['locationElementName'] = html_entity_decode($elementModel->name);
+                            $elementId = key_exists('elementId', $row) ? $row['elementId'] : false;
+                            if ($elementId) {
+                                $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
+                                if ($elementModel !== null) {
+                                    $eventData['locationElementName'] = html_entity_decode($elementModel->name);
+                                }
+                            }
                         }
 
                         //hotfix special char
-                        $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
+                        if (key_exists("locationElementName", $eventData)) {
+                          $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
+                        }
 
                         if (!empty($eventData)) {
                             $childRows[$key] = array_merge($row, $eventData);

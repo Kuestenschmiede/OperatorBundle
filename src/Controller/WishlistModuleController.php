@@ -103,10 +103,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
-     * @Route("/gutesio/operator/wishlist/add/{type}/{uuid}", name="add_to_wishlist", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(
+        path: '/gutesio/operator/wishlist/add/{type}/{uuid}',
+        name: 'add_to_wishlist',
+        methods: ['POST']
+    )]
     public function addToWishlist(Request $request, $type, $uuid)
     {
         $this->contaoFramework->initialize();
@@ -144,10 +148,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
-     * @Route("/gutesio/operator/wishlist/remove/{uuid}", name="remove_from_wishlist", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(
+        path: '/gutesio/operator/wishlist/remove/{uuid}',
+        name: 'remove_from_wishlist',
+        methods: ['POST']
+    )]
     public function removeFromWishlist(Request $request, $uuid)
     {
         $this->contaoFramework->initialize();
@@ -179,10 +187,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
-     * @Route("/gutesio/operator/wishlist/removeWithResult/{uuid}", name="remove_with_result_from_wishlist", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(
+        path: '/gutesio/operator/wishlist/removeWithResult/{uuid}',
+        name: 'remove_with_result_from_wishlist',
+        methods: ['POST']
+    )]
     public function removeWithResultFromWishlist(Request $request, $uuid)
     {
         $this->contaoFramework->initialize();
@@ -223,10 +235,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
-     * @Route("/gutesio/operator/wishlist/getItemCount", name="get_wishlist_item_count", methods={"GET"})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(
+        path: '/gutesio/operator/wishlist/getItemCount',
+        name: 'get_wishlist_item_count',
+        methods: ['GET']
+    )]
     public function getItemCount(Request $request)
     {
         $this->contaoFramework->initialize();
@@ -242,10 +258,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
-     * @Route("/gutesio/operator/wishlist/clearItems", name="clear_wishlist_items", methods={"POST"})
      * @param Request $request
      * @return JsonResponse
      */
+    #[Route(
+        path: '/gutesio/operator/wishlist/clearItems',
+        name: 'clear_wishlist_items',
+        methods: ['POST']
+    )]
     public function clearWishList(Request $request)
     {
         $this->contaoFramework->initialize();

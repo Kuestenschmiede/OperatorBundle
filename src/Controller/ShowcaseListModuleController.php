@@ -77,8 +77,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $this->model = $model;
         $this->setAlias($request);
         $redirectPage = $model->gutesio_data_redirect_page;
-//        $redirectUrl = $this->parser->replace("{{link_url::$redirectPage}}");
-        $redirectUrl = $this->urlGenerator->generate("tl_page." . $redirectPage, ['alias' => 'alias']);
+        $redirectUrl = $this->parser->replace("{{link_url::$redirectPage}}");
+        //$redirectUrl = $this->urlGenerator->generate("tl_page." . $redirectPage, ['alias' => 'alias']);
         if ($redirectPage && $redirectUrl) {
             if (!C4GUtils::endsWith($this->pageUrl, $redirectUrl)) {
                 $this->pageUrl = $redirectUrl;

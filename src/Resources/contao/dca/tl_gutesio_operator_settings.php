@@ -25,13 +25,22 @@ $GLOBALS['TL_DCA'][$strName] = [
         'enableVersioning' => false,
         'notDeletable' => true,
         'notCopyable' => true,
-        'onload_callback' => [[$cbClass, 'redirectToDetails'], [$cbClass, 'deleteMainServerUrl']],
+        'onload_callback' => [
+            [$cbClass, 'redirectToDetails'],
+            [$cbClass, 'deleteMainServerUrl']
+        ],
         'sql' => [
             'keys' => [
                 'id' => 'primary'
             ],
         ],
     ],
+
+    'list' => [
+        'label' => [
+            'fields' => ['']
+        ]
+    ], //prevent cto5 error
     
     'palettes' => [
         'default' => '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
@@ -39,7 +48,7 @@ $GLOBALS['TL_DCA'][$strName] = [
             '{page_legend},showcaseDetailPage,productDetailPage,'.
             'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,cartPage;'
     ],
-    
+
     'fields' => [
         'id' => [
             'sql' => 'int unsigned NOT NULL auto_increment'
@@ -48,10 +57,10 @@ $GLOBALS['TL_DCA'][$strName] = [
             'sql' => 'int unsigned NOT NULL default 0'
         ],
         'cdnUrl' =>[
-            'exclude'                 => true,
-            'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'maxlength' => 100, 'doNotSaveEmpty' => true],
-            'sql'                     => "varchar(255) NOT NULL default ''"
+            'exclude' => true,
+            'inputType' => 'text',
+            'eval' => ['mandatory' => true, 'maxlength' => 100, 'doNotSaveEmpty' => true],
+            'sql' => "varchar(255) NOT NULL default ''"
         ],
         'gutesIoUrl' =>[
             'exclude'                 => true,

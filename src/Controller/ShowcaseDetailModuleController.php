@@ -32,13 +32,9 @@ use con4gis\MapsBundle\Classes\ResourceLoader as MapsResourceLoader;
 use Contao\Config;
 use Contao\ContentModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
-use Contao\CoreBundle\DependencyInjection\Attribute\AsPage;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\Routing\Page\DynamicRouteInterface;
-use Contao\CoreBundle\Routing\Page\PageRoute;
 use Contao\Database;
-use Contao\FrontendTemplate;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
 use Contao\PageModel;
@@ -57,12 +53,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 
-//[AsPage(type: 'showcase_detail_module', path: '{alias}')]
-//, contentComposition: false
-
-#[AsPage(type: 'showcase_detail_module', path: '{alias}', contentComposition: true)]
-//class ShowcaseDetailModuleController extends AbstractFrontendModuleController
-class ShowcaseDetailModuleController
+class ShowcaseDetailModuleController extends AbstractFrontendModuleController
 {
     use AutoItemTrait;
 
@@ -91,28 +82,19 @@ class ShowcaseDetailModuleController
     ) {
     }
 
-    public function __invoke(Request $request, string $alias): Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
-        $template = new FrontendTemplate('mod_gutesio_showcase_detail_module');
-        $module = ModuleModel::findByPk(3); // todo lokale ID
-
-        return $this->getResponse($template, $module, $request, $alias);
-    }
-
-    protected function getResponse(Template $template, ModuleModel $model, Request $request, $alias): Response
-    {
-//        $GLOBALS['TL_CONFIG']['useAutoItem'] = true;
-//        global $objPage;
+        $GLOBALS['TL_CONFIG']['useAutoItem'] = true;
+        global $objPage;
         $this->model = $model;
         $elementUuid = 0;
         $elementUuids = StringUtil::deserialize($this->model->gutesio_data_elements, true);
-        // TODO properties in tl_page auslagern
+
         if ($this->model->gutesio_data_mode == "5" && count($elementUuids) && count($elementUuids) == 1) {
             $elementUuid = $elementUuids[0];
         } else {
             $this->setAlias($request);
         }
-        $this->alias = $alias;
 
         $redirectPage = $model->gutesio_showcase_list_page;
         $redirectUrl = $redirectPage ? $this->generator->generate("tl_page." . $redirectPage) : '';
@@ -138,7 +120,7 @@ class ShowcaseDetailModuleController
             $conf = new FrontendConfiguration('entrypoint_' . $model->id);
             $detailData = $this->getDetailData($request, $elementUuid);
             $request->getSession()->set('gutesio_element_alias', $detailData['alias']);
-//            $objPage->pageTitle = $detailData['name'];
+            $objPage->pageTitle = $detailData['name'];
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
                 $childData = $this->getChildTileData($request, $elementUuid);
@@ -158,7 +140,7 @@ class ShowcaseDetailModuleController
                     $conf->addTileList($relatedShowcaseTileList, $relatedShowcaseFields, $relatedShowcaseData);
                     $template->hasRelatedShowcases = true;
                 }
-                $conf->setLanguage("de");
+                $conf->setLanguage($objPage->language);
                 $jsonConf = json_encode($conf);
                 if ($jsonConf === false) {
                     C4gLogModel::addLogEntry("operator", json_last_error_msg());

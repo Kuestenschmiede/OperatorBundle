@@ -43,6 +43,7 @@ use Contao\ContentModel;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Exception\RedirectResponseException;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\InsertTag\InsertTagParser;
 use Contao\Database;
 use Contao\FrontendUser;
 use Contao\ModuleModel;
@@ -58,6 +59,7 @@ use gutesio\OperatorBundle\Classes\Services\ServerService;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OfferDetailModuleController extends AbstractFrontendModuleController
 {
@@ -66,11 +68,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     private ?Request $request = null;
     private array $tileItems = [];
     private array $languageRefs = [];
-
-    private ?OfferLoaderService $offerService;
-    private ShowcaseService $showcaseService;
-    private ServerService $serverService;
-    private ?ContaoFramework $framework;
 
     public const COOKIE_WISHLIST = "clientUuid";
 
@@ -81,19 +78,17 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
      * @param ServerService $serverService
      */
     public function __construct(
-        ContaoFramework $framework,
-        ?OfferLoaderService $offerService,
-        ShowcaseService $showcaseService,
-        ServerService $serverService,
+        private ContaoFramework $framework,
+        private ?OfferLoaderService $offerService,
+        private ShowcaseService $showcaseService,
+        private ServerService $serverService,
+        private UrlGeneratorInterface $urlGenerator
     ) {
-        $this->framework = $framework;
-        $this->offerService = $offerService;
-        $this->showcaseService = $showcaseService;
-        $this->serverService = $serverService;
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
+        $GLOBALS['TL_CONFIG']['useAutoItem'] = true;
         global $objPage;
         $this->framework->initialize();
         $this->offerService->setModel($model);

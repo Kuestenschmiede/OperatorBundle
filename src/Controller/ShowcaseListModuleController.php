@@ -34,6 +34,7 @@ use con4gis\FrameworkBundle\Classes\TileFields\WrapperTileField;
 use con4gis\FrameworkBundle\Classes\TileLists\TileList;
 use con4gis\FrameworkBundle\Traits\AutoItemTrait;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use Contao\CoreBundle\InsertTag\InsertTagParser;
 use Contao\Database;
 use Contao\ModuleModel;
 use Contao\PageModel;
@@ -47,6 +48,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController
 {
@@ -65,7 +67,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     public const TYPE = 'showcase_list_module';
     public const COOKIE_WISHLIST = "clientUuid";
 
-    public function __construct(private ShowcaseService $showcaseService, private ContaoFramework $framework)
+    public function __construct(private ShowcaseService $showcaseService, private ContaoFramework $framework, private UrlGeneratorInterface $urlGenerator, private InsertTagParser $parser)
     {
     }
 
@@ -75,7 +77,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $this->model = $model;
         $this->setAlias($request);
         $redirectPage = $model->gutesio_data_redirect_page;
-        $redirectUrl = C4GUtils::replaceInsertTags("{{link_url::$redirectPage}}");
+//        $redirectUrl = $this->parser->replace("{{link_url::$redirectPage}}");
+        $redirectUrl = $this->urlGenerator->generate("tl_page." . $redirectPage, ['alias' => 'alias']);
         if ($redirectPage && $redirectUrl) {
             if (!C4GUtils::endsWith($this->pageUrl, $redirectUrl)) {
                 $this->pageUrl = $redirectUrl;
@@ -179,10 +182,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
      * @return JsonResponse
      */
     #[Route(
-    path: '/gutesio/operator/showcase_tile_list_data/{offset}',
-    name: 'showcase_tile_list_data',
-    methods: ['GET'],
-    requirements: ['offset' => '\d+']
+        path: '/gutesio/operator/showcase_tile_list_data/{offset}',
+        name: 'showcase_tile_list_data',
+        methods: ['GET'],
+        requirements: ['offset' => '\d+']
     )]
     public function getDataAction(Request $request, int $offset)
     {

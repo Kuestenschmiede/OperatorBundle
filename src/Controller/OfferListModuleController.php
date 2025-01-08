@@ -134,6 +134,12 @@ class OfferListModuleController extends AbstractFrontendModuleController
     }
 
     /**
+     * @Route(
+     *      path="/gutesio/operator/showcase_child_list_data/{offset}",
+     *      name="showcase_child_list_data_ajax",
+     *      methods={"GET"},
+     *      requirements={"offset": "\d+"}
+     *  )
      * @param Request $request
      * @param $offset
      * @return JsonResponse

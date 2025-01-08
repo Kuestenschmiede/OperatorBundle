@@ -182,11 +182,16 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     }
 
     /**
+     * @Route(
+     *      path="/gutesio/operator/showcase_detail_get_map_data",
+     *      name=ShowcaseDetailModuleController::class,
+     *      methods={"GET"}
+     *  )
      * @param Request $request
      * @param ContaoFramework $framework
      * @return JsonResponse
      */
-    #[Route('/gutesio/operator/showcase_detail_get_map_data', name: ShowcaseDetailModuleController::class, methods: ['GET'])]
+    #[Route(path: '/gutesio/operator/showcase_detail_get_map_data', name: ShowcaseDetailModuleController::class, methods: ['GET'])]
     public function getMapData(Request $request, ContaoFramework $framework)
     {
         $framework->initialize();

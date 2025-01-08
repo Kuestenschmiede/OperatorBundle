@@ -103,6 +103,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
+     * @Route(
+     *      path="/gutesio/operator/wishlist/add/{type}/{uuid}",
+     *      name="add_to_wishlist",
+     *      methods={"POST"}
+     *  )
      * @param Request $request
      * @return JsonResponse
      */
@@ -148,6 +153,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
+     * @Route(
+     *      path="/gutesio/operator/wishlist/remove/{uuid}",
+     *      name="remove_from_wishlist",
+     *      methods={"POST"}
+     *  )
      * @param Request $request
      * @return JsonResponse
      */
@@ -187,6 +197,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
+     * @Route(
+     *      path="/gutesio/operator/wishlist/removeWithResult/{uuid}",
+     *      name="remove_with_result_from_wishlist",
+     *      methods={"POST"}
+     *  )
      * @param Request $request
      * @return JsonResponse
      */
@@ -235,6 +250,11 @@ class WishlistModuleController extends AbstractFrontendModuleController
     }
     
     /**
+     * @Route(
+     *      path="/gutesio/operator/wishlist/getItemCount",
+     *      name="get_wishlist_item_count",
+     *      methods={"GET"}
+     *  )
      * @param Request $request
      * @return JsonResponse
      */

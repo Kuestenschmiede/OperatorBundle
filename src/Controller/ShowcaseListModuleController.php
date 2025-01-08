@@ -177,6 +177,12 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     }
 
     /**
+     * @Route(
+     *      path="/gutesio/operator/showcase_tile_list_data/{offset}",
+     *      name="showcase_tile_list_data",
+     *      methods={"GET"},
+     *      requirements={"offset": "\d+"}
+     *  )
      * @param Request $request
      * @param $offset
      * @return JsonResponse

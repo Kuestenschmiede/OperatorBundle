@@ -215,10 +215,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
                     $row['not_on_wishlist'] = "1";
                 }
             }
-            foreach ($row['types'] as $type) {
-                $types[] = $type['label'];
-                $row['types'] = implode(', ', $types);
+
+            if (key_exists('types', $row) && is_array($row['types'])) {
+                foreach ($row['types'] as $type) {
+                    $types[] = $type['label'];
+                    $row['types'] = implode(', ', $types);
+                }
             }
+
             $results[$key] = $row;
         }
 

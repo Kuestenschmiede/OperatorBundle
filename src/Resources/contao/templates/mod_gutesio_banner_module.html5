@@ -1,8 +1,7 @@
-<?php use gutesio\DataModelBundle\Classes\FileUtils;
-
-if ($_GET['dev'] == 1) {
-    $this->dumpTemplateVars();
-} ?>
+<?php
+use Contao\Input;
+use gutesio\DataModelBundle\Classes\FileUtils;
+?>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
@@ -15,7 +14,7 @@ if ($_GET['dev'] == 1) {
         if ($item['type'] == "element") {
             $slideClass = " slide-element";
         }
-        $loadlazy = $_GET['loading'] == "lazy" ?: $this->loadlazy;
+        $loadlazy = Input::get('loading') == "lazy" ?: $this->loadlazy;
 
         // Image Orientation
         $fileUtils = new FileUtils();
@@ -28,10 +27,10 @@ if ($_GET['dev'] == 1) {
                 <div class="banner__text-wrapper<?= $slideClass ?>">
 
                     <div class="text-wrapper-inner">
-                        <?php if (($item['type'] == "element") && $item['logo'] && $loadlazy): ?>
+                        <?php if (($item['type'] == "element") && key_exists('logo', $item) && $item['logo'] && $loadlazy): ?>
                             <img class="banner__text-wrapper-image" data-src="<?= $item['logo']['src'] ?>"
                                  alt="<?= $item['logo']['alt'] ?>">
-                        <?php elseif (($item['type'] == "element") && $item['logo']): ?>
+                        <?php elseif (($item['type'] == "element") && key_exists('logo', $item) && $item['logo']): ?>
                             <img class="banner__text-wrapper-image" src="<?= $item['logo']['src'] ?>"
                                  alt="<?= $item['logo']['alt'] ?>">
                         <?php endif; ?>
@@ -47,15 +46,15 @@ if ($_GET['dev'] == 1) {
                             </div>
                         </div>
 
-                        <?php if ($item['dateTime'] || $item['location']): ?>
+                        <?php if ((key_exists('dateTime', $item ) && $item['dateTime']) || (key_exists('location', $item) && $item['location'])): ?>
                             <div class="banner__detail-wrapper">
-                                <?php if ($item['dateTime']): ?>
+                                <?php if (key_exists('dateTime', $item ) && $item['dateTime']): ?>
                                     <div class="datetime-wrapper">
                                         <span class="detail-label">Termin:</span><span
                                                 class="detail-info"><?= $item['dateTime'] ?></span>
                                     </div>
                                 <?php endif; ?>
-                                <?php if ($item['location']): ?>
+                                <?php if (key_exists('location', $item) && $item['location']): ?>
                                     <div class="location-wrapper">
                                         <span class="detail-label">Ort: </span><span
                                                 class="detail-info"><?= $item['location'] ?></span>
@@ -99,7 +98,7 @@ if ($_GET['dev'] == 1) {
                                     <span class="footer-text-label">Angeboten von:</span>
                                     <br>
                                 <?php endif; ?>
-                                <?= $item['contact'] ?>
+                                <?= key_exists('contact', $item) ? $item['contact'] : '' ?>
                             </div>
 
                         </div>

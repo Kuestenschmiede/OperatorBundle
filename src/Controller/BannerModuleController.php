@@ -57,6 +57,7 @@ class BannerModuleController extends AbstractFrontendModuleController
 
         $db = Database::getInstance();
         $mode = $model->gutesio_data_mode;
+        $arrReturn = [];
         switch ($mode) {
             case 0: {
                 $arrElements = $db->prepare('SELECT * FROM tl_gutesio_data_element WHERE displayComply=1')->execute()->fetchAllAssoc();
@@ -128,8 +129,9 @@ class BannerModuleController extends AbstractFrontendModuleController
                 break;
             }
         }
+
         foreach ($arrElements as $element) {
-            $arrReturn = $this->getSlidesForElement($element ,$arrReturn);
+            $arrReturn = $this->getSlidesForElement($element, $arrReturn);
         }
         $arrReturn = $arrReturn ?: [];
         shuffle($arrReturn);
@@ -215,7 +217,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], 2400, 86400);
 
         $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
-
+        $shortDescription = key_exists('shortDescription', $element) ? $element['shortDescription'] : '';
         $singleEle = [
             'type'  => "element",
             'image' => [
@@ -223,7 +225,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                 'alt' =>    $element['name']
             ],
             'title' => $element['name'],
-            'slogan' => $element ['displaySlogan'] ?: $element['shortDescription'],
+            'slogan' => $element ['displaySlogan'] ?: $shortDescription,
             'href' => $detailRoute,
             //'contact' => $value['name'],
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
@@ -253,6 +255,8 @@ class BannerModuleController extends AbstractFrontendModuleController
         $fileUtils = new FileUtils();
         $type = $db->prepare('SELECT type,name FROM tl_gutesio_data_child_type
                 WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
+        $termin = '';
+        $location = '';
         if ($type['type'] === "event") {
             $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($child['uuid'])->fetchAssoc();
             $month = $this->model->loadMonth ?: 6;

@@ -316,12 +316,11 @@ class OfferLoaderService
         $strTagFieldClause = $arrTagFieldClause['str'];
         $fieldCount = $arrTagFieldClause['count'];
         $sqlExtendedCategoryTerms = ' OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?';
-        $fieldCount++;
 
         if (empty($types) && empty($categories)) {
             if (!empty($tags)) {
                 $parameters = $tags;
-                for ($i = 0; $i < $fieldCount; $i++) {
+                for ($i = 0; $i <= $fieldCount; $i++) {
                     $parameters[] = '%' . $rawTermString . '%';
                 }
                 $parameters[] = (int) $offset;
@@ -353,14 +352,14 @@ class OfferLoaderService
                 AND tl_gutesio_data_child_tag.tagId ' . C4GUtils::buildInString($tags) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY relevance DESC LIMIT ?, ?'
-                )->execute($parameters)->fetchAllAssoc();
+                )->execute(...$parameters)->fetchAllAssoc();
             } else {
                 $parameters = [];
-                for ($i = 0; $i < $fieldCount; $i++) {
+                for ($i = 0; $i <= $fieldCount; $i++) {
                     $parameters[] = '%' . $rawTermString . '%';
                 }
-                $parameters[] = (int) $offset;
-                $parameters[] = $limit;
+//                $parameters[] = (int) $offset;
+//                $parameters[] = $limit;
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -386,13 +385,11 @@ class OfferLoaderService
                 WHERE a.published = 1 AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' . '
                 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
                 ORDER BY relevance DESC LIMIT 0, 5000') //Todo ?, ? Hotfix offset error
-                ->execute(
-                    $parameters
-                )->fetchAllAssoc();
+                ->execute(...$parameters)->fetchAllAssoc();
             }
         } elseif (empty($categories)) {
             $parameters = $types;
-            for ($i = 0; $i < $fieldCount; $i++) {
+            for ($i = 0; $i <= $fieldCount; $i++) {
                 $parameters[] = '%' . $rawTermString . '%';
             }
 //            $parameters[] = (int) $offset;  //Hotfix offset error
@@ -423,7 +420,7 @@ class OfferLoaderService
                 'AND (match(a.fullTextContent) against(\'' . $termString . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY relevance DESC LIMIT 0, 5000' //Todo ?, ? Hotfix offset error
-            )->execute($parameters)->fetchAllAssoc();
+            )->execute(...$parameters)->fetchAllAssoc();
         } else {
             $parameters = $categories;
             for ($i = 0; $i < $fieldCount; $i++) {
@@ -457,7 +454,7 @@ class OfferLoaderService
                 AND a.parentChildId ' . C4GUtils::buildInString($categories) .
                 ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                 ' ORDER BY relevance DESC LIMIT ?, ?'
-            )->execute($parameters)->fetchAllAssoc();
+            )->execute(...$parameters)->fetchAllAssoc();
         }
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
@@ -1728,12 +1725,13 @@ class OfferLoaderService
                         'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_job.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
-                    if ((string) $jobData['beginDate'] === '') {
-                        $jobData['beginDate'] = 'ab sofort';
-                    } else {
-                        $jobData['beginDate'] = date('d.m.Y', $jobData['beginDate']);
-                    }
+
                     if (!empty($jobData)) {
+                        if ((string) $jobData['beginDate'] === '') {
+                            $jobData['beginDate'] = 'ab sofort';
+                        } else {
+                            $jobData['beginDate'] = date('d.m.Y', $jobData['beginDate']);
+                        }
                         $childRows[$key] = array_merge($row, $jobData);
                     }
 

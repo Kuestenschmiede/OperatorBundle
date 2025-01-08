@@ -712,7 +712,7 @@ class WishlistModuleController extends AbstractFrontendModuleController
                 $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
                 $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
                 $offer['types'] = $type['name'];
-                $offer['alias'] = $element['alias'];
+                $offer['alias'] = key_exists('alias', $element) ? $element['alias'] : '';
                 if ($element['foreignLink'] && $element['directLink']) {
                     $offer['external_link'] = $element['foreignLink'];
                 }

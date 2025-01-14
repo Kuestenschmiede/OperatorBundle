@@ -101,6 +101,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $this->offerService->setPageUrl($pageUrl);
         $this->offerService->setRequest($request);
         $this->request = $request;
+
+        $redirectPage = $model->gutesio_offer_list_page;
+        $redirectUrl = $redirectPage ? $this->urlGenerator->generate("tl_page." . $redirectPage) : $pageUrl;
+
         ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
 
         if (!$model->gutesio_without_contact) {
@@ -199,7 +203,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                         $sc->addData($data, ['name', 'description', 'displayType', 'extendedSearchTerms']);
                     }
                 } else {
-                    throw new RedirectResponseException($pageUrl);
+                    throw new RedirectResponseException($redirectUrl);
                 }
                 $template->entrypoint = 'entrypoint_' . $model->id;
                 $strConf = json_encode($conf);
@@ -212,10 +216,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     $template->searchHTML = $sc->getHTML();
                 }
             } else {
-                throw new RedirectResponseException($pageUrl);
+                throw new RedirectResponseException($redirectUrl);
             }
         } else {
-            throw new RedirectResponseException($pageUrl);
+            throw new RedirectResponseException($redirectUrl);
         }
         $template->detailData = $data;
         if (!$model->gutesio_without_contact) {

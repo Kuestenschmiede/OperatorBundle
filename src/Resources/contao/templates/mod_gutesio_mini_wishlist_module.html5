@@ -4,5 +4,3 @@
       window.c4gConfiguration['mini-wishlist'] = <?php echo $this->configuration ?>;
     </script>
 </div>
-
-<!--<script src="/bundles/con4gisframework/build/c4g-framework.js" defer></script>-->

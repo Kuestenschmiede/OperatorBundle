@@ -61,8 +61,10 @@ class LoadLayersListener
         $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
         $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
 
-        $alias = System::getContainer()->get('request_stack')->getSession()->get('gutesio_element_alias', '');
+        //This does not work in the offer detail view
+        //$alias = System::getContainer()->get('request_stack')->getSession()->get('gutesio_element_alias', '');
 
+        $alias = false;
         if (!$alias) {
             $alias = $_SERVER['HTTP_REFERER'];
             $strC = substr_count($alias, '/');

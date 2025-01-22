@@ -168,6 +168,7 @@ class LoadLayersListener
                 ' ORDER BY elem.name ASC';
             $arrElems = $this->Database->prepare($strQueryElems)->execute($type['uuid'])->fetchAllAssoc();
             $elements = [];
+            $checkDuplicates = [];
             foreach ($arrElems as $elem) {
                 $childElements = [];
                 $sameElements[$elem['uuid']][] = $elem;
@@ -179,7 +180,20 @@ class LoadLayersListener
                         $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
                     }
                 }
-                $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
+                $doCreateElement = true;
+                if (key_exists($elem['uuid'],$checkDuplicates)) {
+                    foreach ($checkDuplicates[$elem['uuid']] as $checkType) {
+                        if ($checkType['uuid'] === $type['uuid']) {
+                            $doCreateElement = false;
+                            break;
+                        }
+                    }
+                }
+                if ($doCreateElement) {
+                    $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
+                }
+                $checkDuplicates[$elem['uuid']][] = $type['uuid'];
+
             }
             $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
             $singleType = [
@@ -267,7 +281,19 @@ class LoadLayersListener
                             $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
                         }
                     }
-                    $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
+                    $doCreateElement = true;
+                    if ($checkDuplicates[$elem['uuid']]) {
+                        foreach ($checkDuplicates[$elem['uuid']] as $checkType) {
+                            if ($checkType['type'] === $type['uuid'] && $checkType['directory'] === $directory->uuid) {
+                                $doCreateElement = false;
+                                break;
+                            }
+                        }
+                    }
+                    if ($doCreateElement) {
+                        $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
+                    }
+                    $checkDuplicates[$elem['uuid']][] = ['type'=>$type['uuid'],'directory'=>$directory->uuid];
                 }
                 $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
                 $singleType = [

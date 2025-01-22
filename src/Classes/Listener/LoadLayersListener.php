@@ -183,7 +183,7 @@ class LoadLayersListener
                 $doCreateElement = true;
                 if (key_exists($elem['uuid'],$checkDuplicates)) {
                     foreach ($checkDuplicates[$elem['uuid']] as $checkType) {
-                        if ($checkType['uuid'] === $type['uuid']) {
+                        if ($checkType === $type['uuid']) {
                             $doCreateElement = false;
                             break;
                         }

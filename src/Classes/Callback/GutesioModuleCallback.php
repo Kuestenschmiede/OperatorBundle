@@ -9,6 +9,7 @@
  */
 namespace gutesio\OperatorBundle\Classes\Callback;
 
+use con4gis\CoreBundle\Classes\Helper\ArrayHelper;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use Contao\Controller;
 use Contao\DataContainer;
@@ -174,7 +175,8 @@ class GutesioModuleCallback
             }
         }
 
-        return $options;
+
+        return ArrayHelper::array_sort($options, '');
     }
 
 }

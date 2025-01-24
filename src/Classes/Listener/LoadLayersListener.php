@@ -159,6 +159,8 @@ class LoadLayersListener
         }
         $types = [];
         $sameElements = [];
+        $skipElements = unserialize($objDataLayer->skipElements);
+
         foreach ($objTypes as $objType) {
             $type = $objType->row();
             $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
@@ -170,6 +172,12 @@ class LoadLayersListener
             $elements = [];
             $checkDuplicates = [];
             foreach ($arrElems as $elem) {
+                foreach ($skipElements as $skipElem) {
+                    if ($skipElem === $elem['uuid']) {
+                        continue 2;
+                    }
+                }
+
                 $childElements = [];
                 $sameElements[$elem['uuid']][] = $elem;
                 if ($elem['showcaseIds'] && $type['showLinkedElements']) {
@@ -252,6 +260,7 @@ class LoadLayersListener
         }
         $directories = [];
         $sameElements = [];
+        $skipElements = unserialize($objDataLayer->skipElements);
         foreach ($objDirectories as $directory) {
             $strQueryTypes = 'SELECT type.* FROM tl_gutesio_data_type AS type
                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
@@ -270,7 +279,13 @@ class LoadLayersListener
                     ' ORDER BY elem.name ASC';
                 $arrElems = $this->Database->prepare($strQueryElems)->execute($type['uuid'])->fetchAllAssoc();
                 $elements = [];
+                $checkDuplicates = [];
                 foreach ($arrElems as $elem) {
+                    foreach ($skipElements as $skipElem) {
+                        if ($skipElem === $elem['uuid']) {
+                            continue 2;
+                        }
+                    }
                     $childElements = [];
                     $sameElements[$elem['uuid']][] = $elem;
                     if ($elem['showcaseIds'] && $type['showLinkedElements']) {

@@ -164,7 +164,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_layoutType'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getLayoutOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => false, 'tl_class' => 'clr'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_layoutType']['options'],
-    'sql'                     => "varchar(25) NOT NULL default 'classic"
+    'sql'                     => "varchar(25) NOT NULL default 'grid"
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_redirect_page'] = [

@@ -182,3 +182,7 @@ services:
       class: gutesio\OperatorBundle\Classes\Listener\SitemapListener
       tags:
         - { name: kernel.event_listener, event: contao.sitemap, method: onCreateSitemap, priority: 1024 }
+
+    gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator:
+      tags:
+        - { name: contao.cronjob, interval: hourly }

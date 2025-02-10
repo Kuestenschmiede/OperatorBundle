@@ -18,4 +18,4 @@ $GLOBALS['TL_MODELS']['tl_gutesio_operator_settings'] = \gutesio\OperatorBundle\
 
 $GLOBALS['TL_CRON']['minutely'][] = [\gutesio\OperatorBundle\Classes\Cron\SyncDataCron::class, 'onMinutely'];
 $GLOBALS['TL_CRON']['hourly'][] = [\gutesio\OperatorBundle\Classes\Cron\SendStatisticDataCron::class, 'onHourly'];
-$GLOBALS['TL_CRON']['hourly'][] = [\gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator::class, 'onHourly'];
+//$GLOBALS['TL_CRON']['hourly'][] = [\gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator::class, 'onHourly'];

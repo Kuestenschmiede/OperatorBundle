@@ -2,18 +2,28 @@
 
 namespace gutesio\OperatorBundle\Classes\Cron;
 
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Contao\PageModel;
+use Psr\Log\LoggerInterface;
 
 class GutesBlogGenerator
 {
+
+    public function __construct(
+        private LoggerInterface $logger,
+        private ContaoFramework $framework
+    ) {
+    }
+
     public function onHourly(): void
     {
+        $this->framework->initialize();
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
-        if (!isset($objSettings->disableImports)) {
+        if (isset($objSettings->disableImports) && $objSettings->disableImports !== null && !$objSettings->disableImports) {
             $db = Database::getInstance();
             $currentDate = strtotime('today');
 
@@ -113,23 +123,23 @@ class GutesBlogGenerator
         // If the 'uuid' column doesn't exist, add it to the table
         // todo there needs to be a better way to do this
         if ($missingUuid) {
-            $addUuidColumnQuery = "ALTER TABLE tl_news ADD COLUMN `gutesUuid` VARCHAR(255) DEFAULT '0'";
+            $addUuidColumnQuery = "ALTER TABLE tl_news ADD COLUMN `gutesUuid` VARCHAR(255) DEFAULT ''";
             $db->query($addUuidColumnQuery);
         }
 
-        $insertQuery = "INSERT INTO tl_news (id, pid, tstamp, headline, date, time, description,
+        $insertQuery = "INSERT INTO tl_news (pid, tstamp, headline, date, time, description,
         teaser, stop, pnSendDate, pnSent, source, url, published, gutesUuid) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $stmtInsert = $db->prepare($insertQuery);
 
         // Get the maximum existing ID from tl_news
-        $maxIdQuery = "SELECT MAX(id) AS maxId FROM tl_news";
-        $maxIdResult = $db->query($maxIdQuery);
-        $maxIdRow = $maxIdResult->fetchAssoc();
-        $maxId = $maxIdRow['maxId'];
-        $counter = $maxId ? $maxId + 1 : 1;
-
+//        $maxIdQuery = "SELECT MAX(id) AS maxId FROM tl_news";
+//        $maxIdResult = $db->query($maxIdQuery);
+//        $maxIdRow = $maxIdResult->fetchAssoc();
+//        $maxId = $maxIdRow['maxId'];
+//        $counter = $maxId ? $maxId + 1 : 1;
+        $counter = 0;
         // Prevent duplicated entries
         $currentEQuery = "SELECT gutesUuid FROM tl_news";
         $result = $db->query($currentEQuery);
@@ -142,7 +152,6 @@ class GutesBlogGenerator
         }
 
         $gutesEventExists = false;
-
         // Iterate over the events and insert them into the table
         foreach ($gutesEvents as $event) {
             if ((is_array($gutesCategories) && in_array($event['typeId'], $gutesCategories)) ||
@@ -157,7 +166,6 @@ class GutesBlogGenerator
                 $gutesEventExists = true;
 
                 $imageUrl = $this->getImagePath($event);
-                $id = $counter ?: 0;
                 $pid = $archiveId ?: 0;
                 $tstamp = $currentDate ?: '';
                 $title = $event['name'] ?: '';
@@ -175,7 +183,7 @@ class GutesBlogGenerator
                 $time = ($event['beginDate'] ?: 0) + ($event['beginTime'] ?: 0);
                 $description = $event['description'] ?: '';
 
-                $source = 'external' ?: '';
+                $source = 'external';
                 $fowardingUrl = $this->getFowardingUrl($uuid) ?: '';
 
                 if ($imageUrl) {
@@ -193,7 +201,7 @@ class GutesBlogGenerator
                 $pnSendDate = 0;
                 $pnSent = 1;
 
-                $stmtInsert->execute([$id, $pid, $tstamp, $title, $date,
+                $stmtInsert->execute([$pid, $tstamp, $title, $date,
                     $time, $description, $teaser,  strtotime('tomorrow'), $pnSendDate, $pnSent,
                     $source, $fowardingUrl, $published, $uuid]);
 
@@ -203,28 +211,27 @@ class GutesBlogGenerator
 
         // Add one pn
         if ($gutesEventExists && !$this->specialEventExists($db)) {
-            $specialEventId = $counter ?: 0;
             $specialTitle = $archive['gutesBlogTitle'] ?: '';
             $specialTeaser = $archive['gutesBlogTeaser'] ?: '';
             $specialDescription = $specialTeaser ?: '';
             $specialDate = $currentDate ?: 0;
             $specialTime = $currentDate ?: 0;
-            $specialSource = 'external' ?: '';
-            $specialPublished = 1 ?: 0;
-            $specialUuid = 1 ?: 0;
+            $specialSource = 'external';
+            $specialPublished = 1;
+            $specialUuid = 1;
             $specialUrl = $this->getFowardingUrl($specialUuid) ?: '';
             $specialPnSendDate = $date + 21600 ?: 0;
-            $specialPnSent = 0 ?: 0;
+            $specialPnSent = 0;
             $specialUnpublish = $currentDate + 60 ?: 0;
 
-            $stmtInsert->execute([$specialEventId, $archiveId, $currentDate, $specialTitle, $specialDate,
+            $stmtInsert->execute([$archiveId, $currentDate, $specialTitle, $specialDate,
                 $specialTime, $specialDescription, $specialTeaser, $specialUnpublish, $specialPnSendDate, $specialPnSent, $specialSource, $specialUrl, $specialPublished, $specialUuid]);
         }
     }
 
     private function specialEventExists($db): bool
     {
-        $checkSpecialEventQuery = "SELECT 1 FROM tl_news WHERE gutesUuid = 1";
+        $checkSpecialEventQuery = "SELECT * FROM tl_news WHERE gutesUuid = 1";
         $stmtCheckSpecialEvent = $db->query($checkSpecialEventQuery);
         return $stmtCheckSpecialEvent->numRows > 0;
     }

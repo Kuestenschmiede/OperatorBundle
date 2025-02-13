@@ -23,9 +23,13 @@ class GutesBlogGenerator
     {
         $this->framework->initialize();
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
-        if (isset($objSettings->disableImports) && $objSettings->disableImports !== null && !$objSettings->disableImports) {
+        if (isset($objSettings->syncDataAutomaticly) && $objSettings->syncDataAutomaticly !== null && $objSettings->syncDataAutomaticly) {
             $db = Database::getInstance();
-            $currentDate = strtotime('today');
+            $currentTime = strtotime('today');
+            $currentDate = new \DateTime();
+            $currentDate->setTimestamp($currentTime);
+            $currentDate->setTime(0, 0, 0);
+            $currentDate = $currentDate->getTimestamp();
 
             $subscriptionTypes = $this->checkSubscriptions($db);
             $gutesNewsArchives = $this->checkArchives($db);

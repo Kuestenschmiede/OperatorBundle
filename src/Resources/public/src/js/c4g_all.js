@@ -175,7 +175,7 @@ function reactRenderReady() {
             var handlePutOnWishlist = function (event) {
                 jQuery(".js-putDetailOnWishlist").css("display", "none");
                 jQuery(".js-removeDetailFromWishlist").css("display", "block");
-                console.log(window.detailData);
+                //console.log(window.detailData);
                 const detailType = window.detailData['internal_type'];
                 const detailUuid = window.detailData['uuid'];
                 const postUrl = '/gutesio/operator/wishlist/add/' + detailType + '/' + detailUuid;

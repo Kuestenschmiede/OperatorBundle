@@ -228,7 +228,7 @@ class Openinghours extends Component {
 jQuery(document).ready(() => {
   let ohId = "react__opening-hours";
   let openingHoursDiv = document.querySelector("#" + ohId);
-  if (openingHoursDiv) {
+  if (openingHoursDiv && window.detailData) {
     let data = window.detailData.openingHours;
     ReactDOM.render(
       <Openinghours data={data} languageRefs={languageRefs}/>,

@@ -682,8 +682,15 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
 
                         <?php if (!empty($data->selfHelpFocus)): ?>
                             <div class="detail-field-text self-help-focus">
-                                <div class="detail-field-text__label">Schwerpunkte</div>
+                                <div class="detail-field-text__label">Selbsthilfethemen</div>
                                 <span class="detail-field-text__text"><?= $data->selfHelpFocus ?></span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!empty($data->turnDescription)): ?>
+                            <div class="detail-field-text turn-description">
+                                <div class="detail-field-text__label">Wann finden die Treffen statt?</div>
+                                <span class="detail-field-text__text"><?= $data->turnDescription ?></span>
                             </div>
                         <?php endif; ?>
 

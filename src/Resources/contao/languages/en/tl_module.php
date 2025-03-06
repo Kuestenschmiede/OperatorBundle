@@ -26,6 +26,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_max_data'] = ['Maximum number of 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_city'] = ['Show location in list', 'Also shows the location in the list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_category'] = ['Show categories in list', 'Also shows the categories in the list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_image'] = ['Show image in list', 'Also shows image in the list.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_selfHelpFocus'] = ['Show self help focus in list', 'Also shows self help focus in the list.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initial sort', 'Changes the initial sort (default: random).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Activate filter', 'Activates the filter above the list.'];

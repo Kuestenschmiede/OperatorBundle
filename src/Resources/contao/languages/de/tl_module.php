@@ -30,6 +30,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_carousel_template'] = ['Eigenes Templa
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_city'] = ['Ort in Liste anzeigen', 'Zeigt den Ort ebenfalls in der Liste an.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_category'] = ['Kategorien in Liste anzeigen', 'Zeigt die Kategorien in der Liste an.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_image'] = ['Bild in Liste anzeigen', 'Zeigt das Hauptbild in der Liste an.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_selfHelpFocus'] = ['Schwerpunktthemen anzeigen (Selbsthilfe)', 'Zeigt die Schwerpunkte in der Liste an.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initiale Sortierung', 'Ändert die initiale Sortierung (Standard: zufällig).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Filter aktivieren', 'Aktiviert den Filter oberhalb der Liste.'];

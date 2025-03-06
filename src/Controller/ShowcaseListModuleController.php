@@ -614,6 +614,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $fields[] = $field;
         }
 
+        if ($this->model->gutesio_data_show_selfHelpFocus) {
+            $field = new TextTileField();
+            $field->setName("selfHelpFocus");
+            $field->setWrapperClass("c4g-list-element__selfHelpFocus-wrapper");
+            $field->setClass("c4g-list-element__selfHelpFocus");
+            $fields[] = $field;
+        }
+
         $field = new TagTileField();
         $field->setName("tags");
         $field->setWrapperClass("c4g-list-element__tags-wrapper");

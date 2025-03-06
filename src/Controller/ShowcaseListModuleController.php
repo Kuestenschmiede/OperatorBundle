@@ -778,22 +778,24 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $fields[] = $tagFilter;
             }
 
-            $sortFilter = new RadioGroupFormField();
-            $sortFilter->setName("sorting");
-            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label'] ?: '');
-            $sortFilter->setOptions([
-                'random' => $this->languageRefs['filter']['sorting']['random'],
-                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
-                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
-                'tstamp_desc' => $this->languageRefs['filter']['sorting']['tstamp_desc'],
-                'distance' => $this->languageRefs['filter']['sorting']['distance']
-            ]);
-            $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
-            $sortFilter->setChecked($this->model->gutesio_initial_sorting);
-            $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
-            $sortFilter->setCache(true); //ToDo module switch
-            $sortFilter->setEntryPoint($this->model->id);
-            $fields[] = $sortFilter;
+            if (!$this->model->gutesio_disable_sorting_filter) {
+                $sortFilter = new RadioGroupFormField();
+                $sortFilter->setName("sorting");
+                $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label'] ?: '');
+                $sortFilter->setOptions([
+                    'random' => $this->languageRefs['filter']['sorting']['random'],
+                    'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                    'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+                    'tstamp_desc' => $this->languageRefs['filter']['sorting']['tstamp_desc'],
+                    'distance' => $this->languageRefs['filter']['sorting']['distance']
+                ]);
+                $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
+                $sortFilter->setChecked($this->model->gutesio_initial_sorting);
+                $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
+                $sortFilter->setCache(true); //ToDo module switch
+                $sortFilter->setEntryPoint($this->model->id);
+                $fields[] = $sortFilter;
+            }
         } else {
             $form = new Form();
             $form->setMethod('POST');

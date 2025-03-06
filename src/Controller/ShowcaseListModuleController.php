@@ -572,17 +572,19 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $href = $this->pageUrl . '/alias';
         }
 
-        $field = new ImageTileField();
-        $field->setName("image");
-        $field->setWrapperClass("c4g-list-element__image-wrapper");
-        $field->setClass("c4g-list-element__image");
-        $field->setRenderSection(TileField::RENDERSECTION_HEADER);
-        $field->setHref($href);
-        $field->setHrefField("alias");
-        $field->setExternalLinkField('foreignLink');
-        $field->setExternalLinkFieldConditionField("directLink");
-        $field->setExternalLinkFieldConditionValue("1");
-        $fields[] = $field;
+        if ($this->model->gutesio_data_show_image) {
+            $field = new ImageTileField();
+            $field->setName("image");
+            $field->setWrapperClass("c4g-list-element__image-wrapper");
+            $field->setClass("c4g-list-element__image");
+            $field->setRenderSection(TileField::RENDERSECTION_HEADER);
+            $field->setHref($href);
+            $field->setHrefField("alias");
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $fields[] = $field;
+        }
 
         $headline = StringUtil::deserialize($this->model->headline, true);
         $level = (int)str_replace("h", "", $headline['unit']);
@@ -604,11 +606,13 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $fields[] = $field;
         }
 
-        $field = new TextTileField();
-        $field->setName("types");
-        $field->setWrapperClass("c4g-list-element__types-wrapper");
-        $field->setClass("c4g-list-element__types");
-        $fields[] = $field;
+        if ($this->model->gutesio_data_show_category) {
+            $field = new TextTileField();
+            $field->setName("types");
+            $field->setWrapperClass("c4g-list-element__types-wrapper");
+            $field->setClass("c4g-list-element__types");
+            $fields[] = $field;
+        }
 
         $field = new TagTileField();
         $field->setName("tags");

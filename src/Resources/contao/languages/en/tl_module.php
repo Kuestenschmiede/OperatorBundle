@@ -24,6 +24,8 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_render_searchHtml'] = ['Create HT
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_limit'] = ['Loading steps', 'Determines how many records are loaded in each request (default: 30).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_max_data'] = ['Maximum number of records', 'Determines the maximum number of records displayed in the list (0 means no limit).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_city'] = ['Show location in list', 'Also shows the location in the list.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_category'] = ['Show categories in list', 'Also shows the categories in the list.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_image'] = ['Show image in list', 'Also shows image in the list.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initial sort', 'Changes the initial sort (default: random).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Activate filter', 'Activates the filter above the list.'];

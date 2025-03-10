@@ -334,12 +334,14 @@ class WishlistModuleController extends AbstractFrontendModuleController
     private function getListFields()
     {
         $fields = [];
-    
-        $field = new ImageTileField();
-        $field->setName("image");
-        $field->setWrapperClass('c4g-list-element__image-wrapper');
-        $field->setClass('c4g-list-element__image');
-        $fields[] = $field;
+
+        if ($this->model->gutesio_data_show_image) {
+            $field = new ImageTileField();
+            $field->setName("image");
+            $field->setWrapperClass('c4g-list-element__image-wrapper');
+            $field->setClass('c4g-list-element__image');
+            $fields[] = $field;
+        }
     
         $field = new HeadlineTileField();
         $field->setName("name");
@@ -347,12 +349,22 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setClass('c4g-list-element__title');
         $field->setLevel(3);
         $fields[] = $field;
-    
-        $field = new TextTileField();
-        $field->setName("types");
-        $field->setWrapperClass('c4g-list-element__types-wrapper');
-        $field->setClass('c4g-list-element__types');
-        $fields[] = $field;
+
+        if ($this->model->gutesio_data_show_category) {
+            $field = new TextTileField();
+            $field->setName("types");
+            $field->setWrapperClass('c4g-list-element__types-wrapper');
+            $field->setClass('c4g-list-element__types');
+            $fields[] = $field;
+        }
+
+        if ($this->model->gutesio_data_show_selfHelpFocus) {
+            $field = new TextTileField();
+            $field->setName("selfHelpFocus");
+            $field->setWrapperClass("c4g-list-element__selfHelpFocus-wrapper");
+            $field->setClass("c4g-list-element__selfHelpFocus");
+            $fields[] = $field;
+        }
 
         $field = new TagTileField();
         $field->setName("tags");

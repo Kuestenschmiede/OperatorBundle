@@ -169,7 +169,7 @@ class ShowcaseService
             if ($hyphenatorResults && count($hyphenatorResults) > 0) {
                 foreach($hyphenatorResults as $result) {
                     $strParts = explode('-',$result);
-                    break; //Todo more parts
+                    break; //Todo more parts and additional "whole string" without hyphen parts
                 }
             }
         }

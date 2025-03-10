@@ -224,7 +224,7 @@ class Phonehours extends Component {
 jQuery(document).ready(() => {
   let phId = "react__phone-hours";
   let phoneHoursDiv = document.querySelector("#" + phId);
-  if (phoneHoursDiv) {
+  if (phoneHoursDiv && window.detailData) {
     let data = window.detailData.phoneHours;
     ReactDOM.render(
       <Phonehours data={data} languageRefs={languageRefs}/>,

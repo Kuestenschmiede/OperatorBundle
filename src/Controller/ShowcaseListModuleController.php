@@ -572,17 +572,19 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $href = $this->pageUrl . '/alias';
         }
 
-        $field = new ImageTileField();
-        $field->setName("image");
-        $field->setWrapperClass("c4g-list-element__image-wrapper");
-        $field->setClass("c4g-list-element__image");
-        $field->setRenderSection(TileField::RENDERSECTION_HEADER);
-        $field->setHref($href);
-        $field->setHrefField("alias");
-        $field->setExternalLinkField('foreignLink');
-        $field->setExternalLinkFieldConditionField("directLink");
-        $field->setExternalLinkFieldConditionValue("1");
-        $fields[] = $field;
+        if ($this->model->gutesio_data_show_image) {
+            $field = new ImageTileField();
+            $field->setName("image");
+            $field->setWrapperClass("c4g-list-element__image-wrapper");
+            $field->setClass("c4g-list-element__image");
+            $field->setRenderSection(TileField::RENDERSECTION_HEADER);
+            $field->setHref($href);
+            $field->setHrefField("alias");
+            $field->setExternalLinkField('foreignLink');
+            $field->setExternalLinkFieldConditionField("directLink");
+            $field->setExternalLinkFieldConditionValue("1");
+            $fields[] = $field;
+        }
 
         $headline = StringUtil::deserialize($this->model->headline, true);
         $level = (int)str_replace("h", "", $headline['unit']);
@@ -604,11 +606,21 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $fields[] = $field;
         }
 
-        $field = new TextTileField();
-        $field->setName("types");
-        $field->setWrapperClass("c4g-list-element__types-wrapper");
-        $field->setClass("c4g-list-element__types");
-        $fields[] = $field;
+        if ($this->model->gutesio_data_show_category) {
+            $field = new TextTileField();
+            $field->setName("types");
+            $field->setWrapperClass("c4g-list-element__types-wrapper");
+            $field->setClass("c4g-list-element__types");
+            $fields[] = $field;
+        }
+
+        if ($this->model->gutesio_data_show_selfHelpFocus) {
+            $field = new TextTileField();
+            $field->setName("selfHelpFocus");
+            $field->setWrapperClass("c4g-list-element__selfHelpFocus-wrapper");
+            $field->setClass("c4g-list-element__selfHelpFocus");
+            $fields[] = $field;
+        }
 
         $field = new TagTileField();
         $field->setName("tags");
@@ -766,22 +778,24 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $fields[] = $tagFilter;
             }
 
-            $sortFilter = new RadioGroupFormField();
-            $sortFilter->setName("sorting");
-            $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label'] ?: '');
-            $sortFilter->setOptions([
-                'random' => $this->languageRefs['filter']['sorting']['random'],
-                'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
-                'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
-                'tstamp_desc' => $this->languageRefs['filter']['sorting']['tstamp_desc'],
-                'distance' => $this->languageRefs['filter']['sorting']['distance']
-            ]);
-            $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
-            $sortFilter->setChecked($this->model->gutesio_initial_sorting);
-            $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
-            $sortFilter->setCache(true); //ToDo module switch
-            $sortFilter->setEntryPoint($this->model->id);
-            $fields[] = $sortFilter;
+            if (!$this->model->gutesio_disable_sorting_filter) {
+                $sortFilter = new RadioGroupFormField();
+                $sortFilter->setName("sorting");
+                $sortFilter->setLabel($this->languageRefsFrontend['filter']['sorting']['label'] ?: '');
+                $sortFilter->setOptions([
+                    'random' => $this->languageRefs['filter']['sorting']['random'],
+                    'name_asc' => $this->languageRefs['filter']['sorting']['name_asc'],
+                    'name_desc' => $this->languageRefs['filter']['sorting']['name_desc'],
+                    'tstamp_desc' => $this->languageRefs['filter']['sorting']['tstamp_desc'],
+                    'distance' => $this->languageRefs['filter']['sorting']['distance']
+                ]);
+                $sortFilter->setClassName("showcase-filter__sorting form-view__sorting");
+                $sortFilter->setChecked($this->model->gutesio_initial_sorting);
+                $sortFilter->setOptionsClass('c4g-form-check c4g-form-check-inline');
+                $sortFilter->setCache(true); //ToDo module switch
+                $sortFilter->setEntryPoint($this->model->id);
+                $fields[] = $sortFilter;
+            }
         } else {
             $form = new Form();
             $form->setMethod('POST');

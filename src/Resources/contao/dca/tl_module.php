@@ -19,8 +19,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
-    'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_data_show_city;' .
-    '{showcase_filter_legend},gutesio_initial_sorting,gutesio_enable_filter,gutesio_enable_ext_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter,gutesio_enable_location_filter;';
+    'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_city,gutesio_data_show_selfHelpFocus;' .
+    '{showcase_filter_legend},gutesio_initial_sorting,gutesio_enable_filter,gutesio_enable_ext_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter,gutesio_enable_location_filter,gutesio_disable_sorting_filter;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_0'] = '';
@@ -75,7 +75,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_3'] = 'g
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_carousel_template;';
 
-$GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data;{cart_legend},cart_page;';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_selfHelpFocus;{cart_legend},cart_page;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
     '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth;';
@@ -316,6 +316,30 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_tag_filter_selection'] = [
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_city'] = [
     'exclude'                 => true,
     'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '1'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_category'] = [
+    'exclude'                 => true,
+    'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '1'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_image'] = [
+    'exclude'                 => true,
+    'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '1'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_selfHelpFocus'] = [
+    'exclude'                 => true,
+    'default'                 => false,
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr'],
     'sql'                     => "char(1) NOT NULL default '0'"

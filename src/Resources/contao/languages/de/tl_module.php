@@ -28,6 +28,9 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_restrict_postals'] = ['Postleitza
 $GLOBALS['TL_LANG']['tl_module']['gutesio_load_klaro_consent'] = ['Klaro Consent-Tool aktivieren', 'Lädt das Klaro Consent-Tool für die Anzeige von YouTube- und Vimeo-Videos.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_carousel_template'] = ['Eigenes Template verwenden', 'Wenn gewünscht, kann hier ein eigenes Template ausgewählt werden, welches vom Carousel-Modul verwendet wird (der Name der Template-Datei muss dann "mit mod_gutesio_showcase_carousel_module_" beginnen).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_city'] = ['Ort in Liste anzeigen', 'Zeigt den Ort ebenfalls in der Liste an.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_category'] = ['Kategorien in Liste anzeigen', 'Zeigt die Kategorien in der Liste an.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_image'] = ['Bild in Liste anzeigen', 'Zeigt das Hauptbild in der Liste an.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_selfHelpFocus'] = ['Schwerpunktthemen anzeigen (Selbsthilfe)', 'Zeigt die Schwerpunkte in der Liste an.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initiale Sortierung', 'Ändert die initiale Sortierung (Standard: zufällig).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Filter aktivieren', 'Aktiviert den Filter oberhalb der Liste.'];

@@ -222,8 +222,8 @@ class GutesBlogGenerator
             $specialTime = $currentDate ?: 0;
             $specialSource = 'external';
             $specialPublished = 1;
-            $specialUuid = 1;
-            $specialUrl = $this->getFowardingUrl($specialUuid) ?: '';
+            $redirectPage = PageModel::findById($archive['jumpTo']);
+            $specialUrl = ($redirectPage !== null) ? $redirectPage->alias : "";
             $specialPnSendDate = $date + 21600 ?: 0;
             $specialPnSent = 0;
             $specialUnpublish = $currentDate + 60 ?: 0;

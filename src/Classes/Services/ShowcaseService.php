@@ -54,6 +54,7 @@ class ShowcaseService
 
 
     //ToDo AND search to find exact results
+    //ToDo search type values
     const FILTER_FIELDS = ['name_'=>1000,'alias_'=>1000,'name'=>60,'alias'=>60,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60];
 
     public static function getFilterSQLString() {

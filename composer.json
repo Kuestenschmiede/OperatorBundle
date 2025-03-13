@@ -27,8 +27,8 @@
     "contao/core-bundle": "^4.13 || ^5.3",
     "gutesio/data-model": "^2.2",
     "con4gis/framework": "^2.0",
-    "con4gis/maps": "^10.0",
-    "con4gis/pwa": "^2.7",
+    "con4gis/maps": "^10.1",
+    "con4gis/pwa": "^2.8",
     "bacon/bacon-qr-code": "^2.0",
     "guzzlehttp/guzzle": "^7",
     "org_heigl/hyphenator": "^v3.1.0"

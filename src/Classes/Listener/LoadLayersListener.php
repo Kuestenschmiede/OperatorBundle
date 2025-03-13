@@ -14,6 +14,7 @@ namespace gutesio\OperatorBundle\Classes\Listener;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use Contao\Request;
+use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use con4gis\MapsBundle\Classes\Events\LoadLayersEvent;
@@ -241,6 +242,40 @@ class LoadLayersListener
             return;
         }
 
+        if ($objDataLayer->popup_share_button) {
+            $shareMethods = StringUtil::deserialize($objDataLayer->popup_share_type, true);
+            $shareDest = $objDataLayer->popup_share_destination;
+
+            switch ($shareDest) {
+                case "con4gis_map":
+                case "con4gis_routing":
+                    $shareBaseUrl = "";
+                    break;
+                case "con4gis_map_external":
+                case "con4gis_routing_external":
+                case "osm":
+                case "osm_routing":
+                    $shareBaseUrl = $objDataLayer->popup_share_external_link;
+                    break;
+                case "google_map":
+                    $shareBaseUrl = "https://www.google.com/maps/dir/";
+                    break;
+                case "google_map_routing":
+                    $shareBaseUrl = "https://www.google.com/maps/dir/";
+                    break;
+                default:
+                    $shareBaseUrl = "";
+            }
+
+            $popupShare = [
+                'methods' => $shareMethods,
+                'baseUrl' => $shareBaseUrl,
+                'destType' => $shareDest,
+                'additionalMessage' => $objDataLayer->popup_share_message
+            ];
+            $dataLayer['popup_share'] = $popupShare;
+        }
+
         $t = 'tl_gutesio_data_directory';
         $arrOptions = [
             'order' => "$t.name ASC",
@@ -405,6 +440,10 @@ class LoadLayersListener
             'hideInStarboard' => false,
             'zoomTo' => true,
         ];
+
+        if ($dataLayer['popup_share']) {
+            $element['popup_share'] = $dataLayer['popup_share'];
+        }
 
         if (($objElement['geox'] && $objElement['geoy']) || $objElement['geojson']) {
             $properties = array_merge([

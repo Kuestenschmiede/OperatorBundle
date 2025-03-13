@@ -293,7 +293,8 @@ class OfferListModuleController extends AbstractFrontendModuleController
             );
         }
 
-        $fullTextData = $this->offerService->getListData($search, 0, $type, $filterData, $this->model->gutesio_child_determine_orientation === '1');
+        //ToDO performance
+        $fullTextData = [];//$this->offerService->getListData($search, 0, $type, $filterData, $this->model->gutesio_child_determine_orientation === '1');
         $conf->addTileList(
             $this->getFullTextTileList($search !== ''),
             $this->getFullTextTileFields(),

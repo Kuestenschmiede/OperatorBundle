@@ -363,8 +363,9 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $field->setExternalLinkField('foreignLink');
             $field->setExternalLinkFieldConditionField("directLink");
             $field->setExternalLinkFieldConditionValue("1");
+            $field->setConditionField('type');
+            $field->setConditionValue($key);
             $fields[] = $field;
-            break;
         }
 
         $field = new HeadlineTileField();

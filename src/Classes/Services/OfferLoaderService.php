@@ -1393,95 +1393,33 @@ class OfferLoaderService
 
                     break;
                 case 'event':
-                    $eventData = $database->prepare('SELECT ' . '
-                        (CASE ' . '
-                            WHEN a.beginDate IS NOT NULL THEN a.beginDate ' . '
-                            WHEN b.beginDate IS NOT NULL THEN b.beginDate ' . '
-                            WHEN c.beginDate IS NOT NULL THEN c.beginDate ' . '
-                            WHEN d.beginDate IS NOT NULL THEN d.beginDate ' . '
-                        ELSE NULL END) AS beginDate, ' . '
-                        (CASE ' . '
-                            WHEN a.beginTime IS NOT NULL THEN a.beginTime ' . '
-                            WHEN b.beginTime IS NOT NULL THEN b.beginTime ' . '
-                            WHEN c.beginTime IS NOT NULL THEN c.beginTime ' . '
-                            WHEN d.beginTime IS NOT NULL THEN d.beginTime ' . '
-                        ELSE NULL END) AS beginTime, ' . '
-                        (CASE ' . '
-                            WHEN a.endDate IS NOT NULL THEN a.endDate ' . '
-                            WHEN b.endDate IS NOT NULL THEN b.endDate ' . '
-                            WHEN c.endDate IS NOT NULL THEN c.endDate ' . '
-                            WHEN d.endDate IS NOT NULL THEN d.endDate ' . '
-                        ELSE NULL END) AS endDate, ' . '
-                        (CASE ' . '
-                            WHEN a.endTime IS NOT NULL THEN a.endTime ' . '
-                            WHEN b.endTime IS NOT NULL THEN b.endTime ' . '
-                            WHEN c.endTime IS NOT NULL THEN c.endTime ' . '
-                            WHEN d.endTime IS NOT NULL THEN d.endTime ' . '
-                        ELSE NULL END) AS endTime, ' . '
-                        (CASE ' . '
-                            WHEN a.entryTime IS NOT NULL THEN a.entryTime ' . '
-                            WHEN b.entryTime IS NOT NULL THEN b.entryTime ' . '
-                            WHEN c.entryTime IS NOT NULL THEN c.entryTime ' . '
-                            WHEN d.entryTime IS NOT NULL THEN d.entryTime ' . '
-                        ELSE NULL END) AS entryTime, ' . '
-                        (CASE ' . '
-                            WHEN a.eventPrice IS NOT NULL THEN a.eventPrice ' . '
-                            WHEN b.eventPrice IS NOT NULL THEN b.eventPrice ' . '
-                            WHEN c.eventPrice IS NOT NULL THEN c.eventPrice ' . '
-                            WHEN d.eventPrice IS NOT NULL THEN d.eventPrice ' . '
-                        ELSE NULL END) AS eventPrice, ' . '
-                        (CASE ' . '
-                            WHEN a.reservationContactEMail IS NOT NULL THEN a.reservationContactEMail ' . '
-                            WHEN b.reservationContactEMail IS NOT NULL THEN b.reservationContactEMail ' . '
-                            WHEN c.reservationContactEMail IS NOT NULL THEN c.reservationContactEMail ' . '
-                            WHEN d.reservationContactEMail IS NOT NULL THEN d.reservationContactEMail ' . '
-                        ELSE NULL END) AS reservationContactEMail, ' . '
-                        (CASE ' . '
-                            WHEN a.reservationContactPhone IS NOT NULL THEN a.reservationContactPhone ' . '
-                            WHEN b.reservationContactPhone IS NOT NULL THEN b.reservationContactPhone ' . '
-                            WHEN c.reservationContactPhone IS NOT NULL THEN c.reservationContactPhone ' . '
-                            WHEN d.reservationContactPhone IS NOT NULL THEN d.reservationContactPhone ' . '
-                        ELSE NULL END) AS reservationContactPhone, ' . '
-                        (CASE ' . '
-                            WHEN a.locationElementId IS NOT NULL THEN a.locationElementId ' . '
-                            WHEN b.locationElementId IS NOT NULL THEN b.locationElementId ' . '
-                            WHEN c.locationElementId IS NOT NULL THEN c.locationElementId ' . '
-                            WHEN d.locationElementId IS NOT NULL THEN d.locationElementId ' . '
-                        ELSE NULL END) AS locationElementId, ' . '
-                        (CASE ' . '
-                            WHEN a.recurring IS NOT NULL THEN a.recurring ' . '
-                            WHEN b.recurring IS NOT NULL THEN b.recurring ' . '
-                            WHEN c.recurring IS NOT NULL THEN c.recurring ' . '
-                            WHEN d.recurring IS NOT NULL THEN d.recurring ' . '
-                        ELSE NULL END) AS recurring, ' . '
-                        (CASE ' . '
-                            WHEN a.recurrences IS NOT NULL THEN a.recurrences ' . '
-                            WHEN b.recurrences IS NOT NULL THEN b.recurrences ' . '
-                            WHEN c.recurrences IS NOT NULL THEN c.recurrences ' . '
-                            WHEN d.recurrences IS NOT NULL THEN d.recurrences ' . '
-                        ELSE NULL END) AS recurrences, ' . '
-                        (CASE ' . '
-                            WHEN a.repeatEach IS NOT NULL THEN a.repeatEach ' . '
-                            WHEN b.repeatEach IS NOT NULL THEN b.repeatEach ' . '
-                            WHEN c.repeatEach IS NOT NULL THEN c.repeatEach ' . '
-                            WHEN d.repeatEach IS NOT NULL THEN d.repeatEach ' . '
-                        ELSE NULL END) AS repeatEach, ' . '
-                        (CASE ' . '
-                            WHEN a.appointmentUponAgreement IS NOT NULL THEN a.appointmentUponAgreement ' . '
-                            WHEN b.appointmentUponAgreement IS NOT NULL THEN b.appointmentUponAgreement ' . '
-                            WHEN c.appointmentUponAgreement IS NOT NULL THEN c.appointmentUponAgreement ' . '
-                            WHEN d.appointmentUponAgreement IS NOT NULL THEN d.appointmentUponAgreement ' . '
-                        ELSE NULL END) AS appointmentUponAgreement, ' . '
-                        a.beginDate + a.beginTime AS beginDateTime ' . '
-                        FROM tl_gutesio_data_child_event a ' . '
-                        JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_event b ON b.childId = cb.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid ' . '
-                        LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid ' . '
-                        WHERE a.childId = ? ORDER BY beginDateTime ASC')
+                    $eventData = $database->prepare('SELECT 
+                                COALESCE(a.beginDate, b.beginDate, c.beginDate, d.beginDate) AS beginDate,
+                                COALESCE(a.beginTime, b.beginTime, c.beginTime, d.beginTime) AS beginTime,
+                                COALESCE(a.endDate, b.endDate, c.endDate, d.endDate) AS endDate,
+                                COALESCE(a.endTime, b.endTime, c.endTime, d.endTime) AS endTime,
+                                COALESCE(a.entryTime, b.entryTime, c.entryTime, d.entryTime) AS entryTime,
+                                COALESCE(a.eventPrice, b.eventPrice, c.eventPrice, d.eventPrice) AS eventPrice,
+                                COALESCE(a.reservationContactEMail, b.reservationContactEMail, c.reservationContactEMail, d.reservationContactEMail) AS reservationContactEMail,
+                                COALESCE(a.reservationContactPhone, b.reservationContactPhone, c.reservationContactPhone, d.reservationContactPhone) AS reservationContactPhone,
+                                COALESCE(a.locationElementId, b.locationElementId, c.locationElementId, d.locationElementId) AS locationElementId,
+                                COALESCE(a.recurring, b.recurring, c.recurring, d.recurring) AS recurring,
+                                COALESCE(a.recurrences, b.recurrences, c.recurrences, d.recurrences) AS recurrences,
+                                COALESCE(a.repeatEach, b.repeatEach, c.repeatEach, d.repeatEach) AS repeatEach,
+                                COALESCE(a.appointmentUponAgreement, b.appointmentUponAgreement, c.appointmentUponAgreement, d.appointmentUponAgreement) AS appointmentUponAgreement,
+                                (COALESCE(a.beginDate, b.beginDate, c.beginDate, d.beginDate) || COALESCE(a.beginTime, b.beginTime, c.beginTime, d.beginTime)) AS beginDateTime
+                            FROM tl_gutesio_data_child_event a
+                            JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid
+                            LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid
+                            LEFT JOIN tl_gutesio_data_child_event b ON b.childId = cb.uuid
+                            LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid
+                            LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid
+                            LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid
+                            LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid
+                            WHERE a.childId = ?
+                            ORDER BY beginDateTime ASC
+                            LIMIT 100;
+                            ')
                         ->execute($row['uuid'])->fetchAssoc();
 
                     if ($eventData) {

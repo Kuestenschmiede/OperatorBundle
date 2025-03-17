@@ -55,3 +55,8 @@ $GLOBALS['TL_LANG']['FMD']['cart_module'] = [
     '',
 ];
 
+$GLOBALS['TL_LANG']['FMD']['nearby_showcase_list_module'] = [
+    'Schaufenster in der Nähe',
+    '',
+];
+

@@ -1,0 +1,45 @@
+<?php
+
+$data = $this->getData()['data'];
+$moduleId = $this->getData()['moduleId'];
+
+?>
+
+
+<div class="c4g-grid-outer">
+    <div id="nearby-showcase-list" class="c4g-list-elements" module-id="<?= $moduleId ?>" check-position="true">
+
+    </div>
+</div>
+
+<template id="elementTpl">
+    <div id="element" class="c4g-list-element">
+        <div class="c4g-list-element__inner">
+            <div class="c4g-list-element__image-wrapper">
+                <a href="redirectUrl">
+                    <img class="c4g-list-element__image" src="elementImageSrc" alt="elementImageAlt" height="450" width="600">
+                </a>
+            </div>
+
+            <div class="c4g-list-element__title-wrapper">
+                <h2 class="c4g-list-element__title">
+                    elementName
+                </h2>
+            </div>
+
+            <div class="c4g-list-element__types-wrapper">
+                    <span class="c4g-list-element__types">
+                        elementType
+                    </span>
+            </div>
+
+            <div class="c4g-list-element__buttons-wrapper">
+                <div class="c4g-list-element__notice-wrapper"></div>
+                <div class="c4g-list-element__more-wrapper">
+                    <a href="redirectUrl" class="c4g-list-element__more-link" rel="noreferrer noopener">Mehr</a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>

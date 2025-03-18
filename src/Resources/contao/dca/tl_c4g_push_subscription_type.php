@@ -31,9 +31,9 @@ if (C4GVersionProvider::isInstalled('con4gis/pwa')) {
         'label'                   => &$GLOBALS['TL_LANG'][$str]['gutesioEventTypes'],
         'inputType'               => 'select',
         'exclude'                 => true,
-        'default'                 => '-',
+        'default'                 => [],
         'options_callback'        => [GutesioModuleCallback::class, 'getGutesioEventTypes'],
         'eval'                    => array('chosen'=>true,'mandatory'=>false,'multiple'=>true, 'tl_class'=>'long clr','alwaysSave'=> true),
-        'sql'                     => "blob not NULL"
+        'sql'                     => "blob NULL"
     );
 }

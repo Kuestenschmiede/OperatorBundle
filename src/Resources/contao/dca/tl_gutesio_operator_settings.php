@@ -14,6 +14,7 @@
  */
 
 use Contao\DC_Table;
+use gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback;
 
 $strName = "tl_gutesio_operator_settings";
 $cbClass = \gutesio\OperatorBundle\Classes\Callback\GutesioOperatorSettingCallback::class;
@@ -41,12 +42,13 @@ $GLOBALS['TL_DCA'][$strName] = [
             'fields' => ['']
         ]
     ], //prevent cto5 error
-    
+
     'palettes' => [
         'default' => '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
-            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,cartPage;'
+            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,cartPage;'.
+            '{pwa_legend},dailyEventPushConfig;'
     ],
 
     'fields' => [
@@ -81,11 +83,11 @@ $GLOBALS['TL_DCA'][$strName] = [
             'inputType'               => 'select',
             'foreignKey'              => 'tl_c4g_map_profiles.name',
             'eval'                    => ['tl_class'=>'clr', 'includeBlankOption'=>true,  'chosen'=>true, 'blankOptionLabel'=>"-",
-                                            'submitOnChange' => true, 'alwaysSave' => true],
+                'submitOnChange' => true, 'alwaysSave' => true],
             'relation'                => ['type'=>'belongsTo', 'load'=>'eager'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
         ],
-       'popupFields' => [
+        'popupFields' => [
             'exclude'                 => true,
             'inputType'               => 'select',
             'eval'                    => [
@@ -111,8 +113,8 @@ $GLOBALS['TL_DCA'][$strName] = [
             'exclude'                 => true,
             'inputType'               => 'select',
             'eval'                    => ['tl_class'=>'clr', 'includeBlankOption'=>true,  'chosen'=>true, 'blankOptionLabel'=>"-",
-                                            'submitOnChange' => true, 'alwaysSave' => true],
-            'options_callback' => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getMapContentElements"],
+                'submitOnChange' => true, 'alwaysSave' => true],
+            'options_callback' => [GutesioModuleCallback::class, "getMapContentElements"],
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
         ],
         'showcaseDetailPage' => [
@@ -185,6 +187,45 @@ $GLOBALS['TL_DCA'][$strName] = [
         ],
         'mainServerUrl' => [
             'sql'                     => "varchar(50) NOT NULL default ''"
+        ],
+
+        'dailyEventPushConfig' => [
+            'label'     => &$GLOBALS['TL_LANG'][$strName]['dailyEventPushConfig'],
+            'exclude'   => true,
+            'inputType' => 'multiColumnWizard',
+            'eval'      => [
+                'columnFields' => [
+                    'pushTime'      => [
+                        'label'     => &$GLOBALS['TL_LANG'][$strName]['pushTime'],
+                        'exclude'   => true,
+                        'inputType' => 'text',
+                    ],
+                    'pushMessage' => [
+                        'label'     => &$GLOBALS['TL_LANG'][$strName]['pushMessage'],
+                        'exclude'   => true,
+                        'inputType' => 'text',
+                        'eval'      => [ 'style' => 'width: 150px;' ],
+                    ],
+                    'subscriptionTypes' => [
+                        'label'     => &$GLOBALS['TL_LANG'][$strName]['subscriptionTypes'],
+                        'exclude'   => true,
+                        'inputType' => 'select',
+                        'eval'      => [ 'multiple' => true, 'chosen' => true, 'style'=> 'width: 250px;' ],
+                        'foreignKey'              => 'tl_c4g_push_subscription_type.name',
+                        'relation'                => ['type'=>'belongsTo', 'load'=>'eager'],
+//                        'options_callback' => [GutesioModuleCallback::class, "getSubscriptionTypes"],
+                    ],
+                    'pushRedirectPage' => [
+                        'label'     => &$GLOBALS['TL_LANG'][$strName]['pushRedirectPage'],
+                        'exclude'                 => true,
+                        'inputType'               => 'pageTree',
+                        'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+                        'sql'                     => "int(10) unsigned NOT NULL default '0'"
+                    ]
+                ],
+            ],
+            'sql'       => 'blob NULL',
         ]
+
     ],
 ];

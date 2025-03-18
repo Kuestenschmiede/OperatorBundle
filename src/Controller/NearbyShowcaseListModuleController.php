@@ -11,6 +11,7 @@ use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\Database;
 use Contao\ModuleModel;
 use Contao\StringUtil;
+use Contao\Template;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,7 +32,7 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
     }
 
 
-    protected function getResponse(FragmentTemplate $template, ModuleModel $model, Request $request): Response
+    protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");

@@ -917,7 +917,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     {
         $database = Database::getInstance();
         $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
-        $links = false;
+        $links = [];
         if ($result) {
             foreach ($result as $row) {
                 $alias = is_array($row) && key_exists('alias', $row) ? $row['alias'] : false;

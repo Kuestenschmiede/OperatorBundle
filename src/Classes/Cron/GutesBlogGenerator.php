@@ -2,26 +2,32 @@
 
 namespace gutesio\OperatorBundle\Classes\Cron;
 
+use con4gis\PwaBundle\Classes\Events\PushNotificationEvent;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
+use Contao\StringUtil;
 use gutesio\DataModelBundle\Classes\FileUtils;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Contao\PageModel;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\RouterInterface;
 
 class GutesBlogGenerator
 {
 
     public function __construct(
         private LoggerInterface $logger,
-        private ContaoFramework $framework
+        private ContaoFramework $framework,
+        private EventDispatcherInterface $eventDispatcher,
+        private RouterInterface $router
     ) {
     }
 
     public function onHourly(): void
     {
         $this->framework->initialize();
+        $this->logger->error("Start GutesBlogGenerator run...");
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
         if (isset($objSettings->syncDataAutomaticly) && $objSettings->syncDataAutomaticly !== null && $objSettings->syncDataAutomaticly) {
             $db = Database::getInstance();
@@ -31,29 +37,50 @@ class GutesBlogGenerator
             $currentDate->setTime(0, 0, 0);
             $currentDate = $currentDate->getTimestamp();
 
-            $subscriptionTypes = $this->checkSubscriptions($db);
-            $gutesNewsArchives = $this->checkArchives($db);
+            
 
-            $gutesNews = $this->getGutesNews($db, $currentDate/*, $categories*/);
+            $gutesEvents = $this->getGutesEvents($db, $currentDate/*, $categories*/);
 
-            //todo add multiple gutes type for each subType (pwa)
-            if ($gutesNewsArchives) {
-                //todo here we can add different intervals for the pn
-                foreach ($gutesNewsArchives as $archive) {
-                    $archiveSubs = unserialize($archive['subscriptionTypes']);
-                    foreach ($archiveSubs as $archiveSub) {
-                        foreach ($subscriptionTypes as $subscriptionType) {
-                            $gutesCat = unserialize($subscriptionType['gutesioEventTypes']) ?: $subscriptionType['gutesioEventTypes'] ?: '';
-                            if (intval($archiveSub) == $subscriptionType['id']) {
-                                $this->addGutesNews($db, $archive, $currentDate, $gutesCat, $gutesNews);
+            if (count($gutesEvents) > 0) {
+                // check operator settings
+                $this->logger->error("Checking push configuration...");
+                $settings = GutesioOperatorSettingsModel::findSettings();
+
+                $pushConfiguration = StringUtil::deserialize($settings->dailyEventPushConfig, true);
+                if ($pushConfiguration && count($pushConfiguration) > 0) {
+                    foreach ($pushConfiguration as $pushConfig) {
+                        $time = $pushConfig['pushTime'];
+                        $arrTime = explode(":", $time);
+                        $datetime = new \DateTime();
+                        $datetime->setTime(intval($arrTime[0]) % 24, intval($arrTime[1]) % 60);
+
+                        $now = new \DateTime();
+                        if ($now->getTimestamp() >= $datetime->getTimestamp()) {
+                            // time matches, push message
+                            $message = $pushConfig['pushMessage'];
+                            $types = $pushConfig['subscriptionTypes'];
+                            $pageId = $pushConfig['pushRedirectPage'];
+                            if ($pageId) {
+                                $clickUrl = $this->router->generate("tl_page." . $pageId);
+                            } else {
+                                $clickUrl = "";
                             }
+                            $event = new PushNotificationEvent();
+                            $event->setMessage($message);
+                            $event->setSubscriptionTypes($types);
+                            $event->setClickUrl($clickUrl);
+                            $this->eventDispatcher->dispatch($event, PushNotificationEvent::NAME);
+                            $this->logger->error("Sent notification with text: " . $event->getMessage() . " to " . count($event->getSubscriptions()) . " recipients.");
                         }
                     }
-
-                    $this->cleanArchive($archive, $currentDate, $db);
+                } else {
+                    $this->logger->error("No valid push configuration found.");
                 }
+            } else {
+                $this->logger->error("No events found.");
             }
         }
+        $this->logger->error("...finished GutesBlogGenerator run.");
     }
 
     private function checkArchives($db)
@@ -87,7 +114,7 @@ class GutesBlogGenerator
     }
 
     //todo get event news with only with the categories (typeID == category or subtype uuid)
-    private function getGutesNews($db, $currentDate/*, $categories*/)
+    private function getGutesEvents($db, $currentDate/*, $categories*/)
     {
         // todo get event news with only the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
@@ -225,7 +252,7 @@ class GutesBlogGenerator
             $specialUuid = 1;
             $redirectPage = PageModel::findById($archive['jumpTo']);
             $specialUrl = ($redirectPage !== null) ? $redirectPage->getAbsoluteUrl() : "";
-            $specialPnSendDate = $date + 21600 ?: 0;
+            $specialPnSendDate = $specialDate + 21600 ?: 0;
             $specialPnSent = 0;
             $specialUnpublish = $currentDate + 60 ?: 0;
 

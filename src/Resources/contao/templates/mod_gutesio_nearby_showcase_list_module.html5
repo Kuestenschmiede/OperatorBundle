@@ -2,12 +2,13 @@
 
 $data = $this->getData()['data'];
 $moduleId = $this->getData()['moduleId'];
+$checkPosition = $this->getData()['checkPosition'];
 
 ?>
 
 
 <div class="c4g-grid-outer">
-    <div id="nearby-showcase-list" class="c4g-list-elements" module-id="<?= $moduleId ?>" check-position="true">
+    <div id="nearby-showcase-list" class="c4g-list-elements" module-id="<?= $moduleId ?>" check-position="<?= $checkPosition ? 'true' : 'false' ?>">
 
     </div>
 </div>
@@ -17,7 +18,7 @@ $moduleId = $this->getData()['moduleId'];
         <div class="c4g-list-element__inner">
             <div class="c4g-list-element__image-wrapper">
                 <a href="redirectUrl">
-                    <img class="c4g-list-element__image" src="elementImageSrc" alt="elementImageAlt" height="450" width="600">
+                    <img class="c4g-list-element__image" src="elementImageSrc" alt="elementImageAlt" height="450" width="600" loading="lazy">
                 </a>
             </div>
 

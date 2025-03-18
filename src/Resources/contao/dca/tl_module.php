@@ -81,7 +81,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},n
     '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data;';
+    '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position;';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
     'exclude'                 => true,
@@ -558,4 +558,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['loadMonth'] = [
     'default'                 => '6',
     'eval'                    => ['rgxp'=>'digit', 'tl_class'=>'clr'],
     'sql'                     => "int(10) unsigned NOT NULL default '6'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_check_position'] = [
+    'exclude'                 => true,
+    'default'                 => true,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "char(1) NOT NULL default '1'"
 ];

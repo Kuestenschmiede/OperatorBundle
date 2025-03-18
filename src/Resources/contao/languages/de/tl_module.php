@@ -119,3 +119,4 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_max_childs'] = ['Maximale Anzahl an In
 $GLOBALS['TL_LANG']['tl_module']['lazyBanner'] = ['Bilder nachladen','Bilder nachladen statt initial alles zu laden.'];
 $GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Banner automatisch aktualisieren','Banner automatisiert nach einer Stunde neu laden.'];
 $GLOBALS['TL_LANG']['tl_module']['loadMonth'] = ['Inhalte der nächsten X Monate','Wie viele Monate sollen die Veranstaltungen im Voraus angezeigt werden (Standard: 6)?'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_check_position'] = ['Positionsermittlung aktivieren', 'Über diese Checkbox kann die Positionsermittlung für die Liste geschaltet werden. Wenn nicht aktiv, werden statt den nächsten Schaufenstern zufällige Schaufenster geladen.'];

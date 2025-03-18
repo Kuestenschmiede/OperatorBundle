@@ -41,13 +41,12 @@ document.addEventListener('DOMContentLoaded', () => {
                             let card = renderTemplateNode(data[i], i);
                             listContainer.appendChild(card);
                         }
-                        // listContainer.style.display = "";
                     } else {
-                        console.error("An Error occurred loading new data from the server.")
+                        console.error("An error occurred loading new data from the server.")
                     }
                 });
             } else {
-                console.error("An Error occurred loading new data from the server.")
+                console.error("An error occurred loading new data from the server.")
             }
         });
     }
@@ -63,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (listContainer.getAttribute("check-position") === "true") {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(successCallback, errorCallback);
+            navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {maximumAge: 1800000, timeout: 5000});
+
         }
     } else {
         handleFetch(null);

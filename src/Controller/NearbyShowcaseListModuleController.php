@@ -7,18 +7,15 @@ use con4gis\CoreBundle\Classes\ResourceLoader;
 use con4gis\MapsBundle\Classes\Services\AreaService;
 use Contao\CoreBundle\Controller\FrontendModule\AbstractFrontendModuleController;
 use Contao\CoreBundle\Framework\ContaoFramework;
-use Contao\CoreBundle\InsertTag\InsertTagParser;
 use Contao\CoreBundle\Twig\FragmentTemplate;
 use Contao\Database;
 use Contao\ModuleModel;
-use Contao\PageModel;
 use Contao\StringUtil;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class NearbyShowcaseListModuleController extends AbstractFrontendModuleController
@@ -42,11 +39,11 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
 
         $template->setData([
             'data' => [],
-            'moduleId' => $model->id
+            'moduleId' => $model->id,
+            'checkPosition' => (bool) $model->gutesio_check_position
         ]);
 
         return $template->getResponse();
-
     }
 
     /**
@@ -115,7 +112,6 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
             }
             $showcases = $db->prepare($sql)->execute(...$elementIds)->fetchAllAssoc();
         }
-        // todo distance filtering
 
         if ($distanceFiltering) {
             $showcases = $this->filterShowcasesByDistance($showcases, $limit, $position);
@@ -130,14 +126,6 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
         }
 
         $redirectPage = $moduleModel->gutesio_data_redirect_page;
-
-//        if ($redirectPage) {
-//            $pageModel = PageModel::findById($redirectPage);
-//            $redirectUrl = $pageModel->getFrontendUrl();
-//        } else {
-//            $redirectUrl = $this->parser->replace("{{link_url::$redirectPage}}");
-//        }
-
 
         foreach ($showcases as $key => $showcase) {
             $typeName = "";

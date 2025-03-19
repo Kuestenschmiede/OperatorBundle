@@ -77,17 +77,42 @@ class GutesBlogGenerator
                         // time matches, push message
                         $message = $pushConfig['pushMessage'];
                         $pageId = $pushConfig['pushRedirectPage'];
-                        if ($pageId) {
-                            $clickUrl = $this->router->generate("tl_page." . $pageId);
+                        $identifier = implode("_", [sha1($message), $pageId, $datetime->getTimestamp()]);
+                        $updateMode = "";
+                        $results = $db->prepare("SELECT `sentTime` FROM tl_gutesio_event_push_notifications WHERE `identifier` = ?")
+                            ->execute($identifier)->fetchAllAssoc();
+                        if (count($results) === 0) {
+                            $sent = false;
+                            $updateMode = "insert";
+                        } else if (count($results) === 1) {
+                            $sentTime = $results[0]['sentTime'];
+                            $sent = $sentTime >= $datetime->getTimestamp();
+                            $updateMode = "update";
                         } else {
-                            $clickUrl = "";
+                            // too many results, shouldn't happen
+                            $sent = true;
                         }
-                        $event = new PushNotificationEvent();
-                        $event->setMessage($message);
-                        $event->setSubscriptionTypes($types);
-                        $event->setClickUrl($clickUrl);
-                        $this->eventDispatcher->dispatch($event, PushNotificationEvent::NAME);
-                        $this->logger->error("Sent notification with text: " . $event->getMessage() . " to " . count($event->getSubscriptions()) . " recipients.");
+
+                        if (!$sent) {
+                            if ($pageId) {
+                                $clickUrl = $this->router->generate("tl_page." . $pageId);
+                            } else {
+                                $clickUrl = "";
+                            }
+                            $event = new PushNotificationEvent();
+                            $event->setMessage($message);
+                            $event->setSubscriptionTypes($types);
+                            $event->setClickUrl($clickUrl);
+                            $this->eventDispatcher->dispatch($event, PushNotificationEvent::NAME);
+                            $this->logger->error("Sent notification with text: " . $event->getMessage() . " to " . count($event->getSubscriptions()) . " recipients.");
+                            if ($updateMode === "insert") {
+                                $sql = "INSERT INTO tl_gutesio_event_push_notifications (`identifier`, `sentTime`) VALUES (?,?)";
+                                $db->prepare($sql)->execute($identifier, time());
+                            } else if ($updateMode === "update") {
+                                $sql = "UPDATE tl_gutesio_event_push_notifications SET `sentTime` = ? WHERE `identifier` = ?";
+                                $db->prepare($sql)->execute(time(), $identifier);
+                            }
+                        }
                     }
                 }
             } else {

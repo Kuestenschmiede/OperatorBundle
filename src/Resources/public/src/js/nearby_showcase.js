@@ -1,4 +1,3 @@
-
 function renderTemplateNode(data, index) {
     let template = document.querySelector('#elementTpl');
     let cardNode = template.content.querySelector('#element');
@@ -14,6 +13,17 @@ function renderTemplateNode(data, index) {
 
     node.innerHTML = node.innerHTML.replaceAll("elementName", data.name);
     node.innerHTML = node.innerHTML.replaceAll("elementType", data.type);
+
+    data.opening_hours = data.opening_hours.replaceAll("Mo", "Montag");
+    data.opening_hours = data.opening_hours.replaceAll("Tu", "Dienstag");
+    data.opening_hours = data.opening_hours.replaceAll("We", "Mittwoch");
+    data.opening_hours = data.opening_hours.replaceAll("Th", "Donnerstag");
+    data.opening_hours = data.opening_hours.replaceAll("Do", "Donnerstag");
+    data.opening_hours = data.opening_hours.replaceAll("Fr", "Freitag");
+    data.opening_hours = data.opening_hours.replaceAll("Sa", "Samstag");
+    data.opening_hours = data.opening_hours.replaceAll("Su", "Sonntag");
+
+    node.innerHTML = node.innerHTML.replaceAll("openingHours", data.opening_hours)
 
     return node;
 }

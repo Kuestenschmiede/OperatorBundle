@@ -41,7 +41,8 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
         $template->setData([
             'data' => [],
             'moduleId' => $model->id,
-            'checkPosition' => (bool) $model->gutesio_check_position
+            'checkPosition' => (bool) $model->gutesio_check_position,
+            'detailLink' =>  (bool) $model->gutesio_show_detail_link,
         ]);
 
         return $template->getResponse();
@@ -107,7 +108,7 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
         }
 
         if (count($elementIds) > 0) {
-            $sql = "SELECT name, uuid, alias,geox,geoy,imageCDN FROM tl_gutesio_data_element WHERE `uuid` " . C4GUtils::buildInString($elementIds);
+            $sql = "SELECT name, uuid, alias, geox, geoy, imageCDN, opening_hours  FROM tl_gutesio_data_element WHERE `uuid` " . C4GUtils::buildInString($elementIds);
             if (!$distanceFiltering) {
                 $sql .= " ORDER BY RAND() LIMIT " . intval($limit);
             }

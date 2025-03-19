@@ -3,6 +3,7 @@
 $data = $this->getData()['data'];
 $moduleId = $this->getData()['moduleId'];
 $checkPosition = $this->getData()['checkPosition'];
+$detailLink = $this->getData()['detailLink'];
 
 ?>
 
@@ -34,12 +35,21 @@ $checkPosition = $this->getData()['checkPosition'];
                     </span>
             </div>
 
-            <div class="c4g-list-element__buttons-wrapper">
-                <div class="c4g-list-element__notice-wrapper"></div>
-                <div class="c4g-list-element__more-wrapper">
-                    <a href="redirectUrl" class="c4g-list-element__more-link" rel="noreferrer noopener">Mehr</a>
-                </div>
+            <div class="c4g-list-element__opening-hours-wrapper">
+                    <div id="opening-hours" class="c4g-list-element__opening-hours">
+                        openingHours
+                    </div>
             </div>
+
+            <?php if ($detailLink): ?>
+
+                <div class="c4g-list-element__buttons-wrapper">
+                    <div class="c4g-list-element__more-wrapper">
+                        <a href="redirectUrl" class="c4g-list-element__more-link" rel="noreferrer noopener">Mehr</a>
+                    </div>
+                </div>
+
+            <?php endif; ?>
 
         </div>
     </div>

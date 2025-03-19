@@ -278,10 +278,10 @@ class ShowcaseService
                 $returnData = [];
                 // check if the relation is bidirectional
                 foreach ($relatedShowcases as $relatedShowcase) {
-                    $relatedUuids = StringUtil::deserialize($relatedShowcase['showcaseIds']);
-                    if ($arrShowcase && is_array($arrShowcase) && $relatedUuids && is_array($relatedUuids) && in_array($arrShowcase['uuid'], $relatedUuids)) {
+                    //$relatedUuids = StringUtil::deserialize($relatedShowcase['showcaseIds']);
+                    //if ($arrShowcase && is_array($arrShowcase) && $relatedUuids && is_array($relatedUuids) && in_array($arrShowcase['uuid'], $relatedUuids)) {
                         $returnData[] = $relatedShowcase;
-                    }
+                    //}
                 }
                 $returnData = $this->converter->convertDbResult($returnData, ['loadTagsComplete' => true]);
                 if (count($returnData) > 1 && !($returnData[0])) {

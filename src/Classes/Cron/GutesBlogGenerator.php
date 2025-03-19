@@ -2,10 +2,13 @@
 
 namespace gutesio\OperatorBundle\Classes\Cron;
 
+use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\PwaBundle\Classes\Events\PushNotificationEvent;
+use con4gis\PwaBundle\Entity\PushSubscriptionType;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\StringUtil;
+use Doctrine\ORM\EntityManagerInterface;
 use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Contao\PageModel;
@@ -20,7 +23,8 @@ class GutesBlogGenerator
         private LoggerInterface $logger,
         private ContaoFramework $framework,
         private EventDispatcherInterface $eventDispatcher,
-        private RouterInterface $router
+        private RouterInterface $router,
+        private EntityManagerInterface $entityManager
     ) {
     }
 
@@ -37,29 +41,59 @@ class GutesBlogGenerator
             $currentDate->setTime(0, 0, 0);
             $currentDate = $currentDate->getTimestamp();
 
-            
+            // check operator settings
+            $this->logger->error("Checking push configuration...");
+            $settings = GutesioOperatorSettingsModel::findSettings();
+            $pushConfiguration = StringUtil::deserialize($settings->dailyEventPushConfig, true);
+            $subTypeRepo = $this->entityManager->getRepository(PushSubscriptionType::class);
 
-            $gutesEvents = $this->getGutesEvents($db, $currentDate/*, $categories*/);
+            if ($pushConfiguration && count($pushConfiguration) > 0) {
+                foreach ($pushConfiguration as $pushConfig) {
+                    $sendMessage = false;
+                    $types = $pushConfig['subscriptionTypes'];
+                    foreach ($types as $type) {
+                        /** @var PushSubscriptionType $objType */
+                        $objType = $subTypeRepo->findOneBy(['id' => $type]);
+                        if ($objType) {
+                            $gutesCategories = $objType->getGutesioEventTypes();
+                            $postals = $objType->getPostals();
+                            $events = $this->getGutesEvents($db, $currentDate, $gutesCategories, $postals);
+                            if (count($events) > 0) {
+                                $sendMessage = true;
+                            }
+                        }
+                    }
 
-            if (count($gutesEvents) > 0) {
-                // check operator settings
-                $this->logger->error("Checking push configuration...");
-                $settings = GutesioOperatorSettingsModel::findSettings();
+                    if (!$sendMessage) {
+                        continue;
+                    }
+                    $time = $pushConfig['pushTime'];
+                    $arrTime = explode(":", $time);
+                    $datetime = new \DateTime();
+                    $datetime->setTime(intval($arrTime[0]) % 24, intval($arrTime[1]) % 60);
 
-                $pushConfiguration = StringUtil::deserialize($settings->dailyEventPushConfig, true);
-                if ($pushConfiguration && count($pushConfiguration) > 0) {
-                    foreach ($pushConfiguration as $pushConfig) {
-                        $time = $pushConfig['pushTime'];
-                        $arrTime = explode(":", $time);
-                        $datetime = new \DateTime();
-                        $datetime->setTime(intval($arrTime[0]) % 24, intval($arrTime[1]) % 60);
+                    $now = new \DateTime();
+                    if ($now->getTimestamp() >= $datetime->getTimestamp()) {
+                        // time matches, push message
+                        $message = $pushConfig['pushMessage'];
+                        $pageId = $pushConfig['pushRedirectPage'];
+                        $identifier = implode("_", [sha1($message), $pageId, $datetime->getTimestamp()]);
+                        $updateMode = "";
+                        $results = $db->prepare("SELECT `sentTime` FROM tl_gutesio_event_push_notifications WHERE `identifier` = ?")
+                            ->execute($identifier)->fetchAllAssoc();
+                        if (count($results) === 0) {
+                            $sent = false;
+                            $updateMode = "insert";
+                        } else if (count($results) === 1) {
+                            $sentTime = $results[0]['sentTime'];
+                            $sent = $sentTime >= $datetime->getTimestamp();
+                            $updateMode = "update";
+                        } else {
+                            // too many results, shouldn't happen
+                            $sent = true;
+                        }
 
-                        $now = new \DateTime();
-                        if ($now->getTimestamp() >= $datetime->getTimestamp()) {
-                            // time matches, push message
-                            $message = $pushConfig['pushMessage'];
-                            $types = $pushConfig['subscriptionTypes'];
-                            $pageId = $pushConfig['pushRedirectPage'];
+                        if (!$sent) {
                             if ($pageId) {
                                 $clickUrl = $this->router->generate("tl_page." . $pageId);
                             } else {
@@ -71,13 +105,18 @@ class GutesBlogGenerator
                             $event->setClickUrl($clickUrl);
                             $this->eventDispatcher->dispatch($event, PushNotificationEvent::NAME);
                             $this->logger->error("Sent notification with text: " . $event->getMessage() . " to " . count($event->getSubscriptions()) . " recipients.");
+                            if ($updateMode === "insert") {
+                                $sql = "INSERT INTO tl_gutesio_event_push_notifications (`identifier`, `sentTime`) VALUES (?,?)";
+                                $db->prepare($sql)->execute($identifier, time());
+                            } else if ($updateMode === "update") {
+                                $sql = "UPDATE tl_gutesio_event_push_notifications SET `sentTime` = ? WHERE `identifier` = ?";
+                                $db->prepare($sql)->execute(time(), $identifier);
+                            }
                         }
                     }
-                } else {
-                    $this->logger->error("No valid push configuration found.");
                 }
             } else {
-                $this->logger->error("No events found.");
+                $this->logger->error("No valid push configuration found.");
             }
         }
         $this->logger->error("...finished GutesBlogGenerator run.");
@@ -114,12 +153,46 @@ class GutesBlogGenerator
     }
 
     //todo get event news with only with the categories (typeID == category or subtype uuid)
-    private function getGutesEvents($db, $currentDate/*, $categories*/)
+    private function getGutesEvents($db, $currentDate, $categories, $postals)
     {
         // todo get event news with only the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
+        $params = [];
 
-        $query = "SELECT t.type, 
+        if ($postals) {
+            $postals = str_replace("*", "%", $postals);
+            $arrPostals = explode(",", $postals);
+            $query = "SELECT t.type, 
+                     IF(e.beginDate <= '$currentDate' AND e.endDate >= '$currentDate', '$currentDate', e.beginDate) AS beginDate,
+                     e.beginTime,
+                     c.uuid,
+                     c.name,
+                     c.description,
+                     c.shortDescription,
+                     c.typeId,
+                     c.imageCDN,
+                     elem.locationZip
+              FROM tl_gutesio_data_child_event e
+              JOIN tl_gutesio_data_child c ON e.childId = c.uuid
+              JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid
+              JOIN tl_gutesio_data_child_connection cc ON cc.childId = c.uuid
+              JOIN tl_gutesio_data_element elem ON cc.childId = c.uuid
+              WHERE ('$currentDate' BETWEEN e.beginDate AND e.endDate)
+              OR (e.beginDate = '$currentDate')
+              OR (e.endDate = '$currentDate')
+              AND e.beginDate <= '$endDate'";
+
+            $query .= " AND ";
+
+            foreach ($arrPostals as $key=>$arrPostal) {
+                $query .= " `locationZip` LIKE ?";
+                if (!(array_key_last($arrPostals) === $key)) {
+                    $query .= " OR";
+                }
+                $params[] = $arrPostal;
+            }
+        } else {
+            $query = "SELECT t.type, 
                      IF(e.beginDate <= '$currentDate' AND e.endDate >= '$currentDate', '$currentDate', e.beginDate) AS beginDate,
                      e.beginTime,
                      c.uuid,
@@ -135,10 +208,23 @@ class GutesBlogGenerator
               OR (e.beginDate = '$currentDate')
               OR (e.endDate = '$currentDate')
               AND e.beginDate <= '$endDate'";
+        }
 
-        return $db->prepare($query)
-            ->execute()
+        if ($categories) {
+            $categories = StringUtil::deserialize($categories, true);
+            $query .= " AND c.typeId " . C4GUtils::buildInString($categories);
+            $params = array_merge($params, $categories);
+        }
+
+        $result = $db->prepare($query)
+            ->execute(...$params)
             ->fetchAllAssoc();
+
+        if (count($result) === 0) {
+            $this->logger->error("No events found that match the configuration.");
+        }
+
+        return $result;
     }
 
 

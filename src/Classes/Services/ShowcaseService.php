@@ -159,9 +159,9 @@ class ShowcaseService
             $hyphenatorOptions = new Options();
             $hyphenatorOptions->setHyphen('-')
                 ->setDefaultLocale('de_DE')
-                ->setRightMin(3)
-                ->setLeftMin(3)
-                ->setWordMin(5)
+                ->setRightMin(4)
+                ->setLeftMin(4)
+                ->setWordMin(8)
                 ->setFilters('NonStandard')
                 ->setTokenizers(['Whitespace', 'Punctuation']);
             $hyphenator = new Hyphenator();

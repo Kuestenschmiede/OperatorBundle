@@ -54,12 +54,19 @@ class GutesBlogGenerator
                     foreach ($types as $type) {
                         /** @var PushSubscriptionType $objType */
                         $objType = $subTypeRepo->findOneBy(['id' => $type]);
+                        $arrPostals = [];
+                        $arrTypes = [];
                         if ($objType) {
                             $gutesCategories = $objType->getGutesioEventTypes();
                             $postals = $objType->getPostals();
                             $events = $this->getGutesEvents($db, $currentDate, $gutesCategories, $postals);
                             if (count($events) > 0) {
+                                // there are events for this type for today
                                 $sendMessage = true;
+                                $arrTypes = array_merge($arrTypes, StringUtil::deserialize($gutesCategories, true));
+                                $arrPostals = array_merge($arrPostals, explode(",", $postals));
+
+                                break;
                             }
                         }
                     }
@@ -96,6 +103,12 @@ class GutesBlogGenerator
                         if (!$sent) {
                             if ($pageId) {
                                 $clickUrl = $this->router->generate("tl_page." . $pageId);
+                                $clickUrl .= "&postals=" . implode(",", $arrPostals);
+                                foreach ($arrTypes as $arrType) {
+                                    $clickUrl .= "&types[]=" . $arrType;
+                                }
+                                $clickUrl .= "&filterFrom=" . $datetime->getTimestamp();
+                                $clickUrl .= "&filterUntil=" . strtotime('tomorrow');
                             } else {
                                 $clickUrl = "";
                             }

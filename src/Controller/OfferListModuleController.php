@@ -279,17 +279,52 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $conf = new FrontendConfiguration('entrypoint_' . $this->model->id);
 
         if ($this->model->gutesio_enable_filter === '1') {
+            $filterFields = $this->getFormFields();
+
+            $queryParams = $this->request->query->all();
+            if ($queryParams['types']) {
+
+                // get type field
+                $typeField = null;
+                foreach ($filterFields as $filterField) {
+                    if ($filterField->getName() === "types") {
+                        $typeField = $filterField;
+                        break;
+                    }
+                }
+
+                if ($typeField !== null) {
+                    $types = is_array($queryParams['types']) ? $queryParams['types'] : explode(",", $queryParams['types']);
+                    $fieldOptions = $typeField->getOptions();
+
+                    $initialOptions = [];
+                    foreach ($fieldOptions as $option) {
+                        if (in_array($option['value'], $types)) {
+                            $initialOptions[] = $option;
+                        }
+                    }
+
+                    $filterData['types'] = $initialOptions;
+                }
+            }
+            if ($queryParams['postals']) {
+                // TODO wie gehen wir mit mehreren PLZs/Wildcard PLZ um? Das alles hier ist damit ja nicht wirklich kompatibel
+                $filterData['search'] = $queryParams['postals'];
+            }
+            if ($queryParams['filterFrom']) {
+                $filterData['filterFrom'] = $queryParams['filterFrom'];
+                $filterData['sorting'] = "date";
+            }
+            if ($queryParams['filterUntil']) {
+                $filterData['filterUntil'] = $queryParams['filterUntil'];
+                $filterData['sorting'] = "date";
+            }
+
             $conf->addForm(
                 $this->getForm(),
-                $this->getFormFields(),
+                $filterFields,
                 $this->getFormButtons(),
-                [
-                    'search' => $search,
-                    'moduleId' => $this->model->id,
-                    'filterFrom' => null,
-                    'filterUntil' => null,
-                    'sorting' => $filterData['sorting']
-                ]
+                $filterData
             );
         }
 

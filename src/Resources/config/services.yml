@@ -198,3 +198,7 @@ services:
     gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator:
       tags:
         - { name: contao.cronjob, interval: hourly }
+
+    gutesio\OperatorBundle\Classes\Cron\SyncDataCron:
+      tags:
+        - { name: contao.cronjob, interval: minutely }

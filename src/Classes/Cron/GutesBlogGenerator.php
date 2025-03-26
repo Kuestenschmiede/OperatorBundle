@@ -102,7 +102,7 @@ class GutesBlogGenerator
 
                         if (!$sent) {
                             if ($pageId) {
-                                $clickUrl = $this->router->generate("tl_page." . $pageId);
+                                $clickUrl = $this->router->generate("tl_page." . $pageId) . "?";
                                 $clickUrl .= "&postals=" . implode(",", $arrPostals);
                                 foreach ($arrTypes as $arrType) {
                                     $clickUrl .= "&types[]=" . $arrType;

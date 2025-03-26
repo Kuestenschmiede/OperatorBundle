@@ -36,7 +36,7 @@ class SyncDataCron
                     foreach ($importIds as $importId) {
                         $currentImport = $db->prepare('SELECT availableVersion, importVersion FROM tl_c4g_import_data WHERE id=? AND type=?')->execute($importId, 'gutesio')->fetchAssoc();
                         if ($currentImport['availableVersion'] && $currentImport['importVersion'] && ($currentImport['availableVersion'] > $currentImport['importVersion'])) {
-                            $importDataClass->updateBaseData($importId);
+                            $importDataClass->updateBaseData($importId, true);
                         }
                     }
                 }

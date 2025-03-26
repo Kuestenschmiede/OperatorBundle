@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\CoreBundle\Classes\C4GVersionProvider;
 use con4gis\FrameworkBundle\Classes\Utility\RegularExpression;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
@@ -1278,6 +1279,7 @@ class OfferLoaderService
         $database = Database::getInstance();
         System::loadLanguageFile('tl_gutesio_data_child');
         System::loadLanguageFile('offer_list');
+        $isContao5 = C4GVersionProvider::isContaoVersionAtLeast('5.0.0');
         foreach ($childRows as $key => $row) {
             $tooOld = false;
             switch ($row['type']) {
@@ -1718,7 +1720,12 @@ class OfferLoaderService
                     $objSettings = GutesioOperatorSettingsModel::findSettings();
                     $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
                     if ($elementPage !== null) {
-                        $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $vendor['alias']]);
+                        if ($isContao5) {
+                            $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $vendor['alias']]);
+                        } else {
+                            $url = $elementPage->getAbsoluteUrl();
+                        }
+
                         if ($url) {
                             $href = '';
                             if (C4GUtils::endsWith($url, '.html')) {

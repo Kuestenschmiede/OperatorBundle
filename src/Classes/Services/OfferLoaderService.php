@@ -653,10 +653,7 @@ class OfferLoaderService
             }
         } elseif (empty($categories)) {
             if (count($elements)) {
-                $parameters = $types;
-                $parameters = array_merge($parameters, $elements);
-                $parameters[] = (int) $offset;
-                $parameters[] = $limit;
+                $parameters = array_merge($types, $elements);
                 $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                     'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -681,7 +678,7 @@ class OfferLoaderService
                     ' AND elementId ' . C4GUtils::buildInString($elements) .
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
-                )->execute($parameters)->fetchAllAssoc();
+                )->execute(...$parameters)->fetchAllAssoc();
             } else {
                 $parameters = $types;
                 $parameters[] = (int) $offset;
@@ -710,6 +707,7 @@ class OfferLoaderService
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
                 )->execute($parameters)->fetchAllAssoc();
+//                dd($childRows);
             }
         } else {
             if (count($elements)) {
@@ -1720,7 +1718,7 @@ class OfferLoaderService
                     $objSettings = GutesioOperatorSettingsModel::findSettings();
                     $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
                     if ($elementPage !== null) {
-                        $url = $elementPage->getAbsoluteUrl();
+                        $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $vendor['alias']]);
                         if ($url) {
                             $href = '';
                             if (C4GUtils::endsWith($url, '.html')) {
@@ -1802,7 +1800,7 @@ class OfferLoaderService
         foreach ($data as $datum) {
             $sql = 'SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ? AND `typeId` ' . $categoryString;
             $params = array_merge([$datum['uuid']], $categoryIds);
-            $categoryChildConnections = $db->prepare($sql)->execute($params)->fetchAllAssoc();
+            $categoryChildConnections = $db->prepare($sql)->execute(...$params)->fetchAllAssoc();
             if (count($categoryChildConnections) > 0) {
                 $result[] = $datum;
             }

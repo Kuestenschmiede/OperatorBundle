@@ -7272,7 +7272,8 @@ html {
 }
 .detail-view .detail-field-wrapper__tags .tag-entry__linked > a {
   box-shadow: 4px 4px 8px rgba(0,0,0,.6);
-  transition: ease-in-out .3s
+  transition: ease-in-out .3s;
+  border-radius: var(--gutes-base-border-radius)
 }
 .detail-view .detail-field-wrapper__tags .tag-entry__linked > a:hover {
   box-shadow: none

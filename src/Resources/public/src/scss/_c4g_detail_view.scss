@@ -381,6 +381,7 @@
           > a {
             box-shadow: 4px 4px 8px rgba(#000000, .6);
             transition: ease-in-out 300ms;
+            border-radius: var(--gutes-base-border-radius);
 
             &:hover {
               box-shadow: none;

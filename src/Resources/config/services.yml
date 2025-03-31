@@ -202,3 +202,7 @@ services:
     gutesio\OperatorBundle\Classes\Cron\SyncDataCron:
       tags:
         - { name: contao.cronjob, interval: minutely }
+
+    gutesio\OperatorBundle\Classes\Cron\DownloadImagesCron:
+      tags:
+        - { name: contao.cronjob, interval: hourly }

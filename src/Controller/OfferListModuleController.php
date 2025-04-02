@@ -59,6 +59,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OfferListModuleController extends AbstractFrontendModuleController
 {
@@ -81,8 +82,12 @@ class OfferListModuleController extends AbstractFrontendModuleController
      * @param OfferLoaderService|null $offerService
      * @param ServerService $serverService
      */
-    public function __construct(private ContaoFramework $framework, private ?OfferLoaderService $offerService, private ServerService $serverService)
-    {
+    public function __construct(
+        private ContaoFramework $framework,
+        private ?OfferLoaderService $offerService,
+        private ServerService $serverService,
+        private UrlGeneratorInterface $urlGenerator
+    ) {
     }
 
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
@@ -269,7 +274,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         ];
         if ($this->model->gutesio_child_sort_by_date) {
             if ($this->model->gutesio_child_data_mode === "1") {
-                $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
+//                $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
                 $this->initialDateSort = true;
             }
 
@@ -861,22 +866,15 @@ class OfferListModuleController extends AbstractFrontendModuleController
     private function getOfferDetailLinks(): array
     {
         $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $productPageModel = PageModel::findByPk($objSettings->productDetailPage);
-        $eventPageModel = PageModel::findByPk($objSettings->eventDetailPage);
-        $jobPageModel = PageModel::findByPk($objSettings->jobDetailPage);
-        $arrangementPageModel = PageModel::findByPk($objSettings->arrangementDetailPage);
-        $servicePageModel = PageModel::findByPk($objSettings->serviceDetailPage);
-        $personPageModel = PageModel::findByPk($objSettings->personDetailPage);
-        $voucherPageModel = PageModel::findByPk($objSettings->voucherDetailPage);
 
         return [
-            'product' => $productPageModel ? $productPageModel->getAbsoluteUrl() : '',
-            'event' => $eventPageModel ? $eventPageModel->getAbsoluteUrl() : '',
-            'job' => $jobPageModel ? $jobPageModel->getAbsoluteUrl() : '',
-            'arrangement' => $arrangementPageModel ? $arrangementPageModel->getAbsoluteUrl() : '',
-            'service' => $servicePageModel ? $servicePageModel->getAbsoluteUrl() : '',
-            'person' => $personPageModel ? $personPageModel->getAbsoluteUrl() : '',
-            'voucher' => $voucherPageModel ? $voucherPageModel->getAbsoluteUrl() : '',
+            'product' => $objSettings->productDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->productDetailPage, ['parameters' => ""]) : "",
+            'event' => $objSettings->eventDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->eventDetailPage, ['parameters' => ""]) : "",
+            'job' => $objSettings->jobDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->jobDetailPage, ['parameters' => ""]) : "",
+            'arrangement' => $objSettings->arrangementDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->arrangementDetailPage, ['parameters' => ""]) : "",
+            'service' => $objSettings->serviceDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->serviceDetailPage, ['parameters' => ""]) : "",
+            'person' => $objSettings->personDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->personDetailPage, ['parameters' => ""]) : "",
+            'voucher' => $objSettings->voucherDetailPage ? $this->urlGenerator->generate("tl_page." . $objSettings->voucherDetailPage, ['parameters' => ""]) : "",
         ];
     }
 

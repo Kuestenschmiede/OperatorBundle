@@ -1748,12 +1748,16 @@ class OfferLoaderService
                     };
 
                     if ($childPage !== null) {
-                        $url = $childPage->getAbsoluteUrl();
+                        $objRouter = System::getContainer()->get('contao.routing.content_url_generator');
+                        $url = $objRouter->generate($childPage, ['parameters' => "/" . $row['uuid']]);
                         if ($url) {
                             if (C4GUtils::endsWith($url, '.html')) {
                                 $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
                             } else {
                                 $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                            }
+                            if (str_ends_with($href, "/href")) {
+                                $href = str_replace("/href", "", $href);
                             }
                             $childRows[$key]['childLink'] = $href ?: '';
                         }

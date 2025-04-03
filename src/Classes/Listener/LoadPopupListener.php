@@ -18,6 +18,7 @@ use Contao\StringUtil;
 use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
+use Safe\Exceptions\JsonException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -187,7 +188,14 @@ class LoadPopupListener
 
         if ($element['description']) {
 
-            $desc = C4GUtils::truncate($element['description'], 275);
+            $desc = C4GUtils::truncate(mb_convert_encoding($element['description'], 'UTF-8', mb_detect_encoding($element['description'])), 275);
+            try  {
+                \Safe\json_encode($desc);
+            } catch (JsonException $exception) {
+                // fallback to fix weird encoding problem with some datasets
+                $desc = mb_convert_encoding($desc, 'ISO-8859-1', 'UTF-8');
+                $desc = mb_convert_encoding($desc, 'UTF-8', 'ISO-8859-1');
+            }
         }
         $settings = GutesioOperatorSettingsModel::findSettings();
         $fields = $reduced ? StringUtil::deserialize($settings->popupFieldsReduced) : StringUtil::deserialize($settings->popupFields);

@@ -1050,7 +1050,7 @@ try {
     \con4gis\CoreBundle\Resources\contao\models\C4gLogModel::addLogEntry('operator', $typeError->getMessage());
     throw new \Contao\CoreBundle\Exception\PageNotFoundException();
 }
-$newArr["detailData"]["openingHours"] = key_exists('detail', $newArr["components"]) ? $newArr["components"]["detail"]["data"]["opening_hours"] : '';
+$newArr["detailData"]["openingHours"] = ($newArr["components"] && key_exists('detail', $newArr["components"])) ? $newArr["components"]["detail"]["data"]["opening_hours"] : '';
 unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);
 ?>

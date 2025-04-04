@@ -22,13 +22,13 @@ class DownloadImagesCron
     {
         $db = Database::getInstance();
         $c4gOperatorSettings = $db->prepare('SELECT * FROM tl_gutesio_operator_settings')->execute()->fetchAssoc();
-        $cdnUrl = $c4gOperatorSettings->cdnUrl;
+        $cdnUrl = $c4gOperatorSettings['cdnUrl'];
         $fileUtils = new FileUtils();
         $imagePaths = [];
         $cropWidth = 0;
         $cropHeight = 0;
 
-        $cdnElements = $db->prepare('SELECT imageCDN, logoCDN, imageGalleryCDN FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
+        $cdnElements = $db->prepare('SELECT imageCDN, logoCDN, imageGalleryCDN FROM tl_gutesio_data_element')->execute()->fetchAllAssoc() ?: [];
 
         foreach ($cdnElements as $element) {
             $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], $cropWidth, $cropHeight);
@@ -41,7 +41,7 @@ class DownloadImagesCron
             }
         }
 
-        $cdnChilds = $db->prepare('SELECT imageCDN, imageGalleryCDN FROM tl_gutesio_data_child')->execute()->fetchAllAssoc();
+        $cdnChilds = $db->prepare('SELECT imageCDN, imageGalleryCDN FROM tl_gutesio_data_child')->execute()->fetchAllAssoc() ?: [];
 
         foreach ($cdnChilds as $child) {
             $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $child['imageCDN'], $cropWidth, $cropHeight);

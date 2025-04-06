@@ -32,9 +32,12 @@ class DownloadImagesCron
 
         foreach ($cdnElements as $element) {
             $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], $cropWidth, $cropHeight);
-            $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $element['logoCDN'], 0, 150);
 
-            $images = StringUtil::deserialize($element['imageGalleryCDN']);
+            if ($element['logoCDN']) {
+                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $element['logoCDN'], 0, 150);
+            }
+
+            $images = StringUtil::deserialize($element['imageGalleryCDN']) ?: [];
             $idx = 0;
             foreach ($images as $image) {
                 $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600, 450);
@@ -46,7 +49,7 @@ class DownloadImagesCron
         foreach ($cdnChilds as $child) {
             $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $child['imageCDN'], $cropWidth, $cropHeight);
 
-            $images = StringUtil::deserialize($child['imageGalleryCDN']);
+            $images = StringUtil::deserialize($child['imageGalleryCDN']) ?: [];
             $idx = 0;
             foreach ($images as $image) {
                 $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600, 450);

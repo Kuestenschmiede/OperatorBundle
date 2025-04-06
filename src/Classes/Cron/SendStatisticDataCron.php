@@ -25,10 +25,10 @@ class SendStatisticDataCron
             $data['domain'] = $_SERVER['SERVER_NAME'];
 
             $headers = [];
-            if ($_SERVER['HTTP_REFERER']) {
+            if (!empty($_SERVER['HTTP_REFERER'])) {
                 $headers['Referer'] = $_SERVER['HTTP_REFERER'];
             }
-            if ($_SERVER['HTTP_USER_AGENT']) {
+            if (!empty($_SERVER['HTTP_USER_AGENT'])) {
                 $headers['User-Agent'] = $_SERVER['HTTP_USER_AGENT'];
             }
 

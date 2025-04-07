@@ -199,6 +199,10 @@ services:
       tags:
         - { name: contao.cronjob, interval: hourly }
 
+    gutesio\OperatorBundle\Classes\Cron\SendStatisticDataCron:
+      tags:
+        - { name: contao.cronjob, interval: hourly }
+
     gutesio\OperatorBundle\Classes\Cron\SyncDataCron:
       tags:
         - { name: contao.cronjob, interval: minutely }

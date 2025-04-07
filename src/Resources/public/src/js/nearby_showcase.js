@@ -28,8 +28,7 @@ function renderTemplateNode(data, index) {
     return node;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
+function getData() {
     const listContainer = document.querySelector('#nearby-showcase-list');
 
     function handleFetch(position) {
@@ -78,7 +77,17 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         handleFetch(null);
     }
+}
 
-});
+if (document.readyState === "loading") {
+    document.addEventListener('DOMContentLoaded', () => {
+        getData();
+    });
+} else {
+    // DOM already fully loaded
+    getData();
+}
+
+
 
 

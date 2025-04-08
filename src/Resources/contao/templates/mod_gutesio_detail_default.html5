@@ -827,7 +827,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                     <?php if (property_exists($data, 'contactable') && $data->contactable && !empty($data->contactName)): ?>
                                         <h3 class="entry-content name"><?= $data->contactName ?></h3>
                                     <?php else: ?>
-                                        <h3 class="entry-content name"><?= $data->contactName ?></h3>
+                                        <h3 class="entry-content name"><?= $data->locationName ?></h3>
                                     <?php endif; ?>
 
                                     <?php if (property_exists($data, 'contactable') && $data->contactable && !empty($data->contactAdditionalName)): ?>

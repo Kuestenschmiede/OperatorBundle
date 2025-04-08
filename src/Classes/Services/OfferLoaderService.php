@@ -908,7 +908,11 @@ class OfferLoaderService
             $rows[$key]['phone'] = html_entity_decode($result['phone']);
             $rows[$key]['website'] = $result['website'];
             $rows[$key]['websiteLabel'] = key_exists('websiteLabel', $result) ? $result['websiteLabel'] : '';
-            $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
+            if ($result['opening_hours'] && strpos($result['opening_hours'], '"') === 0) {
+                $rows[$key]['opening_hours'] = html_entity_decode(str_replace(array("\r\n", "\r", "\n"), '', $result['opening_hours']));
+            } else {
+                $rows[$key]['opening_hours'] = html_entity_decode($result['opening_hours']);
+            }
             $rows[$key]['deviatingPhoneHours'] = $result['deviatingPhoneHours'];
             $rows[$key]['phoneHours'] = html_entity_decode($result['phoneHours']);
             $rows[$key]['opening_hours_additional'] = html_entity_decode($result['opening_hours_additional']);
@@ -918,7 +922,7 @@ class OfferLoaderService
             $rows[$key]['contactStreetNumber'] = $result['contactStreetNumber'];
             $rows[$key]['contactZip'] = $result['contactZip'];
             $rows[$key]['contactCity'] = $result['contactCity'];
-            $rows[$key]['locationName'] = key_exists('locationName', $result) ? $result['locationName'] : '';
+            $rows[$key]['locationName'] = key_exists('name', $result) ? html_entity_decode($result['name']) : '';
             $rows[$key]['locationAdditionalName'] = key_exists('locationAdditionalName', $result) ? $result['locationAdditionalName'] : '';
             $rows[$key]['locationStreet'] = $result['locationStreet'];
             $rows[$key]['locationStreetNumber'] = $result['locationStreetNumber'];

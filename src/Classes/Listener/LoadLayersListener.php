@@ -13,7 +13,6 @@ namespace gutesio\OperatorBundle\Classes\Listener;
 //use con4gis\DataBundle\Classes\Popup\Popup;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
-use Contao\Request;
 use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
@@ -29,6 +28,11 @@ class LoadLayersListener
     private $layerService;
 
     private $Database;
+
+    private $typeMap = [];
+    private $locStyleMap = [];
+    private $tagMap = [];
+    private $elementMap = [];
 
     /**
      * LayerContentService constructor.
@@ -295,85 +299,56 @@ class LoadLayersListener
         }
         $directories = [];
         $sameElements = [];
-        $skipElements = unserialize($objDataLayer->skipElements);
+        $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
+        $directoryElems = [];
+        $typeElems = [];
+
+        $this->loadTags();
+
         foreach ($objDirectories as $directory) {
-            $strQueryTypes = 'SELECT type.* FROM tl_gutesio_data_type AS type
+            $elemQuery = 'SELECT elem.*, type.uuid AS typeId, type.name AS typeName, dirType.directoryId AS directoryId FROM tl_gutesio_data_type AS type
                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
+                INNER JOIN tl_gutesio_data_element_type AS elemType ON dirType.typeId = elemType.typeId
+                INNER JOIN tl_gutesio_data_element AS elem ON elemType.elementId = elem.uuid
                 WHERE dirType.directoryId = ?
                 ORDER BY type.name ASC';
-            $arrTypes = $this->Database->prepare($strQueryTypes)->execute($directory->uuid)->fetchAllAssoc();
-            $types = [];
-            foreach ($arrTypes as $type) {
-                if ($configuredTypes && !strpos($configuredTypes, $type['uuid'])) {
+            $arrElems = $this->Database->prepare($elemQuery)->execute($directory->uuid)->fetchAllAssoc();
+            $validTypes = [];
+
+            foreach ($arrElems as $elem) {
+                if (in_array($elem['uuid'], $skipElements)) {
                     continue;
                 }
-                $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
-                $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
-                WHERE typeElem.typeId = ?' . $strPublishedElem .
-                    ' ORDER BY elem.name ASC';
-                $arrElems = $this->Database->prepare($strQueryElems)->execute($type['uuid'])->fetchAllAssoc();
-                $elements = [];
-                $checkDuplicates = [];
-                foreach ($arrElems as $elem) {
-                    foreach ($skipElements as $skipElem) {
-                        if ($skipElem === $elem['uuid']) {
-                            continue 2;
-                        }
-                    }
-                    $childElements = [];
-                    $sameElements[$elem['uuid']][] = $elem;
-                    if ($elem['showcaseIds'] && $type['showLinkedElements']) {
-                        foreach (unserialize($elem['showcaseIds']) as $showcaseId) {
-                            $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                                                WHERE elem.uuid = ?' . $strPublishedElem;
-                            $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
-                            $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
-                        }
-                    }
-                    $doCreateElement = true;
-                    if ($checkDuplicates[$elem['uuid']]) {
-                        foreach ($checkDuplicates[$elem['uuid']] as $checkType) {
-                            if ($checkType['type'] === $type['uuid'] && $checkType['directory'] === $directory->uuid) {
-                                $doCreateElement = false;
-                                break;
-                            }
-                        }
-                    }
-                    if ($doCreateElement) {
-                        $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
-                    }
-                    $checkDuplicates[$elem['uuid']][] = ['type'=>$type['uuid'],'directory'=>$directory->uuid];
+
+                if (!key_exists($directory->uuid.$elem['typeId'], $typeElems)) {
+                    $hideInStarboard = (bool)$objDataLayer->skipTypes;
+                    $singleType = [
+                        'pid' => $directory->uuid,
+                        'id' => $elem['typeId'],
+                        'name' => $elem['typeName'],
+                        'hideInStarboard' => $hideInStarboard,
+                        'childs' => [],
+                        'zoomTo' => true,
+                    ];
+                    $typeElems[$directory->uuid.$elem['typeId']] = array_merge($dataLayer, $singleType);
+                    $validTypes[$directory->uuid.$elem['typeId']] = array_merge($dataLayer, $singleType);
                 }
-                $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
-                $singleType = [
-                    'pid' => $directory->uuid,
-                    'id' => $type['uuid'],
-                    'name' => $type['name'],
-                    'hideInStarboard' => $hideInStarboard,
-                    'childs' => $elements,
-                    'zoomTo' => true,
-                ];
-                if ($elements) {
-                    $types[] = array_merge($dataLayer, $singleType);
-                }
+
+                $treeElement = $this->createElement($elem, $dataLayer, ['uuid' => $elem['typeId']]);
+                $typeElems[$directory->uuid.$elem['typeId']]['childs'][] = $treeElement;
+                $validTypes[$directory->uuid.$elem['typeId']]['childs'][] = $treeElement;
+
             }
-            if (count($types) < 1) {
-                continue;
-            }
-            else if (count($types) === 1 && $configuredTypes) {
-                $singleDir = $types[0];
-            }
-            else {
+
+            if (!key_exists($directory->uuid, $directoryElems)) {
                 $singleDir = [
                     'pid' => $dataLayer['id'],
                     'id' => $directory->uuid,
                     'name' => $directory->name,
-                    'hideInStarboard' => count($types) === 0,
-                    'childs' => $types,
+                    'hideInStarboard' => count($validTypes) === 0,
+                    'childs' => array_values($validTypes),
                 ];
-            }
-            if ($types) {
+                $directoryElems[$directory->uuid][] = $singleDir;
                 $directories[] = array_merge($dataLayer, $singleDir);
             }
         }
@@ -398,22 +373,30 @@ class LoadLayersListener
      */
     private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false, $sameElements = [])
     {
-        $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type 
+
+        if (!key_exists($objElement['uuid'], $this->locStyleMap)) {
+            $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type
                                         INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
-                                        WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1';'//AND typeElem.rank = 0';
-        $objLocstyle = $this->Database->prepare($strQueryLocstyle)->execute($objElement['uuid'])->fetchAssoc();
-        $strQueryTags = 'SELECT tag.uuid, tag.imageCDN, tag.name FROM tl_gutesio_data_tag AS tag
-                                        INNER JOIN tl_gutesio_data_tag_element AS elementTag ON elementTag.tagId = tag.uuid
-                                        WHERE tag.published = 1 AND elementTag.elementId = ? ORDER BY tag.name ASC';
-        $arrTags = $this->Database->prepare($strQueryTags)->execute($objElement['uuid'])->fetchAllAssoc();
+                                        WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1';
+            $objLocstyle = $this->Database->prepare($strQueryLocstyle)->execute($objElement['uuid'])->fetchAssoc();
+            $this->locStyleMap[$objElement['uuid']] = $objLocstyle;
+        } else {
+            $objLocstyle = $this->locStyleMap[$objElement['uuid']];
+        }
+
+        $tagQuery = "SELECT tagId FROM tl_gutesio_data_tag_element WHERE `elementId` = ?";
+        $elementTags = $this->Database->prepare($tagQuery)->execute($objElement['uuid'])->fetchAllAssoc();
         $tags = [];
         $tagUuids = [];
-        foreach ($arrTags as $key => $tag) {
+        foreach ($elementTags as $key => $elementTag) {
+            $tag = $this->tagMap[$elementTag['tagId']];
+
             if ($tag['name'] && !key_exists($tag['uuid'], $tagUuids)) {
                 $tags[$key] = $tag['name'];
                 $tagUuids[$tag['uuid']] = true;
             }
         }
+
         $tagUuids[$parent['uuid']] = true;
         $popup = [];
         if ($withPopup) {
@@ -496,6 +479,16 @@ class LoadLayersListener
         $element = array_merge($dataLayer, $element);
 
         return $element;
+    }
+
+    private function loadTags()
+    {
+        $sql = "SELECT uuid, imageCDN, name FROM tl_gutesio_data_tag";
+        $tagResult = $this->Database->prepare($sql)->execute()->fetchAllAssoc();
+
+        foreach ($tagResult as $tag) {
+            $this->tagMap[$tag['uuid']] = $tag;
+        }
     }
 
     /**

@@ -9,9 +9,10 @@
  */
 namespace gutesio\OperatorBundle\Classes\Cache;
 
+use Contao\FrontendUser;
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
-class ShowcaseListApiCache
+class OfferDataCache
 {
     /**
      * @var FilesystemAdapter
@@ -19,11 +20,11 @@ class ShowcaseListApiCache
     protected $cacheInstance;
 
     /**
-     * @var ShowcaseListApiCache
+     * @var OfferDataCache
      */
     protected static $instance = null;
 
-    public static function getInstance($cacheDir)
+    public static function getInstance($cacheDir = '../var/cache/prod/con4gis')
     {
         if (!static::$instance) {
             static::$instance = new self($cacheDir);
@@ -33,25 +34,24 @@ class ShowcaseListApiCache
     }
 
     /**
-     * C4GLayerApiCache constructor.
+     * OfferTagDataCache constructor.
      */
     protected function __construct($cacheDir)
     {
         $this->cacheInstance = new FilesystemAdapter(
-            $namespace = 'gutesio_showcaseList',
+            $namespace = 'gutesio_offerData',
             $defaultLifetime = 0,
             $directory = $cacheDir
         );
     }
 
-    public function hasCacheData($cacheChecksum)
+    public function hasCacheData(string $strChecksum): bool
     {
-        return $this->cacheInstance->hasItem($cacheChecksum);
+        return $this->cacheInstance->hasItem($strChecksum);
     }
 
-    public function getCacheData($strChecksum)
+    public function getCacheData(string $strChecksum)
     {
-//        $strChecksum = $this->getCacheKey($strApiEndpoint, $arrFragments);
         if ($this->hasCacheData($strChecksum)) {
             return $this->cacheInstance->getItem($strChecksum)->get();
         }
@@ -59,7 +59,7 @@ class ShowcaseListApiCache
         return false;
     }
 
-    private function saveCacheData($strChecksum, $strContent)
+    private function saveCacheData($strChecksum, $strContent): bool
     {
         $cacheData = $this->cacheInstance->getItem($strChecksum);
         $cacheData->set($strContent);
@@ -67,13 +67,13 @@ class ShowcaseListApiCache
         return $this->cacheInstance->save($cacheData);
     }
 
-    public function putCacheData($strChecksum, $strContent)
+    public function putCacheData(string $strChecksum, array $content): void
     {
-//        $strChecksum = $this->getCacheKey($strApiEndpoint, $arrFragments);
+        $strContent = serialize($content);
         $this->saveCacheData($strChecksum, $strContent);
     }
 
-    public function clearCache()
+    public function clearCache(): void
     {
         $this->cacheInstance->clear();
     }

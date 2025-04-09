@@ -13,6 +13,7 @@ use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use Contao\Database;
 use Contao\System;
 use con4gis\CoreBundle\Classes\Callback\C4GImportDataCallback;
+use gutesio\OperatorBundle\Classes\Cache\OfferDataCache;
 
 class SyncDataCron
 {
@@ -37,6 +38,8 @@ class SyncDataCron
                         $currentImport = $db->prepare('SELECT availableVersion, importVersion FROM tl_c4g_import_data WHERE id=? AND type=?')->execute($importId, 'gutesio')->fetchAssoc();
                         if ($currentImport['availableVersion'] && $currentImport['importVersion'] && ($currentImport['availableVersion'] > $currentImport['importVersion'])) {
                             $importDataClass->updateBaseData($importId, true);
+                            // clear offer data cache after importing
+                            OfferDataCache::getInstance()->clearCache();
                         }
                     }
                 }

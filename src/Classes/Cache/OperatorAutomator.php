@@ -21,4 +21,12 @@ class OperatorAutomator extends C4GAutomator
     {
         ShowcaseListApiCache::getInstance(System::getContainer())->clearCache();
     }
+
+    /**
+     * Purge the gutesio cache for offer data.
+     */
+    public function purgeOfferDataCache()
+    {
+        OfferDataCache::getInstance(System::getContainer())->clearCache();
+    }
 }

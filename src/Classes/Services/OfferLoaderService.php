@@ -24,6 +24,7 @@ use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Classes\TagDetailFieldGenerator;
 use gutesio\DataModelBundle\Classes\TagFieldUtil;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
+use gutesio\OperatorBundle\Classes\Cache\OfferDataCache;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -44,6 +45,14 @@ class OfferLoaderService
     private $randomSeed;
 
     private $limit = 10;
+
+    private $cachedTagData = [];
+
+    private $newCacheTagData = [];
+
+    private $cachedAdditionalData = [];
+
+    private $newCacheAdditionalData = [];
 
     /**
      * @var VisitCounterService
@@ -85,6 +94,8 @@ class OfferLoaderService
             $offset = 0;
         }
 
+        $this->loadFromCache();
+
         //ToDo compare UPPER terms
         if ($search !== '') {
             $terms = explode(' ', $search);
@@ -93,6 +104,9 @@ class OfferLoaderService
             //ToDo performance check
             $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit, $dateFilter, $determineOrientation);
         }
+
+        $this->writeOfferDataToCache();
+
         if ($tagFilter) {
             // filter using actual limit & offset
             $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, $this->limit);
@@ -460,10 +474,11 @@ class OfferLoaderService
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
         $fileUtils = new FileUtils();
+
         foreach ($childRows as $key => $row) {
             if ($row['imageCDN']) {
                 if ($determineOrientation) {
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN']);
+                    $imageCDN = $fileUtils->addUrlToPath($cdnUrl,$row['imageCDN']);
                     $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
@@ -473,11 +488,11 @@ class OfferLoaderService
                         $width = 594;
                         $height = 841;
                     }
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width, $height);
+                    $imageCDN = $fileUtils->addUrlToPath($cdnUrl,$row['imageCDN'], $width, $height);
                 } else {
                     $width = 841;
                     $height = 594;
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width);
+                    $imageCDN = $fileUtils->addUrlToPath($cdnUrl,$row['imageCDN'], $width);
                 }
 
                 $childRows[$key]['image'] = [
@@ -492,7 +507,7 @@ class OfferLoaderService
 
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
-            $childRows = $this->getTagData($row['uuid'], $childRows, $key);
+            $childRows[$key] = $this->getTagData($row['uuid'], $childRows[$key], $key);
         }
 
         return $this->getAdditionalData($childRows, $dateFilter);
@@ -708,7 +723,6 @@ class OfferLoaderService
                     ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())' .
                     ' ORDER BY RAND(' . $this->randomSeed . ') LIMIT '.$offset.', '.$limit
                 )->execute($parameters)->fetchAllAssoc();
-//                dd($childRows);
             }
         } else {
             if (count($elements)) {
@@ -772,13 +786,14 @@ class OfferLoaderService
             }
         }
         $objSettings = GutesioOperatorSettingsModel::findSettings();
+
         $cdnUrl = $objSettings->cdnUrl;
         foreach ($childRows as $key => $row) {
             $image = $row['imageCDN'];// && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             if ($image) {
                 if ($determineOrientation) {
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN']);
-                    $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
+                    $imageCDN = $fileUtils->addUrlToPath($cdnUrl,$row['imageCDN']);
+                    $result = [0,"0"];//$fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
                         $width = 841;
@@ -787,11 +802,11 @@ class OfferLoaderService
                         $width = 594;
                         $height = 841;
                     }
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width, $height);
+                    $imageCDN = $fileUtils->addUrlToPath($cdnUrl,$row['imageCDN'], $width, $height);
                 } else {
                     $width = 841;
                     $height = 594;
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$row['imageCDN'], $width);
+                    $imageCDN = $fileUtils->addUrlToPath($cdnUrl,$row['imageCDN'], $width);
                 }
 
                 $childRows[$key]['image'] = [
@@ -807,10 +822,12 @@ class OfferLoaderService
 
             $childRows[$key]['href'] = strtolower(str_replace(['{', '}'], ['', ''], $row['uuid']));
 
-            $childRows = $this->getTagData($row['uuid'], $childRows, $key);
+            $childRows[$key] = $this->getTagData($row['uuid'], $childRows[$key], $key);
         }
 
-        return $this->getAdditionalData($childRows, $dateFilter);
+        $data = $this->getAdditionalData($childRows, $dateFilter);
+
+        return $data;
     }
 
     public function getDetailData($alias, $typeKeys)
@@ -1093,7 +1110,7 @@ class OfferLoaderService
                 $rows[$key][$typeValue['typeFieldKey']] = $typeValue['typeFieldValue'];
             }
 
-            $rows = $this->getTagData($row['uuid'], $rows, $key);
+//            $rows[$key] = $this->getTagData($row['uuid'], $rows[$key], $key);
         }
 
         $rows = $this->getAdditionalData($rows, false, !$isPreview);
@@ -1101,164 +1118,106 @@ class OfferLoaderService
         return $rows[0];
     }
 
-    private function getTagData($uuid, $childRows, $key)
+    private function getTagData($uuid, $childRow, $key)
     {
         $database = Database::getInstance();
 
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
 
-        $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
-            'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
-            'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
-            ' OR tl_gutesio_data_tag.validFrom IS NULL' .
-            ' OR tl_gutesio_data_tag.validFrom <= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
-            ' OR tl_gutesio_data_tag.validUntil IS NULL' .
-            ' OR tl_gutesio_data_tag.validUntil >= UNIX_TIMESTAMP())) AND tl_gutesio_data_child_tag.childId = ?')
-            ->execute($uuid)->fetchAllAssoc();
+        if (key_exists($uuid, $this->cachedTagData)) {
+            $childRow['tagLinks'] = $this->cachedTagData[$uuid];
+            return $childRow;
+        } else {
 
-        foreach ($result as $r) {
-            //$model = FilesModel::findByUuid($r['image']);
-            $file = $r['imageCDN'] ? $cdnUrl.$r['imageCDN'] : false;
-            if ($childRows && is_array($childRows) && key_exists($key, $childRows) && key_exists('tagLinks', $childRows[$key])) {
-                foreach ($childRows[$key]['tagLinks'] as $addedIcons) {
-                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
-                        continue(2);
+            $result = $database->prepare('SELECT name, imageCDN, technicalKey, tagFieldValue FROM tl_gutesio_data_tag ' .
+                'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
+                'JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = tl_gutesio_data_child_tag.childId ' .
+                'WHERE tl_gutesio_data_tag.published = 1 AND (tl_gutesio_data_tag.validFrom = 0' .
+                ' OR tl_gutesio_data_tag.validFrom IS NULL' .
+                ' OR tl_gutesio_data_tag.validFrom <= UNIX_TIMESTAMP() AND (tl_gutesio_data_tag.validUntil = 0' .
+                ' OR tl_gutesio_data_tag.validUntil IS NULL' .
+                ' OR tl_gutesio_data_tag.validUntil >= UNIX_TIMESTAMP())) AND tl_gutesio_data_child_tag.childId = ?')
+                ->execute($uuid)->fetchAllAssoc();
+
+            foreach ($result as $r) {
+                //$model = FilesModel::findByUuid($r['image']);
+                $file = $r['imageCDN'] ? $cdnUrl.$r['imageCDN'] : false;
+                if (key_exists('tagLinks', $childRow)) {
+                    foreach ($childRow['tagLinks'] as $addedIcons) {
+                        if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
+                            continue(2);
+                        }
+                    }
+                }
+
+                if ($file) {
+                    $icon = [
+                        'name' => $r['name'],
+                        'image' => [
+                            'src' => $file,
+                            'alt' => $r['name'],
+                            'width' => 100,
+                            'height' => 100,
+                        ],
+                    ];
+
+                    switch ($r['technicalKey']) {
+                        case 'tag_delivery':
+                        case 'tag_clicknmeet':
+                        case 'tag_table_reservation':
+                        case 'tag_onlineshop':
+                        case 'tag_donation':
+                            $tagLink = $r['tagFieldValue'];
+                            if ($tagLink) {
+                                $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
+                            }
+                            break;
+                        case 'tag_online_reservation':
+                            $tagLink = $r['tagFieldValue'];
+
+                            if ($tagLink) {
+                                if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
+                                    if (!str_starts_with($tagLink, 'mailto:')) {
+                                        $tagLink = 'mailto:' . $tagLink;
+                                    }
+                                } else {
+                                    $tagLink = C4GUtils::addProtocolToLink($tagLink);
+                                }
+
+                                $icon['linkHref'] = $tagLink;
+                            }
+
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if ($icon) {
+                        if (key_exists('class', $icon)) {
+                            $icon['class'] .= $r['technicalKey'];
+                        } else {
+                            $icon['class'] = $r['technicalKey'];
+                        }
+
+                        if (!key_exists('tagLinks',$childRow)) {
+                            $childRow['tagLinks'] = [];
+                        }
+
+                        $childRow['tagLinks'][] = $icon;
+
                     }
                 }
             }
 
-            if ($file) {
-                $icon = [
-                    'name' => $r['name'],
-                    'image' => [
-                        'src' => $file,
-                        'alt' => $r['name'],
-                        'width' => 100,
-                        'height' => 100,
-                    ],
-                ];
-                switch ($r['technicalKey']) {
-                    case 'tag_delivery':
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagResult = $stmt->execute(
-                            $uuid,
-                            'deliveryServiceLink'
-                        )->fetchAssoc();
-                        if ($tagResult) {
-                            $tagLink = $tagResult['tagFieldValue'];
-                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        }
-
-                        break;
-                    case 'tag_online_reservation':
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagResult = $stmt->execute(
-                            $uuid,
-                            'onlineReservationLink'
-                        )->fetchAssoc();
-
-                        if ($tagResult) {
-                            $tagLink = $tagResult['tagFieldValue'];
-                            if (preg_match('/' . RegularExpression::EMAIL . '/', $tagLink)) {
-                                if (strpos($tagLink, 'mailto:') !== 0) {
-                                    $tagLink = 'mailto:' . $tagLink;
-                                }
-                            } else {
-                                $tagLink = C4GUtils::addProtocolToLink($tagLink);
-                            }
-
-                            $icon['linkHref'] = $tagLink;
-                        }
-
-                        break;
-                    case 'tag_clicknmeet':
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagResult = $stmt->execute(
-                            $uuid,
-                            'clicknmeetLink'
-                        )->fetchAssoc();
-
-                        if ($tagResult) {
-                            $tagLink = $tagResult['tagFieldValue'];
-                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        }
-
-                        break;
-                    case 'tag_table_reservation':
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagResult = $stmt->execute(
-                            $uuid,
-                            'tableReservationLink'
-                        )->fetchAssoc();
-
-                        if ($tagResult) {
-                            $tagLink = $tagResult['tagFieldValue'];
-                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        }
-
-                        break;
-                    case 'tag_onlineshop':
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagResult = $stmt->execute(
-                            $uuid,
-                            'onlineShopLink'
-                        )->fetchAssoc();
-
-                        if ($tagResult) {
-                            $tagLink = $tagResult['tagFieldValue'];
-                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        }
-
-                        break;
-                    case 'tag_donation':
-                        $stmt = $database->prepare(
-                            'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                            'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                        $tagResult = $stmt->execute(
-                            $uuid,
-                            'donationLink'
-                        )->fetchAssoc();
-
-                        if ($tagResult) {
-                            $tagLink = $tagResult['tagFieldValue'];
-                            $icon['linkHref'] = C4GUtils::addProtocolToLink($tagLink);
-                        }
-
-                        break;
-                    default:
-                        break;
-                }
-
-                if ($icon) {
-                    if (key_exists('class', $icon)) {
-                        $icon['class'] .= $r['technicalKey'];
-                    } else {
-                        $icon['class'] = $r['technicalKey'];
-                    }
-
-                    if (key_exists($key,$childRows)) {
-                        if (!key_exists('tagLinks',$childRows[$key])) {
-                            $childRows[$key]['tagLinks'] = [];
-                        }
-
-                        $childRows[$key]['tagLinks'][] = $icon;
-                    }
-                }
+            if ($childRow['tagLinks']) {
+                $this->addTagDataToCache($uuid, $childRow['tagLinks']);
+            } else {
+                $this->addTagDataToCache($uuid, []);
             }
         }
 
-        return $childRows;
+        return $childRow;
     }
 
     private function createTagFieldClause()
@@ -1286,6 +1245,12 @@ class OfferLoaderService
         $isContao5 = C4GVersionProvider::isContaoVersionAtLeast('5.0.0');
         foreach ($childRows as $key => $row) {
             $tooOld = false;
+
+            if (key_exists($row['uuid'], $this->cachedAdditionalData)) {
+                $childRows[$key] = $this->cachedAdditionalData[$row['uuid']];
+                continue;
+            }
+
             switch ($row['type']) {
                 case 'product':
                     $productData = $database->prepare(
@@ -1775,6 +1740,8 @@ class OfferLoaderService
             } else {
                 unset($childRows[$key]);
             }
+
+            $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
         }
 
         return array_values($childRows);
@@ -1887,6 +1854,46 @@ class OfferLoaderService
         $result = array_merge($result, $appendList);
 
         return $result;
+    }
+
+    private function loadFromCache()
+    {
+        $cache = OfferDataCache::getInstance('../var/cache/prod/con4gis');
+
+        if ($cache->hasCacheData("offerTags")) {
+            $cachedData = $cache->getCacheData("offerTags");
+            if ($cachedData) {
+                $this->cachedTagData = StringUtil::deserialize($cachedData, true);
+            }
+        }
+
+        if ($cache->hasCacheData("offerAdditionalData")) {
+            $cachedData = $cache->getCacheData("offerAdditionalData");
+            if ($cachedData) {
+                $this->cachedAdditionalData = StringUtil::deserialize($cachedData, true);
+            }
+        }
+    }
+
+    private function addAdditionalDataToCache($childUuid, $additionalData)
+    {
+        $this->newCacheAdditionalData[$childUuid] = $additionalData;
+    }
+
+    private function addTagDataToCache($childUuid, $tagData)
+    {
+        $this->newCacheTagData[$childUuid] = $tagData;
+    }
+
+    private function writeOfferDataToCache()
+    {
+        $cache = OfferDataCache::getInstance('../var/cache/prod/con4gis');
+
+        $cacheData = array_merge($this->cachedTagData, $this->newCacheTagData);
+        $cache->putCacheData("offerTags", $cacheData);
+
+        $cacheData = array_merge($this->cachedAdditionalData, $this->newCacheAdditionalData);
+        $cache->putCacheData("offerAdditionalData", $cacheData);
     }
 
     /*

@@ -1,5 +1,7 @@
 <?php
 
+use gutesio\OperatorBundle\Classes\Cache\OperatorAutomator;
+
 $GLOBALS['gutesio']['api-caching'] = ["showcaseList"];
 
 $modules = [
@@ -15,3 +17,8 @@ if (!empty($GLOBALS['BE_MOD']['gutesio'])) {
 }
 
 $GLOBALS['TL_MODELS']['tl_gutesio_operator_settings'] = \gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel::class;
+
+$GLOBALS['TL_PURGE']['folders']['gutesio_offer_data'] = [
+    'callback' => [OperatorAutomator::class, 'purgeOfferDataCache'],
+    'affected' => ['var/cache/prod/con4gis/gutesio_offerData']
+];

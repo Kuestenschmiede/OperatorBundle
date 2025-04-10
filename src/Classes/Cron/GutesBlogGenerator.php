@@ -14,6 +14,7 @@ use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Contao\PageModel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
 class GutesBlogGenerator
@@ -74,6 +75,7 @@ class GutesBlogGenerator
                     if (!$sendMessage) {
                         continue;
                     }
+
                     $time = $pushConfig['pushTime'];
                     $arrTime = explode(":", $time);
                     $datetime = new \DateTime();
@@ -102,7 +104,7 @@ class GutesBlogGenerator
 
                         if (!$sent) {
                             if ($pageId) {
-                                $clickUrl = $this->router->generate("tl_page." . $pageId) . "?";
+                                $clickUrl = $this->router->generate("tl_page." . $pageId, [], UrlGeneratorInterface::ABSOLUTE_URL) . "?";
                                 $clickUrl .= "&postals=" . implode(",", $arrPostals);
                                 foreach ($arrTypes as $arrType) {
                                     $clickUrl .= "&types[]=" . $arrType;

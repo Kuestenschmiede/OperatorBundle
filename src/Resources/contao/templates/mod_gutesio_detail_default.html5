@@ -995,6 +995,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                     <?php endif; ?>
                                 </section>
                             </div>
+                            <?php if ($data->geox && $data->geoy): ?>
                             <div class="col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6">
                             <?php $this->block('detailpage_map'); ?>
 
@@ -1034,6 +1035,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                             <?php endif; ?>
                             <?php $this->endblock(); ?>
                         </div>
+                        <?php endif; ?>
                         </div>
                     </div>
 

@@ -27,6 +27,6 @@ class OperatorAutomator extends C4GAutomator
      */
     public function purgeOfferDataCache()
     {
-        OfferDataCache::getInstance(System::getContainer())->clearCache();
+        OfferDataCache::getInstance()->clearCache();
     }
 }

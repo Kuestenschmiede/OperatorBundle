@@ -282,6 +282,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         
         // special handling for umlauts
         $searchString = $params && key_exists('filter', $params) ? $params['filter'] : null;
+        $params['sorting'] = $moduleModel->gutesio_disable_sorting_filter ? $moduleModel->gutesio_initial_sorting : $params['sorting'];
         if (count($arrSearchStrings) || ($searchString !== null && $searchString !== "")) {
             if ($searchString !== null && $searchString !== "") {
                 $arrSearchStrings[] = $searchString;

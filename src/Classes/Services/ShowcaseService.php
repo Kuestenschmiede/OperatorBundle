@@ -162,7 +162,7 @@ class ShowcaseService
                 ->setRightMin(4)
                 ->setLeftMin(4)
                 ->setWordMin(8)
-                ->setFilters('NonStandard')
+                ->setFilters('Simple')
                 ->setTokenizers(['Whitespace', 'Punctuation']);
             $hyphenator = new Hyphenator();
             $hyphenator->setOptions($hyphenatorOptions);

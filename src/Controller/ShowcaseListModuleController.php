@@ -200,17 +200,18 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         System::loadLanguageFile("operator_showcase_list", "de");
         System::loadLanguageFile("form_tag_fields", "de");
         $moduleId = $request->query->get("moduleId");
-        $tagFilterIds = $request->query->get('tags');
-        if ($tagFilterIds === "" || $tagFilterIds === null) {
-            $tagFilterIds = [];
-        } else {
+        $tagFilterIds = $request->query->get('tags') ?: "";
+        if ($tagFilterIds !== "") {
             $tagFilterIds = explode(",", $tagFilterIds);
-        }
-        $requestTypeIds = $request->query->get("types");
-        if ($requestTypeIds === "" || $requestTypeIds === null) {
-            $requestTypeIds = [];
         } else {
+            $tagFilterIds = [];
+        }
+
+        $requestTypeIds = $request->query->get("types") ?: "";
+        if ($requestTypeIds !== "") {
             $requestTypeIds = explode(",", $requestTypeIds);
+        } else {
+            $requestTypeIds = [];
         }
 
         $requestLocation = $request->query->get("location");

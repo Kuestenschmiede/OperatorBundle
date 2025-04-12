@@ -453,10 +453,11 @@ class ShowcaseService
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
                 if ($withoutLimit) {
                     if ($insertSearchParams) {
+                        $searchString = self::getFilterSQLValueSet($searchString);
                         if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
+                            $arrResult = $stm->execute(...$searchString, ...$restrictedPostals)->fetchAllAssoc();
                         } else {
-                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString))->fetchAllAssoc();
+                            $arrResult = $stm->execute(...$searchString)->fetchAllAssoc();
                         }
                     } else {
                         if (!empty($restrictedPostals)) {

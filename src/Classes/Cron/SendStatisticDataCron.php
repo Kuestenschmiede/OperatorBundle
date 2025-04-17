@@ -36,7 +36,7 @@ class SendStatisticDataCron
                 'headers' => $headers,
                 'body' => json_encode($data)
             ]);
-            $response = $client->request('POST', $statisticUrl, ['timeout' => 2]);
+            $response = $client->request('POST', $statisticUrl, ['timeout' => 20]);
             if ($response->getStatusCode() !== 200) {
                 C4gLogModel::addLogEntry('operator', $response->getContent());
             }

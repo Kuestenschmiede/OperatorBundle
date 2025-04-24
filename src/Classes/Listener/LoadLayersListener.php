@@ -1,64 +1,57 @@
 <?php
-/**
- * This file belongs to gutes.digital and is published exclusively for use
- * in gutes.digital operator or provider pages.
 
- * @package    gutesio
- * @copyright  Küstenschmiede GmbH Software & Design (Matthias Eilers)
- * @link       https://gutes.digital
- */
 namespace gutesio\OperatorBundle\Classes\Listener;
 
-//use con4gis\DataBundle\Classes\Event\LoadPropertiesEvent;
-//use con4gis\DataBundle\Classes\Popup\Popup;
 use con4gis\CoreBundle\Classes\C4GUtils;
-use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
-use Contao\StringUtil;
-use Contao\System;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use con4gis\MapsBundle\Classes\Events\LoadLayersEvent;
 use con4gis\MapsBundle\Classes\Services\LayerService;
+use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use Contao\Database;
+use Contao\StringUtil;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * Class LoadLayersListener
+ * Handles loading and processing of map layers for the gutesio operator bundle
+ */
 class LoadLayersListener
 {
-    private $layerService;
+    private LayerService $layerService;
+    private Database $Database;
 
-    private $Database;
+    /** @var array<string,array> Cached type data */
+    private array $typeMap = [];
 
-    private $typeMap = [];
-    private $locStyleMap = [];
-    private $tagMap = [];
-    private $elementMap = [];
+    /** @var array<string,array> Cached location style data */
+    private array $locStyleMap = [];
 
-    /**
-     * LayerContentService constructor.
-     * @param LayerService $layerService
-     */
+    /** @var array<string,array> Cached tag data */
+    private array $tagMap = [];
+
+    /** @var array<string,array> Cached element data */
+    private array $elementMap = [];
+
+    /** @var string SQL condition for published elements */
+    private string $strPublished;
+
     public function __construct(LayerService $layerService)
     {
         $this->layerService = $layerService;
         $this->Database = Database::getInstance();
-        $this->strPublished = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
+        $this->strPublished = ' AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
     }
 
     /**
-     * Handles the loading of layers and loads elements based on the event data.
-     *
-     * @param LoadLayersEvent $event The event that triggered the layer loading.
-     * @param string $eventName The name of the event.
-     * @param EventDispatcherInterface $eventDispatcher The event dispatcher interface.
-     *
-     * @return void
+     * Handles loading of individual elements for the map
      */
     public function onLoadLayersLoadElement(
         LoadLayersEvent $event,
-        $eventName,
-        EventDispatcherInterface $eventDispatcher)
-    {
+        string $eventName,
+        EventDispatcherInterface $eventDispatcher
+    ): void {
         $dataLayer = $event->getLayerData();
         if (!($dataLayer['type'] === 'gutesElem')) {
             return;
@@ -66,11 +59,8 @@ class LoadLayersListener
         $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
         $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
 
-        //This does not work in the offer detail view
-        //$alias = System::getContainer()->get('request_stack')->getSession()->get('gutesio_element_alias', '');
-
         $alias = false;
-        if (!$alias) {
+        if (!$alias && isset($_SERVER['HTTP_REFERER'])) {
             $alias = $_SERVER['HTTP_REFERER'];
             $strC = substr_count($alias, '/');
             $arrUrl = explode('/', $alias);
@@ -84,36 +74,45 @@ class LoadLayersListener
                 $alias = explode('?', $alias)[0];
             }
         }
+
+        if (!$alias) {
+            return;
+        }
+
         $event->setPreventCaching(true);
         if (C4GUtils::isValidGUID($alias)) {
-            $offerConnections = Database::getInstance()->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
+            $offerConnections = $this->Database->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
                 ->execute('{' . strtoupper($alias) . '}')->fetchAllAssoc();
-            if ($offerConnections and (count($offerConnections) > 0)) {
+            if ($offerConnections && (count($offerConnections) > 0)) {
                 $firstConnection = $offerConnections[0];
-                $elem = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?')
+                $elem = $this->Database->prepare('SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?')
                     ->execute($firstConnection['elementId'])->fetchAssoc();
             }
         } else {
             $elem = $this->Database->prepare($strQueryElem)->execute($alias)->fetchAssoc();
         }
 
-        $childElements = [];
-        if ($elem) {
-            $strQueryType = 'SELECT type.* FROM tl_gutesio_data_type AS type 
-                            INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
-                            WHERE typeElem.elementId =?';
-            $type = $this->Database->prepare($strQueryType)->execute($elem['uuid'])->fetchAssoc();
+        if (!$elem) {
+            return;
+        }
 
-            if ($elem['showcaseIds'] && $type['showLinkedElements']) {
-                foreach (unserialize($elem['showcaseIds']) as $showcaseId) {
-                    $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                                                WHERE elem.uuid = ?' . $strPublishedElem;
-                    $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
+        $childElements = [];
+        $strQueryType = 'SELECT type.* FROM tl_gutesio_data_type AS type 
+                        INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
+                        WHERE typeElem.elementId =?';
+        $type = $this->Database->prepare($strQueryType)->execute($elem['uuid'])->fetchAssoc();
+
+        if ($elem['showcaseIds'] && $type['showLinkedElements']) {
+            $showcaseIds = StringUtil::deserialize($elem['showcaseIds'], true);
+            foreach ($showcaseIds as $showcaseId) {
+                $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
+                                            WHERE elem.uuid = ?' . $strPublishedElem;
+                $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
+                if ($childElem) {
                     $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], false);
                 }
             }
         }
-
 
         if ($childElements && (count($childElements) > 1) && $type['showLinkedElements']) {
             $dataLayer['childs'] = $childElements;
@@ -122,17 +121,15 @@ class LoadLayersListener
             $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, false, true);
             $dataLayer['childs'] = $elements;
         }
-        $dataLayer['childs'][] = $this->addArea($elem, $dataLayer);
+        
+        $area = $this->addArea($elem, $dataLayer);
+        if ($area) {
+            $dataLayer['childs'][] = $area;
+        }
+        
         $event->setLayerData($dataLayer);
     }
 
-    /**
-     * Handles the LoadLayersEvent and processes layer data based on specific conditions.
-     *
-     * @param LoadLayersEvent $event The event instance containing layer data.
-     * @param string $eventName The name of the event.
-     * @param EventDispatcherInterface $eventDispatcher The event dispatcher interface.
-     */
     public function onLoadLayersLoadPart(
         LoadLayersEvent $event,
         $eventName,
@@ -186,11 +183,14 @@ class LoadLayersListener
                 $childElements = [];
                 $sameElements[$elem['uuid']][] = $elem;
                 if ($elem['showcaseIds'] && $type['showLinkedElements']) {
-                    foreach (unserialize($elem['showcaseIds']) as $showcaseId) {
+                    $showcaseIds = StringUtil::deserialize($elem['showcaseIds'], true);
+                    foreach ($showcaseIds as $showcaseId) {
                         $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
                                                 WHERE elem.uuid = ?' . $strPublishedElem;
                         $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
-                        $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
+                        if ($childElem) {
+                            $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
+                        }
                     }
                 }
                 $doCreateElement = true;
@@ -225,13 +225,6 @@ class LoadLayersListener
         $event->setLayerData($dataLayer);
     }
 
-    /**
-     * Handles the loading of layer directories during a LoadLayersEvent.
-     *
-     * @param LoadLayersEvent $event The event triggering the load action.
-     * @param string $eventName The name of the event.
-     * @param EventDispatcherInterface $eventDispatcher The event dispatcher interface.
-     */
     public function onLoadLayersLoadDirectories(
         LoadLayersEvent $event,
         $eventName,
@@ -284,7 +277,7 @@ class LoadLayersListener
         $arrOptions = [
             'order' => "$t.name ASC",
         ];
-        $configuredDirectories = unserialize($objDataLayer->directories);
+        $configuredDirectories = StringUtil::deserialize($objDataLayer->directories, true);
         $configuredTypes = $objDataLayer->types;
         if ($configuredDirectories) {
             $objDirectories = [];
@@ -337,7 +330,6 @@ class LoadLayersListener
                 $treeElement = $this->createElement($elem, $dataLayer, ['uuid' => $elem['typeId']]);
                 $typeElems[$directory->uuid.$elem['typeId']]['childs'][] = $treeElement;
                 $validTypes[$directory->uuid.$elem['typeId']]['childs'][] = $treeElement;
-
             }
 
             if (!key_exists($directory->uuid, $directoryElems)) {
@@ -352,28 +344,26 @@ class LoadLayersListener
                 $directories[] = array_merge($dataLayer, $singleDir);
             }
         }
-        //ToDO doesn't work with default settings
-        //$directories = array_unique($directories);
         $dataLayer['childs'] = $directories;
         $event->setLayerData($dataLayer);
     }
 
-    /**
-     * Creates an element for the data layer based on the given parameters.
-     *
-     * @param array $objElement The object element data.
-     * @param array $dataLayer The data layer details.
-     * @param array $parent The parent element data.
-     * @param array $childElements The child elements associated with the parent element.
-     * @param bool $withPopup Flag indicating whether to include popup information.
-     * @param bool $layerStyle Flag indicating whether to use the layer style from dataLayer.
-     * @param array $sameElements List of elements that are the same.
-     *
-     * @return array The constructed element with its properties.
-     */
-    private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false, $sameElements = [])
+    private function loadTags(): void
     {
+        if (!empty($this->tagMap)) {
+            return;
+        }
 
+        $sql = "SELECT uuid, imageCDN, name FROM tl_gutesio_data_tag";
+        $tagResult = $this->Database->prepare($sql)->execute()->fetchAllAssoc();
+
+        foreach ($tagResult as $tag) {
+            $this->tagMap[$tag['uuid']] = $tag;
+        }
+    }
+
+    private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false, $sameElements = []): array
+    {
         if (!key_exists($objElement['uuid'], $this->locStyleMap)) {
             $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type
                                         INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
@@ -481,40 +471,22 @@ class LoadLayersListener
         return $element;
     }
 
-    private function loadTags()
+    private function addArea($objElement, $layer): ?array
     {
-        $sql = "SELECT uuid, imageCDN, name FROM tl_gutesio_data_tag";
-        $tagResult = $this->Database->prepare($sql)->execute()->fetchAllAssoc();
-
-        foreach ($tagResult as $tag) {
-            $this->tagMap[$tag['uuid']] = $tag;
-        }
-    }
-
-    /**
-     * Adds an area to the map layer based on surrounding postal codes and location style from database.
-     *
-     * Retrieves surrounding postal codes associated with the given element and constructs an Overpass API query
-     * to fetch geospatial data. Sends the query to the Overpass API and processes the response to generate
-     * a map area configuration.
-     *
-     * @param array $objElement The element object containing necessary identifiers.
-     * @param array $layer The map layer configuration.
-     *
-     * @return array|bool Returns the map area configuration or false if no surrounding postal codes are found.
-     */
-    private function addArea ($objElement, $layer) {
         $settings = C4gMapSettingsModel::findOnly();
+        if (!$settings) {
+            return null;
+        }
+        
         $url = $settings->con4gisIoUrl;
-//        $url = "https://osm.kartenkueste.de/api/interpreter";
         $key = $settings->con4gisIoKey;
         $strSurroundingPostals = 'SELECT typeFieldValue as zip FROM tl_gutesio_data_type_element_values
                                                 WHERE elementId = ? AND typeFieldKey="surrZip"';
         $zipElem = $this->Database->prepare($strSurroundingPostals)->execute($objElement['uuid'])->fetchAssoc();
         $strLocstyle = 'SELECT areaLocstyle as locci FROM tl_c4g_maps WHERE id=?';
         $locstyle = $this->Database->prepare($strLocstyle)->execute($layer['id'])->fetchAssoc()['locci'];
-        if (!$zipElem && !$zipElem['zip']) {
-            return false;
+        if (!$zipElem || !$zipElem['zip']) {
+            return null;
         }
         $arrPostalCodes = explode(',', $zipElem['zip']);
         $strOvp = "[out:geojson][timeout:25];(";
@@ -525,21 +497,26 @@ class LoadLayersListener
         }
         $strOvp .= ');out body;>;out skel qt;';
         $REQUEST = new \Request();
-        if ($_SERVER['HTTP_REFERER']) {
+        if (isset($_SERVER['HTTP_REFERER'])) {
             $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
         }
-        if ($_SERVER['HTTP_USER_AGENT']) {
+        if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
         }
-//        $sendUrl = $url . "?key=" . $key . "&data=" . urlencode($strOvp);
         $sendUrl = $url . "osm.php?key=" . $key . "&data=" . rawurlencode($strOvp);
         $REQUEST->send($sendUrl);
         $response = $REQUEST->response;
-        $return = ["content" => [[
-            "data" => json_decode($response),
-            "locationStyle" => $locstyle ?: $layer['locstyle'],
-            "type" => "GeoJSON",
-        ]],
+
+        if (!$response) {
+            return null;
+        }
+
+        return [
+            "content" => [[
+                "data" => json_decode($response),
+                "locationStyle" => $locstyle ?: $layer['locstyle'],
+                "type" => "GeoJSON",
+            ]],
             "id" => 999999999,
             "pid" => $layer['id'],
             "childs" => [],
@@ -549,6 +526,5 @@ class LoadLayersListener
             "locstyle" => $locstyle ?: $layer['locstyle'],
             "excludeFromSingleLayer" => true
         ];
-        return $return;
     }
 }

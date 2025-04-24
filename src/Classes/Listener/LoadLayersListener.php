@@ -13,120 +13,130 @@ use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-/**
- * Class LoadLayersListener
- * Handles loading and processing of map layers for the gutesio operator bundle
- */
 class LoadLayersListener
 {
     private LayerService $layerService;
-    private Database $Database;
+    private Database $database;
 
-    /** @var array<string,array> Cached type data */
-    private array $typeMap = [];
-
-    /** @var array<string,array> Cached location style data */
-    private array $locStyleMap = [];
-
-    /** @var array<string,array> Cached tag data */
-    private array $tagMap = [];
-
-    /** @var array<string,array> Cached element data */
-    private array $elementMap = [];
+    /** @var array<string,array> Cached data maps */
+    private array $cache = [
+        'types' => [],
+        'locStyles' => [],
+        'tags' => [],
+        'elements' => [],
+        'elementTypes' => []
+    ];
 
     /** @var string SQL condition for published elements */
-    private string $strPublished;
+    private string $publishedCondition;
 
     public function __construct(LayerService $layerService)
     {
         $this->layerService = $layerService;
-        $this->Database = Database::getInstance();
-        $this->strPublished = ' AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
+        $this->database = Database::getInstance();
+        $this->publishedCondition = $this->buildPublishedCondition();
+    }
+
+    private function buildPublishedCondition(): string 
+    {
+        $currentTime = time();
+        return " AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < $currentTime) " .
+               "AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > $currentTime)";
     }
 
     /**
-     * Handles loading of individual elements for the map
+     * Preload commonly used data to reduce database queries
      */
+    private function preloadData(): void
+    {
+        if (!empty($this->cache['tags'])) {
+            return;
+        }
+
+        // Load tags
+        $tagResult = $this->database->execute("SELECT uuid, imageCDN, name FROM tl_gutesio_data_tag")->fetchAllAssoc();
+        foreach ($tagResult as $tag) {
+            $this->cache['tags'][$tag['uuid']] = $tag;
+        }
+
+        // Load element types
+        $elementTypesResult = $this->database->execute(
+            "SELECT elementId, typeId FROM tl_gutesio_data_element_type"
+        )->fetchAllAssoc();
+        foreach ($elementTypesResult as $elementType) {
+            $this->cache['elementTypes'][$elementType['elementId']][] = $elementType['typeId'];
+        }
+    }
+
+    private function getElement(string $uuid): ?array
+    {
+        if (!isset($this->cache['elements'][$uuid])) {
+            $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
+            $result = $this->database->prepare(
+                "SELECT * FROM tl_gutesio_data_element WHERE uuid = ?" . $strPublishedElem
+            )->execute($uuid)->fetchAssoc();
+            
+            $this->cache['elements'][$uuid] = $result ?: null;
+        }
+        
+        return $this->cache['elements'][$uuid];
+    }
+
+    private function getLocationStyle(string $elementId): ?array
+    {
+        if (!isset($this->cache['locStyles'][$elementId])) {
+            $result = $this->database->prepare(
+                'SELECT type.locstyle, type.loctype 
+                 FROM tl_gutesio_data_type AS type
+                 INNER JOIN tl_gutesio_data_element_type AS typeElem 
+                 ON typeElem.typeId = type.uuid
+                 WHERE typeElem.elementId = ? 
+                 ORDER BY typeElem.rank ASC 
+                 LIMIT 1'
+            )->execute($elementId)->fetchAssoc();
+            
+            $this->cache['locStyles'][$elementId] = $result ?: null;
+        }
+        
+        return $this->cache['locStyles'][$elementId];
+    }
+
     public function onLoadLayersLoadElement(
         LoadLayersEvent $event,
         string $eventName,
         EventDispatcherInterface $eventDispatcher
     ): void {
         $dataLayer = $event->getLayerData();
-        if (!($dataLayer['type'] === 'gutesElem')) {
+        if ($dataLayer['type'] !== 'gutesElem') {
             return;
         }
-        $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
-        $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
 
-        $alias = false;
-        if (!$alias && isset($_SERVER['HTTP_REFERER'])) {
-            $alias = $_SERVER['HTTP_REFERER'];
-            $strC = substr_count($alias, '/');
-            $arrUrl = explode('/', $alias);
-
-            if (strpos($arrUrl[$strC], '.html')) {
-                $alias = substr($arrUrl[$strC], 0, strpos($arrUrl[$strC], '.html'));
-            } else {
-                $alias = $arrUrl[$strC];
-            }
-            if (strpos($alias, '?')) {
-                $alias = explode('?', $alias)[0];
-            }
-        }
-
+        $alias = $this->extractAliasFromReferer();
         if (!$alias) {
             return;
         }
 
         $event->setPreventCaching(true);
-        if (C4GUtils::isValidGUID($alias)) {
-            $offerConnections = $this->Database->prepare('SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?')
-                ->execute('{' . strtoupper($alias) . '}')->fetchAllAssoc();
-            if ($offerConnections && (count($offerConnections) > 0)) {
-                $firstConnection = $offerConnections[0];
-                $elem = $this->Database->prepare('SELECT * FROM tl_gutesio_data_element WHERE `uuid` = ?')
-                    ->execute($firstConnection['elementId'])->fetchAssoc();
-            }
-        } else {
-            $elem = $this->Database->prepare($strQueryElem)->execute($alias)->fetchAssoc();
-        }
-
+        $elem = $this->resolveElement($alias);
         if (!$elem) {
             return;
         }
 
-        $childElements = [];
-        $strQueryType = 'SELECT type.* FROM tl_gutesio_data_type AS type 
-                        INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
-                        WHERE typeElem.elementId =?';
-        $type = $this->Database->prepare($strQueryType)->execute($elem['uuid'])->fetchAssoc();
+        $this->preloadData();
+        $type = $this->getElementType($elem['uuid']);
+        $childElements = $this->loadChildElements($elem, $type, $dataLayer);
 
-        if ($elem['showcaseIds'] && $type['showLinkedElements']) {
-            $showcaseIds = StringUtil::deserialize($elem['showcaseIds'], true);
-            foreach ($showcaseIds as $showcaseId) {
-                $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                                            WHERE elem.uuid = ?' . $strPublishedElem;
-                $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
-                if ($childElem) {
-                    $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], false);
-                }
-            }
-        }
-
-        if ($childElements && (count($childElements) > 1) && $type['showLinkedElements']) {
+        if ($childElements && count($childElements) > 1 && $type['showLinkedElements']) {
             $dataLayer['childs'] = $childElements;
         } else {
-            $elements = [];
-            $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, false, true);
-            $dataLayer['childs'] = $elements;
+            $dataLayer['childs'] = [$this->createElement($elem, $dataLayer, $type, $childElements, false, true)];
         }
-        
+
         $area = $this->addArea($elem, $dataLayer);
         if ($area) {
             $dataLayer['childs'][] = $area;
         }
-        
+
         $event->setLayerData($dataLayer);
     }
 
@@ -134,341 +144,530 @@ class LoadLayersListener
         LoadLayersEvent $event,
         $eventName,
         EventDispatcherInterface $eventDispatcher
-    ) {
+    ): void {
         $dataLayer = $event->getLayerData();
-        if (!($dataLayer['type'] === 'gutesPart')) {
+        if ($dataLayer['type'] !== 'gutesPart') {
             return;
         }
+
         $objDataLayer = C4gMapsModel::findByPk($dataLayer['id']);
         if (!$objDataLayer) {
             return;
         }
-        $configuredTypes = unserialize($objDataLayer->types);
-        $objTypes = [];
-        if ($configuredTypes) {
-            foreach($configuredTypes as $type) {
-                $tempType = GutesioDataTypeModel::findOneBy('uuid', $type);
-                if ($tempType) {
-                    $objTypes[] = $tempType;
-                }
-            }
-        }
-        else {
-            $arrOptions = [
-                'order' => "tl_gutesio_data_type.name ASC"
-            ];
-            $objTypes = GutesioDataTypeModel::findAll($arrOptions);
-        }
-        $types = [];
+
+        $this->preloadData();
+        $types = $this->loadTypes($objDataLayer);
+        $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
         $sameElements = [];
-        $skipElements = unserialize($objDataLayer->skipElements);
+        $typeElements = $this->processTypes($types, $dataLayer, $skipElements, $sameElements, $objDataLayer);
+        
+        $dataLayer['childs'] = array_values($typeElements);
+        $event->setLayerData($dataLayer);
+    }
 
-        foreach ($objTypes as $objType) {
-            $type = $objType->row();
-            $strPublishedElem = str_replace('{{table}}', 'elem', $this->strPublished);
-            $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
-                WHERE typeElem.typeId = ?' . $strPublishedElem .
-                ' ORDER BY elem.name ASC';
-            $arrElems = $this->Database->prepare($strQueryElems)->execute($type['uuid'])->fetchAllAssoc();
-            $elements = [];
-            $checkDuplicates = [];
-            foreach ($arrElems as $elem) {
-                foreach ($skipElements as $skipElem) {
-                    if ($skipElem === $elem['uuid']) {
-                        continue 2;
-                    }
-                }
+    private function loadTypes($objDataLayer): array
+    {
+        $configuredTypes = unserialize($objDataLayer->types);
+        if ($configuredTypes) {
+            return array_filter(array_map(function($type) {
+                return GutesioDataTypeModel::findOneBy('uuid', $type);
+            }, $configuredTypes));
+        }
 
-                $childElements = [];
-                $sameElements[$elem['uuid']][] = $elem;
-                if ($elem['showcaseIds'] && $type['showLinkedElements']) {
-                    $showcaseIds = StringUtil::deserialize($elem['showcaseIds'], true);
-                    foreach ($showcaseIds as $showcaseId) {
-                        $strQueryElems = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                                                WHERE elem.uuid = ?' . $strPublishedElem;
-                        $childElem = $this->Database->prepare($strQueryElems)->execute($showcaseId)->fetchAssoc();
-                        if ($childElem) {
-                            $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], true, false, $sameElements[$elem['uuid']]);
-                        }
-                    }
-                }
-                $doCreateElement = true;
-                if (key_exists($elem['uuid'],$checkDuplicates)) {
-                    foreach ($checkDuplicates[$elem['uuid']] as $checkType) {
-                        if ($checkType === $type['uuid']) {
-                            $doCreateElement = false;
-                            break;
-                        }
-                    }
-                }
-                if ($doCreateElement) {
-                    $elements[] = $this->createElement($elem, $dataLayer, $type, $childElements, true, false, $sameElements[$elem['uuid']]);
-                }
-                $checkDuplicates[$elem['uuid']][] = $type['uuid'];
+        return GutesioDataTypeModel::findAll([
+            'order' => "tl_gutesio_data_type.name ASC"
+        ]) ?: [];
+    }
 
+    private function processTypes(array $types, array $dataLayer, array $skipElements, array &$sameElements, $objDataLayer): array
+    {
+        $typeElements = [];
+        $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
+
+        foreach ($types as $type) {
+            $typeData = $type->row();
+            $elements = $this->loadTypeElements($typeData['uuid'], $strPublishedElem, $skipElements);
+            
+            if (empty($elements)) {
+                continue;
             }
-            $hideInStarboard = $objDataLayer->skipTypes || count($elements) === 0;
-            $singleType = [
-                'pid' => $objDataLayer->id,
-                'id' => $type['uuid'],
-                'name' => $type['name'],
-                'hideInStarboard' => $hideInStarboard,
-                'childs' => $elements,
-                'zoomTo' => true,
-            ];
-            if ($elements) {
-                $types[] = array_merge($dataLayer, $singleType);
+
+            $processedElements = $this->processTypeElements($elements, $dataLayer, $type, $sameElements);
+            
+            if (!empty($processedElements)) {
+                $typeElements[$typeData['uuid']] = array_merge($dataLayer, [
+                    'pid' => $objDataLayer->id,
+                    'id' => $typeData['uuid'],
+                    'name' => $typeData['name'],
+                    'hideInStarboard' => $objDataLayer->skipTypes,
+                    'childs' => $processedElements,
+                    'zoomTo' => true,
+                ]);
             }
         }
-        $dataLayer['childs'] = $types;
-        $event->setLayerData($dataLayer);
+
+        return $typeElements;
+    }
+
+    private function loadTypeElements(string $typeId, string $publishedCondition, array $skipElements): array
+    {
+        $query = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
+                 INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
+                 WHERE typeElem.typeId = ?' . $publishedCondition . ' ORDER BY elem.name ASC';
+                 
+        $elements = $this->database->prepare($query)->execute($typeId)->fetchAllAssoc();
+        
+        return array_filter($elements, function($elem) use ($skipElements) {
+            return !in_array($elem['uuid'], $skipElements);
+        });
+    }
+
+    private function processTypeElements(array $elements, array $dataLayer, $type, array &$sameElements): array
+    {
+        $processedElements = [];
+        $checkDuplicates = [];
+
+        foreach ($elements as $elem) {
+            $sameElements[$elem['uuid']][] = $elem;
+            $childElements = $this->loadChildElements($elem, $type->row(), $dataLayer);
+
+            if ($this->shouldCreateElement($elem['uuid'], $type->uuid, $checkDuplicates)) {
+                $processedElements[] = $this->createElement(
+                    $elem, 
+                    $dataLayer, 
+                    $type->row(), 
+                    $childElements, 
+                    true, 
+                    false, 
+                    $sameElements[$elem['uuid']]
+                );
+            }
+            
+            $checkDuplicates[$elem['uuid']][] = $type->uuid;
+        }
+
+        return $processedElements;
+    }
+
+    private function shouldCreateElement(string $elemUuid, string $typeUuid, array $checkDuplicates): bool
+    {
+        if (!isset($checkDuplicates[$elemUuid])) {
+            return true;
+        }
+        
+        return !in_array($typeUuid, $checkDuplicates[$elemUuid]);
     }
 
     public function onLoadLayersLoadDirectories(
         LoadLayersEvent $event,
         $eventName,
         EventDispatcherInterface $eventDispatcher
-    ) {
+    ): void {
         $dataLayer = $event->getLayerData();
-        if (!($dataLayer['type'] === 'gutes')) {
+        if ($dataLayer['type'] !== 'gutes') {
             return;
         }
+
         $objDataLayer = C4gMapsModel::findByPk($dataLayer['id']);
         if (!$objDataLayer) {
             return;
         }
 
-        if ($objDataLayer->popup_share_button) {
-            $shareMethods = StringUtil::deserialize($objDataLayer->popup_share_type, true);
-            $shareDest = $objDataLayer->popup_share_destination;
-
-            switch ($shareDest) {
-                case "con4gis_map":
-                case "con4gis_routing":
-                    $shareBaseUrl = "";
-                    break;
-                case "con4gis_map_external":
-                case "con4gis_routing_external":
-                case "osm":
-                case "osm_routing":
-                    $shareBaseUrl = $objDataLayer->popup_share_external_link;
-                    break;
-                case "google_map":
-                    $shareBaseUrl = "https://www.google.com/maps/dir/";
-                    break;
-                case "google_map_routing":
-                    $shareBaseUrl = "https://www.google.com/maps/dir/";
-                    break;
-                default:
-                    $shareBaseUrl = "";
-            }
-
-            $popupShare = [
-                'methods' => $shareMethods,
-                'baseUrl' => $shareBaseUrl,
-                'destType' => $shareDest,
-                'additionalMessage' => $objDataLayer->popup_share_message
-            ];
-            $dataLayer['popup_share'] = $popupShare;
-        }
-
-        $t = 'tl_gutesio_data_directory';
-        $arrOptions = [
-            'order' => "$t.name ASC",
-        ];
-        $configuredDirectories = StringUtil::deserialize($objDataLayer->directories, true);
-        $configuredTypes = $objDataLayer->types;
-        if ($configuredDirectories) {
-            $objDirectories = [];
-            foreach ($configuredDirectories as $configuredDirectory) {
-                $tempDirs = GutesioDataDirectoryModel::findOneBy('uuid', $configuredDirectory);
-                if ($tempDirs) {
-                    $objDirectories[] = $tempDirs;
-                }
-            }
-        } else {
-            $objDirectories = GutesioDataDirectoryModel::findAll($arrOptions);
-        }
-        $directories = [];
-        $sameElements = [];
-        $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
-        $directoryElems = [];
-        $typeElems = [];
-
-        $this->loadTags();
-
-        foreach ($objDirectories as $directory) {
-            $elemQuery = 'SELECT elem.*, type.uuid AS typeId, type.name AS typeName, dirType.directoryId AS directoryId FROM tl_gutesio_data_type AS type
-                INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
-                INNER JOIN tl_gutesio_data_element_type AS elemType ON dirType.typeId = elemType.typeId
-                INNER JOIN tl_gutesio_data_element AS elem ON elemType.elementId = elem.uuid
-                WHERE dirType.directoryId = ?
-                ORDER BY type.name ASC';
-            $arrElems = $this->Database->prepare($elemQuery)->execute($directory->uuid)->fetchAllAssoc();
-            $validTypes = [];
-
-            foreach ($arrElems as $elem) {
-                if (in_array($elem['uuid'], $skipElements)) {
-                    continue;
-                }
-
-                if (!key_exists($directory->uuid.$elem['typeId'], $typeElems)) {
-                    $hideInStarboard = (bool)$objDataLayer->skipTypes;
-                    $singleType = [
-                        'pid' => $directory->uuid,
-                        'id' => $elem['typeId'],
-                        'name' => $elem['typeName'],
-                        'hideInStarboard' => $hideInStarboard,
-                        'childs' => [],
-                        'zoomTo' => true,
-                    ];
-                    $typeElems[$directory->uuid.$elem['typeId']] = array_merge($dataLayer, $singleType);
-                    $validTypes[$directory->uuid.$elem['typeId']] = array_merge($dataLayer, $singleType);
-                }
-
-                $treeElement = $this->createElement($elem, $dataLayer, ['uuid' => $elem['typeId']]);
-                $typeElems[$directory->uuid.$elem['typeId']]['childs'][] = $treeElement;
-                $validTypes[$directory->uuid.$elem['typeId']]['childs'][] = $treeElement;
-            }
-
-            if (!key_exists($directory->uuid, $directoryElems)) {
-                $singleDir = [
-                    'pid' => $dataLayer['id'],
-                    'id' => $directory->uuid,
-                    'name' => $directory->name,
-                    'hideInStarboard' => count($validTypes) === 0,
-                    'childs' => array_values($validTypes),
-                ];
-                $directoryElems[$directory->uuid][] = $singleDir;
-                $directories[] = array_merge($dataLayer, $singleDir);
-            }
-        }
-        $dataLayer['childs'] = $directories;
+        $this->preloadData();
+        $this->processShareSettings($dataLayer, $objDataLayer);
+        
+        $directories = $this->loadDirectories($objDataLayer);
+        $processedDirectories = $this->processDirectories($directories, $dataLayer, $objDataLayer);
+        
+        $dataLayer['childs'] = $processedDirectories;
         $event->setLayerData($dataLayer);
     }
 
-    private function loadTags(): void
+    private function processShareSettings(array &$dataLayer, $objDataLayer): void
     {
-        if (!empty($this->tagMap)) {
+        if (!$objDataLayer->popup_share_button) {
             return;
         }
 
-        $sql = "SELECT uuid, imageCDN, name FROM tl_gutesio_data_tag";
-        $tagResult = $this->Database->prepare($sql)->execute()->fetchAllAssoc();
+        $shareMethods = StringUtil::deserialize($objDataLayer->popup_share_type, true);
+        $shareDest = $objDataLayer->popup_share_destination;
+        $shareBaseUrl = $this->getShareBaseUrl($shareDest, $objDataLayer);
 
-        foreach ($tagResult as $tag) {
-            $this->tagMap[$tag['uuid']] = $tag;
+        $dataLayer['popup_share'] = [
+            'methods' => $shareMethods,
+            'baseUrl' => $shareBaseUrl,
+            'destType' => $shareDest,
+            'additionalMessage' => $objDataLayer->popup_share_message
+        ];
+    }
+
+    private function getShareBaseUrl(string $shareDest, $objDataLayer): string
+    {
+        switch ($shareDest) {
+            case "con4gis_map":
+            case "con4gis_routing":
+                return "";
+            case "con4gis_map_external":
+            case "con4gis_routing_external":
+            case "osm":
+            case "osm_routing":
+                return $objDataLayer->popup_share_external_link;
+            case "google_map":
+            case "google_map_routing":
+                return "https://www.google.com/maps/dir/";
+            default:
+                return "";
         }
     }
 
-    private function createElement($objElement, $dataLayer, $parent, $childElements = [], $withPopup = true, $layerStyle = false, $sameElements = []): array
+    private function loadDirectories($objDataLayer): array
     {
-        if (!key_exists($objElement['uuid'], $this->locStyleMap)) {
-            $strQueryLocstyle = 'SELECT type.locstyle, type.loctype FROM tl_gutesio_data_type AS type
-                                        INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.typeId = type.uuid
-                                        WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1';
-            $objLocstyle = $this->Database->prepare($strQueryLocstyle)->execute($objElement['uuid'])->fetchAssoc();
-            $this->locStyleMap[$objElement['uuid']] = $objLocstyle;
-        } else {
-            $objLocstyle = $this->locStyleMap[$objElement['uuid']];
+        $configuredDirectories = StringUtil::deserialize($objDataLayer->directories, true);
+        if ($configuredDirectories) {
+            $directories = [];
+            foreach ($configuredDirectories as $directoryId) {
+                $directory = GutesioDataDirectoryModel::findOneBy('uuid', $directoryId);
+                if ($directory) {
+                    $directories[] = $directory->row(); // Konvertiere zu Array
+                }
+            }
+            return $directories;
         }
 
-        $tagQuery = "SELECT tagId FROM tl_gutesio_data_tag_element WHERE `elementId` = ?";
-        $elementTags = $this->Database->prepare($tagQuery)->execute($objElement['uuid'])->fetchAllAssoc();
-        $tags = [];
-        $tagUuids = [];
-        foreach ($elementTags as $key => $elementTag) {
-            $tag = $this->tagMap[$elementTag['tagId']];
+        $result = GutesioDataDirectoryModel::findAll([
+            'order' => "tl_gutesio_data_directory.name ASC"
+        ]);
 
-            if ($tag['name'] && !key_exists($tag['uuid'], $tagUuids)) {
-                $tags[$key] = $tag['name'];
-                $tagUuids[$tag['uuid']] = true;
+        return $result ? $result->fetchAll() : [];
+    }
+
+    private function processDirectories(array $directories, array $dataLayer, $objDataLayer): array
+    {
+        $processedDirectories = [];
+        $directoryElements = [];
+        $typeElements = [];
+        $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
+
+        foreach ($directories as $directory) {
+            // Da wir jetzt ein Array haben, müssen wir den Zugriff anpassen
+            $directoryUuid = $directory['uuid'] ?? null;
+            $directoryName = $directory['name'] ?? '';
+
+            if (!$directoryUuid) {
+                continue;
+            }
+
+            $elements = $this->loadDirectoryElements($directoryUuid);
+            $validTypes = $this->processDirectoryElements(
+                $elements,
+                $dataLayer,
+                $skipElements,
+                $typeElements,
+                $directoryUuid,
+                $objDataLayer
+            );
+
+            if (!empty($validTypes)) {
+                $singleDir = [
+                    'pid' => $dataLayer['id'],
+                    'id' => $directoryUuid,
+                    'name' => $directoryName,
+                    'hideInStarboard' => empty($validTypes),
+                    'childs' => array_values($validTypes),
+                ];
+                $directoryElements[$directoryUuid][] = $singleDir;
+                $processedDirectories[] = array_merge($dataLayer, $singleDir);
             }
         }
 
-        $tagUuids[$parent['uuid']] = true;
-        $popup = [];
-        if ($withPopup) {
-            $popup = [
-                'async' => true,
-                'content' => 'showcase::' . $objElement['uuid'],
-                'routing_link' => true,
-            ];
+        return $processedDirectories;
+    }
+
+    private function loadDirectoryElements(string $directoryId): array
+    {
+        $query = 'SELECT elem.*, type.uuid AS typeId, type.name AS typeName, dirType.directoryId AS directoryId 
+                 FROM tl_gutesio_data_type AS type
+                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
+                 INNER JOIN tl_gutesio_data_element_type AS elemType ON dirType.typeId = elemType.typeId
+                 INNER JOIN tl_gutesio_data_element AS elem ON elemType.elementId = elem.uuid
+                 WHERE dirType.directoryId = ?
+                 ORDER BY type.name ASC';
+                 
+        return $this->database->prepare($query)->execute($directoryId)->fetchAllAssoc();
+    }
+
+    private function processDirectoryElements(
+        array $elements, 
+        array $dataLayer, 
+        array $skipElements, 
+        array &$typeElements, 
+        string $directoryId, 
+        $objDataLayer
+    ): array {
+        $validTypes = [];
+
+        foreach ($elements as $elem) {
+            if (in_array($elem['uuid'], $skipElements)) {
+                continue;
+            }
+
+            $typeKey = $directoryId . $elem['typeId'];
+            if (!isset($typeElements[$typeKey])) {
+                $hideInStarboard = (bool)$objDataLayer->skipTypes;
+                $singleType = [
+                    'pid' => $directoryId,
+                    'id' => $elem['typeId'],
+                    'name' => $elem['typeName'],
+                    'hideInStarboard' => $hideInStarboard,
+                    'childs' => [],
+                    'zoomTo' => true,
+                ];
+                $typeElements[$typeKey] = array_merge($dataLayer, $singleType);
+                $validTypes[$typeKey] = array_merge($dataLayer, $singleType);
+            }
+
+            $treeElement = $this->createElement($elem, $dataLayer, ['uuid' => $elem['typeId']]);
+            $typeElements[$typeKey]['childs'][] = $treeElement;
+            $validTypes[$typeKey]['childs'][] = $treeElement;
         }
 
-        $link = count($sameElements) > 1;
+        return $validTypes;
+    }
 
-        $element = [
-            'pid' => $parent['uuid'],
-            'id' => $objElement['uuid'],
-            'key' => $objElement['uuid'].$parent['uuid'],
-            'type' => 'GeoJSON',
-            'tags' => $tags,
-            'childs' => $childElements,
-            'name' => html_entity_decode($objElement['name']),
-            'zIndex' => 2000,
-            'layername' => html_entity_decode($objElement['name']),
-            'locstyle' => $layerStyle ? $dataLayer['locstyle'] : $objLocstyle['locstyle'],
-            'hideInStarboard' => false,
-            'zoomTo' => true,
-        ];
+    private function createElement(
+        array $objElement, 
+        array $dataLayer, 
+        array $parent, 
+        array $childElements = [], 
+        bool $withPopup = true, 
+        bool $layerStyle = false, 
+        array $sameElements = []
+    ): array {
+        $objLocstyle = $this->getLocationStyle($objElement['uuid']);
+        $tags = $this->getElementTags($objElement['uuid']);
+        $tagUuids = array_merge(
+            array_combine(array_keys($tags), array_fill(0, count($tags), true)),
+            [$parent['uuid'] => true]
+        );
+
+        $popup = $withPopup ? [
+            'async' => true,
+            'content' => 'showcase::' . $objElement['uuid'],
+            'routing_link' => true,
+        ] : [];
+
+        $element = $this->buildBaseElement($objElement, $parent, $dataLayer, $layerStyle, $objLocstyle, $tags, $childElements);
 
         if ($dataLayer['popup_share']) {
             $element['popup_share'] = $dataLayer['popup_share'];
         }
 
         if (($objElement['geox'] && $objElement['geoy']) || $objElement['geojson']) {
-            $properties = array_merge([
-                'projection' => 'EPSG:4326',
-                'opening_hours' => $objElement['opening_hours'],
-                'phoneHours' => $objElement['phoneHours'],
-                'popup' => $popup,
-                'graphicTitle' => $objElement['name'],
-            ], $tagUuids);
-            $data = [];
-            if ($objLocstyle['loctype'] === 'Editor' || $objLocstyle['loctype'] === 'LineString' || $objLocstyle['loctype'] === 'Polygon') {
-                $element['cluster'] = false;
-                $element['excludeFromSingleLayer'] = true;
-                $geojson = strpos($objElement['geojson'], 'FeatureCollection') ? $objElement['geojson'] : '{"type": "FeatureCollection", "features": ' . $objElement['geojson'] . '}';
-                $data = json_decode($geojson, true);
-                foreach ($data['features'] as $key => $feature) {
-                    $data['features'][$key]['properties']['zindex'] = -5;
-                }
-                $data['properties'] = $properties;
-            } else {
-                $data = [
-                    'type' => 'Feature',
-                    'geometry' => [
-                        'type' => 'Point',
-                        'coordinates' => [
-                            $objElement['geox'], $objElement['geoy'],
-                        ],
-                    ],
-                    'properties' => $properties,
-                ];
-            }
-            $content = [
-                [
-                    'id' => $objElement['uuid'],
-                    'type' => 'GeoJSON',
-                    'locationStyle' => $layerStyle ?  $dataLayer['locstyle'] : $objLocstyle['locstyle'],
-                    'data' => $data,
-                    'position' => [
-                        'positionId' => $objElement['uuid'],
-                    ],
-                    'format' => 'GeoJSON',
-                ],
-            ];
-
-            $element['content'] = $content;
+            $this->addGeometryData($element, $objElement, $objLocstyle, $popup, $tagUuids, $layerStyle, $dataLayer);
         }
+
         if ($popup) {
             $element['popup'] = $popup;
         }
-        $element = array_merge($dataLayer, $element);
 
-        return $element;
+        return array_merge($dataLayer, $element);
+    }
+
+    private function getElementTags(string $elementId): array
+    {
+        $elementTags = $this->database->prepare(
+            "SELECT tagId FROM tl_gutesio_data_tag_element WHERE elementId = ?"
+        )->execute($elementId)->fetchAllAssoc();
+
+        $tags = [];
+        $tagUuids = [];
+        foreach ($elementTags as $key => $elementTag) {
+            $tag = $this->cache['tags'][$elementTag['tagId']] ?? null;
+            if ($tag && $tag['name'] && !isset($tagUuids[$tag['uuid']])) {
+                $tags[$key] = $tag['name'];
+                $tagUuids[$tag['uuid']] = true;
+            }
+        }
+
+        return $tags;
+    }
+
+    private function buildBaseElement(
+        array $objElement, 
+        array $parent, 
+        array $dataLayer, 
+        bool $layerStyle, 
+        ?array $objLocstyle, 
+        array $tags, 
+        array $childElements
+    ): array {
+        return [
+            'pid' => $parent['uuid'],
+            'id' => $objElement['uuid'],
+            'key' => $objElement['uuid'] . $parent['uuid'],
+            'type' => 'GeoJSON',
+            'tags' => $tags,
+            'childs' => $childElements,
+            'name' => html_entity_decode($objElement['name']),
+            'zIndex' => 2000,
+            'layername' => html_entity_decode($objElement['name']),
+            'locstyle' => $layerStyle ? $dataLayer['locstyle'] : ($objLocstyle['locstyle'] ?? null),
+            'hideInStarboard' => false,
+            'zoomTo' => true,
+        ];
+    }
+
+    private function addGeometryData(
+        array &$element, 
+        array $objElement, 
+        ?array $objLocstyle, 
+        array $popup, 
+        array $tagUuids, 
+        bool $layerStyle, 
+        array $dataLayer
+    ): void {
+        $properties = [
+            'projection' => 'EPSG:4326',
+            'opening_hours' => $objElement['opening_hours'],
+            'phoneHours' => $objElement['phoneHours'],
+            'popup' => $popup,
+            'graphicTitle' => $objElement['name'],
+        ];
+        $properties = array_merge($properties, $tagUuids);
+
+        if ($objLocstyle && in_array($objLocstyle['loctype'], ['Editor', 'LineString', 'Polygon'])) {
+            $this->addComplexGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
+        } else {
+            $this->addSimpleGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
+        }
+    }
+
+    private function addComplexGeometry(
+        array &$element, 
+        array $objElement, 
+        array $properties, 
+        bool $layerStyle, 
+        array $dataLayer, 
+        ?array $objLocstyle
+    ): void {
+        $element['cluster'] = false;
+        $element['excludeFromSingleLayer'] = true;
+        
+        $geojson = strpos($objElement['geojson'], 'FeatureCollection') 
+            ? $objElement['geojson'] 
+            : '{"type": "FeatureCollection", "features": ' . $objElement['geojson'] . '}';
+            
+        $data = json_decode($geojson, true);
+        
+        foreach ($data['features'] as $key => $feature) {
+            $data['features'][$key]['properties']['zindex'] = -5;
+        }
+        
+        $data['properties'] = $properties;
+        
+        $element['content'] = [[
+            'id' => $objElement['uuid'],
+            'type' => 'GeoJSON',
+            'locationStyle' => $layerStyle ? $dataLayer['locstyle'] : ($objLocstyle['locstyle'] ?? null),
+            'data' => $data,
+            'position' => ['positionId' => $objElement['uuid']],
+            'format' => 'GeoJSON',
+        ]];
+    }
+
+    private function addSimpleGeometry(
+        array &$element, 
+        array $objElement, 
+        array $properties, 
+        bool $layerStyle, 
+        array $dataLayer, 
+        ?array $objLocstyle
+    ): void {
+        $data = [
+            'type' => 'Feature',
+            'geometry' => [
+                'type' => 'Point',
+                'coordinates' => [$objElement['geox'], $objElement['geoy']],
+            ],
+            'properties' => $properties,
+        ];
+
+        $element['content'] = [[
+            'id' => $objElement['uuid'],
+            'type' => 'GeoJSON',
+            'locationStyle' => $layerStyle ? $dataLayer['locstyle'] : ($objLocstyle['locstyle'] ?? null),
+            'data' => $data,
+            'position' => ['positionId' => $objElement['uuid']],
+            'format' => 'GeoJSON',
+        ]];
+    }
+
+    private function extractAliasFromReferer(): ?string
+    {
+        if (!isset($_SERVER['HTTP_REFERER'])) {
+            return null;
+        }
+
+        $referer = $_SERVER['HTTP_REFERER'];
+        $parts = explode('/', $referer);
+        $lastPart = end($parts);
+
+        if (strpos($lastPart, '.html') !== false) {
+            $lastPart = substr($lastPart, 0, strpos($lastPart, '.html'));
+        }
+
+        if (strpos($lastPart, '?') !== false) {
+            $lastPart = explode('?', $lastPart)[0];
+        }
+
+        return $lastPart ?: null;
+    }
+
+    private function resolveElement(string $alias): ?array
+    {
+        if (C4GUtils::isValidGUID($alias)) {
+            $offerConnections = $this->database->prepare(
+                'SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?'
+            )->execute('{' . strtoupper($alias) . '}')->fetchAllAssoc();
+
+            if ($offerConnections && count($offerConnections) > 0) {
+                return $this->getElement($offerConnections[0]['elementId']);
+            }
+        }
+
+        $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
+        return $this->database->prepare(
+            'SELECT * FROM tl_gutesio_data_element WHERE alias = ?' . $strPublishedElem
+        )->execute($alias)->fetchAssoc();
+    }
+
+    private function getElementType(string $elementId): ?array
+    {
+        return $this->database->prepare(
+            'SELECT type.* FROM tl_gutesio_data_type AS type 
+             INNER JOIN tl_gutesio_data_element_type AS typeElem 
+             ON typeElem.typeId = type.uuid
+             WHERE typeElem.elementId = ?'
+        )->execute($elementId)->fetchAssoc();
+    }
+
+    private function loadChildElements(array $elem, array $type, array $dataLayer): array
+    {
+        if (!$elem['showcaseIds'] || !$type['showLinkedElements']) {
+            return [];
+        }
+
+        $childElements = [];
+        $showcaseIds = StringUtil::deserialize($elem['showcaseIds'], true);
+
+        foreach ($showcaseIds as $showcaseId) {
+            $childElem = $this->getElement($showcaseId);
+            if ($childElem) {
+                $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], false);
+            }
+        }
+
+        return $childElements;
     }
 
     private function addArea($objElement, $layer): ?array
@@ -480,22 +679,31 @@ class LoadLayersListener
         
         $url = $settings->con4gisIoUrl;
         $key = $settings->con4gisIoKey;
-        $strSurroundingPostals = 'SELECT typeFieldValue as zip FROM tl_gutesio_data_type_element_values
-                                                WHERE elementId = ? AND typeFieldKey="surrZip"';
-        $zipElem = $this->Database->prepare($strSurroundingPostals)->execute($objElement['uuid'])->fetchAssoc();
-        $strLocstyle = 'SELECT areaLocstyle as locci FROM tl_c4g_maps WHERE id=?';
-        $locstyle = $this->Database->prepare($strLocstyle)->execute($layer['id'])->fetchAssoc()['locci'];
+        
+        $zipElem = $this->database->prepare(
+            'SELECT typeFieldValue as zip FROM tl_gutesio_data_type_element_values 
+             WHERE elementId = ? AND typeFieldKey="surrZip"'
+        )->execute($objElement['uuid'])->fetchAssoc();
+        
+        $locstyle = $this->database->prepare(
+            'SELECT areaLocstyle as locci FROM tl_c4g_maps WHERE id=?'
+        )->execute($layer['id'])->fetchAssoc()['locci'];
+        
         if (!$zipElem || !$zipElem['zip']) {
             return null;
         }
+        
         $arrPostalCodes = explode(',', $zipElem['zip']);
         $strOvp = "[out:geojson][timeout:25];(";
+        
         foreach ($arrPostalCodes as $postalCode) {
             if (preg_match("/^[0-9]{5}$/", $postalCode)) {
                 $strOvp .= 'relation[postal_code=' . $postalCode . '][boundary=postal_code];';
             }
         }
+        
         $strOvp .= ');out body;>;out skel qt;';
+        
         $REQUEST = new \Request();
         if (isset($_SERVER['HTTP_REFERER'])) {
             $REQUEST->setHeader('Referer', $_SERVER['HTTP_REFERER']);
@@ -503,6 +711,7 @@ class LoadLayersListener
         if (isset($_SERVER['HTTP_USER_AGENT'])) {
             $REQUEST->setHeader('User-Agent', $_SERVER['HTTP_USER_AGENT']);
         }
+        
         $sendUrl = $url . "osm.php?key=" . $key . "&data=" . rawurlencode($strOvp);
         $REQUEST->send($sendUrl);
         $response = $REQUEST->response;

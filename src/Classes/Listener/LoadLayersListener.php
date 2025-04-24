@@ -68,10 +68,10 @@ class LoadLayersListener
         }
     }
 
-    private function getElement(string $uuid): ?array
+    private function getElement(string $uuid, bool $withPublishedCondition=false): ?array
     {
         if (!isset($this->cache['elements'][$uuid])) {
-            $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
+            $strPublishedElem = $withPublishedCondition ? str_replace('{{table}}', 'elem', $this->publishedCondition) : "";
             $result = $this->database->prepare(
                 "SELECT * FROM tl_gutesio_data_element WHERE uuid = ?" . $strPublishedElem
             )->execute($uuid)->fetchAssoc();
@@ -635,9 +635,9 @@ class LoadLayersListener
             }
         }
 
-        $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
+        //$strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
         return $this->database->prepare(
-            'SELECT * FROM tl_gutesio_data_element WHERE alias = ?' . $strPublishedElem
+            'SELECT * FROM tl_gutesio_data_element WHERE alias = ?'
         )->execute($alias)->fetchAssoc();
     }
 

@@ -82,6 +82,7 @@ $GLOBALS['TL_LANG']['tl_module']['generic_legend'] = 'Allgemeine Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Lade-Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter-Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['showcase_tag_filter_legend'] = 'Tag-Filter-Einstellungen';
+$GLOBALS['TL_LANG']['tl_module']['content_legend'] = 'Einstellungen zum Content';
 $GLOBALS['TL_LANG']['tl_module']['cart_legend'] = 'Warenkorb-Einstellungen';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'zufällig';

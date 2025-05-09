@@ -45,6 +45,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_change_layout_filte
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_showcase_list_page,gutesio_load_klaro_consent,gutesio_data_mode,customTpl;'.
+    '{content_legend},gutesio_without_tiles,gutesio_data_max_data;'.
     '{cart_legend},cart_page'
 ;
 

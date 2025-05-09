@@ -123,7 +123,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $objPage->pageTitle = $detailData['name'];
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
-                $childData = $this->getChildTileData($request, $elementUuid);
+                $childData = $model->gutesio_without_tiles ? [] : $this->getChildTileData($request, $elementUuid, $model->gutesio_data_max_data);
                 if (count($childData) > 0) {
                     $template->hasOffers = true;
                 }
@@ -131,8 +131,8 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                     $template->hasImprint = true;
                 }
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
-                $relatedShowcaseTileList = $this->createRelatedShowcaseTileList();
-                $relatedShowcaseFields = $this->getRelatedShowcaseTileFields();
+                $relatedShowcaseTileList = $model->gutesio_without_tiles ? [] : $this->createRelatedShowcaseTileList();
+                $relatedShowcaseFields = $model->gutesio_without_tiles ? [] : $this->getRelatedShowcaseTileFields();
                 if (count($childData) > 0) {
                     $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
                 }
@@ -557,7 +557,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         ];
     }
 
-    private function getChildTileData($request, $elementUuid = 0)
+    private function getChildTileData($request, $elementUuid = 0, $maxCount = 0)
     {
         $database = Database::getInstance();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
@@ -583,7 +583,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId OR e.uuid = v.locationElementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.uuid = ?'
-                . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC'
+                . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC' . ($maxCount > 0 ? ' LIMIT ' . $maxCount : '')
             )->execute($elementUuid)->fetchAllAssoc();
         } else {
             $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
@@ -604,7 +604,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId OR e.uuid = v.locationElementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.alias = ?'
-                . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC'
+                . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC' . ($maxCount > 0 ? ' LIMIT ' . $maxCount : '')
             )->execute($this->alias)->fetchAllAssoc();
         }
 

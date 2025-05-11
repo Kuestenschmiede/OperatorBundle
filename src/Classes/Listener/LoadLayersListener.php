@@ -655,7 +655,7 @@ class LoadLayersListener
             'SELECT type.* FROM tl_gutesio_data_type AS type 
              INNER JOIN tl_gutesio_data_element_type AS typeElem 
              ON typeElem.typeId = type.uuid
-             WHERE typeElem.elementId = ?'
+             WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1'
         )->execute($elementId)->fetchAssoc();
     }
 

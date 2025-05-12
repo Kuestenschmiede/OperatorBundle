@@ -60,7 +60,7 @@ class GutesBlogGenerator
                         if ($objType) {
                             $gutesCategories = $objType->getGutesioEventTypes();
                             $postals = $objType->getPostals();
-                            $events = $this->getGutesEvents($db, $currentDate, $gutesCategories, $postals);
+                            $events = $this->getGutesEvents($db, $currentDate, $gutesCategories, $postals, $pushConfig['sendForAllEventTypes']);
                             if (count($events) > 0) {
                                 // there are events for this type for today
                                 $sendMessage = true;
@@ -105,15 +105,26 @@ class GutesBlogGenerator
                         if (!$sent) {
                             if ($pageId) {
                                 $clickUrl = $this->router->generate("tl_page." . $pageId, [], UrlGeneratorInterface::ABSOLUTE_URL) . "?";
-                                $clickUrl .= "&postals=" . implode(",", $arrPostals);
-                                foreach ($arrTypes as $arrType) {
-                                    $clickUrl .= "&types[]=" . $arrType;
+
+
+                                if (!empty($arrPostals) && is_array($arrPostals) && count($arrPostals) > 0) {
+                                    if (!(count($arrPostals) === 1 && $arrPostals[0] === "")) {
+                                        $clickUrl .= "postals=" . implode(",", $arrPostals);
+                                    }
                                 }
+
+                                if (!$pushConfig['sendForAllEventTypes']) {
+                                    foreach ($arrTypes as $arrType) {
+                                        $clickUrl .= "&types[]=" . $arrType;
+                                    }
+                                }
+
                                 $clickUrl .= "&filterFrom=" . $datetime->getTimestamp();
                                 $clickUrl .= "&filterUntil=" . strtotime('tomorrow');
                             } else {
                                 $clickUrl = "";
                             }
+
                             $event = new PushNotificationEvent();
                             $event->setMessage($message);
                             $event->setSubscriptionTypes($types);
@@ -167,10 +178,8 @@ class GutesBlogGenerator
         return $imagePath;
     }
 
-    //todo get event news with only with the categories (typeID == category or subtype uuid)
-    private function getGutesEvents($db, $currentDate, $categories, $postals)
+    private function getGutesEvents($db, $currentDate, $categories, $postals, $sendForAllEventTypes)
     {
-        // todo get event news with only the categories (typeID == category or subtype uuid)
         $endDate = strtotime('tomorrow');
         $params = [];
 
@@ -200,7 +209,7 @@ class GutesBlogGenerator
             $query .= " AND ";
 
             foreach ($arrPostals as $key=>$arrPostal) {
-                $query .= " `locationZip` LIKE ?";
+                $query .= " `elem.locationZip` LIKE ?";
                 if (!(array_key_last($arrPostals) === $key)) {
                     $query .= " OR";
                 }
@@ -225,7 +234,7 @@ class GutesBlogGenerator
               AND e.beginDate <= '$endDate'";
         }
 
-        if ($categories) {
+        if ($categories && !$sendForAllEventTypes) {
             $categories = StringUtil::deserialize($categories, true);
             $query .= " AND c.typeId " . C4GUtils::buildInString($categories);
             $params = array_merge($params, $categories);
@@ -238,6 +247,8 @@ class GutesBlogGenerator
         if (count($result) === 0) {
             $this->logger->error("No events found that match the configuration.");
         }
+
+        $this->logger->error("result count: " . count($result));
 
         return $result;
     }

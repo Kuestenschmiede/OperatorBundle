@@ -43,6 +43,7 @@ $GLOBALS['TL_LANG'][$strName]['pushTime'] = ['Versendungsdatum', 'Geben Sie die 
 $GLOBALS['TL_LANG'][$strName]['pushMessage'] = ['Inhalt der Nachricht', 'Geben Sie den Inhalt der täglichen Pushnachricht ein.'];
 $GLOBALS['TL_LANG'][$strName]['subscriptionTypes'] = ['Abonnement-Typen', 'Wählen Sie die Abonnement-Typen aus, die diese Pushnachricht erhalten sollen.'];
 $GLOBALS['TL_LANG'][$strName]['pushRedirectPage'] = ['Weiterleitungsseite', 'Wählen Sie die Seite aus, auf die in der Pushnachricht verlinkt werden soll.'];
+$GLOBALS['TL_LANG'][$strName]['sendForAllEventTypes'] = ['Kategorie-Einschränkung ignorieren', 'Wenn diese Checkbox gesetzt ist, wird'];
 
 $GLOBALS['TL_LANG'][$strName]['popupFieldsRefs'] =[
     'image'     => 'Bild',

@@ -221,6 +221,13 @@ $GLOBALS['TL_DCA'][$strName] = [
                         'inputType'               => 'pageTree',
                         'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
                         'sql'                     => "int(10) unsigned NOT NULL default '0'"
+                    ],
+                    'sendForAllEventTypes' => [
+                        'label' => &$GLOBALS['TL_LANG'][$strName]['sendForAllEventTypes'],
+                        'exclude'                 => true,
+                        'inputType'               => 'checkbox',
+                        'eval'                    => ['mandatory' => false],
+                        'sql'                     => "int(10) unsigned NOT NULL default 0"
                     ]
                 ],
             ],

@@ -1736,12 +1736,12 @@ class OfferLoaderService
                             $childRows[$key]['childLink'] = $href ?: '';
                         }
                     }
+
+                    $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
                 }
             } else {
                 unset($childRows[$key]);
             }
-
-            $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
         }
 
         return array_values($childRows);

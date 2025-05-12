@@ -10,6 +10,7 @@
 namespace gutesio\OperatorBundle\Classes\Cron;
 
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\System;
 use con4gis\CoreBundle\Classes\Callback\C4GImportDataCallback;
@@ -17,9 +18,18 @@ use gutesio\OperatorBundle\Classes\Cache\OfferDataCache;
 
 class SyncDataCron
 {
+
+
+    public function __construct(
+        private ContaoFramework $framework
+    ) {
+    }
+
     public function onMinutely()
     {
+        $this->framework->initialize();
         $db = Database::getInstance();
+
 
         $c4gSettings = $db->prepare('SELECT * FROM tl_c4g_settings')->execute()->fetchAssoc();
         if (!key_exists('disableImports',$c4gSettings)  && $c4gSettings['syncDataAutomaticly'] == 1) {

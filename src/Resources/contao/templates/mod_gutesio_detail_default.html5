@@ -231,41 +231,41 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                 </div>
             <?php endif; ?>
 
-            <?php if (isset($data->beginDate) && !empty($data->beginDate)): ?>
+            <?php if (isset($data->beginDateDisplay) && !empty($data->beginDateDisplay)): ?>
                 <div class="c4g-container">
                     <div class="c4g-row beginDate">
                         <div class="col-12">
                             <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginoffer'] ?> </strong>
 
                             <?php
-                            $beginString = $data->beginDate;
-                            if (isset($data->beginTime) && !empty($data->beginTime) && ($data->beginTime !== '0')) $beginString .= ', ' . $data->beginTime;
+                            $beginString = $data->beginDateDisplay;
+                            if (isset($data->beginTimeDisplay) && !empty($data->beginTimeDisplay) && ($data->beginTime !== '0')) $beginString .= ', ' . $data->beginTimeDisplay;
                             ?>
                             <span><?= $beginString ?></span>
                         </div>
 
 
-                        <?php if ((isset($data->endDate) && !empty($data->endDate)) && (isset($data->endTime) && !empty($data->endTime))): ?>
+                        <?php if ((isset($data->endDateDisplay) && !empty($data->endDateDisplay)) && (isset($data->endTimeDisplay) && !empty($data->endTimeDisplay))): ?>
                             <div class="col-12">
                                 <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
 
                                 <?php
-                                $endString = $data->endDate;
-                                if (isset($data->endTime) && !empty($data->endTime) && ($data->endTime !== '0')) $endString .= ', ' . $data->endTime . ' ' . $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'];
+                                $endString = $data->endDateDisplay;
+                                if (isset($data->endTimeDisplay) && !empty($data->endTimeDisplay) && ($data->endTimeDisplay !== '0')) $endString .= ', ' . $data->endTimeDisplay . ' ' . $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'];
                                 ?>
                                 <span><?= $endString ?></span>
                             </div>
 
-                        <?php elseif (isset($data->endDate) && !empty($data->endDate)): ?>
+                        <?php elseif (isset($data->endDateDisplay) && !empty($data->endDateDisplay)): ?>
                             <div class="col-12">
                                 <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
-                                <span> <?= $data->endDate ?></span>
+                                <span> <?= $data->endDateDisplay ?></span>
                             </div>
 
-                        <?php elseif (isset($data->endTime) && !empty($data->endTime)): ?>
+                        <?php elseif (isset($data->endTimeDisplay) && !empty($data->endTimeDisplay)): ?>
                             <div class="col-12">
                                 <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['endoffer'] ?></strong>
-                                <span><?= $data->endTime ?> <?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'] ?></span>
+                                <span><?= $data->endTimeDisplay ?> <?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['timesuffix'] ?></span>
                             </div>
 
                         <?php else: ?>

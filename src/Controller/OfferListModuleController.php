@@ -698,31 +698,31 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $fields[] = $field;
 
         $field = new TextTileField();
-        $field->setName('beginDate');
+        $field->setName('beginDateDisplay');
         $field->setWrapperClass("c4g-list-element__begindate-wrapper");
         $field->setClass("c4g-list-element__beginDate");
-        $field->addCondition(new FieldNotValueCondition('beginDate', '0'));
+        $field->addCondition(new FieldNotValueCondition('beginDateDisplay', '0'));
         $fields[] = $field;
 
         $field = new TextTileField();
-        $field->setName('beginTime');
+        $field->setName('beginTimeDisplay');
         $field->setWrapperClass("c4g-list-element__begintime-wrapper");
         $field->setClass("c4g-list-element__beginTime");
-        $field->addCondition(new FieldNotValueCondition('beginTime', '0'));
+        $field->addCondition(new FieldNotValueCondition('beginTimeDisplay', '0'));
         $fields[] = $field;
 
         $field = new TextTileField();
-        $field->setName('endDate');
+        $field->setName('endDateDisplay');
         $field->setWrapperClass("c4g-list-element__enddate-wrapper");
         $field->setClass("c4g-list-element__endDate");
-        $field->addCondition(new FieldNotValueCondition('endDate', '0'));
+        $field->addCondition(new FieldNotValueCondition('endDateDisplay', '0'));
         $fields[] = $field;
 
         $field = new TextTileField();
-        $field->setName('endTime');
+        $field->setName('endTimeDisplay');
         $field->setWrapperClass("c4g-list-element__endtime-wrapper");
         $field->setClass("c4g-list-element__endTime");
-        $field->addCondition(new FieldNotValueCondition('endTime', '0'));
+        $field->addCondition(new FieldNotValueCondition('endTimeDisplay', '0'));
         $fields[] = $field;
 
         $field = new TextTileField();

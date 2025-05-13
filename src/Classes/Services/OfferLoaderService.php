@@ -1376,7 +1376,8 @@ class OfferLoaderService
                                 COALESCE(a.recurrences, b.recurrences, c.recurrences, d.recurrences) AS recurrences,
                                 COALESCE(a.repeatEach, b.repeatEach, c.repeatEach, d.repeatEach) AS repeatEach,
                                 COALESCE(a.appointmentUponAgreement, b.appointmentUponAgreement, c.appointmentUponAgreement, d.appointmentUponAgreement) AS appointmentUponAgreement,
-                                (COALESCE(a.beginDate, b.beginDate, c.beginDate, d.beginDate) || COALESCE(a.beginTime, b.beginTime, c.beginTime, d.beginTime)) AS beginDateTime
+                                COALESCE(a.beginDate, b.beginDate, c.beginDate, d.beginDate, a.beginTime, b.beginTime, c.beginTime, d.beginTime) AS beginDateTime,
+                                COALESCE(a.expertTimes, b.expertTimes, c.expertTimes, d.expertTimes) AS expertTimes
                             FROM tl_gutesio_data_child_event a
                             JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid
                             LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid
@@ -1392,6 +1393,7 @@ class OfferLoaderService
                         ->execute($row['uuid'])->fetchAssoc();
 
                     if ($eventData) {
+
                         $beginDateTime = new \DateTime();
                         $beginDateTime->setTimestamp($eventData['beginDate']);
                         // Add one day so events are still shown on the day they expire
@@ -1495,7 +1497,7 @@ class OfferLoaderService
                                     }
                                 }
                             }
-                        } elseif (($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
+                        } elseif (($endDateTime > 0) && ($endDateTime->getTimestamp() < time())) {
                             $tooOld = true;
                         }
                     }
@@ -1515,40 +1517,41 @@ class OfferLoaderService
                         $beginTime = isset($eventData['beginTime']) ? gmdate('H:i', $eventData['beginTime']) : false;
                         $endTime = isset($eventData['endTime']) ? gmdate('H:i', $eventData['endTime']) : false;
 
+                        // TODO vermutlich für Formatierung gebraucht, sorgt aber dafür, dass der Datefilter nicht richtig funktioniert
                         if ($beginDate && $beginDate !== '01.01.1970') {
                             if ($endDate && ($endDate !== $beginDate) && $endDate !== '01.01.1970') {
                                 if ($beginTime && $endTime && ($beginTime != '00:00')) {
-                                    $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
-                                    $eventData['endDate'] = '';
-                                    $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
-                                    $eventData['endTime'] = '';
+                                    $eventData['beginDateDisplay'] = $beginDateShort.' - '.$endDate;
+                                    $eventData['endDateDisplay'] = '';
+                                    $eventData['beginTimeDisplay'] = $beginTime.' - '.$endTime.' Uhr';
+                                    $eventData['endTimeDisplay'] = '';
                                 } else if ($beginTime && ($beginTime != '00:00')) {
-                                    $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
-                                    $eventData['endDate'] = '';
-                                    $eventData['beginTime'] = $beginTime.' Uhr';
-                                    $eventData['endTime'] = '';
+                                    $eventData['beginDateDisplay'] = $beginDateShort.' - '.$endDate;
+                                    $eventData['endDateDisplay'] = '';
+                                    $eventData['beginTimeDisplay'] = $beginTime.' Uhr';
+                                    $eventData['endTimeDisplay'] = '';
                                 } else {
-                                    $eventData['beginDate'] = $beginDateShort.' - '.$endDate;
-                                    $eventData['endDate'] = '';
-                                    $eventData['beginTime'] = '';
-                                    $eventData['endTime'] = '';
+                                    $eventData['beginDateDisplay'] = $beginDateShort.' - '.$endDate;
+                                    $eventData['endDateDisplay'] = '';
+                                    $eventData['beginTimeDisplay'] = '';
+                                    $eventData['endTimeDisplay'] = '';
                                 }
                             } else {
                                 if ($beginTime && $endTime && ($beginTime != '00:00')) {
-                                    $eventData['beginDate'] = $beginDate;
-                                    $eventData['endDate'] = '';
-                                    $eventData['beginTime'] = $beginTime.' - '.$endTime.' Uhr';
-                                    $eventData['endTime'] = '';
+                                    $eventData['beginDateDisplay'] = $beginDate;
+                                    $eventData['endDateDisplay'] = '';
+                                    $eventData['beginTimeDisplay'] = $beginTime.' - '.$endTime.' Uhr';
+                                    $eventData['endTimeDisplay'] = '';
                                 } else if ($beginTime && ($beginTime != '00:00')) {
-                                    $eventData['beginDate'] = $beginDate;
-                                    $eventData['endDate'] = '';
-                                    $eventData['beginTime'] = $beginTime.' Uhr';
-                                    $eventData['endTime'] = '';
+                                    $eventData['beginDateDisplay'] = $beginDate;
+                                    $eventData['endDateDisplay'] = '';
+                                    $eventData['beginTimeDisplay'] = $beginTime.' Uhr';
+                                    $eventData['endTimeDisplay'] = '';
                                 } else {
-                                    $eventData['beginDate'] = $beginDate;
-                                    $eventData['endDate'] = '';
-                                    $eventData['beginTime'] = '';
-                                    $eventData['endTime'] = '';
+                                    $eventData['beginDateDisplay'] = $beginDate;
+                                    $eventData['endDateDisplay'] = '';
+                                    $eventData['beginTimeDisplay'] = '';
+                                    $eventData['endTimeDisplay'] = '';
                                 }
                             }
                         }
@@ -1587,14 +1590,26 @@ class OfferLoaderService
                                 }
                                 $fieldValue .= ')';
                             }
-                            $eventData['beginDate'] = '';
-                            $eventData['beginTime'] = '';
-                            $eventData['endDate'] = '';
-                            $eventData['endTime'] = '';
+                            $eventData['beginDateDisplay'] = '';
+                            $eventData['beginTimeDisplay'] = '';
+                            $eventData['endDateDisplay'] = '';
+                            $eventData['endTimeDisplay'] = '';
                             $eventData['appointmentUponAgreement'] = $fieldValue;
                             $tooOld = false;
                         } else {
                             $eventData['appointmentUponAgreement'] = '';
+                        }
+
+                        if ($eventData['expertTimes']) {
+                            $expertBeginTimes = StringUtil::deserialize($eventData['expertBeginDateTimes'], true);
+                            $expertEndTimes = StringUtil::deserialize($eventData['expertEndDateTimes'], true);
+                            foreach ($expertBeginTimes as $timeKey => $value) {
+                                if ($value <= time() && $expertEndTimes[$timeKey] >= time()) {
+                                    $tooOld = false;
+                                } else {
+                                    $tooOld = true;
+                                }
+                            }
                         }
 
                         $elementModel = $eventData['locationElementId'] ? GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']) : null;
@@ -1737,6 +1752,8 @@ class OfferLoaderService
                         }
                     }
 
+
+
                     $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
                 }
             } else {
@@ -1808,8 +1825,17 @@ class OfferLoaderService
                     $result[] = $datum;
                 } else {
                     // add one day so events are displayed on the day they expire
-                    $beginTstamp = strtotime($datum['beginDate']);
-                    $endTstamp = strtotime($datum['endDate']);
+                    $beginTstamp = $datum['beginDate'];
+                    if (!is_integer($beginTstamp)) {
+                        $beginTstamp = strtotime($beginTstamp);
+                    }
+                    $endTstamp = $datum['endDate'];
+
+                    if (!is_integer($endTstamp)) {
+                        $endTstamp = strtotime($endTstamp);
+                    }
+
+
                     if ($filterFrom) {
                         $fromDt = (new \DateTime())->setTimestamp($filterFrom);
                         $filterFromFirstMinute = $fromDt->setTime(0, 0, 0)->getTimestamp();
@@ -1826,6 +1852,17 @@ class OfferLoaderService
                     $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute && $filterUntilLastMinute && $endTstamp && ($beginTstamp >= $filterFromFirstMinute) && ($endTstamp <= $filterUntilLastMinute)) ? 5 : $dateMatchesFilter;
                     $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute == NULL && $filterUntilLastMinute && ($beginTstamp <= $filterUntilLastMinute)) ? 6 : $dateMatchesFilter;
                     $dateMatchesFilter = !$dateMatchesFilter && ($filterFromFirstMinute == NULL && $filterUntilLastMinute && $endTstamp && ($endTstamp <= $filterUntilLastMinute))? 7 : $dateMatchesFilter;
+
+                    if (!$dateMatchesFilter) {
+                        if ($beginTstamp <= $filterFromFirstMinute && ($filterUntilLastMinute && ($filterUntilLastMinute <= $endTstamp))) {
+                            $dateMatchesFilter = true;
+                        }
+                    }
+
+                    if (str_contains($datum['name'], "Frauenzimmer")) {
+                        $datum['datematchesfilter'] = $dateMatchesFilter;
+//                        dd($datum);
+                    }
 
                     if ($dateMatchesFilter) {
                         $result[] = $datum;

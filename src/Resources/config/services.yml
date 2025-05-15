@@ -102,6 +102,12 @@ services:
       lazy: true
       public: true
 
+    gutesio\OperatorBundle\Classes\Services\EventDataService: ~
+
+    gutesio\OperatorBundle\Classes\Services\VisitCounterService:
+      lazy: true
+      public: true
+
     gutesio\OperatorBundle\Classes\Services\ServerService: ~
 
     gutesio\OperatorBundle\Classes\ShowcaseInsertTag:

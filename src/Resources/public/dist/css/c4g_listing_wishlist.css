@@ -3234,7 +3234,7 @@ a.btn.btn-warning.remove-from-wishlist.on-wishlist {
 @media (min-width:992px) {
   .c4g-wishlist-outer .c4g-list-element__inner > div,
   .wishlist .c4g-list-element__inner > div {
-    width: 70%
+    width: 65%
   }
 }
 @media (min-width:768px) {
@@ -3248,7 +3248,7 @@ a.btn.btn-warning.remove-from-wishlist.on-wishlist {
 @media (min-width:992px) {
   .c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper,
   .wishlist .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
-    width: calc(30% - 1rem)
+    width: calc(35% - 1rem)
   }
 }
 .c4g-wishlist-outer .c4g-list-element__inner > div.c4g-list-element__contact-wrapper .c4g-list-element__address,

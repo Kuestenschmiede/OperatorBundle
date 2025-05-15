@@ -99,7 +99,7 @@ a.btn.btn-warning.remove-from-wishlist.on-wishlist {
           float: right;
         }
         @include media-breakpoint-up(lg) {
-          width: 80%;
+          width: 70%;
         }
 
         &.c4g-list-element__image-wrapper {
@@ -110,7 +110,7 @@ a.btn.btn-warning.remove-from-wishlist.on-wishlist {
             float: left;
           }
           @include media-breakpoint-up(lg) {
-            width: calc(20% - 1rem);
+            width: calc(30% - 1rem);
           }
         }
 

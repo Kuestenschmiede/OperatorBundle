@@ -652,6 +652,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setExternalLinkFieldConditionValue("1");
             $field->setConditionField('type');
             $field->setConditionValue($key);
+            $field->setCheckOrientation($this->model->gutesio_data_layoutType !== "plain");
             $fields[] = $field;
             //break;
         }

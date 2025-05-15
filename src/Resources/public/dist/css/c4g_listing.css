@@ -8112,7 +8112,7 @@ html {
 }
 @media (min-width:992px) {
   .c4g-list-outer .c4g-list-element__inner > div {
-    width: 80%
+    width: 70%
   }
 }
 @media (min-width:768px) {
@@ -8124,7 +8124,7 @@ html {
 }
 @media (min-width:992px) {
   .c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
-    width: calc(20% - 1rem)
+    width: calc(30% - 1rem)
   }
 }
 .c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__more-wrapper,

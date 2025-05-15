@@ -585,6 +585,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $field->setExternalLinkField('foreignLink');
             $field->setExternalLinkFieldConditionField("directLink");
             $field->setExternalLinkFieldConditionValue("1");
+            $field->setCheckOrientation($this->model->gutesio_data_layoutType !== "plain");
             $fields[] = $field;
         }
 

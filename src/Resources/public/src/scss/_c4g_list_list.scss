@@ -72,7 +72,7 @@ html {
           float: right;
         }
         @include media-breakpoint-up(lg) {
-          width: 80%;
+          width: 70%;
         }
 
         &.c4g-list-element__image-wrapper {
@@ -87,7 +87,7 @@ html {
             //min-height: 200px;
           }
           @include media-breakpoint-up(lg) {
-            width: calc(20% - 1rem);
+            width: calc(30% - 1rem);
           }
         }
 

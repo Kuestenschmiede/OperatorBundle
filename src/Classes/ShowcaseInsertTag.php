@@ -97,7 +97,7 @@ class ShowcaseInsertTag
                         return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,2400,660) : '';
                     case 'imageList':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,600,450) : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,600) : '';
                     case 'previewimage':
                         $url = $arrShowcase['imageCDN'];
                         return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,2400,660) : '';

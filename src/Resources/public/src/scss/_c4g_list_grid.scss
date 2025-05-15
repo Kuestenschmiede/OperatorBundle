@@ -107,8 +107,48 @@ html {
       > div {
         margin-bottom: var(--gutes-base-spacing-unit);
 
+        &.c4g-list-element__elementname-wrapper {
+          /*a.c4g-list-element__elementname-link:before {
+            content: "\f041";
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 600;
+            padding-right: 5px;
+            color: var(--color-brand);
+          }*/
+        }
+
+        &.c4g-list-element__begindate-wrapper {
+          .c4g-list-element__beginDate {
+            padding: 2px 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 3px;
+            /*&:before {
+              content: "\f783";
+              font-weight: 900;
+              font-family: "Font Awesome 5 Free";
+              padding-right: 5px;
+            }*/
+          }
+        }
+        &.c4g-list-element__begintime-wrapper {
+          .c4g-list-element__beginTime {
+            padding: 2px 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background-color: white;
+            border-radius: 3px;
+            /*&:before {
+              content: "\f017";
+              font-weight: 600;
+              font-family: "Font Awesome 5 Free";
+              padding-right: 5px;
+            }*/
+          }
+        }
+
         &.c4g-list-element__buttons-wrapper {
           margin-bottom: 0;
+          margin-top: var(--gutes-base-spacing-unit);
         }
         padding: 0 var(--gutes-base-spacing-unit);
         &.c4g-list-element__image-wrapper {
@@ -186,6 +226,13 @@ html {
     &__more {
       right: 0;
     }
+
+    &:has(.c4g-list-element__beginTime:not(:empty)) {
+      .c4g-list-element__begindate-wrapper {
+        margin-bottom: 0;
+      }
+    }
+
 
   }
 }

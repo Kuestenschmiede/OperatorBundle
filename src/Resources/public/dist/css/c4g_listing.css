@@ -7978,9 +7978,24 @@ html {
   margin-bottom: var(--gutes-base-spacing-unit);
   padding: 0 var(--gutes-base-spacing-unit)
 }
+.c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate,
+.c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate {
+  padding: 2px 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  background-color: #fff;
+  border-radius: 3px
+}
+.c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime,
+.c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime {
+  padding: 2px 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  background-color: #fff;
+  border-radius: 3px
+}
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__buttons-wrapper,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__buttons-wrapper {
-  margin-bottom: 0
+  margin-bottom: 0;
+  margin-top: var(--gutes-base-spacing-unit)
 }
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
@@ -8052,6 +8067,10 @@ html {
 .c4g-grid-outer .c4g-list-element__more,
 .c4g-plain-outer .c4g-list-element__more {
   right: 0
+}
+.c4g-grid-outer .c4g-list-element:has(.c4g-list-element__beginTime:not(:empty)) .c4g-list-element__begindate-wrapper,
+.c4g-plain-outer .c4g-list-element:has(.c4g-list-element__beginTime:not(:empty)) .c4g-list-element__begindate-wrapper {
+  margin-bottom: 0
 }
 html {
   box-sizing: border-box

@@ -110,6 +110,11 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/dist/js/phonehours.js|async", ResourceLoader::JAVASCRIPT, "phonehours");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/fancybox/jquery.fancybox.min.js|async");
+        ResourceLoader::loadCssResource("/bundles/con4gisframework/dist/css/tiles.min.css");
+
+        if ($this->model->gutesio_data_layoutType !== "plain") {
+            ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing.min.css");
+        }
         System::loadLanguageFile("operator_showcase_list");
         System::loadLanguageFile("offer_list");
         System::loadLanguageFile("gutesio_frontend");
@@ -615,17 +620,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             if ($imageFile) {
                 //list($width, $height) = $fileUtils->getImageSize($cdnUrl.$imageFile);
                 $childRows[$key]['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile,600,450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile,600),
                     'alt' => $row['name'],
-                    'width' => 600,
-                    'height' => 450,
+                    'width' => 600
                 ];
                 $row['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile,600,450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile,600),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name'],
-                    'width' => 600,
-                    'height' => 450,
-                ];
+                    'width' => 600                ];
             }
 //            unset($childRows[$key]['imageOffer']);
 //            unset($row['imageOffer']);

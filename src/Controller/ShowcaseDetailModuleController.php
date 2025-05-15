@@ -400,13 +400,13 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $fields[] = $field;
 
         $field = new TextTileField();
-        $field->setName('beginDate');
+        $field->setName('beginDateDisplay');
         $field->setWrapperClass("c4g-list-element__begindate-wrapper");
         $field->setClass("c4g-list-element__begindate");
         $fields[] = $field;
 
         $field = new TextTileField();
-        $field->setName('beginTime');
+        $field->setName('beginTimeDisplay');
         $field->setWrapperClass("c4g-list-element__begintime-wrapper");
         $field->setClass("c4g-list-element__begintime");
         $fields[] = $field;

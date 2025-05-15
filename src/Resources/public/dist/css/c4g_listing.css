@@ -910,7 +910,7 @@ html {
   --gutes-base-border-color: #ccc;
   --gutes-base-border: 1px solid #ccc;
   --gutes-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  --gutes-font-size-title: 1.5rem;
+  --gutes-font-size-title: 1.3rem;
   --gutes-font-weight-title: normal;
   --gutes-grid-list-element-img-height: 240px;
   --gutes-carousel-list-img-height: 200px;
@@ -7952,7 +7952,8 @@ html {
 .c4g-grid-outer .c4g-list-element__image-wrapper,
 .c4g-plain-outer .c4g-list-element__image-wrapper {
   overflow: hidden;
-  height: var(--gutes-grid-list-element-img-height)
+  max-height: var(--gutes-grid-list-element-img-height);
+  aspect-ratio: auto
 }
 .c4g-grid-outer .c4g-list-element__image,
 .c4g-plain-outer .c4g-list-element__image {
@@ -7961,8 +7962,8 @@ html {
   width: 100%;
   -o-object-fit: contain;
   object-fit: contain;
-  max-height: 225px;
-  padding-top: 1em
+  max-height: 100%;
+  padding: 0
 }
 .c4g-grid-outer .c4g-list-element:hover,
 .c4g-plain-outer .c4g-list-element:hover {

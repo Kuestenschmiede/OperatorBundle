@@ -74,7 +74,8 @@ html {
 
     &__image-wrapper {
       overflow: hidden;
-      height: var(--gutes-grid-list-element-img-height);
+      max-height: var(--gutes-grid-list-element-img-height);
+      aspect-ratio: auto;
     }
 
     &__image {
@@ -82,8 +83,8 @@ html {
       height: var(--gutes-grid-list-element-img-height);
       width: 100%;
       object-fit: contain;
-      max-height: 225px;
-      padding-top: 1em;
+      max-height: 100%;
+      padding: 0em;
     }
 
     &:hover {

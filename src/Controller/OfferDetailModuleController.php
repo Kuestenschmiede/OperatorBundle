@@ -1003,11 +1003,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600, 450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600,450),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }

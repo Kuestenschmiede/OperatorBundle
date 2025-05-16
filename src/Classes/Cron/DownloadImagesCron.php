@@ -40,7 +40,7 @@ class DownloadImagesCron
             $images = StringUtil::deserialize($element['imageGalleryCDN']) ?: [];
             $idx = 0;
             foreach ($images as $image) {
-                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600, 450);
+                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
             }
         }
 
@@ -52,7 +52,7 @@ class DownloadImagesCron
             $images = StringUtil::deserialize($child['imageGalleryCDN']) ?: [];
             $idx = 0;
             foreach ($images as $image) {
-                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600, 450);
+                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
             }
         }
 

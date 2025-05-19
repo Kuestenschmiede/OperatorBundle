@@ -27,10 +27,10 @@ class EventDataService
 
 
         $parameters = [];
-        $strTagFieldClause = ""; // TODO
-        $sqlExtendedCategoryTerms = ""; // TODO
+        $termsSet = ($searchTerm !== "") && ($searchTerm !== "*");
+        $strTagFieldClause = " tl_gutesio_data_child_tag_values.`tagFieldValue` LIKE ?";
+        $sqlExtendedCategoryTerms = " OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?";
 
-        // TODO fix fulltext match part
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
             'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 COALESCE(a.shortDescription) AS shortDescription, ' . '
@@ -54,7 +54,11 @@ class EventDataService
                 ' /* RAND() calculation for random sorting of recurring events, otherwise they all are at the start */ .'
                 COALESCE(e.beginDate, e.beginTime, FLOOR(RAND()*(2000000000-1700000000+1)+1700000000)) AS beginDateTime,
                 e.expertTimes, '.
-//                'match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, ' . '
+                (
+                $termsSet ?
+                'match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, '
+                : ""
+                ) .
                 'a.uuid as alias, ' . '
                 tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
                 tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
@@ -66,9 +70,19 @@ class EventDataService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_event e ON e.childId = a.uuid ' . '
                 WHERE a.published = 1 AND type = "event"'  .
-//            ' AND (match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
-            ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'
+                (
+                $termsSet ?
+                    ' AND (match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') '
+                    : ""
+                ) .
+                ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'
             ;
+
+        if ($termsSet) {
+            $searchTermParam = str_replace("*", "%", $searchTerm);
+            $parameters[] = "%".$searchTermParam;
+            $parameters[] = "%".$searchTermParam;
+        }
 
         if ($filterData['tags']) {
             $sql .= " AND tl_gutesio_data_child_tag_values.tagId " . C4GUtils::buildInString($filterData['tags']);
@@ -83,15 +97,19 @@ class EventDataService
             $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?))";
             $parameters[] = $filterData['date']['from'];
             $parameters[] = $filterData['date']['until'];
-        }
-        else {
-            // TODO muss ich hier statt time() den timestamp von heute morgen 0 Uhr nehmen?
-            // TODO hier werden nur Events ab morgen beginnend dargestellt
-            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1 OR e.expertTimes = 1)";
-            $parameters[] = time();
+        } else {
+            // use today midnight as parameter to get all events from today
+            $today = new \DateTime();
+            $today->setTime(0, 0);
+            $todayTstamp = $today->getTimestamp();
+            $tomorrow = $today->modify("+1 day");
+            $tomorrowStamp = $tomorrow->getTimestamp();
+            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR (e.beginDate <= ? AND e.endDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1 OR e.expertTimes = 1)";
+            $parameters[] = $todayTstamp;
+            $parameters[] = $todayTstamp;
+            $parameters[] = $tomorrowStamp;
         }
 
-        // TODO Links auf Schaufensterdetails und Inhaltsdetails fixen
         $sql .= sprintf(" ORDER BY beginDateTime ASC LIMIT %s, %s", $offset, $limit);
 
         $eventData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
@@ -211,10 +229,6 @@ class EventDataService
                         }
                     }
                 }
-                // TODO not needed anymore since non recurring events get filtered via sql
-//                elseif (($endDateTime > 0) && ($endDateTime->getTimestamp() < time())) {
-//                    $tooOld = true;
-//                }
             }
 
             if ($tooOld && !$eventData['expertTimes']) {
@@ -376,6 +390,10 @@ class EventDataService
 //                    $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
                 }
             }
+
+            $eventData['image'] = [
+                'src' => $eventData['imageCDN']
+            ];
 
             if (!empty($eventData)) {
                 $results[] = $eventData;

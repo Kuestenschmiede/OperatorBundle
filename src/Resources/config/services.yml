@@ -103,6 +103,7 @@ services:
       public: true
 
     gutesio\OperatorBundle\Classes\Services\EventDataService: ~
+    gutesio\OperatorBundle\Classes\Maintenance\ChildFullTextUpdater: ~
 
     gutesio\OperatorBundle\Classes\Services\VisitCounterService:
       lazy: true

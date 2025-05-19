@@ -1,6 +1,7 @@
 <?php
 
 use gutesio\OperatorBundle\Classes\Cache\OperatorAutomator;
+use gutesio\OperatorBundle\Classes\Maintenance\ChildFullTextUpdater;
 
 $GLOBALS['gutesio']['api-caching'] = ["showcaseList"];
 
@@ -21,4 +22,8 @@ $GLOBALS['TL_MODELS']['tl_gutesio_operator_settings'] = \gutesio\OperatorBundle\
 $GLOBALS['TL_PURGE']['folders']['gutesio_offer_data'] = [
     'callback' => [OperatorAutomator::class, 'purgeOfferDataCache'],
     'affected' => ['var/cache/prod/con4gis/gutesio_offerData']
+];
+
+$GLOBALS['TL_PURGE']['custom']['gutes_update_child_fulltext'] = [
+    'callback' => [ChildFullTextUpdater::class, 'updateFulltextIndex'],
 ];

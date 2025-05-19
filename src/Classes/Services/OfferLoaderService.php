@@ -60,12 +60,17 @@ class OfferLoaderService
     private $visitCounter = null;
 
     /**
+     * @var EventDataService
+     */
+    private $eventDataService = null;
+
+    /**
      * OfferLoaderService constructor.
      */
     public function __construct(
         VisitCounterService $visitCounter,
         EventDataService $eventDataService
-    ){
+    ) {
         $this->visitCounter = $visitCounter;
         $this->eventDataService = $eventDataService;
     }
@@ -99,12 +104,7 @@ class OfferLoaderService
 
         // todo end new event stuff
 
-        if ($hasFilter) {
-            // raise limit and ignore offset temporarily
-            $limit = 5000;
-            $tmpOffset = $offset;
-            $offset = 0;
-        }
+
 
         $terms = explode(' ', $search);
         $database = Database::getInstance();
@@ -126,6 +126,12 @@ class OfferLoaderService
 
             $results = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
         } else {
+            if ($hasFilter) {
+                // raise limit and ignore offset temporarily
+                $limit = 5000;
+                $tmpOffset = $offset;
+                $offset = 0;
+            }
             //ToDo compare UPPER terms
             if ($search !== '') {
 //                $terms = explode(' ', $search);
@@ -151,21 +157,23 @@ class OfferLoaderService
                 $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
             }
 
-            $results = $this->sortOfferData($sortFilter, $filterData, $results);
-            if ($hasFilter) {
-                $results = array_slice($results, $tmpOffset, $this->limit);
-            }
 
-            // data cleaning
-            foreach ($results as $key => $result) {
-                $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
-                $results[$key]['name'] = html_entity_decode($result['name']);
+        }
 
-                if ($result['foreignLink']) {
-                    // search for http to avoid prepending https to insecure links
-                    if (!str_contains($result['foreignLink'], 'http')) {
-                        $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
-                    }
+        $results = $this->sortOfferData($sortFilter, $filterData, $results);
+        if ($hasFilter) {
+            $results = array_slice($results, $tmpOffset, $this->limit);
+        }
+
+        // data cleaning
+        foreach ($results as $key => $result) {
+            $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
+            $results[$key]['name'] = html_entity_decode($result['name']);
+
+            if ($result['foreignLink']) {
+                // search for http to avoid prepending https to insecure links
+                if (!str_contains($result['foreignLink'], 'http')) {
+                    $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
                 }
             }
         }

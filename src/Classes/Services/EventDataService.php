@@ -30,11 +30,14 @@ class EventDataService
         $strTagFieldClause = ""; // TODO
         $sqlExtendedCategoryTerms = ""; // TODO
 
+        // TODO fix fulltext match part
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
             'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 COALESCE(a.shortDescription) AS shortDescription, ' . '
-                tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, ' . '
+                tl_gutesio_data_child_type.uuid AS typeId, tl_gutesio_data_child_type.type AS type, tl_gutesio_data_child_type.name as typeName, ' . '
                 tl_gutesio_data_element.uuid as elementId, ' . '
+                tl_gutesio_data_element.name as vendorName, ' . '
+                tl_gutesio_data_element.alias as vendorAlias, ' . '
                 e.beginDate,
                 e.beginTime,
                 e.endDate,
@@ -48,10 +51,11 @@ class EventDataService
                 e.recurrences,
                 e.repeatEach,
                 e.appointmentUponAgreement,
-                COALESCE(e.beginDate, e.beginTime) AS beginDateTime,
-                e.expertTimes
-                match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, ' . '
-                a.uuid as alias, ' . '
+                ' /* RAND() calculation for random sorting of recurring events, otherwise they all are at the start */ .'
+                COALESCE(e.beginDate, e.beginTime, FLOOR(RAND()*(2000000000-1700000000+1)+1700000000)) AS beginDateTime,
+                e.expertTimes, '.
+//                'match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, ' . '
+                'a.uuid as alias, ' . '
                 tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
                 tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
                 
@@ -62,21 +66,33 @@ class EventDataService
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_event e ON e.childId = a.uuid ' . '
                 WHERE a.published = 1 AND type = "event"'  .
-            ' AND (match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
+//            ' AND (match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) OR ' . $strTagFieldClause . $sqlExtendedCategoryTerms . ') ' .
             ' AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())'
             ;
 
         if ($filterData['tags']) {
-            // TODO add tag id constraint to query
+            $sql .= " AND tl_gutesio_data_child_tag_values.tagId " . C4GUtils::buildInString($filterData['tags']);
+            $parameters = array_merge($parameters, $filterData['tags']);
         }
         if ($filterData['categories']) {
-            // TODO add category (type) id constraint to query
-        }
-        if ($filterData['date']) {
-            // TODO filter event begin and end date
+            $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
+            $parameters = array_merge($parameters, $filterData['categories']);
         }
 
-        $sql .= sprintf(" ORDER BY relevance DESC LIMIT %s, %s", $offset, $limit);
+        if ($filterData['date']) {
+            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?))";
+            $parameters[] = $filterData['date']['from'];
+            $parameters[] = $filterData['date']['until'];
+        }
+        else {
+            // TODO muss ich hier statt time() den timestamp von heute morgen 0 Uhr nehmen?
+            // TODO hier werden nur Events ab morgen beginnend dargestellt
+            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1 OR e.expertTimes = 1)";
+            $parameters[] = time();
+        }
+
+        // TODO Links auf Schaufensterdetails und Inhaltsdetails fixen
+        $sql .= sprintf(" ORDER BY beginDateTime ASC LIMIT %s, %s", $offset, $limit);
 
         $eventData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 
@@ -89,9 +105,10 @@ class EventDataService
     {
         // do something
         $results = [];
+        $isContao5 = C4GVersionProvider::isContaoVersionAtLeast('5.0.0');
 
         foreach ($events as $key => $eventData) {
-
+            $tooOld = false;
             $beginDateTime = new \DateTime();
             $beginDateTime->setTimestamp($eventData['beginDate']);
             // Add one day so events are still shown on the day they expire
@@ -106,7 +123,6 @@ class EventDataService
             $eventData['storeBeginDate'] = $eventData['beginDate'];
             $eventData['storeBeginTime'] = $eventData['beginTime'];
 
-            //ToDo fix recurring
             if ($beginDateTime->getTimestamp() < time()) {
                 if ($eventData['recurring']) {
                     $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
@@ -194,12 +210,14 @@ class EventDataService
                             }
                         }
                     }
-                } elseif (($endDateTime > 0) && ($endDateTime->getTimestamp() < time())) {
-                    $tooOld = true;
                 }
+                // TODO not needed anymore since non recurring events get filtered via sql
+//                elseif (($endDateTime > 0) && ($endDateTime->getTimestamp() < time())) {
+//                    $tooOld = true;
+//                }
             }
 
-            if ($tooOld) {
+            if ($tooOld && !$eventData['expertTimes']) {
                 continue;
             }
 
@@ -312,104 +330,57 @@ class EventDataService
                 }
             }
 
-            $elementModel = $eventData['locationElementId'] ? GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']) : null;
-            if ($elementModel !== null) {
-                $eventData['locationElementName'] = html_entity_decode($elementModel->name);
-            } else {
-                $elementId = key_exists('elementId', $eventData) ? $eventData['elementId'] : false;
-                if ($elementId) {
-                    $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
-                    if ($elementModel !== null) {
-                        $eventData['locationElementName'] = html_entity_decode($elementModel->name);
-                    }
-                }
-            }
+            $eventData['locationElementName'] = $eventData['vendorName'];
 
             //hotfix special char
             if (key_exists("locationElementName", $eventData)) {
                 $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
             }
 
+            if (!$tooOld || $eventData['appointmentUponAgreement']) {
+                if ($eventData['vendorName'] && $eventData['vendorAlias']) {
+                    $eventData['elementName'] = html_entity_decode($eventData['vendorName']);
+
+                    //hotfix special char
+                    $eventData['elementName'] = str_replace('&#39;', "'", $eventData['elementName']);
+
+                    $objSettings = GutesioOperatorSettingsModel::findSettings();
+                    $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
+                    if ($elementPage !== null) {
+                        if ($isContao5) {
+                            $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $eventData['vendorAlias']]);
+                        } else {
+                            $url = $elementPage->getAbsoluteUrl();
+                        }
+
+                        if ($url) {
+                            $href = '';
+                            if (C4GUtils::endsWith($url, '.html')) {
+                                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $eventData['vendorAlias'])) . '.html', $url);
+                            } else if (str_ends_with($url, $eventData['vendorAlias'])) {
+                                $href = $url;
+                            } else if ($eventData['vendorAlias']) {
+                                $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $eventData['vendorAlias']));
+                            }
+                            $eventData['elementLink'] = $href ?: '';
+                        }
+                    }
+                    $childPage = PageModel::findByPk($objSettings->eventDetailPage);
+
+                    if ($childPage !== null) {
+                        $cleanUuid = strtolower(str_replace(['{', '}'], '', $eventData['uuid']));
+                        $eventData['href'] = $cleanUuid;
+                    }
+
+                    // TODO caching?
+//                    $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
+                }
+            }
+
             if (!empty($eventData)) {
                 $results[] = $eventData;
             }
         }
-
-        // TODO prüfen was ich hier brauche, element müsste ja oben schon geladen sein
-        // TODO link generierung unten vermutlich notwendig
-//        if (!$tooOld || $eventData['appointmentUponAgreement'] || !$checkEventTime) {
-//            $vendorUuid = $database->prepare(
-//                'SELECT * FROM tl_gutesio_data_child_connection WHERE childId = ? LIMIT 1'
-//            )->execute($row['uuid'])->fetchAssoc();
-//
-//            $vendor = $database->prepare(
-//                'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
-//            )->execute($vendorUuid['elementId'])->fetchAssoc();
-//
-//            if ($vendor && count($vendor) && $vendor['name'] && $vendor['alias']) {
-//                $childRows[$key]['elementName'] = $vendor['name'] ? html_entity_decode($vendor['name']) : '';
-//
-//                //hotfix special char
-//                $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
-//
-//                $objSettings = GutesioOperatorSettingsModel::findSettings();
-//                $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
-//                if ($elementPage !== null) {
-//                    if ($isContao5) {
-//                        $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $vendor['alias']]);
-//                    } else {
-//                        $url = $elementPage->getAbsoluteUrl();
-//                    }
-//
-//                    if ($url) {
-//                        $href = '';
-//                        if (C4GUtils::endsWith($url, '.html')) {
-//                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
-//                        } else if ($vendor['alias']) {
-//                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
-//                        }
-//                        $childRows[$key]['elementLink'] = $href ?: '';
-//                    }
-//                }
-//                $childPage = match ($row['type']) {
-//                    'product' => PageModel::findByPk($objSettings->productDetailPage),
-//                    'jobs' => PageModel::findByPk($objSettings->jobDetailPage),
-//                    'event' => PageModel::findByPk($objSettings->eventDetailPage),
-//                    'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
-//                    'service' => PageModel::findByPk($objSettings->serviceDetailPage),
-//                    'person' => PageModel::findByPk($objSettings->personDetailPage),
-//                    'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
-//                    default => null,
-//                };
-//
-//                if ($childPage !== null) {
-//                    if (C4GVersionProvider::isContaoVersionAtLeast("5.0")) {
-//                        $objRouter = System::getContainer()->get('contao.routing.content_url_generator');
-//                        $url = $objRouter->generate($childPage, ['parameters' => "/" . $row['uuid']]);
-//                    } else {
-//                        $url = $childPage->getAbsoluteUrl();
-//                    }
-//
-//                    if ($url) {
-//                        if (C4GUtils::endsWith($url, '.html')) {
-//                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
-//                        } else {
-//                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
-//                        }
-//                        if (str_ends_with($href, "/href")) {
-//                            $href = str_replace("/href", "", $href);
-//                        }
-//                        $childRows[$key]['childLink'] = $href ?: '';
-//                    }
-//                }
-//
-//
-//
-//                $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
-//            }
-//        } else {
-//            unset($childRows[$key]);
-//        }
 
         return $results;
     }

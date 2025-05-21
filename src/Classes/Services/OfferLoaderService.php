@@ -97,15 +97,6 @@ class OfferLoaderService
 
         $hasFilter = $tagFilter || $categoryFilter || $sortFilter || $dateFilter;
 
-        // todo new event stuff
-
-//
-//        $this->eventDataService->getEventData($search, $offset, $eventFilterData, $limit, $determineOrientation);
-
-        // todo end new event stuff
-
-
-
         $terms = explode(' ', $search);
         $database = Database::getInstance();
         foreach ($terms as $key => $term) {
@@ -114,9 +105,11 @@ class OfferLoaderService
         $termString = implode(',', $terms);
 
         $this->loadFromCache();
+        $offerData = [];
 
         $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
-        if ((count($types) === 1) && ($types[0] === "event")) {
+
+        if (in_array("event", $types)) {
             $eventFilterData = [
                 'tags' => $tagFilter ? $tagIds : [],
                 'categories' => $categoryFilter ? $categoryIds : [],
@@ -124,8 +117,15 @@ class OfferLoaderService
                 'sort' => $sortFilter ? $filterData['sorting'] : 'date'
             ];
 
-            $results = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
-        } else {
+            $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+            $offerData = array_merge($offerData, $eventResults);
+            $tmpOffset = $offset;
+        }
+
+        // avoid calling legacy logic if it's event data only
+        if (!(count($types) === 1 && $types[0] === "event")) {
+            // TODO dieser Teil wird langfristig durch die einzelnen Service-Aufrufe ersetzt
+            // begin legacy data loading
             if ($hasFilter) {
                 // raise limit and ignore offset temporarily
                 $limit = 5000;
@@ -156,29 +156,29 @@ class OfferLoaderService
             if ($dateFilter) {
                 $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
             }
-
-
+            // end legacy data loading
+            $offerData = array_merge($offerData, $results);
         }
 
-        $results = $this->sortOfferData($sortFilter, $filterData, $results);
+        $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
         if ($hasFilter) {
-            $results = array_slice($results, $tmpOffset, $this->limit);
+            $offerData = array_slice($offerData, $tmpOffset, $this->limit);
         }
 
         // data cleaning
-        foreach ($results as $key => $result) {
-            $results[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
-            $results[$key]['name'] = html_entity_decode($result['name']);
+        foreach ($offerData as $key => $result) {
+            $offerData[$key]['shortDescription'] = html_entity_decode($result['shortDescription']);
+            $offerData[$key]['name'] = html_entity_decode($result['name']);
 
             if ($result['foreignLink']) {
                 // search for http to avoid prepending https to insecure links
                 if (!str_contains($result['foreignLink'], 'http')) {
-                    $results[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
+                    $offerData[$key]['foreignLink'] = C4GUtils::addProtocolToLink($result['foreignLink']);
                 }
             }
         }
 
-        return $results;
+        return $offerData;
     }
 
     private function sortOfferData(string $sortFilter, array $filterData, array $offers)
@@ -343,12 +343,12 @@ class OfferLoaderService
         bool $determineOrientation = false
     ) {
         System::loadLanguageFile('gutesio_frontend');
-//        $rawTermString = implode(' ', $terms);
-//        $database = Database::getInstance();
-//        foreach ($terms as $key => $term) {
-//            $terms[$key] = "$term*";
-//        }
-//        $termString = implode(',', $terms);
+        $rawTermString = implode(' ', $terms);
+        $database = Database::getInstance();
+        foreach ($terms as $key => $term) {
+            $terms[$key] = "$term*";
+        }
+        $termString = implode(',', $terms);
         $updater = new ChildFullTextContentUpdater();
         if ($updater->isFullText() !== true) {
             $updater->addFullText();
@@ -667,8 +667,8 @@ class OfferLoaderService
                 if (count($elements)) {
                     $parameters = [];
                     $parameters = array_merge($parameters, $elements);
-                    $parameters[] = (int)$offset;
-                    $parameters[] = $limit;
+//                    $parameters[] = (int)$offset;
+//                    $parameters[] = $limit;
                     $childRows = $database->prepare('SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
                         'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 (CASE ' . '
@@ -693,7 +693,7 @@ class OfferLoaderService
                 WHERE elementId ' . C4GUtils::buildInString($elements) .' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP())
                 ORDER BY RAND(' . $this->randomSeed . ') LIMIT ' . $offset . ', ' . $limit)
                         ->execute(
-                            $parameters
+                            ...$parameters
                         )->fetchAllAssoc();
                 } else {
 //                    $parameters = [];
@@ -1420,286 +1420,7 @@ class OfferLoaderService
                     }
 
                     break;
-                case 'event':
-//                    $eventData = $database->prepare('SELECT
-//                                COALESCE(a.beginDate, b.beginDate, c.beginDate, d.beginDate) AS beginDate,
-//                                COALESCE(a.beginTime, b.beginTime, c.beginTime, d.beginTime) AS beginTime,
-//                                COALESCE(a.endDate, b.endDate, c.endDate, d.endDate) AS endDate,
-//                                COALESCE(a.endTime, b.endTime, c.endTime, d.endTime) AS endTime,
-//                                COALESCE(a.entryTime, b.entryTime, c.entryTime, d.entryTime) AS entryTime,
-//                                COALESCE(a.eventPrice, b.eventPrice, c.eventPrice, d.eventPrice) AS eventPrice,
-//                                COALESCE(a.reservationContactEMail, b.reservationContactEMail, c.reservationContactEMail, d.reservationContactEMail) AS reservationContactEMail,
-//                                COALESCE(a.reservationContactPhone, b.reservationContactPhone, c.reservationContactPhone, d.reservationContactPhone) AS reservationContactPhone,
-//                                COALESCE(a.locationElementId, b.locationElementId, c.locationElementId, d.locationElementId) AS locationElementId,
-//                                COALESCE(a.recurring, b.recurring, c.recurring, d.recurring) AS recurring,
-//                                COALESCE(a.recurrences, b.recurrences, c.recurrences, d.recurrences) AS recurrences,
-//                                COALESCE(a.repeatEach, b.repeatEach, c.repeatEach, d.repeatEach) AS repeatEach,
-//                                COALESCE(a.appointmentUponAgreement, b.appointmentUponAgreement, c.appointmentUponAgreement, d.appointmentUponAgreement) AS appointmentUponAgreement,
-//                                COALESCE(a.beginDate, b.beginDate, c.beginDate, d.beginDate, a.beginTime, b.beginTime, c.beginTime, d.beginTime) AS beginDateTime,
-//                                COALESCE(a.expertTimes, b.expertTimes, c.expertTimes, d.expertTimes) AS expertTimes
-//                            FROM tl_gutesio_data_child_event a
-//                            JOIN tl_gutesio_data_child ca ON a.childId = ca.uuid
-//                            LEFT JOIN tl_gutesio_data_child cb ON ca.parentChildId = cb.uuid
-//                            LEFT JOIN tl_gutesio_data_child_event b ON b.childId = cb.uuid
-//                            LEFT JOIN tl_gutesio_data_child cc ON cb.parentChildId = cc.uuid
-//                            LEFT JOIN tl_gutesio_data_child_event c ON c.childId = cc.uuid
-//                            LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid
-//                            LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid
-//                            WHERE a.childId = ?
-//                            ORDER BY beginDateTime ASC
-//                            LIMIT 100;
-//                            ')
-//                        ->execute($row['uuid'])->fetchAssoc();
 
-//                    if ($eventData) {
-//
-//                        $beginDateTime = new \DateTime();
-//                        $beginDateTime->setTimestamp($eventData['beginDate']);
-//                        // Add one day so events are still shown on the day they expire
-//                        $beginDateTime->setDate(
-//                            $beginDateTime->format('Y'),
-//                            $beginDateTime->format('m'),
-//                            (int)$beginDateTime->format('d') + 1
-//                        );
-//                        $endDateTime = new \DateTime();
-//                        $endDateTime->setTimestamp($eventData['endDate']);
-//
-//                        $eventData['storeBeginDate'] = $eventData['beginDate'];
-//                        $eventData['storeBeginTime'] = $eventData['beginTime'];
-//                    };
-//
-//                    //ToDo fix recurring
-//                    if ($eventData && $beginDateTime->getTimestamp() < time()) {
-//                        if ($eventData['recurring']) {
-//                            $repeatEach = StringUtil::deserialize($eventData['repeatEach']);
-//                            if ($repeatEach && is_array($repeatEach)) {
-//                                $times = key_exists('recurrences', $eventData) && is_int($eventData['recurrences']) ? intval($eventData['recurrences']) : 0;
-//                                $value = key_exists('value', $eventData) && is_int($repeatEach['value']) ? intval($repeatEach['value']) : 0;
-//
-//                                if ($times === 0) {
-//                                    $times = 100;
-//                                }
-//                                while ($times > 0) {
-//                                    $times -= 1;
-//                                    switch ($repeatEach['unit']) {
-//                                        case 'weeks':
-//                                            $beginDateTime->setDate(
-//                                                $beginDateTime->format('Y'),
-//                                                $beginDateTime->format('m'),
-//                                                ((int) $beginDateTime->format('d')) + ($value * 7)
-//                                            );
-//                                            if ($times > 0) {
-//                                                $nextDateTime = clone $beginDateTime;
-//                                                $nextDateTime->setDate(
-//                                                    $nextDateTime->format('Y'),
-//                                                    $nextDateTime->format('m'),
-//                                                    ((int) $nextDateTime->format('d')) + ($value * 7)
-//                                                );
-//                                            }
-//                                            $endDateTime = $beginDateTime;
-//                                            break;
-//                                        case 'months':
-//                                            $beginDateTime->setDate(
-//                                                $beginDateTime->format('Y'),
-//                                                ((int) $beginDateTime->format('m')) + $value,
-//                                                $beginDateTime->format('d')
-//                                            );
-//                                            if ($times > 0) {
-//                                                $nextDateTime = clone $beginDateTime;
-//                                                $nextDateTime->setDate(
-//                                                    $nextDateTime->format('Y'),
-//                                                    ((int) $nextDateTime->format('m')) + $value,
-//                                                    $nextDateTime->format('d')
-//                                                );
-//                                            }
-//                                            $endDateTime = $beginDateTime;
-//                                            break;
-//                                        case 'years':
-//                                            $beginDateTime->setDate(
-//                                                ((int) $beginDateTime->format('Y')) + $value,
-//                                                $beginDateTime->format('m'),
-//                                                $beginDateTime->format('d')
-//                                            );
-//                                            if ($times > 0) {
-//                                                $nextDateTime = clone $beginDateTime;
-//                                                $nextDateTime->setDate(
-//                                                    ((int) $nextDateTime->format('Y')) + $value,
-//                                                    $nextDateTime->format('m'),
-//                                                    $nextDateTime->format('d')
-//                                                );
-//                                            }
-//                                            $endDateTime = $beginDateTime;
-//                                            break;
-//                                        default:
-//                                            $beginDateTime->setDate(
-//                                                $beginDateTime->format('Y'),
-//                                                $beginDateTime->format('m'),
-//                                                ((int) $beginDateTime->format('d')) + $value
-//                                            );
-//                                            if ($times > 0) {
-//                                                $nextDateTime = clone $beginDateTime;
-//                                                $nextDateTime->setDate(
-//                                                    $nextDateTime->format('Y'),
-//                                                    $nextDateTime->format('m'),
-//                                                    ((int) $nextDateTime->format('d')) + $value
-//                                                );
-//                                            }
-//
-//                                            break;
-//                                    }
-//                                    if ($beginDateTime->getTimestamp() >= time()) {
-//                                        break;
-//                                    } elseif ($times === 0 && ($endDateTime > 0) && $endDateTime->getTimestamp() < time()) {
-//                                        $tooOld = true;
-//
-//                                        break;
-//                                    }
-//                                }
-//                            }
-//                        } elseif (($endDateTime > 0) && ($endDateTime->getTimestamp() < time())) {
-//                            $tooOld = true;
-//                        }
-//                    }
-//
-//                    if ($eventData) {
-//                        // remove the extra day added previously
-//                        $beginDateTime ? $beginDateTime->setDate(
-//                            $beginDateTime->format('Y'),
-//                            $beginDateTime->format('m'),
-//                            (int) $beginDateTime->format('d') - 1
-//                        ) : false;
-//
-//                        $beginDate = isset($beginDateTime) ? $beginDateTime->format('d.m.Y') : false;
-//                        $beginDateShort = isset($beginDateTime) ? $beginDateTime->format('d.m') : false;
-//                        $endDate = isset($endDateTime) ? $endDateTime->format('d.m.Y') : false;
-//                        $nextDate = isset($nextDateTime) ? $nextDateTime->format('d.m.Y') : false;
-//                        $beginTime = isset($eventData['beginTime']) ? gmdate('H:i', $eventData['beginTime']) : false;
-//                        $endTime = isset($eventData['endTime']) ? gmdate('H:i', $eventData['endTime']) : false;
-//
-//                        // TODO vermutlich für Formatierung gebraucht, sorgt aber dafür, dass der Datefilter nicht richtig funktioniert
-//                        if ($beginDate && $beginDate !== '01.01.1970') {
-//                            if ($endDate && ($endDate !== $beginDate) && $endDate !== '01.01.1970') {
-//                                if ($beginTime && $endTime && ($beginTime != '00:00')) {
-//                                    $eventData['beginDateDisplay'] = $beginDateShort.' - '.$endDate;
-//                                    $eventData['endDateDisplay'] = '';
-//                                    $eventData['beginTimeDisplay'] = $beginTime.' - '.$endTime.' Uhr';
-//                                    $eventData['endTimeDisplay'] = '';
-//                                } else if ($beginTime && ($beginTime != '00:00')) {
-//                                    $eventData['beginDateDisplay'] = $beginDateShort.' - '.$endDate;
-//                                    $eventData['endDateDisplay'] = '';
-//                                    $eventData['beginTimeDisplay'] = $beginTime.' Uhr';
-//                                    $eventData['endTimeDisplay'] = '';
-//                                } else {
-//                                    $eventData['beginDateDisplay'] = $beginDateShort.' - '.$endDate;
-//                                    $eventData['endDateDisplay'] = '';
-//                                    $eventData['beginTimeDisplay'] = '';
-//                                    $eventData['endTimeDisplay'] = '';
-//                                }
-//                            } else {
-//                                if ($beginTime && $endTime && ($beginTime != '00:00')) {
-//                                    $eventData['beginDateDisplay'] = $beginDate;
-//                                    $eventData['endDateDisplay'] = '';
-//                                    $eventData['beginTimeDisplay'] = $beginTime.' - '.$endTime.' Uhr';
-//                                    $eventData['endTimeDisplay'] = '';
-//                                } else if ($beginTime && ($beginTime != '00:00')) {
-//                                    $eventData['beginDateDisplay'] = $beginDate;
-//                                    $eventData['endDateDisplay'] = '';
-//                                    $eventData['beginTimeDisplay'] = $beginTime.' Uhr';
-//                                    $eventData['endTimeDisplay'] = '';
-//                                } else {
-//                                    $eventData['beginDateDisplay'] = $beginDate;
-//                                    $eventData['endDateDisplay'] = '';
-//                                    $eventData['beginTimeDisplay'] = '';
-//                                    $eventData['endTimeDisplay'] = '';
-//                                }
-//                            }
-//                        }
-//
-//                        $entryTime = $eventData['entryTime'] ? gmdate('H:i', $eventData['entryTime']) : false;
-//                        if ($entryTime) {
-//                            $eventData['entryTime'] = $entryTime.' Uhr';
-//                        }
-//
-//                        $eventPrice = $eventData['eventPrice'] ? number_format(
-//                                $eventData['eventPrice'],
-//                                2,
-//                                ',',
-//                                ''
-//                            ) . ' €' : false;
-//                        if ($eventPrice) {
-//                            $eventData['eventPrice'] = $eventPrice;
-//                        }
-//
-//                        if ($eventData['appointmentUponAgreement']) {
-//                            $fieldValue = $GLOBALS['TL_LANG']['offer_list']['appointmentUponAgreementContent'];
-//                            if ($eventData['beginDate']) {
-//                                $fieldValue .= ' (';
-//                                if (!$eventData['endDate']) {
-//                                    $fieldValue .= $GLOBALS['TL_LANG']['offer_list']['appointmentUponAgreement_startingAt'] . ' ';
-//                                }
-//                                $fieldValue .= $eventData['beginDate'];
-//                                if ($eventData['beginTime']) {
-//                                    $fieldValue .= ' ' . $eventData['beginTime'];
-//                                }
-//                                if ($eventData['endDate']) {
-//                                    $fieldValue .= ' - ' . $eventData['endDate'];
-//                                    if ($eventData['endTime']) {
-//                                        $fieldValue .= ' ' . $eventData['endTime'];
-//                                    }
-//                                }
-//                                $fieldValue .= ')';
-//                            }
-//                            $eventData['beginDateDisplay'] = '';
-//                            $eventData['beginTimeDisplay'] = '';
-//                            $eventData['endDateDisplay'] = '';
-//                            $eventData['endTimeDisplay'] = '';
-//                            $eventData['appointmentUponAgreement'] = $fieldValue;
-//                            $tooOld = false;
-//                        } else {
-//                            $eventData['appointmentUponAgreement'] = '';
-//                        }
-//
-//                        if ($eventData['expertTimes']) {
-//                            $expertBeginTimes = StringUtil::deserialize($eventData['expertBeginDateTimes'], true);
-//                            $expertEndTimes = StringUtil::deserialize($eventData['expertEndDateTimes'], true);
-//                            foreach ($expertBeginTimes as $timeKey => $value) {
-//                                if ($value <= time() && $expertEndTimes[$timeKey] >= time()) {
-//                                    $tooOld = false;
-//                                } else {
-//                                    $tooOld = true;
-//                                }
-//                            }
-//                        }
-//
-//                        $elementModel = $eventData['locationElementId'] ? GutesioDataElementModel::findBy('uuid', $eventData['locationElementId']) : null;
-//                        if ($elementModel !== null) {
-//                            $eventData['locationElementName'] = html_entity_decode($elementModel->name);
-//                        } else {
-//                            $elementId = key_exists('elementId', $row) ? $row['elementId'] : false;
-//                            if ($elementId) {
-//                                $elementModel = GutesioDataElementModel::findBy('uuid', $elementId);
-//                                if ($elementModel !== null) {
-//                                    $eventData['locationElementName'] = html_entity_decode($elementModel->name);
-//                                }
-//                            }
-//                        }
-//
-//                        //hotfix special char
-//                        if (key_exists("locationElementName", $eventData)) {
-//                          $eventData['locationElementName'] = str_replace('&#39;', "'", $eventData["locationElementName"]);
-//                        }
-//
-//                        if (!empty($eventData)) {
-//                            $childRows[$key] = array_merge($row, $eventData);
-//                        }
-//
-//                    }
-//                    if ($dateFilter) {
-//                        // date filter will be applied later on
-//                        $tooOld = false;
-//                    }
-
-                    break;
                 case 'job':
                     $jobData = $database->prepare('SELECT beginDate AS beginDate ' .
                         'FROM tl_gutesio_data_child_job ' .
@@ -1717,6 +1438,7 @@ class OfferLoaderService
                     }
 
                     break;
+
                 case 'person':
                     $personData = $database->prepare('SELECT dateOfBirth, dateOfDeath ' .
                         'FROM tl_gutesio_data_child_person ' .
@@ -1729,6 +1451,7 @@ class OfferLoaderService
                     }
 
                     break;
+
                 case 'voucher':
                     $voucherData = $database->prepare('SELECT minCredit, maxCredit, credit, customizableCredit ' .
                         'FROM tl_gutesio_data_child_voucher ' .
@@ -1746,6 +1469,79 @@ class OfferLoaderService
             }
 
 
+            $vendorUuid = $database->prepare(
+                'SELECT * FROM tl_gutesio_data_child_connection WHERE childId = ? LIMIT 1'
+            )->execute($row['uuid'])->fetchAssoc();
+
+            $vendor = $database->prepare(
+                'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
+            )->execute($vendorUuid['elementId'])->fetchAssoc();
+
+            if ($vendor && count($vendor) && $vendor['name'] && $vendor['alias']) {
+                $childRows[$key]['elementName'] = html_entity_decode($vendor['name']);
+
+                //hotfix special char
+                $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
+
+                $objSettings = GutesioOperatorSettingsModel::findSettings();
+                $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
+                if ($elementPage !== null) {
+                    if ($isContao5) {
+                        $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $vendor['alias']]);
+                    } else {
+                        $url = $elementPage->getAbsoluteUrl();
+                    }
+
+                    if ($url) {
+
+                        if (str_ends_with($url, $vendor['alias'])) {
+                            $href = $url;
+                        } else {
+                            $href = '';
+                            if (C4GUtils::endsWith($url, '.html')) {
+                                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                            } else if ($vendor['alias']) {
+                                $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias']));
+                            }
+                        }
+
+                        $childRows[$key]['elementLink'] = $href ?: '';
+                    }
+                }
+                $childPage = match ($row['type']) {
+                    'product' => PageModel::findByPk($objSettings->productDetailPage),
+                    'jobs' => PageModel::findByPk($objSettings->jobDetailPage),
+                    'event' => PageModel::findByPk($objSettings->eventDetailPage),
+                    'arrangement' => PageModel::findByPk($objSettings->arrangementDetailPage),
+                    'service' => PageModel::findByPk($objSettings->serviceDetailPage),
+                    'person' => PageModel::findByPk($objSettings->personDetailPage),
+                    'voucher' => PageModel::findByPk($objSettings->voucherDetailPage),
+                    default => null,
+                };
+
+                if ($childPage !== null) {
+                    if (C4GVersionProvider::isContaoVersionAtLeast("5.0")) {
+                        $objRouter = System::getContainer()->get('contao.routing.content_url_generator');
+                        $url = $objRouter->generate($childPage, ['parameters' => "/" . $row['uuid']]);
+                    } else {
+                        $url = $childPage->getAbsoluteUrl();
+                    }
+
+                    if ($url) {
+                        if (C4GUtils::endsWith($url, '.html')) {
+                            $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $vendor['alias'])) . '.html', $url);
+                        } else {
+                            $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                        }
+                        if (str_ends_with($href, "/href")) {
+                            $href = str_replace("/href", "", $href);
+                        }
+                        $childRows[$key]['childLink'] = $href ?: '';
+                    }
+                }
+
+                $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
+            }
         }
 
         return array_values($childRows);

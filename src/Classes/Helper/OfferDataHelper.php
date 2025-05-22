@@ -10,7 +10,7 @@ use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 class OfferDataHelper
 {
-    private $cdnUrl = "";
+    private $settings = null;
 
     /**
      * @var FileUtils|null
@@ -24,6 +24,29 @@ class OfferDataHelper
         $this->fileUtils = new FileUtils();
     }
 
+    public function setImageAndDetailLinks($offerData)
+    {
+        $this->getSettings();
+
+        $offerData['elementLink'] = $this->getElementLink($offerData);
+
+        $childPage = PageModel::findByPk($this->settings->eventDetailPage);
+
+        if ($childPage !== null) {
+            $cleanUuid = strtolower(str_replace(['{', '}'], '', $offerData['uuid']));
+            $offerData['href'] = $cleanUuid;
+        }
+
+        $offerData['image'] = [
+            'src' => $this->getImageLink($offerData)
+        ];
+
+        $offerData['elementName'] = html_entity_decode($offerData['vendorName']);
+        //hotfix special char
+        $offerData['elementName'] = str_replace('&#39;', "'", $offerData['elementName']);
+
+        return $offerData;
+    }
 
     public function getElementLink($offerData)
     {
@@ -60,11 +83,15 @@ class OfferDataHelper
 
     public function getImageLink($offerData)
     {
-        if ($this->cdnUrl === "") {
-            $objSettings = GutesioOperatorSettingsModel::findSettings();
-            $this->cdnUrl = $objSettings->cdnUrl;
-        }
+        $this->getSettings();
 
-        return $this->fileUtils->addUrlToPathAndGetImage($this->cdnUrl, $offerData['imageCDN']);
+        return $this->fileUtils->addUrlToPathAndGetImage($this->settings->cdnUrl, $offerData['imageCDN']);
+    }
+
+    private function getSettings()
+    {
+        if (!$this->settings) {
+            $this->settings = GutesioOperatorSettingsModel::findSettings();
+        }
     }
 }

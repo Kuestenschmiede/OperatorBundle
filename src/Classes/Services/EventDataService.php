@@ -5,16 +5,16 @@ namespace gutesio\OperatorBundle\Classes\Services;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\C4GVersionProvider;
 use Contao\Database;
-use Contao\PageModel;
 use Contao\StringUtil;
-use Contao\System;
 use gutesio\DataModelBundle\Classes\FileUtils;
-use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
+use gutesio\OperatorBundle\Classes\Helper\OfferDataHelper;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
 class EventDataService
 {
-
+    public function __construct(private OfferDataHelper $helper)
+    {
+    }
 
     public function getEventData(
         string $searchTerm,
@@ -23,9 +23,7 @@ class EventDataService
         int $limit,
         bool $determineOrientation = false
     ) {
-
         $database = Database::getInstance();
-
 
         $parameters = [];
         $termsSet = ($searchTerm !== "") && ($searchTerm !== "*");
@@ -239,7 +237,6 @@ class EventDataService
                 continue;
             }
 
-
             // remove the extra day added previously
             $beginDateTime ? $beginDateTime->setDate(
                 $beginDateTime->format('Y'),
@@ -357,52 +354,13 @@ class EventDataService
 
             if (!$tooOld || $eventData['appointmentUponAgreement']) {
                 if ($eventData['vendorName'] && $eventData['vendorAlias']) {
-                    $eventData['elementName'] = html_entity_decode($eventData['vendorName']);
 
-                    //hotfix special char
-                    $eventData['elementName'] = str_replace('&#39;', "'", $eventData['elementName']);
+                    $eventData = $this->helper->setImageAndDetailLinks($eventData);
 
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
-                    if ($elementPage !== null) {
-                        if ($isContao5) {
-                            $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $eventData['vendorAlias']]);
-                        } else {
-                            $url = $elementPage->getAbsoluteUrl();
-                        }
-
-                        if ($url) {
-                            $href = '';
-                            if (C4GUtils::endsWith($url, '.html')) {
-                                $href = str_replace('.html', '/' . strtolower(str_replace(['{', '}'], '', $eventData['vendorAlias'])) . '.html', $url);
-                            } else if (str_ends_with($url, $eventData['vendorAlias'])) {
-                                $href = $url;
-                            } else if ($eventData['vendorAlias']) {
-                                $href = $url . '/' . strtolower(str_replace(['{', '}'], '', $eventData['vendorAlias']));
-                            }
-                            $eventData['elementLink'] = $href ?: '';
-                        }
+                    if (!empty($eventData)) {
+                        $results[] = $eventData;
                     }
-                    $childPage = PageModel::findByPk($objSettings->eventDetailPage);
-
-                    if ($childPage !== null) {
-                        $cleanUuid = strtolower(str_replace(['{', '}'], '', $eventData['uuid']));
-                        $eventData['href'] = $cleanUuid;
-                    }
-
-                    // TODO caching?
-//                    $this->addAdditionalDataToCache($childRows[$key]['uuid'], $childRows[$key]);
                 }
-            }
-
-            $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$eventData['imageCDN']);
-
-            $eventData['image'] = [
-                'src' => $imagePath
-            ];
-
-            if (!empty($eventData)) {
-                $results[] = $eventData;
             }
         }
 

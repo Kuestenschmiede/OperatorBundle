@@ -4,7 +4,6 @@ namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Database;
-use Contao\PageModel;
 use gutesio\OperatorBundle\Classes\Helper\OfferDataHelper;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
@@ -91,8 +90,6 @@ class ProductDataService
 
     private function formatProductData(array $products)
     {
-        $objSettings = GutesioOperatorSettingsModel::findSettings();
-
         foreach ($products as $key => $product) {
             $product['rawPrice'] = $product['price'];
             if ($product['strikePrice'] > 0 && $product['strikePrice'] > $product['price']) {
@@ -191,22 +188,7 @@ class ProductDataService
                     break;
             }
 
-            $product['elementLink'] = $this->helper->getElementLink($product);
-
-            $childPage = PageModel::findByPk($objSettings->eventDetailPage);
-
-            if ($childPage !== null) {
-                $cleanUuid = strtolower(str_replace(['{', '}'], '', $product['uuid']));
-                $product['href'] = $cleanUuid;
-            }
-
-            $product['image'] = [
-                'src' => $this->helper->getImageLink($product)
-            ];
-
-            $product['elementName'] = html_entity_decode($product['vendorName']);
-            //hotfix special char
-            $product['elementName'] = str_replace('&#39;', "'", $product['elementName']);
+            $product = $this->helper->setImageAndDetailLinks($product);
 
             $products[$key] = $product;
         }

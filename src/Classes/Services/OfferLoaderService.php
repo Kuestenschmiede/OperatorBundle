@@ -120,7 +120,7 @@ class OfferLoaderService
         }
         $termString = implode(',', $terms);
 
-        $this->loadFromCache();
+//        $this->loadFromCache();
         $offerData = [];
 
         $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
@@ -138,7 +138,6 @@ class OfferLoaderService
 
                     $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
                     $offerData = array_merge($offerData, $eventResults);
-//                    $tmpOffset = $offset;
                     break;
 
                 case "product":

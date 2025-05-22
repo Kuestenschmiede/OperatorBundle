@@ -122,10 +122,7 @@ class EventDataService
     {
         // do something
         $results = [];
-        $isContao5 = C4GVersionProvider::isContaoVersionAtLeast('5.0.0');
-        $fileUtils = new FileUtils();
         $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $cdnUrl = $objSettings->cdnUrl;
 
         foreach ($events as $key => $eventData) {
             $tooOld = false;

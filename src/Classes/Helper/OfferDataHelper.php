@@ -38,7 +38,10 @@ class OfferDataHelper
         }
 
         $offerData['image'] = [
-            'src' => $this->getImageLink($offerData)
+            'src' => $this->getImageLink($offerData),
+            'alt' => $offerData['name'],
+            'width' => 841,
+            'height' => 594
         ];
 
         $offerData['elementName'] = html_entity_decode($offerData['vendorName']);
@@ -60,7 +63,7 @@ class OfferDataHelper
         $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
         if ($elementPage !== null) {
             if ($isContao5) {
-                $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $offerData['vendorAlias']]);
+                $url = $elementPage->getAbsoluteUrl();
             } else {
                 $url = $elementPage->getAbsoluteUrl();
             }

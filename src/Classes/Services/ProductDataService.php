@@ -23,7 +23,6 @@ class ProductDataService
     ) {
         $database = Database::getInstance();
 
-
         $parameters = [];
         $termsSet = ($searchTerm !== "") && ($searchTerm !== "*");
         $strTagFieldClause = " tl_gutesio_data_child_tag_values.`tagFieldValue` LIKE ?";

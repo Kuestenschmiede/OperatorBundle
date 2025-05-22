@@ -64,15 +64,31 @@ class OfferLoaderService
      */
     private $eventDataService = null;
 
+    private $productDataService = null;
+    private $jobDataService = null;
+    private $voucherDataService = null;
+    private $personDataService = null;
+    private $simpleOfferDataService = null;
+
     /**
      * OfferLoaderService constructor.
      */
     public function __construct(
         VisitCounterService $visitCounter,
-        EventDataService $eventDataService
+        EventDataService $eventDataService,
+        ProductDataService $productDataService,
+        JobDataService $jobDataService,
+        VoucherDataService $voucherDataService,
+        PersonDataService $personDataService,
+        SimpleOfferDataService $simpleOfferDataService
     ) {
         $this->visitCounter = $visitCounter;
         $this->eventDataService = $eventDataService;
+        $this->productDataService = $productDataService;
+        $this->jobDataService = $jobDataService;
+        $this->voucherDataService = $voucherDataService;
+        $this->personDataService = $personDataService;
+        $this->simpleOfferDataService = $simpleOfferDataService;
     }
 
     private function setup()
@@ -109,61 +125,95 @@ class OfferLoaderService
 
         $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
 
-        if (in_array("event", $types)) {
-            $eventFilterData = [
-                'tags' => $tagFilter ? $tagIds : [],
-                'categories' => $categoryFilter ? $categoryIds : [],
-                'date' => $dateFilter ? ['from' => $filterData['filterFrom'], 'until' => $filterData['filterUntil']] : [],
-                'sort' => $sortFilter ? $filterData['sorting'] : 'date'
-            ];
+        $eventFilterData = [
+            'tags' => $tagFilter ? $tagIds : [],
+            'categories' => $categoryFilter ? $categoryIds : [],
+            'date' => $dateFilter ? ['from' => $filterData['filterFrom'], 'until' => $filterData['filterUntil']] : [],
+            'sort' => $sortFilter ? $filterData['sorting'] : 'date'
+        ];
 
-            $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
-            $offerData = array_merge($offerData, $eventResults);
-            $tmpOffset = $offset;
+        foreach ($types as $type) {
+            switch ($type) {
+                case "event":
+
+                    $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $offerData = array_merge($offerData, $eventResults);
+//                    $tmpOffset = $offset;
+                    break;
+
+                case "product":
+                    $productResults = $this->productDataService->getProductData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $offerData = array_merge($offerData, $productResults);
+                    break;
+
+                case "job":
+                    $jobResults = $this->jobDataService->getJobData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $offerData = array_merge($offerData, $jobResults);
+                    break;
+
+                case "person":
+                    $personResults = $this->personDataService->getPersonData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $offerData = array_merge($offerData, $personResults);
+                    break;
+
+                case "voucher":
+                    $voucherResults = $this->voucherDataService->getVoucherData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $offerData = array_merge($offerData, $voucherResults);
+                    break;
+
+                default:
+                    $simpleOfferResults = $this->simpleOfferDataService->getOfferData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $offerData = array_merge($offerData, $simpleOfferResults);
+                    break;
+            }
         }
 
-        $eventsOnly = (count($types) === 1 && $types[0] === "event");
+//        if (in_array("event", $types)) {
+//
+//        }
+//
+//        $eventsOnly = (count($types) === 1 && $types[0] === "event");
         // avoid calling legacy logic if it's event data only
-        if (!$eventsOnly) {
-            // TODO dieser Teil wird langfristig durch die einzelnen Service-Aufrufe ersetzt
-            // begin legacy data loading
-            if ($hasFilter) {
-                // raise limit and ignore offset temporarily
-                $limit = 5000;
-                $tmpOffset = $offset;
-                $offset = 0;
-            }
-            //ToDo compare UPPER terms
-            if ($search !== '') {
-//                $terms = explode(' ', $search);
-                $results = $this->getFullTextData($terms, $offset, $type, $limit, $dateFilter, $determineOrientation);
-            } else {
-                //ToDo performance check
-                $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit, $dateFilter, $determineOrientation);
-            }
-
-            $this->writeOfferDataToCache();
-
-            if ($tagFilter) {
-                // filter using actual limit & offset
-                $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, $this->limit);
-            }
-
-            if ($categoryFilter) {
-                // filter using actual limit & offset
-                $results = $this->applyCategoryFilter($results, $categoryIds, $tmpOffset, $this->limit);
-            }
-
-            if ($dateFilter) {
-                $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
-            }
-            // end legacy data loading
-            $offerData = array_merge($offerData, $results);
-        }
+//        if (!$eventsOnly) {
+//            // TODO dieser Teil wird langfristig durch die einzelnen Service-Aufrufe ersetzt
+//            // begin legacy data loading
+//            if ($hasFilter) {
+//                // raise limit and ignore offset temporarily
+//                $limit = 5000;
+//                $tmpOffset = $offset;
+//                $offset = 0;
+//            }
+//            //ToDo compare UPPER terms
+//            if ($search !== '') {
+////                $terms = explode(' ', $search);
+//                $results = $this->getFullTextData($terms, $offset, $type, $limit, $dateFilter, $determineOrientation);
+//            } else {
+//                //ToDo performance check
+//                $results = $this->getFullTextDataWithoutTerms($offset, $type, $limit, $dateFilter, $determineOrientation);
+//            }
+//
+//            $this->writeOfferDataToCache();
+//
+//            if ($tagFilter) {
+//                // filter using actual limit & offset
+//                $results = $this->applyTagFilter($results, $tagIds, $tmpOffset, $this->limit);
+//            }
+//
+//            if ($categoryFilter) {
+//                // filter using actual limit & offset
+//                $results = $this->applyCategoryFilter($results, $categoryIds, $tmpOffset, $this->limit);
+//            }
+//
+//            if ($dateFilter) {
+//                $results = $this->applyRangeFilter($results, $filterData['filterFrom'] ?: 0, $filterData['filterUntil'] ?: 0);
+//            }
+//            // end legacy data loading
+//            $offerData = array_merge($offerData, $results);
+//        }
 
         $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
-        if ($hasFilter && !$eventsOnly) {
-            $offerData = array_slice($offerData, $tmpOffset, $this->limit);
+        if (count($offerData) > $this->limit) {
+            $offerData = array_slice($offerData, $offset, $this->limit);
         }
 
         // data cleaning
@@ -1321,103 +1371,103 @@ class OfferLoaderService
                         'FROM tl_gutesio_data_child_product p WHERE p.childId = ?'
                     )->execute($row['uuid'])->fetchAssoc();
                     if (!empty($productData)) {
-                        $productData['rawPrice'] = $productData['price'];
-                        if ($productData['strikePrice'] > 0 && $productData['strikePrice'] > $productData['price']) {
-                            $productData['strikePrice'] =
-                                number_format(
-                                    $productData['strikePrice'] ?: 0,
-                                    2,
-                                    ',',
-                                    ''
-                                ) . ' €*';
-                            if ($productData['priceStartingAt']) {
-                                $productData['strikePrice'] =
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
-                                    ' ' . $productData['strikePrice'];
-                            }
-                        } else {
-                            unset($productData['strikePrice']);
-                        }
-                        if (!empty($productData['priceReplacer'])) {
-                            $productData['price'] =
-                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options'][$productData['priceReplacer']];
-                        } elseif ((!$productData['price'])) {
-                            $productData['price'] =
-                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options']['free'];
-                        } else {
-                            $productData['price'] =
-                                number_format(
-                                    $productData['price'] ?: 0,
-                                    2,
-                                    ',',
-                                    ''
-                                ) . ' €';
-                            if ($productData['price'] > 0) {
-                                $productData['price'] .= '*';
-                            }
-                            if ($productData['priceStartingAt']) {
-                                $productData['price'] =
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
-                                    ' ' . $productData['price'];
-                            }
-                        }
-
-                        $productData['color'] = $productData['color'] ?: '';
-                        $productData['size'] = $productData['size'] ?: '';
-                        $productData['isbn'] = $productData['isbn'] ?: '';
-                        $productData['ean'] = $productData['ean'] ?: '';
-                        $productData['brand'] = $productData['brand'] ?: '';
-                        $productData['basePriceUnit'] = $productData['basePriceUnit'] ?: '';
-                        $productData['basePriceUnitPerPiece'] = $productData['basePriceUnitPerPiece'] ?: '';
-                        $productData['basePriceRequired'] = $productData['basePriceRequired'] ?: false;
-                        $productData['availableAmount'] = $productData['availableAmount'] ?: '';
-
-                        if ($productData['basePriceRequired']) {
-                            $productData['basePrice'] = $productData['rawPrice'] && $productData['size'] && $productData['basePriceUnitPerPiece'] ? $productData['rawPrice'] / $productData['size'] * $productData['basePriceUnitPerPiece'] : '';
-                            $productData['basePrice'] = number_format(
-                                    $productData['basePrice'] ?: 0,
-                                    2,
-                                    ',',
-                                    ''
-                                ) . ' €';
-                        }
-                        $productData['allergenes'] = $productData['allergenes'] ?: '';
-                        $productData['ingredients'] = $productData['ingredients'] ?: '';
-                        $productData['kJ'] = $productData['kJ'] ?: '';
-                        $productData['fat'] = $productData['fat'] ?: '';
-                        $productData['saturatedFattyAcid'] = $productData['saturatedFattyAcid'] ?: '';
-                        $productData['carbonHydrates'] = $productData['carbonHydrates'] ?: '';
-                        $productData['sugar'] = $productData['sugar'] ?: '';
-                        $productData['salt'] = $productData['salt'] ?: '';
-
-                        $settings = GutesioOperatorSettingsModel::findSettings();
-                        switch ($productData['taxNote']) {
-                            case 'regular':
-                                $productData['taxNote'] = sprintf(
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['taxInfo'],
-                                    ($settings->taxRegular ?: '19') . '%'
-                                );
-
-                                break;
-                            case 'reduced':
-                                $productData['taxNote'] = sprintf(
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['taxInfo'],
-                                    ($settings->taxReduced ?: '7') . '%'
-                                );
-
-                                break;
-                            case 'none':
-                                $productData['taxNote'] =
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['noTaxInfo'];
-
-                                break;
-                            default:
-                                $productData['taxNote'] =
-                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['list']['taxInfo'];
-
-                                break;
-                        }
-                        $childRows[$key] = array_merge($row, $productData);
+//                        $productData['rawPrice'] = $productData['price'];
+//                        if ($productData['strikePrice'] > 0 && $productData['strikePrice'] > $productData['price']) {
+//                            $productData['strikePrice'] =
+//                                number_format(
+//                                    $productData['strikePrice'] ?: 0,
+//                                    2,
+//                                    ',',
+//                                    ''
+//                                ) . ' €*';
+//                            if ($productData['priceStartingAt']) {
+//                                $productData['strikePrice'] =
+//                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
+//                                    ' ' . $productData['strikePrice'];
+//                            }
+//                        } else {
+//                            unset($productData['strikePrice']);
+//                        }
+//                        if (!empty($productData['priceReplacer'])) {
+//                            $productData['price'] =
+//                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options'][$productData['priceReplacer']];
+//                        } elseif ((!$productData['price'])) {
+//                            $productData['price'] =
+//                                $GLOBALS['TL_LANG']['offer_list']['price_replacer_options']['free'];
+//                        } else {
+//                            $productData['price'] =
+//                                number_format(
+//                                    $productData['price'] ?: 0,
+//                                    2,
+//                                    ',',
+//                                    ''
+//                                ) . ' €';
+//                            if ($productData['price'] > 0) {
+//                                $productData['price'] .= '*';
+//                            }
+//                            if ($productData['priceStartingAt']) {
+//                                $productData['price'] =
+//                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['startingAt'] .
+//                                    ' ' . $productData['price'];
+//                            }
+//                        }
+//
+//                        $productData['color'] = $productData['color'] ?: '';
+//                        $productData['size'] = $productData['size'] ?: '';
+//                        $productData['isbn'] = $productData['isbn'] ?: '';
+//                        $productData['ean'] = $productData['ean'] ?: '';
+//                        $productData['brand'] = $productData['brand'] ?: '';
+//                        $productData['basePriceUnit'] = $productData['basePriceUnit'] ?: '';
+//                        $productData['basePriceUnitPerPiece'] = $productData['basePriceUnitPerPiece'] ?: '';
+//                        $productData['basePriceRequired'] = $productData['basePriceRequired'] ?: false;
+//                        $productData['availableAmount'] = $productData['availableAmount'] ?: '';
+//
+//                        if ($productData['basePriceRequired']) {
+//                            $productData['basePrice'] = $productData['rawPrice'] && $productData['size'] && $productData['basePriceUnitPerPiece'] ? $productData['rawPrice'] / $productData['size'] * $productData['basePriceUnitPerPiece'] : '';
+//                            $productData['basePrice'] = number_format(
+//                                    $productData['basePrice'] ?: 0,
+//                                    2,
+//                                    ',',
+//                                    ''
+//                                ) . ' €';
+//                        }
+//                        $productData['allergenes'] = $productData['allergenes'] ?: '';
+//                        $productData['ingredients'] = $productData['ingredients'] ?: '';
+//                        $productData['kJ'] = $productData['kJ'] ?: '';
+//                        $productData['fat'] = $productData['fat'] ?: '';
+//                        $productData['saturatedFattyAcid'] = $productData['saturatedFattyAcid'] ?: '';
+//                        $productData['carbonHydrates'] = $productData['carbonHydrates'] ?: '';
+//                        $productData['sugar'] = $productData['sugar'] ?: '';
+//                        $productData['salt'] = $productData['salt'] ?: '';
+//
+//                        $settings = GutesioOperatorSettingsModel::findSettings();
+//                        switch ($productData['taxNote']) {
+//                            case 'regular':
+//                                $productData['taxNote'] = sprintf(
+//                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['taxInfo'],
+//                                    ($settings->taxRegular ?: '19') . '%'
+//                                );
+//
+//                                break;
+//                            case 'reduced':
+//                                $productData['taxNote'] = sprintf(
+//                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['taxInfo'],
+//                                    ($settings->taxReduced ?: '7') . '%'
+//                                );
+//
+//                                break;
+//                            case 'none':
+//                                $productData['taxNote'] =
+//                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['details']['noTaxInfo'];
+//
+//                                break;
+//                            default:
+//                                $productData['taxNote'] =
+//                                    $GLOBALS['TL_LANG']['offer_list']['frontend']['list']['taxInfo'];
+//
+//                                break;
+//                        }
+//                        $childRows[$key] = array_merge($row, $productData);
                     }
 
                     break;

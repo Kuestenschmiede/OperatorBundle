@@ -103,6 +103,13 @@ services:
       public: true
 
     gutesio\OperatorBundle\Classes\Services\EventDataService: ~
+    gutesio\OperatorBundle\Classes\Services\ProductDataService: ~
+    gutesio\OperatorBundle\Classes\Services\JobDataService: ~
+    gutesio\OperatorBundle\Classes\Services\VoucherDataService: ~
+    gutesio\OperatorBundle\Classes\Services\PersonDataService: ~
+    gutesio\OperatorBundle\Classes\Services\SimpleOfferDataService: ~
+    gutesio\OperatorBundle\Classes\Helper\OfferDataHelper: ~
+
     gutesio\OperatorBundle\Classes\Maintenance\ChildFullTextUpdater: ~
 
     gutesio\OperatorBundle\Classes\Services\VisitCounterService:

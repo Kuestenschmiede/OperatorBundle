@@ -122,8 +122,9 @@ class OfferLoaderService
             $tmpOffset = $offset;
         }
 
+        $eventsOnly = (count($types) === 1 && $types[0] === "event");
         // avoid calling legacy logic if it's event data only
-        if (!(count($types) === 1 && $types[0] === "event")) {
+        if (!$eventsOnly) {
             // TODO dieser Teil wird langfristig durch die einzelnen Service-Aufrufe ersetzt
             // begin legacy data loading
             if ($hasFilter) {
@@ -161,7 +162,7 @@ class OfferLoaderService
         }
 
         $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
-        if ($hasFilter) {
+        if ($hasFilter && !$eventsOnly) {
             $offerData = array_slice($offerData, $tmpOffset, $this->limit);
         }
 

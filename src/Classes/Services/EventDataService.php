@@ -8,6 +8,7 @@ use Contao\Database;
 use Contao\PageModel;
 use Contao\StringUtil;
 use Contao\System;
+use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 
@@ -124,6 +125,9 @@ class EventDataService
         // do something
         $results = [];
         $isContao5 = C4GVersionProvider::isContaoVersionAtLeast('5.0.0');
+        $fileUtils = new FileUtils();
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        $cdnUrl = $objSettings->cdnUrl;
 
         foreach ($events as $key => $eventData) {
             $tooOld = false;
@@ -391,8 +395,10 @@ class EventDataService
                 }
             }
 
+            $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$eventData['imageCDN']);
+
             $eventData['image'] = [
-                'src' => $eventData['imageCDN']
+                'src' => $imagePath
             ];
 
             if (!empty($eventData)) {

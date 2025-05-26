@@ -19,7 +19,7 @@ class ProductDataService
         int $offset,
         array $filterData,
         int $limit,
-        bool $determineOrientation = false
+        array $tags
     ) {
         $database = Database::getInstance();
 
@@ -82,12 +82,14 @@ class ProductDataService
 
         $productData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 
-        $formattedData = $this->formatProductData($productData);
+        $offerTagRelations = $this->helper->loadOfferTagRelations($productData);
+
+        $formattedData = $this->formatProductData($productData, $tags, $offerTagRelations);
 
         return $formattedData;
     }
 
-    private function formatProductData(array $products)
+    private function formatProductData(array $products, $tags, $offerTagRelations)
     {
         foreach ($products as $key => $product) {
             $product['rawPrice'] = $product['price'];
@@ -188,6 +190,7 @@ class ProductDataService
             }
 
             $product = $this->helper->setImageAndDetailLinks($product);
+            $product['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$product['uuid']]);
 
             $products[$key] = $product;
         }

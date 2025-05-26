@@ -124,36 +124,38 @@ class OfferLoaderService
             'sort' => $sortFilter ? $filterData['sorting'] : 'date'
         ];
 
+        $tagData = $this->loadTags();
+
         foreach ($types as $type) {
             switch ($type) {
                 case "event":
 
-                    $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $eventResults);
                     break;
 
                 case "product":
-                    $productResults = $this->productDataService->getProductData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $productResults = $this->productDataService->getProductData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $productResults);
                     break;
 
                 case "job":
-                    $jobResults = $this->jobDataService->getJobData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $jobResults = $this->jobDataService->getJobData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $jobResults);
                     break;
 
                 case "person":
-                    $personResults = $this->personDataService->getPersonData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $personResults = $this->personDataService->getPersonData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $personResults);
                     break;
 
                 case "voucher":
-                    $voucherResults = $this->voucherDataService->getVoucherData($termString, $offset, $eventFilterData, $limit, $determineOrientation);
+                    $voucherResults = $this->voucherDataService->getVoucherData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $voucherResults);
                     break;
 
                 default:
-                    $simpleOfferResults = $this->simpleOfferDataService->getOfferData($termString, $offset, $eventFilterData, $limit, $type, $determineOrientation);
+                    $simpleOfferResults = $this->simpleOfferDataService->getOfferData($termString, $offset, $eventFilterData, $limit, $type, $tagData);
                     $offerData = array_merge($offerData, $simpleOfferResults);
                     break;
             }
@@ -178,6 +180,18 @@ class OfferLoaderService
         }
 
         return $offerData;
+    }
+
+    private function loadTags()
+    {
+        $sql = "SELECT * FROM tl_gutesio_data_tag";
+        $tags = Database::getInstance()->execute($sql)->fetchAllAssoc();
+        $tagMap = [];
+        foreach ($tags as $tag) {
+            $tagMap[$tag['uuid']] = $tag;
+        }
+
+        return $tagMap;
     }
 
     private function sortOfferData(string $sortFilter, array $filterData, array $offers)

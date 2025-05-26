@@ -17,7 +17,7 @@ class PersonDataService
         int $offset,
         array $filterData,
         int $limit,
-        bool $determineOrientation = false
+        array $tags
     ) {
         $database = Database::getInstance();
         $parameters = [];
@@ -76,15 +76,19 @@ class PersonDataService
 
         $personData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 
-        $formattedData = $this->formatPersonData($personData);
+        $offerTagRelations = $this->helper->loadOfferTagRelations($personData);
+
+        $formattedData = $this->formatPersonData($personData, $tags, $offerTagRelations);
 
         return $formattedData;
     }
 
-    private function formatPersonData($persons)
+    private function formatPersonData($persons, $tags, $offerTagRelations)
     {
         foreach ($persons as $key => $person) {
             $person = $this->helper->setImageAndDetailLinks($person);
+
+            $person['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$person['uuid']]);
 
             $persons[$key] = $person;
         }

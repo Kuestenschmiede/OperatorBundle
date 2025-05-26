@@ -22,7 +22,7 @@ class SimpleOfferDataService
         array $filterData,
         int $limit,
         string $type,
-        bool $determineOrientation = false
+        array $tags
     ) {
 
         $database = Database::getInstance();
@@ -93,17 +93,21 @@ class SimpleOfferDataService
 
         $offerData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 
-        $formattedData = $this->formatOfferData($offerData);
+        $offerTagRelations = $this->helper->loadOfferTagRelations($offerData);
+
+        $formattedData = $this->formatOfferData($offerData, $tags, $offerTagRelations);
 
         return $formattedData;
 
         return [];
     }
 
-    private function formatOfferData($offers)
+    private function formatOfferData($offers, $tags, $offerTagRelations)
     {
         foreach ($offers as $key => $offer) {
             $offer = $this->helper->setImageAndDetailLinks($offer);
+
+            $offer['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$offer['uuid']]);
 
             $offers[$key] = $offer;
         }

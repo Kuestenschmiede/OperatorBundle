@@ -99,15 +99,15 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
             $elementIds = $db->prepare($sql)->execute()->fetchEach('uuid');
         }
 
-        if (count($typeIds) > 0) {
+        if (is_array($typeIds) && count($typeIds) > 0) {
             $sql = "SELECT elementId FROM tl_gutesio_data_element_type WHERE `typeId` " . C4GUtils::buildInString($typeIds);
             $elementIds = $db->prepare($sql)->execute(...$typeIds)->fetchEach('elementId');
-        } else if (count($tagIds) > 0) {
+        } else if (is_array($tagIds) && count($tagIds) > 0) {
             $sql = "SELECT elementId FROM tl_gutesio_data_tag_element WHERE `tagId` " . C4GUtils::buildInString($tagIds);
             $elementIds = $db->prepare($sql)->execute(...$typeIds)->fetchEach('elementId');
         }
 
-        if (count($elementIds) > 0) {
+        if (is_array($elementIds) && count($elementIds) > 0) {
             $sql = "SELECT name, uuid, alias, geox, geoy, imageCDN, opening_hours  FROM tl_gutesio_data_element WHERE `uuid` " . C4GUtils::buildInString($elementIds);
             if (!$distanceFiltering) {
                 $sql .= " ORDER BY RAND() LIMIT " . intval($limit);

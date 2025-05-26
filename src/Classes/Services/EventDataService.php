@@ -29,7 +29,7 @@ class EventDataService
         $termsSet = ($searchTerm !== "") && ($searchTerm !== "*");
         $strTagFieldClause = " tl_gutesio_data_child_tag_values.`tagFieldValue` LIKE ?";
         $sqlExtendedCategoryTerms = " OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?";
-        
+
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
             'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
                 COALESCE(a.shortDescription) AS shortDescription, ' . '
@@ -93,7 +93,9 @@ class EventDataService
         }
 
         if ($filterData['date']) {
-            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?))";
+            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+            $parameters[] = $filterData['date']['from'];
+            $parameters[] = $filterData['date']['until'];
             $parameters[] = $filterData['date']['from'];
             $parameters[] = $filterData['date']['until'];
         } else {

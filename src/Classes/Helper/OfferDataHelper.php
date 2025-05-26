@@ -22,11 +22,18 @@ class OfferDataHelper
      */
     public function __construct()
     {
-        $this->fileUtils = new FileUtils();
+    }
+
+    public function initUtils()
+    {
+        if ($this->fileUtils === null) {
+            $this->fileUtils = new FileUtils();
+        }
     }
 
     public function setImageAndDetailLinks($offerData)
     {
+        $this->initUtils();
         $this->getSettings();
 
         $offerData['elementLink'] = $this->getElementLink($offerData);
@@ -54,6 +61,7 @@ class OfferDataHelper
 
     public function getElementLink($offerData)
     {
+        $this->initUtils();
         $isContao5 = C4GVersionProvider::isContaoVersionAtLeast('5.0.0');
         $offerData['elementName'] = html_entity_decode($offerData['vendorName']);
 
@@ -87,6 +95,7 @@ class OfferDataHelper
 
     public function getImageLink($offerData)
     {
+        $this->initUtils();
         $this->getSettings();
 
         return $this->fileUtils->addUrlToPathAndGetImage($this->settings->cdnUrl, $offerData['imageCDN']);
@@ -94,6 +103,7 @@ class OfferDataHelper
 
     public function loadOfferTagRelations($offerData)
     {
+        $this->initUtils();
         $offerUuids = [];
 
         foreach ($offerData as $offer) {
@@ -119,6 +129,7 @@ class OfferDataHelper
 
     public function generateTagLinks($tagData, $offerTagRelations)
     {
+        $this->initUtils();
         $tagLinks = [];
         $usedTags = [];
 

@@ -497,7 +497,7 @@ class LoadLayersListener
             }
         }
 
-        return $tags;
+        return $tagUuids;
     }
 
     private function buildBaseElement(

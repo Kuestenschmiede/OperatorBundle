@@ -17,7 +17,7 @@ class VoucherDataService
         int $offset,
         array $filterData,
         int $limit,
-        bool $determineOrientation = false
+        array $tags
     ) {
         $database = Database::getInstance();
         $parameters = [];
@@ -76,15 +76,19 @@ class VoucherDataService
 
         $voucherData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 
-        $formattedData = $this->formatVoucherData($voucherData);
+        $offerTagRelations = $this->helper->loadOfferTagRelations($voucherData);
+
+        $formattedData = $this->formatVoucherData($voucherData, $tags, $offerTagRelations);
 
         return $formattedData;
     }
 
-    private function formatVoucherData($vouchers)
+    private function formatVoucherData($vouchers, $tags, $offerTagRelations)
     {
         foreach ($vouchers as $key => $voucher) {
             $voucher = $this->helper->setImageAndDetailLinks($voucher);
+
+            $voucher['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$voucher['uuid']]);
 
             $vouchers[$key] = $voucher;
         }

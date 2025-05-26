@@ -4,6 +4,7 @@ namespace gutesio\OperatorBundle\Classes\Helper;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
 use con4gis\CoreBundle\Classes\C4GVersionProvider;
+use Contao\Database;
 use Contao\PageModel;
 use gutesio\DataModelBundle\Classes\FileUtils;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
@@ -89,6 +90,60 @@ class OfferDataHelper
         $this->getSettings();
 
         return $this->fileUtils->addUrlToPathAndGetImage($this->settings->cdnUrl, $offerData['imageCDN']);
+    }
+
+    public function loadOfferTagRelations($offerData)
+    {
+        $offerUuids = [];
+
+        foreach ($offerData as $offer) {
+            $offerUuids[] = $offer['uuid'];
+        }
+
+        $sql = "SELECT rel.tagId as tagId, rel.childId as childId, val.tagFieldKey as tagFieldKey, val.tagFieldValue as tagFieldValue FROM tl_gutesio_data_child_tag rel JOIN tl_gutesio_data_child_tag_values val ON val.childId = rel.childId WHERE rel.`childId` " . C4GUtils::buildInString($offerUuids);
+        $offerTagRelations = Database::getInstance()->prepare($sql)->execute(...$offerUuids)->fetchAllAssoc();
+        $sortedOfferTagRelations = [];
+
+        foreach ($offerTagRelations as $offerTagRelation) {
+
+            if (!key_exists($offerTagRelation['childId'], $sortedOfferTagRelations)
+                || !is_array($sortedOfferTagRelations[$offerTagRelation['childId']])
+            ) {
+                $sortedOfferTagRelations[$offerTagRelation['childId']] = [];
+            }
+            $sortedOfferTagRelations[$offerTagRelation['childId']][] = $offerTagRelation;
+        }
+
+        return $sortedOfferTagRelations;
+    }
+
+    public function generateTagLinks($tagData, $offerTagRelations)
+    {
+        $tagLinks = [];
+        $usedTags = [];
+
+        foreach ($offerTagRelations as $relation) {
+            $currentTag = $tagData[$relation['tagId']];
+
+            if (array_key_exists($relation['tagId'], $usedTags)) {
+                continue;
+            }
+
+            $tagLinks[] = [
+                'name' => $currentTag['name'],
+                'image' => [
+                    'src' => $currentTag['imageCDN'] ? $this->getImageLink($currentTag) : "",
+                    'alt' => $currentTag['name'],
+                    'width' => 841,
+                    'height' => 594
+                ],
+                'linkHref' => $relation['tagFieldValue'],
+                'class' => $relation['tagFieldKey']
+            ];
+            $usedTags[$relation['tagId']] = true;
+        }
+
+        return $tagLinks;
     }
 
     private function getSettings()

@@ -17,7 +17,7 @@ class JobDataService
         int $offset,
         array $filterData,
         int $limit,
-        bool $determineOrientation = false
+        array $tags
     ) {
         $database = Database::getInstance();
         $parameters = [];
@@ -76,12 +76,14 @@ class JobDataService
 
         $jobData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 
-        $formattedData = $this->formatJobData($jobData);
+        $offerTagRelations = $this->helper->loadOfferTagRelations($jobData);
+
+        $formattedData = $this->formatJobData($jobData, $tags, $offerTagRelations);
 
         return $formattedData;
     }
 
-    private function formatJobData($jobs)
+    private function formatJobData($jobs, $tags, $offerTagRelations)
     {
         foreach ($jobs as $key => $job) {
 
@@ -92,6 +94,8 @@ class JobDataService
             } else {
                 $job['beginDate'] = date('d.m.Y', $job['beginDate']);
             }
+
+            $job['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$job['uuid']]);
 
             $jobs[$key] = $job;
         }

@@ -588,8 +588,9 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId OR e.uuid = v.locationElementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.uuid = ?'
+                . ' AND ((v.beginDate IS NULL AND tl_gutesio_data_child_type.type != "event") OR (v.beginDate >= ?)) '
                 . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC' . ($maxCount > 0 ? ' LIMIT ' . $maxCount : '')
-            )->execute($elementUuid)->fetchAllAssoc();
+            )->execute($elementUuid, time())->fetchAllAssoc();
         } else {
             $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
             a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '

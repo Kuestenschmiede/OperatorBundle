@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,gutesio_without_contact,gutesio_child_data_mode,limit_detail_offers;{cart_legend},cart_page,customTpl;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,limit_detail_offers,gutesio_without_contact,gutesio_child_data_mode;{cart_legend},cart_page,customTpl;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['cart_module'] =

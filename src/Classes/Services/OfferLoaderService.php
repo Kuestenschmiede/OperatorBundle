@@ -371,7 +371,7 @@ class OfferLoaderService
             JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
             WHERE e.uuid = ? AND a.uuid NOT LIKE ?'
-            . ' AND ((v.beginDate IS NULL AND tl_gutesio_data_child_type.type != "event") OR ((v.beginDate >= ?) OR (v.endDate NOT NULL AND v.endDate >= ?))) '
+            . ' AND ((v.beginDate IS NULL AND tl_gutesio_data_child_type.type != "event") OR ((v.beginDate >= ?) OR (v.endDate IS NOT NULL AND v.endDate >= ?))) '
             . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC, RAND()' . (($limit > 0) ? ' LIMIT ' .$limit : "")
         )->execute($showcaseId, $excludedOffer, time(), time())->fetchAllAssoc();
 

@@ -12596,22 +12596,12 @@ html {
   padding-right: 5px;
   color: var(--color-brand)
 }
-.c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate,
-.c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate {
-  padding: 2px 8px;
-  border-radius: 3px
-}
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate:before,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate:before {
   content: "\f783";
   font-weight: 900;
   font-family: "Font Awesome 5 Free";
   padding-right: 5px
-}
-.c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime,
-.c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime {
-  padding: 2px 8px;
-  border-radius: 3px
 }
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime:before,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime:before {

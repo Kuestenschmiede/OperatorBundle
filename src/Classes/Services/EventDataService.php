@@ -105,7 +105,7 @@ class EventDataService
             $todayTstamp = $today->getTimestamp();
             $tomorrow = $today->modify("+1 day");
             $tomorrowStamp = $tomorrow->getTimestamp();
-            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR (e.beginDate <= ? AND e.endDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1 OR e.expertTimes = 1)";
+            $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR (e.beginDate <= ? AND e.endDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1)";
             $parameters[] = $todayTstamp;
             $parameters[] = $todayTstamp;
             $parameters[] = $tomorrowStamp;

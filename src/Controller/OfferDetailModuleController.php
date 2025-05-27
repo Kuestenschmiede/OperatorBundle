@@ -178,7 +178,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                         $components['elements'][1],
                         $components['elements'][2]
                     );
-                    $otherChildData = $this->getChildTileData($data, $request);
+                    $otherChildData = $this->getChildTileData($data, $request, $model->limit_detail_offers);
                     $childList = [];
                     //remove duplicated offers
                     foreach ($otherChildData as $key=>$resultData) {
@@ -967,53 +967,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         ];
     }
     
-    private function getChildTileData($childData, $request)
+    private function getChildTileData($childData, $request, $limit)
     {
-        $database = Database::getInstance();
-        $objSettings = GutesioOperatorSettingsModel::findSettings();
-        $cdnUrl = $objSettings->cdnUrl;
-        $fileUtils = new FileUtils();
-        $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.imageCDN, a.foreignLink, a.directLink, ' . '
-            (CASE ' . '
-                WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
-                WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
-                WHEN c.shortDescription IS NOT NULL THEN c.shortDescription ' . '
-                WHEN d.shortDescription IS NOT NULL THEN d.shortDescription ' . '
-            ELSE NULL END) AS shortDescription, ' . '
-            tl_gutesio_data_child_type.type as type, tl_gutesio_data_child_type.name as typeName '.
-            'FROM tl_gutesio_data_child a ' . '
-            LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
-            LEFT JOIN tl_gutesio_data_child d ON c.parentChildId = d.uuid ' . '
-            JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
-            LEFT JOIN tl_gutesio_data_child_event v ON a.uuid = v.childId ' . '
-            JOIN tl_gutesio_data_element e ON e.uuid = tl_gutesio_data_child_connection.elementId ' . '
-            JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-            WHERE e.uuid = ?'
-            . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC, RAND()'
-        )->execute($childData['elementId'])->fetchAllAssoc();
-        
-        foreach ($childRows as $key => $row) {
-            if ($row['uuid'] === $childData['uuid']) {
-                unset($childRows[$key]);
-                continue;
-            }
-            //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
-            $imageFile = $row['imageCDN'];
-            if ($imageFile) {
-                $childRows[$key]['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600),
-                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
-                ];
-                $row['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600),
-                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
-                ];
-            }
-//            unset($childRows[$key]['imageOffer']);
-//            unset($row['imageOffer']);
-            
+        $childRows = $this->offerService->loadOffersForShowcase($childData['elementId'], $childData['uuid'], $limit);
+
+        foreach ($childRows as $row) {
             $clientUuid = $this->checkCookieForClientUuid($request);
             if ($clientUuid !== null) {
                 $db = Database::getInstance();
@@ -1025,126 +983,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                     $row['not_on_wishlist'] = "1";
                 }
             }
-
-            if (!key_exists('tagLinks', $row)) {
-                $row['tagLinks'] = [];
-            }
-            
-            $row['tagLinks'] = key_exists('tagLinks',$childRows[$key]) ? $childRows[$key]['tagLinks'] : $row['tagLinks'];
-            $tagLinks = [];
-
-            //remove duplicated content
-            foreach ($row['tagLinks'] as $key=>$addedIcons) {
-                $tagLinks[$addedIcons['name']] = $addedIcons;
-            }
-
-            $row['tagLinks'] = $tagLinks;
-            
-            $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
-                'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
-                'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
-                ->execute($row['uuid'])->fetchAllAssoc();
-            foreach ($result as $r) {
-                //$model = FilesModel::findByUuid($r['image']);
-                $file = $fileUtils->addUrlToPath($cdnUrl,$r['imageCDN']);
-                foreach ($row['tagLinks'] as $addedIcons) {
-                    if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
-                        continue(2);
-                    }
-                }
-
-                if ($file) {
-                    $icon = [
-                        'name' => $r['name'],
-                        'image' => [
-                            'src' => $file,
-                            'alt' => $r['name']
-                        ]
-                    ];
-                    switch ($r['technicalKey']) {
-                        case 'tag_delivery':
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                            $icon['linkHref'] = $stmt->execute(
-                                $row['uuid'],
-                                'deliveryServiceLink'
-                            )->fetchAssoc()['tagFieldValue'];
-                            $icon['linkLabel'] = 'Lieferservice';
-                            break;
-                        case 'tag_online_reservation':
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                            $icon['linkHref'] = $stmt->execute(
-                                $row['uuid'],
-                                'onlineReservationLink'
-                            )->fetchAssoc()['tagFieldValue'];
-                            $icon['linkLabel'] = 'Onlinereservierung';
-                            break;
-                        case 'tag_clicknmeet':
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                            $icon['linkHref'] = $stmt->execute(
-                                $row['uuid'],
-                                'clicknmeetLink'
-                            )->fetchAssoc()['tagFieldValue'];
-                            $icon['linkLabel'] = 'Click & Meet';
-                            break;
-                        case 'tag_table_reservation':
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                            $icon['linkHref'] = $stmt->execute(
-                                $row['uuid'],
-                                'tableReservationLink'
-                            )->fetchAssoc()['tagFieldValue'];
-                            $icon['linkLabel'] = 'Tischreservierung';
-                            break;
-                        case 'tag_onlineshop':
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                            $icon['linkHref'] = $stmt->execute(
-                                $row['uuid'],
-                                'onlineShopLink'
-                            )->fetchAssoc()['tagFieldValue'];
-                            $icon['linkLabel'] = 'Onlineshop';
-                            break;
-                        case 'tag_donation':
-                            $stmt = $database->prepare(
-                                'SELECT tagFieldValue FROM tl_gutesio_data_child_tag_values ' .
-                                'WHERE childId = ? AND tagFieldKey = ? ORDER BY id ASC');
-                            $icon['linkHref'] = $stmt->execute(
-                                $row['uuid'],
-                                'donationLink'
-                            )->fetchAssoc()['tagFieldValue'];
-                            $icon['linkLabel'] = 'Spendenlink';
-                            break;
-                        default:
-                            break;
-                    }
-                    
-                    $icon['linkHref'] = C4GUtils::addProtocolToLink($icon['linkHref']);
-                    if (!$row['tagLinks']) {
-                        $row['tagLinks'] = [];
-                    }
-
-                    $row['tagLinks'][] = $icon;
-                }
-
-                array_unique($row['tagLinks']);
-            }
-            
-            $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
-            if ($row['foreignLink']) {
-                $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
-            }
-            $childRows[$key] = $row;
         }
-        
-        $childRows = $this->offerService->getAdditionalData($childRows);
         
         return $childRows;
     }

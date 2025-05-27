@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
-    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,gutesio_without_contact,gutesio_child_data_mode;{cart_legend},cart_page,customTpl;'
+    '{generic_legend},gutesio_data_render_searchHtml,gutesio_offer_list_page,gutesio_without_tiles,gutesio_without_contact,gutesio_child_data_mode,limit_detail_offers;{cart_legend},cart_page,customTpl;'
 ;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['cart_module'] =
@@ -575,4 +575,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_show_detail_link'] = [
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr'],
     'sql'                     => "int NOT NULL default 1"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['limit_detail_offers'] = [
+    'exclude'                 => true,
+    'inputType'               => 'text',
+    'default'                 => 0,
+    'eval'                    => ['rgxp'=>'digit', 'tl_class'=>'clr'],
+    'sql'                     => "int(10) unsigned NOT NULL default 0"
 ];

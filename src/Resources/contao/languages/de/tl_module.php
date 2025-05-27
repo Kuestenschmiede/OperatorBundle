@@ -122,3 +122,4 @@ $GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Banner automatisch aktualis
 $GLOBALS['TL_LANG']['tl_module']['loadMonth'] = ['Inhalte der nächsten X Monate','Wie viele Monate sollen die Veranstaltungen im Voraus angezeigt werden (Standard: 6)?'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_check_position'] = ['Positionsermittlung aktivieren', 'Über diese Checkbox kann die Positionsermittlung für die Liste geschaltet werden. Wenn nicht aktiv, werden statt den nächsten Schaufenstern zufällige Schaufenster geladen.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_show_detail_link'] = ['Detail-Link anzeigen', 'Über diese Checkbox kann der Link auf die Detailseite ein- und ausgeblendet werden.'];
+$GLOBALS['TL_LANG']['tl_module']['limit_detail_offers'] = ['Angebotsanzahl begrenzen', 'Hier kann die Anzahl der in den Details angezeigten weiteren Angebote des Anbieters begrenzt werden.'];

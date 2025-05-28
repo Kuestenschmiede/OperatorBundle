@@ -77,8 +77,19 @@ class ProductDataService
             $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
             $parameters = array_merge($parameters, $filterData['categories']);
         }
-
-        $sql .= sprintf(" ORDER BY name ASC LIMIT %s, %s", $offset, $limit);
+        if ($filterData['sort']) {
+            if ($filterData['sort'] === "price_asc") {
+                $sql .= sprintf(" ORDER BY price ASC LIMIT %s, %s", $offset, $limit);
+            } else if ($filterData['sort'] === "price_desc") {
+                $sql .= sprintf(" ORDER BY price DESC LIMIT %s, %s", $offset, $limit);
+            } else if ($filterData['sort'] === "name_asc") {
+                $sql .= sprintf(" ORDER BY name ASC LIMIT %s, %s", $offset, $limit);
+            } else if ($filterData['sort'] === "name_desc") {
+                $sql .= sprintf(" ORDER BY name DESC LIMIT %s, %s", $offset, $limit);
+            }
+        } else {
+            $sql .= sprintf(" ORDER BY name ASC LIMIT %s, %s", $offset, $limit);
+        }
 
         $productData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 

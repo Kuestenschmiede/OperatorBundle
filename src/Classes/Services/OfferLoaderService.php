@@ -130,7 +130,7 @@ class OfferLoaderService
             switch ($type) {
                 case "event":
 
-                    $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $tagData);
+                    $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $tagData, $this->model->gutesio_hide_events_without_date);
                     $offerData = array_merge($offerData, $eventResults);
                     break;
 
@@ -161,7 +161,7 @@ class OfferLoaderService
             }
         }
 
-        $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
+//        $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
         if (count($offerData) > $this->limit) {
             $offerData = array_slice($offerData, $offset, $this->limit);
         }

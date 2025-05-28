@@ -52,7 +52,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_detail_module'] =
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_layoutType,gutesio_child_showcase_link,gutesio_data_render_searchHtml;'.
-    '{load_legend},gutesio_child_data_mode,gutesio_data_elements,gutesio_data_limit,gutesio_data_max_data,gutesio_child_sort_by_date;'.
+    '{load_legend},gutesio_child_data_mode,gutesio_data_elements,gutesio_data_limit,gutesio_data_max_data,gutesio_child_sort_by_date,gutesio_hide_events_without_date;'.
     '{cart_legend},cart_page;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_enable_ext_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
@@ -583,4 +583,12 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['limit_detail_offers'] = [
     'default'                 => 0,
     'eval'                    => ['rgxp'=>'digit', 'tl_class'=>'clr'],
     'sql'                     => "int(10) unsigned NOT NULL default 0"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_hide_events_without_date'] = [
+    'exclude'                 => true,
+    'default'                 => 0,
+    'inputType'               => 'checkbox',
+    'eval'                    => ['tl_class'=>'clr'],
+    'sql'                     => "int NOT NULL default 0"
 ];

@@ -21,7 +21,8 @@ class EventDataService
         int $offset,
         array $filterData,
         int $limit,
-        array $tags
+        array $tags,
+        bool $hideEventsWithoutDate
     ) {
         $database = Database::getInstance();
 
@@ -93,11 +94,23 @@ class EventDataService
         }
 
         if ($filterData['date']) {
-            $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+            if ($filterData['date']['from'] < time()) {
+                $today = new \DateTime();
+                $today->setTime(0, 0);
+                $todayTstamp = $today->getTimestamp();
+                $filterData['date']['from'] = $todayTstamp;
+            }
+            if ($hideEventsWithoutDate) {
+                $sql .= " AND ((e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+            } else {
+                $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+            }
+
             $parameters[] = $filterData['date']['from'];
             $parameters[] = $filterData['date']['until'];
             $parameters[] = $filterData['date']['from'];
             $parameters[] = $filterData['date']['until'];
+            $sortDay = $filterData['date']['from'];
         } else {
             // use today midnight as parameter to get all events from today
             $today = new \DateTime();
@@ -105,10 +118,16 @@ class EventDataService
             $todayTstamp = $today->getTimestamp();
             $tomorrow = $today->modify("+1 day");
             $tomorrowStamp = $tomorrow->getTimestamp();
-            $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR (e.beginDate <= ? AND e.endDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1)";
+            if ($hideEventsWithoutDate) {
+                $sql .= " AND e.expertTimes = 0 AND ((e.beginDate >= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+            } else {
+                $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ?) OR (e.beginDate <= ? AND e.endDate >= ?) OR e.recurring = 1 OR e.appointmentUponAgreement = 1)";
+            }
+
             $parameters[] = $todayTstamp;
             $parameters[] = $todayTstamp;
             $parameters[] = $tomorrowStamp;
+            $sortDay = $todayTstamp;
         }
 
         $sql .= sprintf(" ORDER BY beginDateTime ASC LIMIT %s, %s", $offset, $limit);
@@ -118,6 +137,8 @@ class EventDataService
         $offerTagRelations = $this->helper->loadOfferTagRelations($eventData);
 
         $formattedData = $this->formatEventData($eventData, $tags, $offerTagRelations);
+
+        $formattedData = $this->sortEventData($formattedData, $sortDay);
 
         return $formattedData;
     }
@@ -366,5 +387,41 @@ class EventDataService
         }
 
         return $results;
+    }
+
+    /**
+     * Merges the first n events for the current day with the events without date and events that run longer and sorts them randomly at the start.
+     * @return array
+     */
+    private function sortEventData($events, $beginDay)
+    {
+        $eventsToSort = [];
+        $remainingEvents = [];
+
+        foreach ($events as $event) {
+            if ($event['beginDate'] === null) {
+                $eventsToSort[] = $event;
+            } else if ($event['beginDate'] && $event['endDate']) {
+                if (($event['endDate'] - $event['beginDate']) > 86400) {
+                    // start and end date are more than one day apart
+                    $eventsToSort[] = $event;
+                } else if (($event['beginDate']- $beginDay) < 86400) {
+                    $eventsToSort[] = $event;
+                } else {
+                    $remainingEvents[] = $event;
+                }
+            } else if (($event['beginDate']- $beginDay) < 86400) {
+                $eventsToSort[] = $event;
+            } else {
+                $remainingEvents[] = $event;
+            }
+        }
+
+
+        shuffle($eventsToSort);
+
+        $sortedEvents = array_merge($eventsToSort, $remainingEvents);
+
+        return $sortedEvents;
     }
 }

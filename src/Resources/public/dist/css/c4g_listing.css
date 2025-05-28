@@ -12601,14 +12601,24 @@ html {
   content: "\f783";
   font-weight: 900;
   font-family: "Font Awesome 5 Free";
-  padding-right: 5px
+  padding-right: 5px;
+  color: var(--color-brand)
 }
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime:before,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime:before {
   content: "\f017";
   font-weight: 600;
   font-family: "Font Awesome 5 Free";
-  padding-right: 5px
+  padding-right: 5px;
+  color: var(--color-brand)
+}
+.c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__city-wrapper .c4g-list-element__city:before,
+.c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__city-wrapper .c4g-list-element__city:before {
+  content: "\f277";
+  font-weight: 600;
+  font-family: "Font Awesome 5 Free";
+  padding-right: 5px;
+  color: var(--color-brand)
 }
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__buttons-wrapper,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__buttons-wrapper {

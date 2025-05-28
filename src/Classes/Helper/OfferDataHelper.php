@@ -157,6 +157,40 @@ class OfferDataHelper
         return $tagLinks;
     }
 
+    public function getOrderClause($filterData, $offset, $limit): string
+    {
+        $sql = "";
+        if ($filterData['sort']) {
+            if ($filterData['sort'] === "price_asc") {
+                $sql = sprintf(" ORDER BY price ASC LIMIT %s, %s", $offset, $limit);
+            } else if ($filterData['sort'] === "price_desc") {
+                $sql = sprintf(" ORDER BY price DESC LIMIT %s, %s", $offset, $limit);
+            } else if ($filterData['sort'] === "name_asc") {
+                $sql = sprintf(" ORDER BY name ASC LIMIT %s, %s", $offset, $limit);
+            } else if ($filterData['sort'] === "name_desc") {
+                $sql = sprintf(" ORDER BY name DESC LIMIT %s, %s", $offset, $limit);
+            }
+        }
+
+        if ($sql === "") {
+            $seed = $this->getSeedForLoading();
+            $sql = sprintf(" ORDER BY RAND($seed) LIMIT %s, %s", $offset, $limit);
+        }
+
+        return $sql;
+    }
+
+    public function getSeedForLoading()
+    {
+        $seed = (new \DateTime())->getTimestamp();
+        // remove seconds from timestamp
+        // this way we achieve a new random sort order each minute,
+        // while still being able to randomly sort in SQL over multiple requests
+        $seed = $seed - ($seed % 60);
+
+        return $seed;
+    }
+
     private function getSettings()
     {
         if (!$this->settings) {

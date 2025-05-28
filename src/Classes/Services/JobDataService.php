@@ -71,8 +71,7 @@ class JobDataService
             $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
             $parameters = array_merge($parameters, $filterData['categories']);
         }
-
-        $sql .= sprintf(" ORDER BY name ASC LIMIT %s, %s", $offset, $limit);
+        $sql .= $this->helper->getOrderClause($filterData, $offset, $limit);
 
         $jobData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 

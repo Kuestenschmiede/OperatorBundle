@@ -89,7 +89,7 @@ class SimpleOfferDataService
             $parameters = array_merge($parameters, $filterData['categories']);
         }
 
-        $sql .= sprintf(" ORDER BY name ASC LIMIT %s, %s", $offset, $limit);
+        $sql .= $this->helper->getOrderClause($filterData, $offset, $limit);
 
         $offerData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();
 

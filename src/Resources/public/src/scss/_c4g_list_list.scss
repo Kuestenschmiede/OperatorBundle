@@ -30,7 +30,6 @@ html {
 
   .c4g-list-element {
     position: relative;
-    padding-bottom: 2rem;
     background-color: var(--gutes-element-bgcolor);
     border-radius: var(--gutes-base-border-radius);
     border: var(--gutes-base-border-width) solid darken($gutes-element-bgcolor, 10%);
@@ -129,6 +128,7 @@ html {
 
     &__shortdescription-wrapper {
       grid-area: 3/2;
+      padding-bottom: 4rem;
     }
 
     &__strikeprice-wrapper {
@@ -170,6 +170,7 @@ html {
       justify-content: flex-end;
       grid-gap: .5rem;
       position: absolute;
+      padding-top: 1rem;
       bottom: 10px;
       right: 10px;
     }

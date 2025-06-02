@@ -101,9 +101,9 @@ class EventDataService
                 $filterData['date']['from'] = $todayTstamp;
             }
             if ($hideEventsWithoutDate) {
-                $sql .= " AND ((e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+                $sql .= " AND e.expertTimes = 0 AND ((e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
             } else {
-                $sql .= " AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+                $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
             }
 
             $parameters[] = $filterData['date']['from'];

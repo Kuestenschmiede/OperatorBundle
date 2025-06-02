@@ -51,6 +51,10 @@
     }
   }
 
+  .react-datepicker-popper {
+    z-index: 10;
+  }
+
   .c4g-listfilter-form-wrapper {
     //display: none;
     margin-top: 2rem;
@@ -170,6 +174,10 @@
     input {
       @extend .form-control;
     }
+  }
+
+  .react-datepicker-popper {
+    z-index: 10;
   }
 
   .c4g-listfilter-form-wrapper {

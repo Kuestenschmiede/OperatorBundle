@@ -94,23 +94,24 @@ class EventDataService
         }
 
         if ($filterData['date']) {
-            if ($filterData['date']['from'] < time()) {
-                $today = new \DateTime();
-                $today->setTime(0, 0);
-                $todayTstamp = $today->getTimestamp();
-                $filterData['date']['from'] = $todayTstamp;
-            }
+            $fromDate = (new \DateTime())->setTimestamp($filterData['date']['from']);
+            $fromDate->setTime(0, 0);
+            $fromTstamp = $fromDate->getTimestamp();
+            $untilDate = (new \DateTime())->setTimestamp($filterData['date']['until']);
+            $untilDate->setTime(23, 59);
+            $untilTstamp = $untilDate->getTimestamp();
+
             if ($hideEventsWithoutDate) {
                 $sql .= " AND e.expertTimes = 0 AND ((e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
             } else {
                 $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
             }
 
-            $parameters[] = $filterData['date']['from'];
-            $parameters[] = $filterData['date']['until'];
-            $parameters[] = $filterData['date']['from'];
-            $parameters[] = $filterData['date']['until'];
-            $sortDay = $filterData['date']['from'];
+            $parameters[] = $fromTstamp;
+            $parameters[] = $untilTstamp;
+            $parameters[] = $fromTstamp;
+            $parameters[] = $untilTstamp;
+            $sortDay = $fromTstamp;
         } else {
             // use today midnight as parameter to get all events from today
             $today = new \DateTime();

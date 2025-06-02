@@ -130,6 +130,12 @@ class EventDataService
             $sortDay = $todayTstamp;
         }
 
+        if ($filterData['location']) {
+            $sql .= " AND (tl_gutesio_data_element.locationCity LIKE ? OR tl_gutesio_data_element.locationZip LIKE ?)";
+            $parameters[] = $filterData['location'];
+            $parameters[] = $filterData['location'];
+        }
+
         $sql .= sprintf(" ORDER BY beginDateTime ASC LIMIT %s, %s", $offset, $limit);
 
         $eventData = $database->prepare($sql)->execute(...$parameters)->fetchAllAssoc();

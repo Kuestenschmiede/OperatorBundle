@@ -164,6 +164,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $search = $this->cleanupSearchString($search);
         $tagIds = (array)$request->query->get('tags');
         $requestTypeIds = $request->query->get("types") ?: null;
+        $location = $request->query->get('location') ?: null;
 
         if ($requestTypeIds === "" || $requestTypeIds === null) {
             $requestTypeIds = [];
@@ -181,7 +182,8 @@ class OfferListModuleController extends AbstractFrontendModuleController
             'categoryIds' => $requestTypeIds,
             'filterFrom' => $request->query->get('filterFrom') ? intval((string)$request->query->get('filterFrom')) : null,
             'filterUntil' => $request->query->get('filterUntil') ? intval((string)$request->query->get('filterUntil')) : null,
-            'sorting' => (string)$request->query->get('sorting')
+            'sorting' => (string)$request->query->get('sorting'),
+            'location' => $location
         ];
 
         $module = ModuleModel::findByPk($moduleId);
@@ -432,6 +434,17 @@ class OfferListModuleController extends AbstractFrontendModuleController
         }
 
         $fields[] = $field;
+
+        if ($this->model->gutesio_enable_location_filter) {
+            $locationFilter = new TextFormField();
+            $locationFilter->setName("location");
+            $locationFilter->setLabel($this->languageRefsFrontend['filter']['locationfilter']['label'] ?: '');
+            $locationFilter->setClassName("form-view__location-filter");
+            $locationFilter->setPlaceholder("PLZ oder Ort eingeben");
+            $locationFilter->setCache(true);
+            $locationFilter->setEntryPoint($this->model->id);
+            $fields[] = $locationFilter;
+        }
 
         if ($this->model->gutesio_enable_category_filter) {
             $selectedTypes = unserialize($this->model->gutesio_category_filter_selection);

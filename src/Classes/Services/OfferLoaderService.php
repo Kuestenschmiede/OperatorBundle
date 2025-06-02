@@ -121,7 +121,8 @@ class OfferLoaderService
             'tags' => $tagFilter ? $tagIds : [],
             'categories' => $categoryFilter ? $categoryIds : [],
             'date' => $dateFilter ? ['from' => $filterData['filterFrom'], 'until' => $filterData['filterUntil']] : [],
-            'sort' => $sortFilter ? $filterData['sorting'] : 'date'
+            'sort' => $sortFilter ? $filterData['sorting'] : 'date',
+            'location' => $filterData['location']
         ];
 
         $tagData = $this->loadTags();

@@ -12919,6 +12919,9 @@ html {
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__type-filter {
   display: none
 }
+.c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__type-filter {
+  z-index: 10
+}
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__searchinput {
   max-width: 400px;
   width: 100%

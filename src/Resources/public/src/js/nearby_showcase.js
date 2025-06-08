@@ -9,6 +9,23 @@ function renderTemplateNode(data, index) {
     if (data.image) {
         node.innerHTML = node.innerHTML.replaceAll("elementImageSrc", data.image.src);
         node.innerHTML = node.innerHTML.replaceAll("elementImageAlt", data.image.alt);
+
+        // set orientation
+        const images = document.querySelectorAll('.main-image');
+        images.forEach(img => {
+            const container = img.closest('.image-container');
+            if (!container) return;
+
+            if (img.complete && img.naturalWidth > 0) {
+                const orientation = img.naturalWidth / img.naturalHeight >= 1 ? 'landscape' : 'portrait';
+                container.classList.add(orientation);
+            } else {
+                img.addEventListener('load', () => {
+                    const orientation = img.naturalWidth / img.naturalHeight >= 1 ? 'landscape' : 'portrait';
+                    container.classList.add(orientation);
+                });
+            }
+        });
     }
 
     node.innerHTML = node.innerHTML.replaceAll("elementName", data.name);

@@ -17,9 +17,14 @@ $detailLink = $this->getData()['detailLink'];
 <template id="elementTpl">
     <div id="element" class="c4g-list-element">
         <div class="c4g-list-element__inner">
-            <div class="c4g-list-element__image-wrapper">
-                <a href="redirectUrl">
-                    <img class="c4g-list-element__image" src="elementImageSrc" alt="elementImageAlt" height="450" width="600" loading="lazy">
+            <div class="image-wrapper c4g-list-element__image-wrapper">
+                <div href="redirectUrl">
+                    <div class="image-container">
+                        <img class="background-image" src="elementImageSrc" alt="elementImageAlt" loading="lazy" >
+                        <img class="c4g-list-element__image main-image" src="elementImageSrc" alt="elementImageAlt" loading="lazy" decoding="async"
+                             fetchpriority="high" onload="this.classList.add('loaded')"
+                        >
+                    </div>
                 </a>
             </div>
 

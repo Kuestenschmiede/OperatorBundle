@@ -112,6 +112,15 @@ function updateWishlistBadgeAtRefresh() {
 
     var getItemsRoute = '/gutesio/operator/wishlist/getItemCount';
 
+    /*
+    const scripts = document.getElementsByTagName('script');
+    for (let script of scripts) {
+        //to prevent duplicated server call
+        if (script.src && script.src.includes("c4g_all.js")) {
+            return true;
+        }
+    }*/
+
     jQuery.get(getItemsRoute).done((data) => {
         var countItemsServer = 0;
         if (data.count > 0) {

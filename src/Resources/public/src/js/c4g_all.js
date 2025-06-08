@@ -79,7 +79,19 @@ function reactRenderReady() {
 
     if (!window.reactRenderReadyDone) {
 
-        updateWishlistBadgeAtRefresh();
+        const scripts = document.getElementsByTagName('script');
+        let doUpdate = true;
+        for (let script of scripts) {
+            //to prevent duplicated server call
+            if (script.src && script.src.includes("badge_map.js")) {
+                doUpdate = false;
+                break;
+            }
+        }
+
+        if (doUpdate) {
+            updateWishlistBadgeAtRefresh();
+        }
 
         if (jQuery("div").hasClass("owl-carousel")) {
             owl();
@@ -208,6 +220,14 @@ function reactRenderReady() {
 function updateWishlistBadgeAtRefresh() {
 
     var getItemsRoute = '/gutesio/operator/wishlist/getItemCount';
+
+    const scripts = document.getElementsByTagName('script');
+    for (let script of scripts) {
+        //to prevent duplicated server call
+        if (script.src && script.src.includes("badge_map.js")) {
+            return true;
+        }
+    }
 
     $.get(getItemsRoute).done((data) => {
         var countItemsServer = 0;

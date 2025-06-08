@@ -272,8 +272,9 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $sql = "SELECT COUNT(1) AS rowCount FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ?";
         $count = $db->prepare($sql)->execute($clientUuid)->rowCount;
         $response = new JsonResponse(['count' => $count]);
+
         // save cookie for 30 days
-        $response = $this->addCookieToResponse($response, $request, $clientUuid);
+        //$response = $this->addCookieToResponse($response, $request, $clientUuid);
 
         return $response;
     }
@@ -778,12 +779,12 @@ class WishlistModuleController extends AbstractFrontendModuleController
     
     private function addCookieToResponse(Response $response, Request $request, string $clientUuid)
     {
-        // save cookie for 30 days
+        // save cookie for 90 days
         $response->headers->setCookie(
             new Cookie(
                 "clientUuid",
                 $clientUuid,
-                new \DateTime("+30 days"),
+                new \DateTime("+90 days"),
                 "/",
                 $request->getHost(),
                 false,

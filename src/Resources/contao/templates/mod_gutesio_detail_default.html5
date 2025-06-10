@@ -9,7 +9,10 @@ $this->block('detailpage_default'); ?>
 <?php
 $data = json_decode(json_encode($this->detailData));
 $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
+
 ?>
+
+<script>window.detailData = <?php echo json_encode($data); ?></script>
 
 <?php $this->block('detailpage_showcase_meta'); ?>
     <?php echo C4GUtils::replaceInsertTags("{{showcase::<?=".$alias."?>::meta}}"); ?>
@@ -127,7 +130,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                 title="Vom Merkzettel entfernen." style="display: none;"><i class="fas fa-heart"></i>
                         </button>
                         <button class="c4g-btn c4g-btn-primary c4g-btn-putonwishlist js-putDetailOnWishlist"
-                                title="Auf den Merkzettel setzen."><i class="fas fa-heart"></i></button>
+                                title="Auf den Merkzettel setzen." style="display: none;"><i class="fas fa-heart"></i></button>
                         <button type="button" class="c4g-btn c4g-btn-primary c4g-btn-sharedetail js-modalShare"
                                 data-toggle="modal" data-target="#shareModal" title="Teilen"><i
                                     class="fas fa-share-alt"></i></button>

@@ -172,6 +172,7 @@ function reactRenderReady() {
 
         if (window.detailData) {
             const onList = window.detailData['on_wishlist'];
+            console.log(window.detailData['on_wishlist']);
             // jQuery('#anchor-menu .share').prepend(buildPutOnWishlistBtn);
             // jQuery('#anchor-menu .share').prepend(buildRemoveFromWishlistBtn);
             // jQuery('.anchor-menu__share').prepend(buildShareBtn);
@@ -179,8 +180,12 @@ function reactRenderReady() {
             // jQuery('.anchor-menu__share').prepend(buildRemoveFromWishlistBtn);
 
             if (onList) {
+                console.log("onList");
                 jQuery(".js-putDetailOnWishlist").css("display", "none");
+                jQuery(".js-removeDetailFromWishlist").css("display", "block");
             } else {
+                console.log("not onList");
+                jQuery(".js-putDetailOnWishlist").css("display", "block");
                 jQuery(".js-removeDetailFromWishlist").css("display", "none");
             }
 

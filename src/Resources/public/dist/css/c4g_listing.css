@@ -12779,6 +12779,34 @@ html {
     width: calc(35% - 1rem)
   }
 }
+.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__elementname-wrapper a.c4g-list-element__elementname-link:before {
+  content: "\f041";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 600;
+  padding-right: 5px;
+  color: var(--color-brand)
+}
+.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__begindate-wrapper .c4g-list-element__beginDate:before {
+  content: "\f783";
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  padding-right: 5px;
+  color: var(--color-brand)
+}
+.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__begintime-wrapper .c4g-list-element__beginTime:before {
+  content: "\f017";
+  font-weight: 600;
+  font-family: "Font Awesome 5 Free";
+  padding-right: 5px;
+  color: var(--color-brand)
+}
+.c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__city-wrapper .c4g-list-element__city:before {
+  content: "\f277";
+  font-weight: 600;
+  font-family: "Font Awesome 5 Free";
+  padding-right: 5px;
+  color: var(--color-brand)
+}
 .c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__more-wrapper,
 .c4g-list-outer .c4g-list-element__inner > div.c4g-list-element__notice-wrapper {
   width: auto;

@@ -12461,6 +12461,13 @@ html {
 .c4g-listfilter-button-wrapper.react-c4g-listfilter-opened {
   text-align: right
 }
+.c4g-listfilter-button:before {
+  content: "\f0b0";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 600;
+  padding-right: 5px;
+  color: var(--color-brand)
+}
 .c4g-listfilter-default .hidden {
   visibility: hidden
 }

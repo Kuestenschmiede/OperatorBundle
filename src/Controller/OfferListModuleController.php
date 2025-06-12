@@ -417,7 +417,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $field = new TextFormField();
         $field->setName('search');
-        $field->setLabel(str_replace('&#39;', "'", $this->model->gutesio_child_search_label) ?: $this->languageRefsFrontend['filter']['searchfilter']['label']);
+        $field->setLabel(str_replace('&#39;', "'", $this->model->gutesio_child_search_label) ?: '');
         $field->setPlaceholder(str_replace('&#39;', "'", $this->model->gutesio_child_search_placeholder));
         $field->setDescription(str_replace('&#39;', "'", $this->model->gutesio_child_search_description));
         $field->setWrappingDiv();
@@ -605,7 +605,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $button->setClassName("c4g-btn c4g-btn-filter");
         $button->setTargetComponent("full-text-tiles");
         $button->setAsyncUrl("/gutesio/operator/showcase_child_list_data/{offset}");
-        $button->setCaption($GLOBALS['TL_LANG']['con4gis']['framework']['frontend']['button']['filter']);
+        $button->setCaption($this->languageRefs['filter']['apply_filter'] ?: '');
         $button->setOuterClass("c4g-btn-filter-wrapper");
         $buttons[] = $button;
 

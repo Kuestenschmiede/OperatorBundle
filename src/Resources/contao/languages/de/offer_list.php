@@ -94,7 +94,7 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['service'] = 'Dienstleistung';
 $GLOBALS['TL_LANG'][$strName]['frontend']['person'] = 'Person';
 $GLOBALS['TL_LANG'][$strName]['frontend']['startingAt'] = 'ab';
 
-$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Erweiterter Filter';
+$GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['random'] = "Zufällig";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['date_asc'] = "Nach Datum";
@@ -103,4 +103,5 @@ $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_asc'] = "Name: aufsteig
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['name_desc'] = "Name: absteigend";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_asc'] = "Preis: aufsteigend";
 $GLOBALS['TL_LANG'][$strName]['filter']['sorting']['price_desc'] = "Preis: absteigend";
+$GLOBALS['TL_LANG'][$strName]['filter']['apply_filter'] = "Suchen";
 

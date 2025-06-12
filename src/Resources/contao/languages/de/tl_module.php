@@ -34,7 +34,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_show_selfHelpFocus'] = ['Schwerpu
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting'] = ['Initiale Sortierung', 'Ändert die initiale Sortierung (Standard: zufällig).'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_filter'] = ['Filter aktivieren', 'Aktiviert den Filter oberhalb der Liste.'];
-$GLOBALS['TL_LANG']['tl_module']['gutesio_enable_ext_filter'] = ['Erweiterter Filter (Button aktivieren)', 'Aktiviert den Filterbutton oberhalb der Liste.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_enable_ext_filter'] = ['Filter-Button aktivieren', 'Aktiviert den Filterbutton oberhalb der Liste.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_change_layout_filter'] = ['Layout der Liste nach Filtern ändern', 'Setzen Sie diese Checkbox, wenn die Liste ihr Layout verändern soll, nachdem eine Filtereingabe getätigt wurde.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_layout_filter'] = ['Layout der Liste nach Filtern', 'Bestimmt, in welchem Layout die Liste nach Filtereingabe dargestellt wird.'];
 

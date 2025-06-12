@@ -650,7 +650,7 @@ class OfferLoaderService
                 $file = $rows[$key]['videoPreviewImageCDN'];
                 if ($file) {
                     $converter = new ShowcaseResultConverter();
-                    $rows[$key]['videoPreview']['videoPreviewImage'] = $converter->createFileDataFromFile($file);
+                    $rows[$key]['videoPreview']['videoPreviewImage'] = $converter->createFileDataFromFile($file,false,new FileUtils(),600,450, $result['name'], $result['name']);
                     $rows[$key]['videoPreviewImage'] = $rows[$key]['videoPreview']['videoPreviewImage'];
                 }
             }

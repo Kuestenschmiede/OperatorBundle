@@ -360,6 +360,9 @@ class OfferLoaderService
         }
         $parameters[] = time();
         $parameters[] = time();
+        // TODO quickfix um die schleife nach dem query auszugleichen
+        $limit = $limit * 2;
+        // TODO quickfix
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
         a.imageCDN, a.foreignLink, a.directLink, ' . '
             (CASE ' . '
@@ -382,6 +385,23 @@ class OfferLoaderService
             . ' AND ((v.beginDate IS NULL AND tl_gutesio_data_child_type.type != "event") OR ((v.appointmentUponAgreement = 1) OR (v.beginDate >= ?) OR (v.endDate IS NOT NULL AND v.endDate >= ?))) '
             . ' AND a.published = 1 AND (a.publishFrom = 0 OR a.publishFrom IS NULL OR a.publishFrom <= UNIX_TIMESTAMP()) AND (a.publishUntil = 0 OR a.publishUntil IS NULL OR a.publishUntil > UNIX_TIMESTAMP()) ORDER BY v.beginDate IS NULL, v.beginDate ASC, v.beginTime ASC, RAND()' . (($limit > 0) ? ' LIMIT ' .$limit : "")
         )->execute(...$parameters)->fetchAllAssoc();
+
+        // filter out duplicates
+        // todo find better solution
+        $childs = [];
+        $childIds = [];
+        foreach ($childRows as $child) {
+            if ($childIds[$child['uuid']]) {
+                if ($child['beginDate'] !== $childIds[$child['uuid']]['beginDate']) {
+                    $childs[] = $child;
+                    $childIds[$child['uuid']] = $child;
+                }
+            } else {
+                $childs[] = $child;
+                $childIds[$child['uuid']] = $child;
+            }
+        }
+        $childRows = $childs;
 
         foreach ($childRows as $key => $row) {
             //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
@@ -999,6 +1019,7 @@ class OfferLoaderService
                             LEFT JOIN tl_gutesio_data_child cd ON cc.parentChildId = cd.uuid
                             LEFT JOIN tl_gutesio_data_child_event d ON d.childId = cd.uuid
                             WHERE a.childId = ?
+                            AND a.expertTimes = 0
                             ORDER BY beginDateTime ASC
                             LIMIT 100;
                             ')

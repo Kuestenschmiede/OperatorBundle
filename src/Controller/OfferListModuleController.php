@@ -450,8 +450,17 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $selectedTypes = unserialize($this->model->gutesio_category_filter_selection);
             $selectedOfferTypes = [];
 
-            if ($this->model->gutesio_child_data_mode === "1") {
+            if ($this->model->gutesio_child_data_mode === "1") { //type
                 $selectedOfferTypes = $this->model ? StringUtil::deserialize($this->model->gutesio_child_type, true) : [];
+            } else if ($this->model->gutesio_child_data_mode === "2") { //category
+                $loadThisTypes  = $this->model ? StringUtil::deserialize($this->model->gutesio_child_category, true) : [];
+                if ($selectedTypes) {
+                    $selectedTypes = array_intersect($selectedTypes, $loadThisTypes);
+                    $selectedTypes = array_values($selectedTypes);
+                } else {
+                    $selectedTypes = $loadThisTypes;
+                }
+
             }
 
             $types = $this->getCategoryOptions($selectedTypes, $selectedOfferTypes);

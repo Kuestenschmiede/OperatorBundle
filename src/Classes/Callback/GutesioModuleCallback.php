@@ -15,6 +15,7 @@ use Contao\Controller;
 use Contao\DataContainer;
 use Contao\Message;
 use Contao\ModuleModel;
+use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataChildTypeModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataElementModel;
@@ -161,6 +162,27 @@ class GutesioModuleCallback
     public function loadShowcaseOptions(DataContainer $dc)
     {
         $models = GutesioDataElementModel::findAll();
+        $options = [];
+
+        if (!$dc->activeRecord) {
+            return [];
+        }
+
+        $id = $dc->activeRecord->id;
+
+        foreach ($models as $model) {
+            if ($model->id !== $id) {
+                $options[$model->uuid] = $model->name;
+            }
+        }
+
+
+        return ArrayHelper::array_sort($options, '');
+    }
+
+    public function loadChildOptions(DataContainer $dc)
+    {
+        $models = GutesioDataChildModel::findAll();
         $options = [];
 
         if (!$dc->activeRecord) {

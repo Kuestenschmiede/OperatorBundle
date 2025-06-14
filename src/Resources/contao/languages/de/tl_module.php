@@ -102,6 +102,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Alle 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Inhalte nach Typ laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['2'] = 'Inhalte nach Kategorie laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['3'] = 'Inhalte nach Tags laden';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['4'] = 'Inhalte auswählen';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['price'] = "Preissortierung";
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['range'] = "Datumsfilter";

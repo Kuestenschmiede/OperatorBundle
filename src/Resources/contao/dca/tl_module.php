@@ -72,6 +72,7 @@ $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_0'] = ''
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_1'] = 'gutesio_child_type';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_2'] = 'gutesio_child_category';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_3'] = 'gutesio_child_tag';
+$GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_child_data_mode_4'] = 'gutesio_child_selection';;
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_redirect_page,gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_carousel_template;';
@@ -357,7 +358,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_data_mode'] = [
     'exclude'                 => true,
     'default'                 => "0",
     'inputType'               => 'radio',
-    'options'                 => ['0', '1', '2', '3'],
+    'options'                 => ['0', '1', '2', '3', '4'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option'],
     'sql'                     => "char(1) NOT NULL default '0'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
@@ -468,6 +469,24 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_tag'] = [
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTagOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
     'sql'                     => "text NULL"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_selection'] = [
+    'default' => '',
+    'exclude' => true,
+    'inputType' => 'select',
+    'filter' => true,
+    'sorting' => true,
+    'search' => true,
+    'options_callback' => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, 'loadChildOptions'],
+    'eval' => [
+        'mandatory' => false,
+        'multiple' => true,
+        'tl_class' => 'clr',
+        'chosen' => true,
+        'includeBlankOption' => true
+    ],
+    'sql' => "text NULL"
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_sort_by_date'] = [

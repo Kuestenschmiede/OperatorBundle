@@ -115,7 +115,24 @@ class OfferLoaderService
 
         $offerData = [];
 
-        $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
+        $childDataMode = $this->model->gutesio_child_data_mode;
+
+        $types = []; //works
+        $categories = []; //todo
+        $tags = []; //todo
+        $childs = []; //todo
+
+        //default todo
+
+        if ($childDataMode == '1') {
+            $types = StringUtil::deserialize($this->model->gutesio_child_type, true);
+        } elseif ($childDataMode == '2') {
+            $categories = StringUtil::deserialize($this->model->gutesio_child_category, true);
+        } elseif ($childDataMode == '3') {
+            $tags = StringUtil::deserialize($this->model->gutesio_child_tag, true);
+        } else if ($childDataMode == '4') {
+            $childs = StringUtil::deserialize($this->model->gutesio_child_selection, true);
+        }
 
         $eventFilterData = [
             'tags' => $tagFilter ? $tagIds : [],

@@ -339,8 +339,16 @@ class OfferListModuleController extends AbstractFrontendModuleController
             foreach ($buttons as $button) {
                 $button->setClassName("hidden");
             }
+            $form = $this->getForm();
+            if (!$form instanceof ToggleableForm) {
+                $form = new ToggleableForm($form);
+            }
+            $form->setToggleableBaseClass('c4g-listfilter');
+            $form->setToggleableOnLabel($GLOBALS['TL_LANG']['offer_list']['filter']['close_filter']);
+            $form->setToggleableOffLabel($GLOBALS['TL_LANG']['offer_list']['filter']['open_filter']);
+            $form->setToggleableOnClass('react-c4g-listfilter-opened');
             $conf->addForm(
-                $this->getForm(),
+                $form,
                 [],
                 $buttons,
                 $filterData

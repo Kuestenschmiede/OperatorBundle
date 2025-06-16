@@ -343,6 +343,8 @@ class ShowcaseService
         $elementIds = [],
         $restrictedPostals = []
     ) {
+        $times = [];
+        $times['start'] = microtime();
         $sorting = 'random';
         if ($params && is_array($params)) {
             $searchString = key_exists('filter', $params) ? $params['filter'] : '';
@@ -350,6 +352,7 @@ class ShowcaseService
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) && str_contains($params['pos'], ",") ? explode(',', $params['pos']) : '';
         }
+        $times['cacheCheck'] = microtime();
         $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
         if ($this->checkForCacheFile($key)) {
             $arrIds = $this->getDataFromCache($key);
@@ -367,6 +370,7 @@ class ShowcaseService
             }
         } else {
             $execQuery = true;
+            $times['switchCase'] = microtime();
             if ($sorting) {
                 switch ($sorting) {
                     case 'random':
@@ -379,6 +383,7 @@ class ShowcaseService
                             $arrResult = [];
                         }
                         $execQuery = false;
+//                        $execQuery = true;
 
                         break;
                     case 'distance':
@@ -399,6 +404,7 @@ class ShowcaseService
                         break;
                 }
             }
+            $times['nach_switchCase'] = microtime();
             if ($execQuery) {
                 $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
                 if ($elementIdString !== '()' && $searchString) {
@@ -483,8 +489,15 @@ class ShowcaseService
                 }
             }
         }
+        $times['afterexecuteQuery'] = microtime();
 
-        return $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
+        $dbResul = $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
+
+        $times['afterConvertDbresult'] = microtime();
+
+//        dd($times);
+
+        return $dbResul;
     }
 
     private function formatDistance($distanceInMeters)

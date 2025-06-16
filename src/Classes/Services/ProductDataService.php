@@ -73,9 +73,14 @@ class ProductDataService
             $sql .= " AND tl_gutesio_data_child_tag_values.tagId " . C4GUtils::buildInString($filterData['tags']);
             $parameters = array_merge($parameters, $filterData['tags']);
         }
+//        dd($parameters);
         if ($filterData['categories']) {
             $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
             $parameters = array_merge($parameters, $filterData['categories']);
+        }
+        if ($filterData['childs']) {
+            $sql .= " AND a.uuid " . C4GUtils::buildInString($filterData['childs']);
+            $parameters = array_merge($parameters, $filterData['childs']);
         }
         if ($filterData['location']) {
             $sql .= " AND (tl_gutesio_data_element.locationCity LIKE ? OR tl_gutesio_data_element.locationZip LIKE ?)";

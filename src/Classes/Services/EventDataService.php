@@ -92,6 +92,10 @@ class EventDataService
             $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
             $parameters = array_merge($parameters, $filterData['categories']);
         }
+        if ($filterData['childs']) {
+            $sql .= " AND a.uuid " . C4GUtils::buildInString($filterData['childs']);
+            $parameters = array_merge($parameters, $filterData['childs']);
+        }
 
         if ($filterData['date']) {
             $fromDate = (new \DateTime())->setTimestamp($filterData['date']['from']);

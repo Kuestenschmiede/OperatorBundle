@@ -134,13 +134,49 @@ class OfferLoaderService
             $childs = StringUtil::deserialize($this->model->gutesio_child_selection, true);
         }
 
+        if ($childDataMode !== "1") {
+            $types = [
+                'product',
+                'event',
+                'news',
+                'exhibition',
+                'advertisement',
+                'job',
+                'arrangement',
+                'service',
+                'voucher',
+                'person'
+            ];
+        }
+
         $eventFilterData = [
             'tags' => $tagFilter ? $tagIds : [],
             'categories' => $categoryFilter ? $categoryIds : [],
             'date' => $dateFilter ? ['from' => $filterData['filterFrom'], 'until' => $filterData['filterUntil']] : [],
             'sort' => $sortFilter ? $filterData['sorting'] : 'date',
-            'location' => $filterData['location']
+            'location' => $filterData['location'],
+            'childs' => $childs
         ];
+
+        // handle category selection from module settings
+        if ($childDataMode === "2" && count($categories) > 0) {
+            if (count($eventFilterData['categories']) > 0) {
+                // active filter, take intersection
+                $eventFilterData['categories'] = array_intersect($eventFilterData['categories'], $categories);
+            } else {
+                $eventFilterData['categories'] = $categories;
+            }
+        }
+
+        // handle category selection from module settings
+        if ($childDataMode === "3" && count($tags) > 0) {
+            if (count($eventFilterData['tags']) > 0) {
+                // active filter, take intersection
+                $eventFilterData['tags'] = array_intersect($eventFilterData['tags'], $tags);
+            } else {
+                $eventFilterData['tags'] = $tags;
+            }
+        }
 
         $tagData = $this->loadTags();
 

@@ -333,6 +333,18 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $this->getFormButtons(),
                 $filterData
             );
+        } else {
+            // add hidden form for the filter data
+            $buttons = $this->getFormButtons();
+            foreach ($buttons as $button) {
+                $button->setClassName("hidden");
+            }
+            $conf->addForm(
+                $this->getForm(),
+                [],
+                $buttons,
+                $filterData
+            );
         }
 
         $fullTextData = [];

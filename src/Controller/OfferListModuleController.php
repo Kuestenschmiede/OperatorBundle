@@ -626,7 +626,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $button->setClassName("c4g-btn c4g-btn-filter");
         $button->setTargetComponent("full-text-tiles");
         $button->setAsyncUrl("/gutesio/operator/showcase_child_list_data/{offset}");
-        $button->setCaption($this->languageRefs['filter']['apply_filter'] ?: '');
+        $button->setCaption($this->languageRefs['filter']['apply_filter'] ?: 'Suchen');
         $button->setOuterClass("c4g-btn-filter-wrapper");
         $buttons[] = $button;
 

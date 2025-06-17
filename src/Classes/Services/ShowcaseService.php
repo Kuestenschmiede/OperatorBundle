@@ -343,8 +343,6 @@ class ShowcaseService
         $elementIds = [],
         $restrictedPostals = []
     ) {
-        $times = [];
-        $times['start'] = microtime();
         $sorting = 'random';
         if ($params && is_array($params)) {
             $searchString = key_exists('filter', $params) ? $params['filter'] : '';
@@ -352,7 +350,6 @@ class ShowcaseService
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) && str_contains($params['pos'], ",") ? explode(',', $params['pos']) : '';
         }
-        $times['cacheCheck'] = microtime();
         $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
         if ($this->checkForCacheFile($key)) {
             $arrIds = $this->getDataFromCache($key);
@@ -370,20 +367,11 @@ class ShowcaseService
             }
         } else {
             $execQuery = true;
-            $times['switchCase'] = microtime();
             if ($sorting) {
                 switch ($sorting) {
                     case 'random':
-                        $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds, $elementIds, $restrictedPostals);
-                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIds);
-                        $arrIds = array_slice($arrIds, $offset, $limit);
-                        if (count($arrIds) > 0) {
-                            $arrResult = $this->loadByIds($arrIds);
-                        } else {
-                            $arrResult = [];
-                        }
-                        $execQuery = false;
-//                        $execQuery = true;
+                        // gets sorted via SQL
+                        $execQuery = true;
 
                         break;
                     case 'distance':
@@ -404,7 +392,6 @@ class ShowcaseService
                         break;
                 }
             }
-            $times['nach_switchCase'] = microtime();
             if ($execQuery) {
                 $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
                 if ($elementIdString !== '()' && $searchString) {
@@ -443,9 +430,11 @@ class ShowcaseService
                     $withoutLimit = false;
                     $arrSort = explode('_', $sorting);
                     if ($searchString && ($sorting == 'random')) {
-                        $sortClause = ' ORDER BY weight DESC LIMIT ? OFFSET ?';
+//                        $sortClause = ' ORDER BY weight DESC LIMIT ? OFFSET ?';
+                        $sortClause = sprintf(" ORDER BY weight DESC LIMIT %s, %s", $offset, $limit);
                     } elseif ($sorting == 'random') {
-                        $sortClause = ' ORDER BY RAND() LIMIT ? OFFSET ?';
+                        $seed = $this->getSeedForLoading();
+                        $sortClause = sprintf(' ORDER BY RAND(%s) LIMIT %s, %s', $seed, $offset, $limit);
                     } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
                         $sortClause = ' ORDER BY '.$arrSort[0].' ' . strtoupper($arrSort[1]);//. ' LIMIT ? OFFSET ?';
                         //ToDO limit / offset
@@ -475,29 +464,24 @@ class ShowcaseService
                 } else {
                     if ($insertSearchParams) {
                         if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals, ...[$limit, $offset])->fetchAllAssoc();
+                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
                         } else {
-                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), $limit, $offset)->fetchAllAssoc();
+                            $paramCount = substr_count($sql, "?");
+                            $params = array_fill(0, $paramCount, self::getFilterSQLValueSet($searchString));
+                            $arrResult = $stm->execute(...$params)->fetchAllAssoc();
                         }
                     } else {
                         if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(...$restrictedPostals, ...[$limit, $offset])->fetchAllAssoc();
+                            $arrResult = $stm->execute(...$restrictedPostals, ...[intval($limit), intval($offset)])->fetchAllAssoc();
                         } else {
-                            $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
+                            $arrResult = $stm->execute()->fetchAllAssoc();
                         }
                     }
                 }
             }
         }
-        $times['afterexecuteQuery'] = microtime();
 
-        $dbResul = $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
-
-        $times['afterConvertDbresult'] = microtime();
-
-//        dd($times);
-
-        return $dbResul;
+        return $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
     }
 
     private function formatDistance($distanceInMeters)
@@ -1066,6 +1050,17 @@ class ShowcaseService
         }
 
         return $arrIds;
+    }
+
+    private function getSeedForLoading()
+    {
+        $seed = (new \DateTime())->getTimestamp();
+        // remove seconds from timestamp
+        // this way we achieve a new random sort order each minute,
+        // while still being able to randomly sort in SQL over multiple requests
+        $seed = $seed - ($seed % 60);
+
+        return $seed;
     }
 
     private function convertDbResult($arrResult, $arrOptions = [])

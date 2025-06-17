@@ -130,18 +130,17 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 
-        $database = Database::getInstance();
+        if ($this->model->gutesio_data_render_searchHtml) {
+            $elements = $this->getAllData($this->model);
 
-
-        //ToDo load by module settings
-        $elements = $this->getAllData($this->model);
-
-        if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_data_render_searchHtml && $this->model->gutesio_enable_filter) {
-            $sc = new SearchConfiguration();
-            $sc->addData($this->getSearchLinks($elements), ['link']);
-            $template->searchHTML = $sc->getHTML();
-            $template->itemListElement = $this->getMetaData($elements);
+            if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_enable_filter) {
+                $sc = new SearchConfiguration();
+                $sc->addData($this->getSearchLinks($elements), ['link']);
+                $template->searchHTML = $sc->getHTML();
+                $template->itemListElement = $this->getMetaData($elements);
+            }
         }
+
 
         return $template->getResponse();
     }

@@ -180,6 +180,29 @@ class OfferDataHelper
         return $sql;
     }
 
+    public function handleFilter($filterData, $parameters, $sql)
+    {
+        if ($filterData['tags']) {
+            $sql .= " AND tl_gutesio_data_child_tag.tagId " . C4GUtils::buildInString($filterData['tags']);
+            $parameters = array_merge($parameters, $filterData['tags']);
+        }
+        if ($filterData['categories']) {
+            $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
+            $parameters = array_merge($parameters, $filterData['categories']);
+        }
+        if ($filterData['childs']) {
+            $sql .= " AND a.uuid " . C4GUtils::buildInString($filterData['childs']);
+            $parameters = array_merge($parameters, $filterData['childs']);
+        }
+        if ($filterData['location']) {
+            $sql .= " AND (tl_gutesio_data_element.locationCity LIKE ? OR tl_gutesio_data_element.locationZip LIKE ?)";
+            $parameters[] = $filterData['location'];
+            $parameters[] = $filterData['location'];
+        }
+
+        return ['params' => $parameters, 'sql' => $sql];
+    }
+
     public function getSeedForLoading()
     {
         $seed = (new \DateTime())->getTimestamp();

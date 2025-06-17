@@ -52,6 +52,7 @@ class ProductDataService
                 LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
                 LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
                 JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
+                LEFT JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_child_tag.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_tag_values ON tl_gutesio_data_child_tag_values.childId = a.uuid ' . '
                 LEFT JOIN tl_gutesio_data_child_product p ON p.childId = a.uuid ' . '
                 WHERE a.published = 1 AND tl_gutesio_data_child_type.type = "product"'  .
@@ -69,24 +70,9 @@ class ProductDataService
             $parameters[] = "%".$searchTermParam;
         }
 
-        if ($filterData['tags']) {
-            $sql .= " AND tl_gutesio_data_child_tag_values.tagId " . C4GUtils::buildInString($filterData['tags']);
-            $parameters = array_merge($parameters, $filterData['tags']);
-        }
-//        dd($parameters);
-        if ($filterData['categories']) {
-            $sql .= " AND typeId " . C4GUtils::buildInString($filterData['categories']);
-            $parameters = array_merge($parameters, $filterData['categories']);
-        }
-        if ($filterData['childs']) {
-            $sql .= " AND a.uuid " . C4GUtils::buildInString($filterData['childs']);
-            $parameters = array_merge($parameters, $filterData['childs']);
-        }
-        if ($filterData['location']) {
-            $sql .= " AND (tl_gutesio_data_element.locationCity LIKE ? OR tl_gutesio_data_element.locationZip LIKE ?)";
-            $parameters[] = $filterData['location'];
-            $parameters[] = $filterData['location'];
-        }
+        $res = $this->helper->handleFilter($filterData, $parameters, $sql);
+        $parameters = $res['params'];
+        $sql = $res['sql'];
 
         $sql .= $this->helper->getOrderClause($filterData, $offset, $limit);
 

@@ -187,7 +187,7 @@ class ShowcaseService
             }
         }
 
-        $filterString = $newFilterString;
+        $filterString = strtoupper($newFilterString);
         $extraFilterString1 = $partArr[0];
         $extraFilterString2 = count($partArr) > 1 ? $partArr[1] : $partArr[0];
 
@@ -393,7 +393,9 @@ class ShowcaseService
                 }
             }
             if ($execQuery) {
-                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
+                // TODO wozu wird der string gebraucht?
+//                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
+                $elementIdString = "()";
                 if ($elementIdString !== '()' && $searchString) {
                     $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
                     $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::getFilterSQLString() . ')';
@@ -466,8 +468,7 @@ class ShowcaseService
                         if (!empty($restrictedPostals)) {
                             $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
                         } else {
-                            $paramCount = substr_count($sql, "?");
-                            $params = array_fill(0, $paramCount, self::getFilterSQLValueSet($searchString));
+                            $params = self::getFilterSQLValueSet($searchString);
                             $arrResult = $stm->execute(...$params)->fetchAllAssoc();
                         }
                     } else {

@@ -847,7 +847,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $typeStr = implode(',',$types);
             $sql = "SELECT DISTINCT uuid, name FROM tl_gutesio_data_type"
                 . " WHERE uuid ".C4GUtils::buildInString($types)." ORDER BY name ASC";
-            $typeResult = Database::getInstance()->prepare($sql)->execute($types)->fetchAllAssoc();
+            $typeResult = Database::getInstance()->prepare($sql)->execute(...$types)->fetchAllAssoc();
         } else if (is_array($blockedTypes) && count($blockedTypes) > 0) {
             $typeStr = implode(',',$blockedTypes);
             $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"

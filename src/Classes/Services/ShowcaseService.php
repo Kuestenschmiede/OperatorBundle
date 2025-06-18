@@ -393,9 +393,7 @@ class ShowcaseService
                 }
             }
             if ($execQuery) {
-                // TODO wozu wird der string gebraucht?
-//                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
-                $elementIdString = "()";
+                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
                 if ($elementIdString !== '()' && $searchString) {
                     $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
                     $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::getFilterSQLString() . ')';

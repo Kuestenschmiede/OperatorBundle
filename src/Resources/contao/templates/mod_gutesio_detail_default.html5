@@ -1278,34 +1278,96 @@ if ($imprintData) {
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Teilen Sie die Seite und informieren Ihre Freunde. Nutzen Sie dafür die beliebten sozialen
-                        Medien.</p>
-
+                    <p>Teilen Sie dieses Schaufenster oder speichern Sie den Standort für später.</p>
 
                     <?php
                     $shareEnvUrl = C4GUtils::replaceInsertTags("{{env::path}}");
                     $shareEnvRequest = C4GUtils::replaceInsertTags("{{env::request}}");
+                    $shareUrl = $shareEnvUrl . $shareEnvRequest;
 
-                    $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareEnvUrl . $shareEnvRequest;
-                    $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareEnvUrl . $shareEnvRequest;
-                    $shareEmailUrl = "mailto:?subject=&body=Schau Dir das folgende Schaufenster an: " . $shareEnvUrl . $shareEnvRequest;
+                    // Basis-Sharing-URLs
+                    $shareFacebookUrl = "https://www.facebook.com/sharer/sharer.php?u=" . $shareUrl;
+                    $shareWhatsappUrl = "https://api.whatsapp.com/send?text=" . $shareUrl;
+                    $shareEmailUrl = "mailto:?subject=&body=Schau Dir das folgende Schaufenster an: " . $shareUrl;
+                    $shareLinkedInUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" . $shareUrl;
+                    $shareInstagramUrl = "https://www.instagram.com/";
+                    $sharePinterestUrl = "https://pinterest.com/pin/create/button/?url=" . $shareUrl;
+                    $shareSignalUrl = "https://signal.me/#p/" . $shareUrl;
+                    $shareThreemaUrl = "threema://compose?text=" . $shareUrl;
 
+                    // POI-spezifische URLs
+                    $businessName = urlencode($data->name);
+                    $businessAddress = urlencode($data->locationStreet . ' ' .$data->locationStreetNumber . ', ' . $data->locationZip . ' ' . $data->locationCity);
+
+                    $shareGoogleMapsUrl = "https://www.google.com/maps/search/?api=1&query=" . $businessAddress;
+                    $shareAppleMapsUrl = "https://maps.apple.com/?q=" . $businessName . "&address=" . $businessAddress;
+                    $shareTripadvisorUrl = "https://www.tripadvisor.com/Search?q=" . $businessName . " " . $data->locationCity;
+                    $shareYelpUrl = "https://www.yelp.com/search?find_desc=" . $businessName . "&find_loc=" . $data->locationCity;
+                    $shareGoogleBusinessUrl = "https://www.google.com/search?q=" . $businessName . " " . $data->locationCity;
+                    $shareOpenStreetMapUrl = "https://www.openstreetmap.org/search?query=" . $businessAddress;
                     ?>
+
                     <nav class="nav flex-column">
-                        <a rel="noopener" href="<?= $shareFacebookUrl ?>"
-                           title="<?= $data->name; ?>"
-                           class="nav-link btn btn-block btn-light share-modal__link"
-                           target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                        <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
-                           class="nav-link btn btn-block btn-light share-modal__link"
-                           target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
+                        <h6 class="nav-header mt-2 mb-2">Schnellzugriff</h6>
+                        <button class="nav-link btn btn-block btn-light share-modal__link" onclick="copyToClipboard('<?= $shareUrl ?>')">
+                            <i class="fas fa-copy"></i> Link kopieren
+                        </button>
                         <a rel="noopener" href="<?= $shareEmailUrl ?>"
                            title="<?= $data->name; ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
-                    </nav>
 
+                        <h6 class="nav-header mt-3 mb-2">Messenger</h6>
+                        <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
+                        <a rel="noopener" href="<?= $shareSignalUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fas fa-signal"></i> Signal</a>
+                        <a rel="noopener" href="<?= $shareThreemaUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fas fa-comment-dots"></i> Threema</a>
+
+                        <h6 class="nav-header mt-3 mb-2">Soziale Medien</h6>
+                        <a rel="noopener" href="<?= $shareFacebookUrl ?>"
+                           title="<?= $data->name; ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
+                        <a rel="noopener" href="<?= $shareInstagramUrl ?>"
+                           title="<?= $data->name; ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+                        <a rel="noopener" href="<?= $shareLinkedInUrl ?>"
+                           title="<?= $data->name; ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
+                        <a rel="noopener" href="<?= $sharePinterestUrl ?>"
+                           title="<?= $data->name; ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-pinterest"></i> Pinterest</a>
+
+                        <h6 class="nav-header mt-3 mb-2">Karten & Bewertungen</h6>
+                        <a rel="noopener" href="<?= $shareGoogleMapsUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fas fa-map-marker-alt"></i> Google Maps</a>
+                        <a rel="noopener" href="<?= $shareAppleMapsUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-apple"></i> Apple Maps</a>
+                        <a rel="noopener" href="<?= $shareOpenStreetMapUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fas fa-map"></i> OpenStreetMap</a>
+                        <a rel="noopener" href="<?= $shareGoogleBusinessUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-google"></i> Google Business</a>
+                        <a rel="noopener" href="<?= $shareTripadvisorUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-tripadvisor"></i> Tripadvisor</a>
+                        <a rel="noopener" href="<?= $shareYelpUrl ?>"
+                           class="nav-link btn btn-block btn-light share-modal__link"
+                           target="_blank"><i class="fab fa-yelp"></i> Yelp</a>
+                    </nav>
                 </div>
+
                 <div class="modal-footer border-0 justify-content-center">
                     <button type="button" class="btn btn-sm btn-light" data-dismiss="modal">Schließen</button>
                 </div>

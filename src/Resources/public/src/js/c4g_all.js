@@ -362,6 +362,15 @@ function getBadgeValue() {
     }
     return valBadge;
 }
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text)
+        .then(() => {
+            alert('Link wurde in die Zwischenablage kopiert!');
+        })
+        .catch(err => {
+            console.error('Fehler beim Kopieren:', err);
+        });
+}
 
 
 

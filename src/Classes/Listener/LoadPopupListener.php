@@ -159,12 +159,12 @@ class LoadPopupListener
                             <i class='fab fa-instagram-square'></i>
                         </a>";
         }
-        if ($element['twitter']) {
+        /*if ($element['twitter']) {
             $tw = $element['twitter'];
             $contacts .= "<a class='entry-content contact-tw' title='X (Twitter) von $name' href='$tw' rel='noopener nofollow' target='_blank'>
                             <i class='fab fa-twitter-square'></i>
                         </a>";
-        }
+        }*/
 
         $href = $url . '/' . $element['alias'];
         $clientUuid = $this->requestStack->getCurrentRequest()->cookies->get('clientUuid');

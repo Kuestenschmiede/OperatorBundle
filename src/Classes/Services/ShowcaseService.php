@@ -403,6 +403,7 @@ class ShowcaseService
                         $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                     }
                     $additionalOrderBy = ' weight';
+                    $searchString = $this->updateSearchStringForNonExactSearch($searchString);
                     $params = array_merge(self::getFilterSQLValueSet($searchString), $restrictedPostals);
                 } else {
 
@@ -424,8 +425,13 @@ class ShowcaseService
                         $params = array_merge($params, $typeIds);
                     }
                     if ($tagIds) {
-                        $params = array_merge($params, $tagIds);
                         $sql .= " AND tl_gutesio_data_tag_element.tagId " . C4GUtils::buildInString($tagIds);
+                        $params = array_merge($params, $tagIds);
+                    }
+
+                    if ($elementIds) {
+                        $sql .= " AND e.uuid " . C4GUtils::buildInString($elementIds);
+                        $params = array_merge($params, $elementIds);
                     }
 
                     if (!empty($restrictedPostals)) {
@@ -487,7 +493,7 @@ class ShowcaseService
                 $sql .= $sortClause;
                 $stm = Database::getInstance()->prepare($sql);
 //                $searchString = '%' . $searchString . '%';
-                $searchString = $this->updateSearchStringForNonExactSearch($searchString);
+
 //                if ($mode === 3) {
 //                    $arrResult = $stm->execute(...$searchString)->fetchAllAssoc();
 //                } else {

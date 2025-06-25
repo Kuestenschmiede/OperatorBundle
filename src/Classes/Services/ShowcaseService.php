@@ -195,29 +195,29 @@ class ShowcaseService
         $weightArr = [];
         $relevanceArr = [];
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
-               if ($weight == 1000) {
-                    $likeArr[] = $filterString;
-                    $likeArr[] = $extraFilterString1;
-                    $likeArr[] = $extraFilterString2;
+            if ($weight == 1000) {
+                $likeArr[] = $filterString;
+                $likeArr[] = $extraFilterString1;
+                $likeArr[] = $extraFilterString2;
 
-                    if (!$withoutWeight) {
-                        $weightArr[] = $filterString;
-                        $weightArr[] = $extraFilterString1;
-                        $weightArr[] = $extraFilterString2;
-                    }
-                } else {
-                   $likeArr[] = '%'.$filterString.'%';
-                   $likeArr[] = '%'.$extraFilterString1.'%';
-                   $likeArr[] = '%'.$extraFilterString2.'%';
-
-                   if (!$withoutWeight) {
-                       $weightArr[] = '%'.$filterString.'%';
-                       $weightArr[] = '%'.$extraFilterString1.'%';
-                       $weightArr[] = '%'.$extraFilterString2.'%';
-                   }
+                if (!$withoutWeight) {
+                    $weightArr[] = $filterString;
+                    $weightArr[] = $extraFilterString1;
+                    $weightArr[] = $extraFilterString2;
                 }
+            } else {
+                $likeArr[] = '%'.$filterString.'%';
+                $likeArr[] = '%'.$extraFilterString1.'%';
+                $likeArr[] = '%'.$extraFilterString2.'%';
 
-                //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
+                if (!$withoutWeight) {
+                    $weightArr[] = '%'.$filterString.'%';
+                    $weightArr[] = '%'.$extraFilterString1.'%';
+                    $weightArr[] = '%'.$extraFilterString2.'%';
+                }
+            }
+
+            //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
         }
 
 
@@ -280,7 +280,7 @@ class ShowcaseService
                 foreach ($relatedShowcases as $relatedShowcase) {
                     //$relatedUuids = StringUtil::deserialize($relatedShowcase['showcaseIds']);
                     //if ($arrShowcase && is_array($arrShowcase) && $relatedUuids && is_array($relatedUuids) && in_array($arrShowcase['uuid'], $relatedUuids)) {
-                        $returnData[] = $relatedShowcase;
+                    $returnData[] = $relatedShowcase;
                     //}
                 }
                 $returnData = $this->converter->convertDbResult($returnData, ['loadTagsComplete' => true]);
@@ -393,11 +393,11 @@ class ShowcaseService
                         break;
                 }
             }
+
             if ($execQuery) {
                 $params = [];
                 if ($searchString) {
-                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-                    $sql .= 'AND ' . self::getFilterSQLString();
+                    $sql = 'SELECT e.*, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element AS e ";
 
                     if (!empty($restrictedPostals)) {
                         $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
@@ -409,68 +409,44 @@ class ShowcaseService
 
                     $sql = "SELECT e.* FROM tl_gutesio_data_element AS e";
 
-                    if ($typeIds) {
-                        $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
-                    }
+                }
 
-                    if ($tagIds) {
-                        $sql .= " JOIN tl_gutesio_data_tag_element ON e.uuid = tl_gutesio_data_tag_element.elementId ";
-                    }
+                if ($typeIds) {
+                    $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
+                }
 
+                if ($tagIds) {
+                    $sql .= " JOIN tl_gutesio_data_tag_element ON e.uuid = tl_gutesio_data_tag_element.elementId ";
+                }
 
-                    $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
+                $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
 
-                    if ($typeIds) {
-                        $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
-                        $params = array_merge($params, $typeIds);
-                    }
-                    if ($tagIds) {
-                        $sql .= " AND tl_gutesio_data_tag_element.tagId " . C4GUtils::buildInString($tagIds);
-                        $params = array_merge($params, $tagIds);
-                    }
-
-                    if ($elementIds) {
-                        $sql .= " AND e.uuid " . C4GUtils::buildInString($elementIds);
-                        $params = array_merge($params, $elementIds);
-                    }
+                if ($searchString) {
+                    $sql .= 'AND ' . self::getFilterSQLString();
 
                     if (!empty($restrictedPostals)) {
-                        $params = array_merge($params, $restrictedPostals);
                         $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                     }
                 }
-//                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds, $mode);
-//                if ($elementIdString !== '()' && $searchString) {
-//                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-//                    $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::getFilterSQLString() . ')';
-//                    if (!empty($restrictedPostals)) {
-//                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-//                    }
-//                    $additionalOrderBy = ' weight';
-//                    $insertSearchParams = true;
-//                } elseif ($elementIdString !== '()') {
-//                    $sql = "SELECT * FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-//                    $sql .= 'AND `uuid` IN ' . $elementIdString;
-//                    if (!empty($restrictedPostals)) {
-//                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-//                    }
-//                    $insertSearchParams = false;
-//                } elseif ($searchString) {
-//                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-//                    $sql .= 'AND ' . self::getFilterSQLString();
-//                    if (!empty($restrictedPostals)) {
-//                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-//                    }
-//                    $additionalOrderBy = ' weight';
-//                    $insertSearchParams = true;
-//                } else {
-//                    $sql = "SELECT * FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-//                    if (!empty($restrictedPostals)) {
-//                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-//                    }
-//                    $insertSearchParams = false;
-//                }
-                $sortClause = '';
+
+                if ($typeIds) {
+                    $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
+                    $params = array_merge($params, $typeIds);
+                }
+                if ($tagIds) {
+                    $sql .= " AND tl_gutesio_data_tag_element.tagId " . C4GUtils::buildInString($tagIds);
+                    $params = array_merge($params, $tagIds);
+                }
+
+                if ($elementIds) {
+                    $sql .= " AND e.uuid " . C4GUtils::buildInString($elementIds);
+                    $params = array_merge($params, $elementIds);
+                }
+
+                if (!empty($restrictedPostals)) {
+                    $params = array_merge($params, $restrictedPostals);
+                    $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
+                }
 
                 $withoutLimit = true;
                 $sortClause = "";
@@ -478,58 +454,20 @@ class ShowcaseService
                     $withoutLimit = false;
                     $arrSort = explode('_', $sorting);
                     if ($searchString && ($sorting == 'random')) {
-//                        $sortClause = ' ORDER BY weight DESC LIMIT ? OFFSET ?';
                         $sortClause = sprintf(" ORDER BY weight DESC LIMIT %s, %s", $offset, $limit);
                     } elseif ($sorting == 'random') {
                         $seed = $this->getSeedForLoading();
                         $sortClause = sprintf(' ORDER BY RAND(%s) LIMIT %s, %s', $seed, $offset, $limit);
                     } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
-                        $sortClause = ' ORDER BY '.$arrSort[0].' ' . strtoupper($arrSort[1]);//. ' LIMIT ? OFFSET ?';
-                        //ToDO limit / offset
+                        $sortClause = sprintf(' ORDER BY ' . $arrSort[0]. ' LIMIT %s, %s', $offset, $limit);
                         $withoutLimit = true;
                     }
                 }
 
                 $sql .= $sortClause;
                 $stm = Database::getInstance()->prepare($sql);
-//                $searchString = '%' . $searchString . '%';
 
-//                if ($mode === 3) {
-//                    $arrResult = $stm->execute(...$searchString)->fetchAllAssoc();
-//                } else {
                 $arrResult = $stm->execute(...$params)->fetchAllAssoc();
-//                if ($withoutLimit) {
-//                    if ($insertSearchParams) {
-//                        $searchString = self::getFilterSQLValueSet($searchString);
-//                        if (!empty($restrictedPostals)) {
-//                            $arrResult = $stm->execute(...$searchString, ...$restrictedPostals)->fetchAllAssoc();
-//                        } else {
-//                            $arrResult = $stm->execute(...$searchString)->fetchAllAssoc();
-//                        }
-//                    } else {
-//                        if (!empty($restrictedPostals)) {
-//                            $arrResult = $stm->execute(...$restrictedPostals)->fetchAllAssoc();
-//                        } else {
-//                            $arrResult = $stm->execute()->fetchAllAssoc();
-//                        }
-//                    }
-//                } else {
-//                    if ($insertSearchParams) {
-//                        if (!empty($restrictedPostals)) {
-//                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals)->fetchAllAssoc();
-//                        } else {
-//                            $params = self::getFilterSQLValueSet($searchString);
-//                            $arrResult = $stm->execute(...$params)->fetchAllAssoc();
-//                        }
-//                    } else {
-//                        if (!empty($restrictedPostals)) {
-//                            $arrResult = $stm->execute(...$restrictedPostals, ...[intval($limit), intval($offset)])->fetchAllAssoc();
-//                        } else {
-//                            $arrResult = $stm->execute()->fetchAllAssoc();
-//                        }
-//                    }
-//                }
-//                }
             }
         }
 
@@ -631,8 +569,8 @@ class ShowcaseService
         }
         $idString .= ')';
         $count = Database::getInstance()->prepare('SELECT COUNT(1) AS rowCount FROM tl_gutesio_data_element_type ' .
-                'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->rowCount;
-                
+            'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->rowCount;
+
         return ($count && $count > 0);
     }
 

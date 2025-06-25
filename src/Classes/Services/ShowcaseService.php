@@ -399,12 +399,9 @@ class ShowcaseService
                 if ($searchString) {
                     $sql = 'SELECT e.*, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element AS e ";
 
-                    if (!empty($restrictedPostals)) {
-                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                    }
-                    $additionalOrderBy = ' weight';
+                    $additionalOrderBy = ' weight DESC ';
                     $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-                    $params = array_merge(self::getFilterSQLValueSet($searchString), $restrictedPostals);
+                    $params = self::getFilterSQLValueSet($searchString);
                 } else {
 
                     $sql = "SELECT e.* FROM tl_gutesio_data_element AS e";
@@ -426,6 +423,7 @@ class ShowcaseService
 
                     if (!empty($restrictedPostals)) {
                         $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
+                        $params = array_merge($params, $restrictedPostals);
                     }
                 }
 
@@ -459,8 +457,13 @@ class ShowcaseService
                         $seed = $this->getSeedForLoading();
                         $sortClause = sprintf(' ORDER BY RAND(%s) LIMIT %s, %s', $seed, $offset, $limit);
                     } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
-                        $sortClause = sprintf(' ORDER BY ' . $arrSort[0]. ' LIMIT %s, %s', $offset, $limit);
-                        $withoutLimit = true;
+                        $sortClause = ' ORDER BY ' . $arrSort[0]. ' ' . $arrSort[1];
+                        if (!empty($additionalOrderBy)) {
+                            $sortClause .= "," . $additionalOrderBy;
+                        }
+
+                        $limitClause = sprintf(' LIMIT %s, %s', $offset, $limit);
+                        $sortClause .= $limitClause;
                     }
                 }
 

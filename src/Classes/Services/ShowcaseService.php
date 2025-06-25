@@ -446,10 +446,8 @@ class ShowcaseService
                     $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                 }
 
-                $withoutLimit = true;
                 $sortClause = "";
                 if ($sorting) {
-                    $withoutLimit = false;
                     $arrSort = explode('_', $sorting);
                     if ($searchString && ($sorting == 'random')) {
                         $sortClause = sprintf(" ORDER BY weight DESC LIMIT %s, %s", $offset, $limit);

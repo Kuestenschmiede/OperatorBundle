@@ -187,7 +187,7 @@ class ShowcaseService
             }
         }
 
-        $filterString = $newFilterString;
+        $filterString = strtoupper($newFilterString);
         $extraFilterString1 = $partArr[0];
         $extraFilterString2 = count($partArr) > 1 ? $partArr[1] : $partArr[0];
 
@@ -195,29 +195,29 @@ class ShowcaseService
         $weightArr = [];
         $relevanceArr = [];
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
-               if ($weight == 1000) {
-                    $likeArr[] = $filterString;
-                    $likeArr[] = $extraFilterString1;
-                    $likeArr[] = $extraFilterString2;
+            if ($weight == 1000) {
+                $likeArr[] = $filterString;
+                $likeArr[] = $extraFilterString1;
+                $likeArr[] = $extraFilterString2;
 
-                    if (!$withoutWeight) {
-                        $weightArr[] = $filterString;
-                        $weightArr[] = $extraFilterString1;
-                        $weightArr[] = $extraFilterString2;
-                    }
-                } else {
-                   $likeArr[] = '%'.$filterString.'%';
-                   $likeArr[] = '%'.$extraFilterString1.'%';
-                   $likeArr[] = '%'.$extraFilterString2.'%';
-
-                   if (!$withoutWeight) {
-                       $weightArr[] = '%'.$filterString.'%';
-                       $weightArr[] = '%'.$extraFilterString1.'%';
-                       $weightArr[] = '%'.$extraFilterString2.'%';
-                   }
+                if (!$withoutWeight) {
+                    $weightArr[] = $filterString;
+                    $weightArr[] = $extraFilterString1;
+                    $weightArr[] = $extraFilterString2;
                 }
+            } else {
+                $likeArr[] = '%'.$filterString.'%';
+                $likeArr[] = '%'.$extraFilterString1.'%';
+                $likeArr[] = '%'.$extraFilterString2.'%';
 
-                //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
+                if (!$withoutWeight) {
+                    $weightArr[] = '%'.$filterString.'%';
+                    $weightArr[] = '%'.$extraFilterString1.'%';
+                    $weightArr[] = '%'.$extraFilterString2.'%';
+                }
+            }
+
+            //$relevanceArr[] = '+'.$filterString.', +'.$extraFilterString;
         }
 
 
@@ -280,7 +280,7 @@ class ShowcaseService
                 foreach ($relatedShowcases as $relatedShowcase) {
                     //$relatedUuids = StringUtil::deserialize($relatedShowcase['showcaseIds']);
                     //if ($arrShowcase && is_array($arrShowcase) && $relatedUuids && is_array($relatedUuids) && in_array($arrShowcase['uuid'], $relatedUuids)) {
-                        $returnData[] = $relatedShowcase;
+                    $returnData[] = $relatedShowcase;
                     //}
                 }
                 $returnData = $this->converter->convertDbResult($returnData, ['loadTagsComplete' => true]);
@@ -343,8 +343,7 @@ class ShowcaseService
         $elementIds = [],
         $restrictedPostals = []
     ) {
-        $times = [];
-        $times['start'] = microtime();
+        $dbParams = [];
         $sorting = 'random';
         if ($params && is_array($params)) {
             $searchString = key_exists('filter', $params) ? $params['filter'] : '';
@@ -352,7 +351,6 @@ class ShowcaseService
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) && str_contains($params['pos'], ",") ? explode(',', $params['pos']) : '';
         }
-        $times['cacheCheck'] = microtime();
         $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
         if ($this->checkForCacheFile($key)) {
             $arrIds = $this->getDataFromCache($key);
@@ -370,20 +368,11 @@ class ShowcaseService
             }
         } else {
             $execQuery = true;
-            $times['switchCase'] = microtime();
             if ($sorting) {
                 switch ($sorting) {
                     case 'random':
-                        $arrIds = $this->generateRandomSortingMap($searchString, $typeIds, $tagIds, $elementIds, $restrictedPostals);
-                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIds);
-                        $arrIds = array_slice($arrIds, $offset, $limit);
-                        if (count($arrIds) > 0) {
-                            $arrResult = $this->loadByIds($arrIds);
-                        } else {
-                            $arrResult = [];
-                        }
-                        $execQuery = false;
-//                        $execQuery = true;
+                        // gets sorted via SQL
+                        $execQuery = true;
 
                         break;
                     case 'distance':
@@ -404,100 +393,86 @@ class ShowcaseService
                         break;
                 }
             }
-            $times['nach_switchCase'] = microtime();
+
             if ($execQuery) {
-                $elementIdString = $this->createIdStringForElements($typeIds, $searchString, $tagIds, $elementIds);
-                if ($elementIdString !== '()' && $searchString) {
-                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-                    $sql .= 'AND `uuid` IN ' . $elementIdString . ' AND (' . self::getFilterSQLString() . ')';
-                    if (!empty($restrictedPostals)) {
-                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                    }
-                    $additionalOrderBy = ' weight';
-                    $insertSearchParams = true;
-                } elseif ($elementIdString !== '()') {
-                    $sql = "SELECT * FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-                    $sql .= 'AND `uuid` IN ' . $elementIdString;
-                    if (!empty($restrictedPostals)) {
-                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                    }
-                    $insertSearchParams = false;
-                } elseif ($searchString) {
-                    $sql = 'SELECT *, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-                    $sql .= 'AND ' . self::getFilterSQLString();
-                    if (!empty($restrictedPostals)) {
-                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                    }
-                    $additionalOrderBy = ' weight';
-                    $insertSearchParams = true;
+                $params = [];
+                if ($searchString) {
+                    $sql = 'SELECT e.*, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element AS e ";
+
+                    $additionalOrderBy = ' weight DESC ';
+                    $searchString = $this->updateSearchStringForNonExactSearch($searchString);
+                    $params = self::getFilterSQLValueSet($searchString);
                 } else {
-                    $sql = "SELECT * FROM tl_gutesio_data_element WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
+
+                    $sql = "SELECT e.* FROM tl_gutesio_data_element AS e";
+
+                }
+
+                if ($typeIds) {
+                    $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
+                }
+
+                if ($tagIds) {
+                    $sql .= " JOIN tl_gutesio_data_tag_element ON e.uuid = tl_gutesio_data_tag_element.elementId ";
+                }
+
+                $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
+
+                if ($searchString) {
+                    $sql .= 'AND ' . self::getFilterSQLString();
+
                     if (!empty($restrictedPostals)) {
                         $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
+                        $params = array_merge($params, $restrictedPostals);
                     }
-                    $insertSearchParams = false;
                 }
-                $sortClause = '';
-                $withoutLimit = true;
+
+                if ($typeIds) {
+                    $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
+                    $params = array_merge($params, $typeIds);
+                }
+                if ($tagIds) {
+                    $sql .= " AND tl_gutesio_data_tag_element.tagId " . C4GUtils::buildInString($tagIds);
+                    $params = array_merge($params, $tagIds);
+                }
+
+                if ($elementIds) {
+                    $sql .= " AND e.uuid " . C4GUtils::buildInString($elementIds);
+                    $params = array_merge($params, $elementIds);
+                }
+
+                if (!empty($restrictedPostals)) {
+                    $params = array_merge($params, $restrictedPostals);
+                    $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
+                }
+
+                $sortClause = "";
                 if ($sorting) {
-                    $withoutLimit = false;
                     $arrSort = explode('_', $sorting);
                     if ($searchString && ($sorting == 'random')) {
-                        $sortClause = ' ORDER BY weight DESC LIMIT ? OFFSET ?';
+                        $sortClause = sprintf(" ORDER BY weight DESC LIMIT %s, %s", $offset, $limit);
                     } elseif ($sorting == 'random') {
-                        $sortClause = ' ORDER BY RAND() LIMIT ? OFFSET ?';
+                        $seed = $this->getSeedForLoading();
+                        $sortClause = sprintf(' ORDER BY RAND(%s) LIMIT %s, %s', $seed, $offset, $limit);
                     } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
-                        $sortClause = ' ORDER BY '.$arrSort[0].' ' . strtoupper($arrSort[1]);//. ' LIMIT ? OFFSET ?';
-                        //ToDO limit / offset
-                        $withoutLimit = true;
+                        $sortClause = ' ORDER BY ' . $arrSort[0]. ' ' . $arrSort[1];
+                        if (!empty($additionalOrderBy)) {
+                            $sortClause .= "," . $additionalOrderBy;
+                        }
+
+                        $limitClause = sprintf(' LIMIT %s, %s', $offset, $limit);
+                        $sortClause .= $limitClause;
                     }
                 }
 
                 $sql .= $sortClause;
                 $stm = Database::getInstance()->prepare($sql);
-//                $searchString = '%' . $searchString . '%';
-                $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-                if ($withoutLimit) {
-                    if ($insertSearchParams) {
-                        $searchString = self::getFilterSQLValueSet($searchString);
-                        if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(...$searchString, ...$restrictedPostals)->fetchAllAssoc();
-                        } else {
-                            $arrResult = $stm->execute(...$searchString)->fetchAllAssoc();
-                        }
-                    } else {
-                        if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(...$restrictedPostals)->fetchAllAssoc();
-                        } else {
-                            $arrResult = $stm->execute()->fetchAllAssoc();
-                        }
-                    }
-                } else {
-                    if ($insertSearchParams) {
-                        if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), ...$restrictedPostals, ...[$limit, $offset])->fetchAllAssoc();
-                        } else {
-                            $arrResult = $stm->execute(self::getFilterSQLValueSet($searchString), $limit, $offset)->fetchAllAssoc();
-                        }
-                    } else {
-                        if (!empty($restrictedPostals)) {
-                            $arrResult = $stm->execute(...$restrictedPostals, ...[$limit, $offset])->fetchAllAssoc();
-                        } else {
-                            $arrResult = $stm->execute($limit, $offset)->fetchAllAssoc();
-                        }
-                    }
-                }
+
+                $arrResult = $stm->execute(...$params)->fetchAllAssoc();
             }
         }
-        $times['afterexecuteQuery'] = microtime();
 
-        $dbResul = $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
-
-        $times['afterConvertDbresult'] = microtime();
-
-//        dd($times);
-
-        return $dbResul;
+        return $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
     }
 
     private function formatDistance($distanceInMeters)
@@ -595,8 +570,8 @@ class ShowcaseService
         }
         $idString .= ')';
         $count = Database::getInstance()->prepare('SELECT COUNT(1) AS rowCount FROM tl_gutesio_data_element_type ' .
-                'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->rowCount;
-                
+            'WHERE elementId = ? AND typeId IN '.$idString)->execute($elementId)->rowCount;
+
         return ($count && $count > 0);
     }
 
@@ -754,7 +729,8 @@ class ShowcaseService
         $typeIds,
         $searchString,
         $tagIds = [],
-        $elementIds = []
+        $elementIds = [],
+        $mode = 0
     ) {
         $db = Database::getInstance();
         $idString = '(';
@@ -814,11 +790,24 @@ class ShowcaseService
             $sql .= ' GROUP BY `elementId`';
         }
 
-        if ($tagIdString === '()') {
+        if ($tagIdString === '()' && $searchString) {
             // no tagId constraint but search string, do not load everything
             $arrTaggedElements = [];
         } else {
             $arrTaggedElements = $db->prepare($sql)->execute()->fetchAllAssoc();
+        }
+
+
+        if ($mode === 3) {
+
+            $ids = [];
+            foreach ($arrTaggedElements as $taggedElement) {
+                $ids[] = $taggedElement['elementId'];
+            }
+
+            $idString = implode("\",\"", $ids);
+
+            return sprintf("(\"%s\")", $idString);
         }
 
         if ($searchString) {
@@ -1066,6 +1055,17 @@ class ShowcaseService
         }
 
         return $arrIds;
+    }
+
+    private function getSeedForLoading()
+    {
+        $seed = (new \DateTime())->getTimestamp();
+        // remove seconds from timestamp
+        // this way we achieve a new random sort order each minute,
+        // while still being able to randomly sort in SQL over multiple requests
+        $seed = $seed - ($seed % 60);
+
+        return $seed;
     }
 
     private function convertDbResult($arrResult, $arrOptions = [])

@@ -130,18 +130,17 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 
-        $database = Database::getInstance();
+        if ($this->model->gutesio_data_render_searchHtml) {
+            $elements = $this->getAllData($this->model);
 
-
-        //ToDo load by module settings
-        $elements = $this->getAllData($this->model);
-
-        if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_data_render_searchHtml && $this->model->gutesio_enable_filter) {
-            $sc = new SearchConfiguration();
-            $sc->addData($this->getSearchLinks($elements), ['link']);
-            $template->searchHTML = $sc->getHTML();
-            $template->itemListElement = $this->getMetaData($elements);
+            if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_enable_filter) {
+                $sc = new SearchConfiguration();
+                $sc->addData($this->getSearchLinks($elements), ['link']);
+                $template->searchHTML = $sc->getHTML();
+                $template->itemListElement = $this->getMetaData($elements);
+            }
         }
+
 
         return $template->getResponse();
     }
@@ -848,7 +847,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $typeStr = implode(',',$types);
             $sql = "SELECT DISTINCT uuid, name FROM tl_gutesio_data_type"
                 . " WHERE uuid ".C4GUtils::buildInString($types)." ORDER BY name ASC";
-            $typeResult = Database::getInstance()->prepare($sql)->execute($types)->fetchAllAssoc();
+            $typeResult = Database::getInstance()->prepare($sql)->execute(...$types)->fetchAllAssoc();
         } else if (is_array($blockedTypes) && count($blockedTypes) > 0) {
             $typeStr = implode(',',$blockedTypes);
             $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"

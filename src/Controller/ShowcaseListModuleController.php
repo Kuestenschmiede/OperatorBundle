@@ -132,13 +132,18 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 
         if ($this->model->gutesio_data_render_searchHtml) {
-            $elements = $this->getAllData($this->model);
 
-            if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_enable_filter) {
-                $sc = new SearchConfiguration();
-                $sc->addData($this->getSearchLinks($elements), ['link']);
-                $template->searchHTML = $sc->getHTML();
-                $template->itemListElement = $this->getMetaData($elements);
+            $requestUserAgent = $request->headers->get("User-Agent");
+            // only render content when it's the Googlebot
+            if (str_contains($requestUserAgent, "Googlebot")) {
+                $elements = $this->getAllData($this->model);
+
+                if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_enable_filter) {
+                    $sc = new SearchConfiguration();
+                    $sc->addData($this->getSearchLinks($elements), ['link']);
+                    $template->searchHTML = $sc->getHTML();
+                    $template->itemListElement = $this->getMetaData($elements);
+                }
             }
         }
 

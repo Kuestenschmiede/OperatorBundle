@@ -120,10 +120,16 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $search = "";
         $conf = $this->getListFrontendConfiguration($search, $this->model->gutesio_child_type);
         $conf->setLanguage($objPage->language);
-        if ($this->model->gutesio_data_render_searchHtml) {
-            $sc = new SearchConfiguration();
-            $sc->addData($this->getSearchLinks($model), ['link']);
+        $requestUserAgent = $request->headers->get("User-Agent");
+        // only render content when it's the Googlebot
+        if (str_contains($requestUserAgent, "Googlebot")) {
+            if ($this->model->gutesio_data_render_searchHtml) {
+                $sc = new SearchConfiguration();
+                $sc->addData($this->getSearchLinks($model), ['link']);
+                $template->searchHTML = $sc->getHTML();
+            }
         }
+
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
         $strConf = json_encode($conf);
@@ -132,9 +138,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             C4gLogModel::addLogEntry("operator", $error);
         }
         $template->configuration = $strConf;
-        if ($this->model->gutesio_data_render_searchHtml) {
-            $template->searchHTML = $sc->getHTML();
-        }
+
         return $template->getResponse();
     }
 

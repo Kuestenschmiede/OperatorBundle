@@ -108,7 +108,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             [
                 'randKey' => $data['randKey'],
                 'moduleId' => $this->model->id,
-                'tags' => []
+                'tags' => [],
+                'sorting' => $model->gutesio_initial_sorting ?: "random"
             ]
         );
 

@@ -1308,7 +1308,6 @@ if ($imprintData) {
                     ?>
 
                     <nav class="nav flex-column">
-                        <h6 class="nav-header mt-2 mb-2">Schnellzugriff</h6>
                         <button class="nav-link btn btn-block btn-light share-modal__link" onclick="copyToClipboard('<?= $shareUrl ?>')">
                             <i class="fas fa-copy"></i> Link kopieren
                         </button>
@@ -1316,8 +1315,6 @@ if ($imprintData) {
                            title="<?= $data->name; ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fas fa-envelope"></i> E-Mail</a>
-
-                        <h6 class="nav-header mt-3 mb-2">Messenger</h6>
                         <a rel="noopener" href="<?= $shareWhatsappUrl ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fab fa-whatsapp"></i> WhatsApp</a>
@@ -1327,26 +1324,14 @@ if ($imprintData) {
                         <a rel="noopener" href="<?= $shareThreemaUrl ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fas fa-comment-dots"></i> Threema</a>
-
-                        <h6 class="nav-header mt-3 mb-2">Soziale Medien</h6>
                         <a rel="noopener" href="<?= $shareFacebookUrl ?>"
                            title="<?= $data->name; ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fab fa-facebook"></i> Facebook</a>
-                        <a rel="noopener" href="<?= $shareInstagramUrl ?>"
-                           title="<?= $data->name; ?>"
-                           class="nav-link btn btn-block btn-light share-modal__link"
-                           target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
                         <a rel="noopener" href="<?= $shareLinkedInUrl ?>"
                            title="<?= $data->name; ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fab fa-linkedin"></i> LinkedIn</a>
-                        <a rel="noopener" href="<?= $sharePinterestUrl ?>"
-                           title="<?= $data->name; ?>"
-                           class="nav-link btn btn-block btn-light share-modal__link"
-                           target="_blank"><i class="fab fa-pinterest"></i> Pinterest</a>
-
-                        <h6 class="nav-header mt-3 mb-2">Karten & Bewertungen</h6>
                         <a rel="noopener" href="<?= $shareGoogleMapsUrl ?>"
                            class="nav-link btn btn-block btn-light share-modal__link"
                            target="_blank"><i class="fas fa-map-marker-alt"></i> Google Maps</a>

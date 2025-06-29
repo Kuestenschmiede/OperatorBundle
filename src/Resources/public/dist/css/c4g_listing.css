@@ -12334,7 +12334,7 @@ html {
   border-color: var(--gutes-tag-filter-border-color-checked)
 }
 .c4g-listfilter-outer .react-datepicker-popper {
-  z-index: 10
+  z-index: 20
 }
 .c4g-listfilter-outer .c4g-listfilter-form-wrapper {
   margin-top: 2rem;
@@ -12413,7 +12413,7 @@ html {
   border-color: var(--gutes-tag-filter-border-color-checked)
 }
 .c4g-listfilter-default .react-datepicker-popper {
-  z-index: 10
+  z-index: 20
 }
 .c4g-listfilter-default .c4g-listfilter-form-wrapper {
   margin-top: 2rem;
@@ -12955,7 +12955,7 @@ html {
   display: none
 }
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__type-filter {
-  z-index: 10
+  z-index: 20
 }
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .form-view__searchinput {
   max-width: 400px;

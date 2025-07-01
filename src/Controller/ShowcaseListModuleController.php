@@ -211,6 +211,8 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         } else {
             $tagFilterIds = [];
         }
+        $randKey = $request->query->get("randKey");
+        $params['randKey'] = $randKey;
 
         $requestTypeIds = $request->query->get("types") ?: "";
         if ($requestTypeIds !== "") {
@@ -232,7 +234,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         }
         $params = $request->query->all();
         $mode = intval($moduleModel->gutesio_data_mode);
-        if (!count($requestTypeIds) && ($mode === 1 || $mode === 2 || $mode === 4)) {
+        if (!count($requestTypeIds) && ($mode === 1 || $mode === 2 /*|| $mode === 4*/)) {
             $typeIds = $this->getTypeConstraintForModule($moduleModel);
             //$typeIds = array_merge($requestTypeIds, $typeIds);
         } else {
@@ -320,7 +322,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $arrResult = [];
             foreach ($arrSearchStrings as $arrSearchString) {
                 $params['filter'] = $arrSearchString;
-                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
+                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals, $moduleModel);
                 if (count($partialResult) > 0 && !$partialResult[0]) {
                     // only one element
                     $partialResult = [$partialResult];
@@ -329,26 +331,9 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
             $data = $arrResult;
         } else {
-            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
+            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals, $moduleModel);
         }
         
-        if ($mode === 4) {
-            $tmpData = [];
-            foreach ($data as $key => $value) {
-                $exit = false;
-                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
-                foreach ($value['types'] as $type) {
-                    if (in_array($type['uuid'], $blockedTypeIds)) {
-                        $exit = true;
-                        break;
-                    }
-                }
-                if (!$exit) {
-                    $tmpData[] = $value;
-                }
-            }
-            $data = $tmpData;
-        }
         if (is_array($data) && count($data) > 0 && !$data[0]) {
             // single data entry
             // but array is required by the client
@@ -704,7 +689,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
     private function getInitialData(): array
     {
-        return ['randKey' => $this->showcaseService->createRandomKey()];
+        return ['randKey' => $this->showcaseService->getSeedForLoading()];
     }
 
     private function buildFilter()

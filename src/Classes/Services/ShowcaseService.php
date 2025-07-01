@@ -14,6 +14,7 @@ use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapProfilesModel;
 use con4gis\MapsBundle\Classes\Services\AreaService;
 use Contao\Database;
+use Contao\ModuleModel;
 use Contao\StringUtil;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\ShowcaseResultConverter;
@@ -341,7 +342,8 @@ class ShowcaseService
         $typeIds = [],
         $tagIds = [],
         $elementIds = [],
-        $restrictedPostals = []
+        $restrictedPostals = [],
+        ModuleModel $moduleModel = null
     ) {
         $dbParams = [];
         $sorting = 'random';
@@ -351,125 +353,123 @@ class ShowcaseService
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) && str_contains($params['pos'], ",") ? explode(',', $params['pos']) : '';
         }
-        $key = $this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds);
-        if ($this->checkForCacheFile($key)) {
-            $arrIds = $this->getDataFromCache($key);
-            if ($arrIds && is_array($arrIds)) {
-                // slice correct chunk
-                $arrIds = array_slice($arrIds, $offset, $limit);
-                if (count($arrIds) > 0) {
-                    $arrResult = $this->loadByIds($arrIds, $params['sorting'] === 'distance');
-                } else {
-                    $arrResult = [];
-                }
-            } else {
-                // error
-                $arrResult = [];
-            }
-        } else {
-            $execQuery = true;
-            if ($sorting) {
-                switch ($sorting) {
-                    case 'random':
-                        // gets sorted via SQL
-                        $execQuery = true;
+        if (!$randKey) {
+            $randKey = $this->getSeedForLoading();
+        }
+        $seed = $randKey;
+        $execQuery = true;
+        if ($sorting) {
+            switch ($sorting) {
+                case 'random':
+                    // gets sorted via SQL
+                    $execQuery = true;
 
-                        break;
-                    case 'distance':
-                        $arrIdsWithDistances = $this->generateDistanceSortingMap($position, $searchString, $typeIds, $tagIds, $elementIds, $restrictedPostals);
-                        $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIdsWithDistances);
-                        $arrIdsWithDistances = array_slice($arrIdsWithDistances, $offset, $limit);
-                        if (count($arrIdsWithDistances) > 0) {
-                            $arrResult = $this->loadByIds($arrIdsWithDistances, true);
-                        } else {
-                            $arrResult = [];
-                        }
-                        $execQuery = false;
-
-                        break;
-                    default:
-                        $execQuery = true;
-
-                        break;
-                }
-            }
-
-            if ($execQuery) {
-                $params = [];
-                if ($searchString) {
-                    $sql = 'SELECT e.*, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element AS e ";
-
-                    $additionalOrderBy = ' weight DESC ';
-                    $searchString = $this->updateSearchStringForNonExactSearch($searchString);
-                    $params = self::getFilterSQLValueSet($searchString);
-                } else {
-
-                    $sql = "SELECT e.* FROM tl_gutesio_data_element AS e";
-
-                }
-
-                if ($typeIds) {
-                    $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
-                }
-
-                if ($tagIds) {
-                    $sql .= " JOIN tl_gutesio_data_tag_element ON e.uuid = tl_gutesio_data_tag_element.elementId ";
-                }
-
-                $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
-
-                if ($searchString) {
-                    $sql .= 'AND ' . self::getFilterSQLString();
-
-                    if (!empty($restrictedPostals)) {
-                        $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                        $params = array_merge($params, $restrictedPostals);
+                    break;
+                case 'distance':
+                    $arrIdsWithDistances = $this->generateDistanceSortingMap($position, $searchString, $typeIds, $tagIds, $elementIds, $restrictedPostals);
+                    $this->writeIntoCache($this->getCacheKey($randKey, $searchString, $sorting, $tagIds, $typeIds), $arrIdsWithDistances);
+                    $arrIdsWithDistances = array_slice($arrIdsWithDistances, $offset, $limit);
+                    if (count($arrIdsWithDistances) > 0) {
+                        $arrResult = $this->loadByIds($arrIdsWithDistances, true);
+                    } else {
+                        $arrResult = [];
                     }
-                }
+                    $execQuery = false;
 
+                    break;
+                default:
+                    $execQuery = true;
+
+                    break;
+            }
+        }
+
+        if ($execQuery) {
+            $params = [];
+            if ($searchString) {
+                $sql = 'SELECT DISTINCT e.*, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element AS e ";
+
+                $additionalOrderBy = ' weight DESC ';
+                $searchString = $this->updateSearchStringForNonExactSearch($searchString);
+                $params = self::getFilterSQLValueSet($searchString);
+            } else {
+
+                $sql = "SELECT DISTINCT e.* FROM tl_gutesio_data_element AS e";
+
+            }
+
+            $blockedTypeIds = [];
+            if ($moduleModel->gutesio_data_mode === "4") {
+                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
+            }
+
+            if ($typeIds || $blockedTypeIds) {
+                $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
+            }
+
+            if ($tagIds) {
+                $sql .= " JOIN tl_gutesio_data_tag_element ON e.uuid = tl_gutesio_data_tag_element.elementId ";
+            }
+
+            $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
+
+            if ($searchString) {
+                $sql .= 'AND ' . self::getFilterSQLString();
+
+                if (!empty($restrictedPostals)) {
+                    $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
+                    $params = array_merge($params, $restrictedPostals);
+                }
+            }
+
+            if ($typeIds || $blockedTypeIds) {
                 if ($typeIds) {
                     $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
                     $params = array_merge($params, $typeIds);
                 }
-                if ($tagIds) {
-                    $sql .= " AND tl_gutesio_data_tag_element.tagId " . C4GUtils::buildInString($tagIds);
-                    $params = array_merge($params, $tagIds);
+                if ($blockedTypeIds) {
+                    $sql .= " AND tl_gutesio_data_element_type.typeId NOT " . C4GUtils::buildInString($blockedTypeIds);
+                    $params = array_merge($params, $blockedTypeIds);
                 }
-
-                if ($elementIds) {
-                    $sql .= " AND e.uuid " . C4GUtils::buildInString($elementIds);
-                    $params = array_merge($params, $elementIds);
-                }
-
-                if (!empty($restrictedPostals)) {
-                    $params = array_merge($params, $restrictedPostals);
-                    $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
-                }
-
-                $sortClause = "";
-                if ($sorting) {
-                    $arrSort = explode('_', $sorting);
-                    if ($searchString && ($sorting == 'random')) {
-                        $sortClause = sprintf(" ORDER BY weight DESC LIMIT %s, %s", $offset, $limit);
-                    } elseif ($sorting == 'random') {
-                        $seed = $this->getSeedForLoading();
-                        $sortClause = sprintf(' ORDER BY RAND(%s) LIMIT %s, %s', $seed, $offset, $limit);
-                    } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
-                        $sortClause = ' ORDER BY ' . $arrSort[0]. ' ' . $arrSort[1];
-                        if (!empty($additionalOrderBy)) {
-                            $sortClause .= "," . $additionalOrderBy;
-                        }
-
-                        $limitClause = sprintf(' LIMIT %s, %s', $offset, $limit);
-                        $sortClause .= $limitClause;
-                    }
-                }
-
-                $sql .= $sortClause;
-                $stm = Database::getInstance()->prepare($sql);
-
-                $arrResult = $stm->execute(...$params)->fetchAllAssoc();
             }
+
+            if ($tagIds) {
+                $sql .= " AND tl_gutesio_data_tag_element.tagId " . C4GUtils::buildInString($tagIds);
+                $params = array_merge($params, $tagIds);
+            }
+
+            if ($elementIds) {
+                $sql .= " AND e.uuid " . C4GUtils::buildInString($elementIds);
+                $params = array_merge($params, $elementIds);
+            }
+
+            if (!empty($restrictedPostals)) {
+                $params = array_merge($params, $restrictedPostals);
+                $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
+            }
+
+            $sortClause = "";
+            if ($sorting) {
+                $arrSort = explode('_', $sorting);
+                if ($searchString && ($sorting == 'random')) {
+                    $sortClause = sprintf(" ORDER BY weight DESC LIMIT %s, %s", $offset, $limit);
+                } elseif ($sorting == 'random') {
+                    $sortClause = sprintf(' ORDER BY RAND(%s) LIMIT %s, %s', $seed, $offset, $limit);
+                } elseif ($arrSort && $arrSort[0] && $arrSort[1]) {
+                    $sortClause = ' ORDER BY ' . $arrSort[0]. ' ' . $arrSort[1];
+                    if (!empty($additionalOrderBy)) {
+                        $sortClause .= "," . $additionalOrderBy;
+                    }
+
+                    $limitClause = sprintf(' LIMIT %s, %s', $offset, $limit);
+                    $sortClause .= $limitClause;
+                }
+            }
+
+            $sql .= $sortClause;
+            $stm = Database::getInstance()->prepare($sql);
+
+            $arrResult = $stm->execute(...$params)->fetchAllAssoc();
         }
 
         return $this->convertDbResult($arrResult, ['loadTagsComplete' => true]);
@@ -1057,7 +1057,7 @@ class ShowcaseService
         return $arrIds;
     }
 
-    private function getSeedForLoading()
+    public function getSeedForLoading()
     {
         $seed = (new \DateTime())->getTimestamp();
         // remove seconds from timestamp

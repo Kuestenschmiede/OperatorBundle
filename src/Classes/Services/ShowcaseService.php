@@ -398,12 +398,7 @@ class ShowcaseService
 
             }
 
-            $blockedTypeIds = [];
-            if ($moduleModel->gutesio_data_mode === "4") {
-                $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
-            }
-
-            if ($typeIds || $blockedTypeIds) {
+            if ($typeIds) {
                 $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
             }
 
@@ -422,14 +417,10 @@ class ShowcaseService
                 }
             }
 
-            if ($typeIds || $blockedTypeIds) {
+            if ($typeIds) {
                 if ($typeIds) {
                     $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
                     $params = array_merge($params, $typeIds);
-                }
-                if ($blockedTypeIds) {
-                    $sql .= " AND tl_gutesio_data_element_type.typeId NOT " . C4GUtils::buildInString($blockedTypeIds);
-                    $params = array_merge($params, $blockedTypeIds);
                 }
             }
 

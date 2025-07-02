@@ -349,9 +349,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
         }
 
-        $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
-
-
         if ($mode === 4) {
             $tmpData = [];
             foreach ($data as $key => $value) {

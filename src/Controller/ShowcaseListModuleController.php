@@ -357,12 +357,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             foreach ($data as $key => $value) {
                 $exit = false;
                 $blockedTypeIds = StringUtil::deserialize($moduleModel->gutesio_data_blocked_types);
-                foreach ($value['types'] as $type) {
-                    if (in_array($type['uuid'], $blockedTypeIds)) {
-                        $exit = true;
-                        break;
+                if (is_array($value) && array_key_exists("types", $value) && is_array($value['types'])) {
+                    foreach ($value['types'] as $type) {
+                        if (in_array($type['uuid'], $blockedTypeIds)) {
+                            $exit = true;
+                            break;
+                        }
                     }
                 }
+
                 if (!$exit) {
                     $tmpData[] = $value;
                 }
@@ -376,6 +379,10 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $rowData = [];
         foreach ($data as $key => $row) {
             $types = [];
+            if (!is_array($row) || !$row['uuid']) {
+                unset($data[$key]);
+                continue;
+            }
             if ($clientUuid !== null) {
                 $db = Database::getInstance();
                 $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";

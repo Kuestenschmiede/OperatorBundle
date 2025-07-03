@@ -58,7 +58,7 @@ class ShowcaseService
     //ToDo search type values
     const FILTER_FIELDS = ['name_'=>1000,'alias_'=>1000,'name'=>60,'alias'=>60,'description'=>30,'contactName'=>40,'contactStreet'=>1,'contactStreetNumber'=>1,'contactCity'=>1,'contactZip'=>1,'locationStreet'=>30,'locationStreetNumber'=>1,'locationCity'=>30,'locationZip'=>60, 'extendedSearchTerms'=>60];
 
-    public static function getFilterSQLString() {
+    public static function getFilterSQLString($elementKeyPrefix = "e.", $typeKeyPrefix = "tl_gutesio_data_type.") {
         if(C4GUtils::isBackend()) {
             return '';
         }
@@ -66,18 +66,23 @@ class ShowcaseService
         $result = '(';
         //1. entry, 2. part left, 3. part right
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+            if ($key === "extendedSearchTerms") {
+                $prefix = $typeKeyPrefix;
+            } else {
+                $prefix = $elementKeyPrefix;
+            }
             if ($weight == 1000) {
                 $key = str_replace('_','',$key);
                 If ($result == '(') {
-                    $result .= 'UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?';
+                    $result .= 'UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ?';
                 } else {
-                    $result .= ' OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?';
+                    $result .= ' OR UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ?';
                 }
             } else {
                 If ($result == '(') {
-                    $result .= 'UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+                    $result .= 'UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ?';
                 } else {
-                    $result .= ' OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?';
+                    $result .= ' OR UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ?';
                 }
             }
         }
@@ -110,7 +115,7 @@ class ShowcaseService
 //        return $result;
 //    }
 
-    public static function getFilterSQLStringWeight() {
+    public static function getFilterSQLStringWeight($elementKeyPrefix = "e.", $typeKeyPrefix = "tl_gutesio_data_type.") {
         if(C4GUtils::isBackend()) {
             return '';
         }
@@ -118,18 +123,24 @@ class ShowcaseService
         $result = '';
         //1. entry, 2. part left, 3. part right
         foreach (ShowcaseService::FILTER_FIELDS as $key=>$weight) {
+            if ($key === "extendedSearchTerms") {
+                $prefix = $typeKeyPrefix;
+            } else {
+                $prefix = $elementKeyPrefix;
+            }
             if ($weight == 1000) {
                 $key = str_replace('_','',$key);
+
                 If ($result == '') {
-                    $result .= 'IF (UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?, '.$weight.', 0)';
+                    $result .= 'IF (UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ?, '.$weight.', 0)';
                 } else {
-                    $result .= ' + IF (UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ? OR UPPER(`'.$key.'`) = ?, '.$weight.', 0)';
+                    $result .= ' + IF (UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ? OR UPPER('.$prefix.'`'.$key.'`) = ?, '.$weight.', 0)';
                 }
             } else {
                 If ($result == '') {
-                    $result .= 'IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+                    $result .= 'IF (UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ?, '.$weight.', 0)';
                 } else {
-                    $result .= ' + IF (UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ? OR UPPER(`'.$key.'`) LIKE ?, '.$weight.', 0)';
+                    $result .= ' + IF (UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ? OR UPPER('.$prefix.'`'.$key.'`) LIKE ?, '.$weight.', 0)';
                 }
             }
         }
@@ -345,7 +356,6 @@ class ShowcaseService
         $restrictedPostals = [],
         ModuleModel $moduleModel = null
     ) {
-        $dbParams = [];
         $sorting = 'random';
         if ($params && is_array($params)) {
             $searchString = key_exists('filter', $params) ? $params['filter'] : '';
@@ -353,7 +363,7 @@ class ShowcaseService
             $randKey =  key_exists('randKey',$params) ? $params['randKey'] : '';
             $position = key_exists('pos',$params) && str_contains($params['pos'], ",") ? explode(',', $params['pos']) : '';
         }
-        if (!$randKey) {
+        if (empty($randKey) || ($randKey === "")) {
             $randKey = $this->getSeedForLoading();
         }
         $seed = $randKey;
@@ -387,7 +397,7 @@ class ShowcaseService
         if ($execQuery) {
             $params = [];
             if ($searchString) {
-                $sql = 'SELECT DISTINCT e.*, ' . self::getFilterSQLStringWeight() . " FROM tl_gutesio_data_element AS e ";
+                $sql = 'SELECT DISTINCT e.*, ' . self::getFilterSQLStringWeight("e.") . " FROM tl_gutesio_data_element AS e ";
 
                 $additionalOrderBy = ' weight DESC ';
                 $searchString = $this->updateSearchStringForNonExactSearch($searchString);
@@ -398,8 +408,8 @@ class ShowcaseService
 
             }
 
-            if ($typeIds) {
-                $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId ";
+            if ($typeIds || $searchString) {
+                $sql .= " JOIN tl_gutesio_data_element_type ON e.uuid = tl_gutesio_data_element_type.elementId JOIN tl_gutesio_data_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId ";
             }
 
             if ($tagIds) {
@@ -409,8 +419,11 @@ class ShowcaseService
             $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
 
             if ($searchString) {
-                $sql .= 'AND ' . self::getFilterSQLString();
-
+                $sql .= 'AND ' . self::getFilterSQLString("e.");
+                // type search
+                $sql .= " OR (UPPER(tl_gutesio_data_type.name) LIKE ? OR UPPER(tl_gutesio_data_type.extendedSearchTerms) LIKE ?) ";
+                $params[] = $searchString;
+                $params[] = $searchString;
                 if (!empty($restrictedPostals)) {
                     $sql .= ' AND locationZip ' . C4GUtils::buildInString($restrictedPostals);
                     $params = array_merge($params, $restrictedPostals);
@@ -418,10 +431,10 @@ class ShowcaseService
             }
 
             if ($typeIds) {
-                if ($typeIds) {
-                    $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
-                    $params = array_merge($params, $typeIds);
-                }
+
+                $sql .= " AND tl_gutesio_data_element_type.typeId " . C4GUtils::buildInString($typeIds);
+                $params = array_merge($params, $typeIds);
+
             }
 
             if ($tagIds) {

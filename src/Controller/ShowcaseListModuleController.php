@@ -205,6 +205,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         System::loadLanguageFile("operator_showcase_list", "de");
         System::loadLanguageFile("form_tag_fields", "de");
         $moduleId = $request->query->get("moduleId");
+        $tmpOffset = 0;
         $tagFilterIds = $request->query->get('tags') ?: "";
         if ($tagFilterIds !== "") {
             $tagFilterIds = explode(",", $tagFilterIds);
@@ -254,7 +255,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if (count($tagFilterIds) > 0) {
             // temporarily ignore offset & limit when tag filter is active
             $limit = 5000;
-            $tmpOffset = 0;
         } else {
             $tmpOffset = $offset;
         }
@@ -322,7 +322,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             $arrResult = [];
             foreach ($arrSearchStrings as $arrSearchString) {
                 $params['filter'] = $arrSearchString;
-                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals, $moduleModel);
+                $partialResult = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds ?: [], $tagIds ?: [], $elementIds ?: [], $restrictedPostals ?: [], $moduleModel);
                 if (count($partialResult) > 0 && !$partialResult[0]) {
                     // only one element
                     $partialResult = [$partialResult];
@@ -331,7 +331,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
             $data = $arrResult;
         } else {
-            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals, $moduleModel);
+            $data = $this->showcaseService->loadDataChunk($params, $tmpOffset, $limit, $typeIds ?: [], $tagIds ?: [], $elementIds ?: [], $restrictedPostals ?: [], $moduleModel);
         }
 
         if (is_array($data) && count($data) > 0 && !$data[0]) {
@@ -456,7 +456,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $params['sorting'] = false; //dummy value
 
-        $data = $this->showcaseService->loadDataChunk($params, $offset, $limit, $typeIds, $tagIds, $elementIds, $restrictedPostals);
+        $data = $this->showcaseService->loadDataChunk($params, $offset, $limit, $typeIds ?: [], $tagIds ?: [], $elementIds ?: [], $restrictedPostals ?: []);
 
         if ($mode === 4) {
             $tmpData = [];

@@ -142,7 +142,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                 <div class="c4g-container">
                     <?php if ($data->tags): ?>
                         <?php foreach ($data->tags as $k => $v): ?>
-                            <?php if (property_exists($v,"linkHref") && ($v->technicalKey == "tag_online_reservation")): ?>
+                            <?php if (property_exists($v,"linkHref") && (strlen($v->linkHref) > 4) && ($v->technicalKey == "tag_online_reservation")): ?>
                                 <div class="bookingGroup">
                                     <div class="bookingButton">
                                         <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
@@ -714,7 +714,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if (property_exists($v,"linkHref") && ($v->technicalKey == "tag_online_reservation")): ?>
+                                    <?php if (property_exists($v,"linkHref") && (strlen($v->linkHref) > 4) && ($v->technicalKey == "tag_online_reservation")): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
@@ -738,9 +738,9 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                         <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
-                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && property_exists($v,"linkHref"))): ?>
+                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && property_exists($v,"linkHref") && (strlen($v->linkHref) > 4))): ?>
                                             <div class="tag-entry <?= $v->technicalKey ?><?php if (property_exists($v,"linkHref")): ?> tag-entry__linked<?php endif; ?>">
-                                            <?php if (property_exists($v,"linkHref")): ?>
+                                            <?php if (property_exists($v,"linkHref") && (strlen($v->linkHref) > 4)): ?>
                                                 <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
                                                    title="<?= $v->name ?>"
                                                    class="detail-field-image<?php if ($v->linkHref): ?> detail-field-image__link-item<?php endif; ?>">
@@ -754,7 +754,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                                              width="100" height="100"
                                                              data-content="<?= $v->name ?>"
                                                              title="<?= $v->name ?>">
-                                                        <?php if (!property_exists($v,"linkHref")): ?>
+                                                        <?php if (!property_exists($v,"linkHref") || (strlen($v->linkHref) <= 4)): ?>
                                                     </div>
                                                     <?php else: ?>
                                                 </a>

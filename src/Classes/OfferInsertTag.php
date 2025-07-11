@@ -80,9 +80,9 @@ class OfferInsertTag
                         }
 
                         if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
-                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrUrls[0], $width, $height);
+                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrUrls[0], '', $width, $height);
                         } else {
-                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrOffer['imageCDN'], $width, $height);
+                            $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrOffer['imageCDN'], '', $width, $height);
                         }
 
                         return $url ?: ''; //Further processing in the template
@@ -98,7 +98,7 @@ class OfferInsertTag
 //                            }
                             $image = $arrOffer['imageCDN']; //ToDO CDN TEST
                             if ($image && $cdnUrl) {
-                                $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl ,$image, 1200, 630);
+                                $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl ,$image, '-meta',1200, 630);
                                 $metaDescription = str_replace('IO_OFFER_IMAGE', $imagePath, $metaDescription);
                             } else {
                                 $metaDescription = str_replace(',"image":"IO_OFFER_IMAGE"', '', $metaDescription);
@@ -142,7 +142,7 @@ class OfferInsertTag
 //                                    }
                                     $image = $objShowcase['imageCDN'];//C4GUtils::replaceInsertTags("{{file::$uuid}}");
                                     if ($image && $cdnUrl) {
-                                        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$image, 1200, 630);
+                                        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$image, '-meta', 1200, 630);
                                         $metaDescription = str_replace('IO_SHOWCASE_IMAGE', $imagePath, $metaDescription);
                                     } else {
                                         $metaDescription = str_replace(',"image":"IO_SHOWCASE_IMAGE"', '', $metaDescription);

@@ -206,7 +206,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         }
         //$objLogo = FilesModel::findByUuid($element['logo']);
         $fileUtils = new FileUtils();
-        $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN'],0, 0, 86400);
+        $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN'], '',0, 0, 86400);
         foreach ($arrChilds as $key => $child) {
             if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
                 break;
@@ -214,7 +214,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
 
-        $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], 2400, 86400);
+        $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], '',2400, 86400);
 
         $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
         $shortDescription = key_exists('shortDescription', $element) ? $element['shortDescription'] : '';
@@ -293,7 +293,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
         }
 
-        $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$child['imageCDN'],0,0,86400);
+        $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$child['imageCDN'], '',0,0,86400);
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images

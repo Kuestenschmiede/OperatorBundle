@@ -30,8 +30,8 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
 <?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}")): ?>
 
     <?php
-    $imageXL = $imageCDN.'?crop=smart&width=1920&quality=85&format=webp&fit=scale-down';
-    $imageXS = $imageCDN.'?crop=smart&width=1024&quality=85&format=webp&fit=scale-down';
+    $imageXL = $imageCDN;
+    $imageXS = $imageCDN;
     /**
      * For Contao Users:
      * You can use srcset image url by adding the id of image-size configured in contao backend

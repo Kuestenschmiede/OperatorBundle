@@ -83,7 +83,7 @@ class LoadPopupListener
         $fileUtils = new FileUtils();
         if ($file) {
             $alt = $name;
-            $image = "<img class='entry-content' src='" . $fileUtils->addUrlToPathAndGetImage($cdnUrl, $file, 600, 300) . "' alt='$alt' title='$name'>";
+            $image = "<img class='entry-content' src='" . $fileUtils->addUrlToPathAndGetImage($cdnUrl, $file, '-popup',600, 300) . "' alt='$alt' title='$name'>";
         }
         $tags = '';
 

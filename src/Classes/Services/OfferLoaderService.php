@@ -461,11 +461,11 @@ class OfferLoaderService
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, '-list', 600),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
                 $row['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, 600),
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, '-list',600),
                     'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
                 ];
             }
@@ -759,7 +759,7 @@ class OfferLoaderService
                         $height = 841;
                     }
 
-                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,$width,$height);
+                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'',$width,$height);
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $url,
                         'path' => $url,

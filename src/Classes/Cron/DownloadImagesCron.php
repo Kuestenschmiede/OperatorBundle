@@ -31,16 +31,19 @@ class DownloadImagesCron
         $cdnElements = $db->prepare('SELECT imageCDN, logoCDN, imageGalleryCDN FROM tl_gutesio_data_element')->execute()->fetchAllAssoc() ?: [];
 
         foreach ($cdnElements as $element) {
-            $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], $cropWidth, $cropHeight);
+            $image = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], $cropWidth, $cropHeight);
+            $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
 
             if ($element['logoCDN']) {
-                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $element['logoCDN'], 0, 150);
+                $image = $fileUtils->addUrlToPath($cdnUrl, $element['logoCDN'], 0, 150);
+                $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
             }
 
             $images = StringUtil::deserialize($element['imageGalleryCDN']) ?: [];
             $idx = 0;
             foreach ($images as $image) {
-                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
+                $image = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
+                $imagePaths[] = ['image' => $image, 'extendedParam' => '-list'];
             }
         }
 
@@ -52,7 +55,8 @@ class DownloadImagesCron
             $images = StringUtil::deserialize($child['imageGalleryCDN']) ?: [];
             $idx = 0;
             foreach ($images as $image) {
-                $imagePaths[] = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
+                $galleryImage = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
+                $imagePaths[] = $imagePaths[] = ['image' => $galleryImage, 'extendedParam' => ''];
             }
         }
 

@@ -27,26 +27,21 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}")): ?>
+<?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$alias."::imageCDN}}")): ?>
 
     <?php
-    $imageXL = $imageCDN;
-    $imageXS = $imageCDN;
-    /**
-     * For Contao Users:
-     * You can use srcset image url by adding the id of image-size configured in contao backend
-     * $imageResized = $this->getImage($image->path, null, null, 1);
-     */
+    $image = $imageCDN;
+    $bgImage = $image;//C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}");
     ?>
 
     <style>
         .detail-hero2 {
-            background-image: url(<?= $imageXS ?>);
+            background-image: url(<?= $image ?>);
         }
 
         @media screen and (min-width: 901px) {
             .detail-hero2 {
-                background-image: url(<?= $imageXL ?>);
+                background-image: url(<?= $bgImage ?>);
             }
         }
     </style>
@@ -56,7 +51,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
         <div class="detail-hero2__blur-layer"></div>
         <!--    Image -->
         <div class="detail-hero2__image-wrapper">
-            <img src="<?= $imageXS ?>" alt="">
+            <img src="<?= $image ?>" alt="">
 
         </div>
 

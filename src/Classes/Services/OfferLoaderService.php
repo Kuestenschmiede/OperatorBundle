@@ -457,20 +457,17 @@ class OfferLoaderService
         $childRows = $childs;
 
         foreach ($childRows as $key => $row) {
-            //$imageModel = $row['imageOffer'] && FilesModel::findByUuid($row['imageOffer']) ? FilesModel::findByUuid($row['imageOffer']) : FilesModel::findByUuid($row['image']);
             $imageFile = $row['imageCDN'];
             if ($imageFile) {
                 $childRows[$key]['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, '-list', 600),
-                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, '-small', 600),
+                    'alt' => $row['name']
                 ];
                 $row['image'] = [
-                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, '-list',600),
-                    'alt' => /*$imageModel->meta && unserialize($imageModel->meta)['de'] ? unserialize($imageModel->meta)['de']['alt'] : */$row['name']
+                    'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile, '-small',600),
+                    'alt' => $row['name']
                 ];
             }
-//            unset($childRows[$key]['imageOffer']);
-//            unset($row['imageOffer']);
 
             if (!key_exists('tagLinks', $row)) {
                 $row['tagLinks'] = [];
@@ -748,18 +745,18 @@ class OfferLoaderService
             foreach ($images as $image) {
                 $file = $image;
                 if ($file) {
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file);
+                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'-small');
                     $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
-                        $width = 841;
-                        $height = 594;
+                        $width = 600;
+                        $height = 450;
                     } else {
-                        $width = 594;
-                        $height = 841;
+                        $width = 450;
+                        $height = 600;
                     }
 
-                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'',$width,$height);
+                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'-small',$width,$height);
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $url,
                         'path' => $url,

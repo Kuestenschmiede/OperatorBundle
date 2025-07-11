@@ -35,7 +35,7 @@ class DownloadImagesCron
             $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
 
             $listImage = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], 600);
-            $imagePaths[] = ['image' => $listImage, 'extendedParam' => '-list'];
+            $imagePaths[] = ['image' => $listImage, 'extendedParam' => '-small'];
 
             if ($element['logoCDN']) {
                 $image = $fileUtils->addUrlToPath($cdnUrl, $element['logoCDN'], 0, 150);
@@ -59,7 +59,7 @@ class DownloadImagesCron
             $idx = 0;
             foreach ($images as $image) {
                 $galleryImage = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
-                $imagePaths[] = $imagePaths[] = ['image' => $galleryImage, 'extendedParam' => ''];
+                $imagePaths[] = $imagePaths[] = ['image' => $galleryImage, 'extendedParam' => '-small'];
             }
         }
 

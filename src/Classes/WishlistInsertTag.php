@@ -112,17 +112,8 @@ class WishlistInsertTag
     {
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
-//        if ($arrItem['internal_type'] === 'showcase') {
-//            $image = $arrItem['imageList'] ? $arrItem['imageList'] : $arrItem['image'];
-//        } else {
-//            $image = $arrItem['imageOffer'] ? $arrItem['imageOffer'] : $arrItem['image'];
-//        }
-//        $objImage = FilesModel::findByUuid(StringUtil::binToUuid($image));
         $fileUtils = new FileUtils();
-        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrItem['imageCDN'], '-list',600);
-//        if ($objImage !== null) {
-//            $imagePath = $objImage->path;
-//        }
+        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrItem['imageCDN'], '-small',600);
 
         return $imagePath;
     }

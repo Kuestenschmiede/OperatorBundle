@@ -173,7 +173,7 @@ class GutesBlogGenerator
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $cdnUrl = $objSettings->cdnUrl;
         $fileUtils = new FileUtils();
-        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrItem['imageCDN'],'-blog');
+        $imagePath = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrItem['imageCDN'],'-small');
 
         return $imagePath;
     }

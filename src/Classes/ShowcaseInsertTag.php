@@ -91,13 +91,13 @@ class ShowcaseInsertTag
                         return '{{link_open::'.$url.'}}'.html_entity_decode($arrShowcase['name']).'{{link_close}}';
                     case 'image':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url, '',600) : ''; //Further processing in the template
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url, '-small',600) : ''; //Further processing in the template
                     case 'imageCDN':
                         $url = $arrShowcase['imageCDN'];
                         return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,'',2400,660) : '';
                     case 'imageList':
                         $url = $arrShowcase['imageCDN'];
-                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url, '-list',600) : '';
+                        return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url, '-small',600) : '';
                     case 'previewimage':
                         $url = $arrShowcase['imageCDN'];
                         return $url ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$url,'',2400,660) : '';

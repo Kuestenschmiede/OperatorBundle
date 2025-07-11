@@ -34,6 +34,9 @@ class DownloadImagesCron
             $image = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], $cropWidth, $cropHeight);
             $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
 
+            $listImage = $fileUtils->addUrlToPath($cdnUrl, $element['imageCDN'], 600);
+            $imagePaths[] = ['image' => $listImage, 'extendedParam' => '-list'];
+
             if ($element['logoCDN']) {
                 $image = $fileUtils->addUrlToPath($cdnUrl, $element['logoCDN'], 0, 150);
                 $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
@@ -43,7 +46,7 @@ class DownloadImagesCron
             $idx = 0;
             foreach ($images as $image) {
                 $image = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
-                $imagePaths[] = ['image' => $image, 'extendedParam' => '-list'];
+                $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
             }
         }
 

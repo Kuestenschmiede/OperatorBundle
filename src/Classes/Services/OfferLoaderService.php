@@ -745,7 +745,8 @@ class OfferLoaderService
             foreach ($images as $image) {
                 $file = $image;
                 if ($file) {
-                    $imageCDN = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'-small');
+                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'-small',600);
+                    /*
                     $result = $fileUtils->getImageSizeAndOrientation($imageCDN);
 
                     if ($result && $result[1] !== 'portrait') {
@@ -757,6 +758,7 @@ class OfferLoaderService
                     }
 
                     $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$file,'-small',$width,$height);
+                    */
                     $rows[$key]['imageGallery_' . $idx] = [
                         'src' => $url,
                         'path' => $url,

@@ -108,6 +108,7 @@ services:
     gutesio\OperatorBundle\Classes\Services\VoucherDataService: ~
     gutesio\OperatorBundle\Classes\Services\PersonDataService: ~
     gutesio\OperatorBundle\Classes\Services\SimpleOfferDataService: ~
+    gutesio\OperatorBundle\Classes\Services\ShowcaseExportService: ~
     gutesio\OperatorBundle\Classes\Helper\OfferDataHelper: ~
 
     gutesio\OperatorBundle\Classes\Maintenance\ChildFullTextUpdater: ~
@@ -224,3 +225,24 @@ services:
     gutesio\OperatorBundle\Classes\Cron\DownloadImagesCron:
       tags:
         - { name: contao.cronjob, interval: hourly }
+
+
+    gutesio\OperatorBundle\Controller\ShowcaseExportController:
+      public: true
+      autowire: true
+      arguments:
+        $showcaseExportService: '@gutesio\OperatorBundle\Classes\Services\ShowcaseExportService'
+        $framework: '@Contao\CoreBundle\Framework\ContaoFramework'
+        $tokenManager: '@Contao\CoreBundle\Csrf\ContaoCsrfTokenManager'
+        $menuBuilder: '@contao.menu.backend_builder'
+      tags:
+        - controller.service_arguments
+        - container.service_subscriber
+
+    gutesio\OperatorBundle\Classes\Listener\BackendMenuListener:
+      autoconfigure: true
+      autowire: true
+      tags:
+        - name: kernel.event_listener
+          event: contao.backend_menu_build
+          priority: -254

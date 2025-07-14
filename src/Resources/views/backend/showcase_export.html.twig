@@ -1,0 +1,31 @@
+{% extends '@Contao/be_main' %}
+
+
+{% block main_content %}
+
+    <div id="tl_buttons">
+        <a href="/contao" class="header_back" title="{{ "Zurück" }}" accesskey="b"
+           onclick="Backend.getScrollOffset()">{{ "Zurück" }}</a>
+    </div>
+
+    <div class="tl_listing_container">
+        <div class="tl_formbody_edit">
+            <h1>Schaufenster exportieren</h1>
+
+            <div class="tl_box">
+                <form action="" method="post">
+                    <div class="widget widget-select">
+                        <h3>{{ form_label(form.types) }}</h3>
+                        {{ form_widget(form.types, {'attr': {'class': 'tl_mselect tl_chosen'}}) }}
+                    </div>
+                    <input type="hidden" name="REQUEST_TOKEN" value="{{ token }}" id="request_token"/>
+                    <div class="widget widget-submit" style="margin-top: 1rem;">
+                        <button type="submit" class="tl_submit">{{ 'Schaufenster exportieren'|trans }}</button>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}

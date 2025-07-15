@@ -10,17 +10,26 @@
 
     <div class="tl_listing_container">
         <div class="tl_formbody_edit">
-            <h1>Schaufenster exportieren</h1>
+
+
 
             <div class="tl_box">
+                <div class="widget">
+                    <h1>Schaufenster exportieren</h1>
+
+                    <p style="margin-top: 1rem;">Hier kann ein CSV-Export der Schaufensterdaten erzeugt werden. Wählen Sie dazu die gewünschten Kategorien aus, und klicken Sie auf "Schaufenster exportieren". Die CSV-Datei wird dann erstellt und kann direkt heruntergeladen werden.</p>
+                </div>
+
                 <form action="" method="post">
+
                     <div class="widget widget-select">
                         <h3>{{ form_label(form.types) }}</h3>
                         {{ form_widget(form.types, {'attr': {'class': 'tl_mselect tl_chosen'}}) }}
+                        <p class="tl_help tl_tip">Wählen Sie die Schaufenster-Kategorien aus.</p>
                     </div>
                     <input type="hidden" name="REQUEST_TOKEN" value="{{ token }}" id="request_token"/>
                     <div class="widget widget-submit" style="margin-top: 1rem;">
-                        <button type="submit" class="tl_submit">{{ 'Schaufenster exportieren'|trans }}</button>
+                        <button type="submit" class="tl_submit">{{ 'Schaufenster exportieren' }}</button>
                     </div>
 
                 </form>

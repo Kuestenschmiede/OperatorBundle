@@ -21,7 +21,7 @@ class ShowcaseExportService
         $options = [];
 
         foreach ($types as $type) {
-            $options[$type['name']] = $type['uuid'];
+            $options[$type['uuid']] = $type['name'];
         }
 
         return $options;

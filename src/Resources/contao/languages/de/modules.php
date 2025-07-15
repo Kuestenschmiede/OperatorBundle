@@ -14,6 +14,7 @@
 
 $GLOBALS['TL_LANG']['MOD']['gutesio'] = ['Gutes.digital', 'Gutes.digital'];
 $GLOBALS['TL_LANG']['MOD']['gutesio_operator_settings'] = ['gutes.digital Einstellungen', 'gutes.digital Einstellungen bearbeiten'];
+$GLOBALS['TL_LANG']['MOD']['gutesio_showcase_export'] = ['Schaufenster exportieren', 'gutes.digital Schaufenster exportieren'];
 
 $GLOBALS['TL_LANG']['FMD']['showcase_list_module'] = [
     'Schaufenster Liste',

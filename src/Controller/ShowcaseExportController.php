@@ -6,9 +6,13 @@ use Contao\CoreBundle\Csrf\ContaoCsrfTokenManager;
 use Contao\CoreBundle\Event\MenuEvent;
 use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\CoreBundle\Menu\BackendMenuBuilder;
+use Contao\Database;
+use Contao\Message;
+use Contao\StringUtil;
 use Contao\System;
 use gutesio\OperatorBundle\Classes\Services\ShowcaseExportService;
 use gutesio\OperatorBundle\Form\ShowcaseExportType;
+use Knp\Menu\Renderer\ListRenderer;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -32,7 +36,6 @@ class ShowcaseExportController extends AbstractController
         private ShowcaseExportService $showcaseExportService,
         private ContaoFramework $framework,
         private ContaoCsrfTokenManager $tokenManager,
-        private BackendMenuBuilder $menuBuilder
     ) {
     }
 
@@ -40,45 +43,37 @@ class ShowcaseExportController extends AbstractController
     {
         $this->framework->initialize();
         System::loadLanguageFile("default");
+        System::loadLanguageFile("tl_gutesio_data_element");
 
-        $form = $this->createForm(
-            ShowcaseExportType::class,
-            ['REQUEST_TOKEN'=>$this->tokenManager->getDefaultTokenValue()],
-            ['type_options' => $this->showcaseExportService->getTypeOptions()]
-        );
+        $exportId = $request->query->get("exportId");
 
-        $form->handleRequest($request);
-
-        if ($request->getMethod() === "POST") {
-
-            $formResponse = $this->handleForm($form);
-
-            if ($formResponse !== null) {
-                return $formResponse;
-            } else {
-                // todo error message
-            }
+        if (!$exportId) {
+            // we need an export ID
+            return new Response();
         }
 
-        // TODO add menu to response
-        $header = $this->menuBuilder->buildHeaderMenu();
-        $mainMenu = $this->menuBuilder->buildMainMenu();
+        $exportResponse = $this->handleExport($exportId);
 
-        return $this->render('@gutesioOperator/backend/showcase_export.html.twig', [
-            'token' => $this->tokenManager->getDefaultTokenValue(),
-            'types' => $this->showcaseExportService->getTypeOptions(),
-            'form' => $form,
-            'theme' => "flexible",
-            'title' => "Schaufenster exportieren",
-//            'version' => "1.0",
-//            'menu' => true
-        ]);
+        if (null !== $exportResponse) {
+            return $exportResponse;
+        }
+
+        // TODO show error feedback
+
+        Message::addError("Beim Exportieren ist ein Fehler aufgetreten.");
+
+        return new Response();
     }
 
-    private function handleForm(FormInterface $form)
+    private function handleExport(string $exportId)
     {
-        $formData = $form->getData();
-        $selectedTypes = $formData['types'];
+        $exportData = Database::getInstance()->prepare("SELECT * FROM tl_gutesio_showcase_export WHERE `id` = ?")
+            ->execute($exportId)->fetchAssoc();
+
+        $exportName = $exportData['name'];
+        $exportName = str_replace(" ", "_", $exportName);
+
+        $selectedTypes = StringUtil::deserialize($exportData['types'], true);
 
         if (count($selectedTypes) > 0) {
             $showcaseData = $this->showcaseExportService->createExportData($selectedTypes);
@@ -90,6 +85,13 @@ class ShowcaseExportController extends AbstractController
 
         if ($showcaseData) {
             $headerFields = array_keys($showcaseData[0]);
+
+            if ($exportData['translateFieldNames'] && $GLOBALS['TL_LANG']['tl_gutesio_data_element']) {
+                // translate field names
+                foreach ($headerFields as $key => $field) {
+                    $headerFields[$key] = $GLOBALS['TL_LANG']['tl_gutesio_data_element'][$field][0];
+                }
+            }
 
             $csvData = [
                 $headerFields,
@@ -107,7 +109,7 @@ class ShowcaseExportController extends AbstractController
             fclose($fp);
 
             $response->headers->set('Content-Type', 'text/csv');
-            $response->headers->set('Content-Disposition', 'attachment; filename="schaufenster.csv"');
+            $response->headers->set('Content-Disposition', 'attachment; filename="'.$exportName.'.csv"');
 
             return $response;
         }

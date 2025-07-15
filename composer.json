@@ -31,8 +31,7 @@
     "con4gis/pwa": "^2.8",
     "bacon/bacon-qr-code": "^2.0",
     "guzzlehttp/guzzle": "^7",
-    "org_heigl/hyphenator": "^v3.1.0",
-    "symfony/form": "^6.4"
+    "org_heigl/hyphenator": "^v3.1.0"
   },
   "conflict": {
     "contao/core": "*",

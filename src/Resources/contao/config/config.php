@@ -8,6 +8,9 @@ $GLOBALS['gutesio']['api-caching'] = ["showcaseList"];
 $modules = [
     'gutesio_operator_settings' => [
         'tables' => ['tl_gutesio_operator_settings']
+    ],
+    'gutesio_showcase_export' => [
+        'tables' => ['tl_gutesio_showcase_export']
     ]
 ];
 

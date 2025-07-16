@@ -84,14 +84,17 @@ class ShowcaseExportController extends AbstractController
         }
 
         if ($showcaseData) {
-            $headerFields = array_keys($showcaseData[0]);
 
-            if ($exportData['translateFieldNames'] && $GLOBALS['TL_LANG']['tl_gutesio_data_element']) {
-                // translate field names
-                foreach ($headerFields as $key => $field) {
-                    $headerFields[$key] = $GLOBALS['TL_LANG']['tl_gutesio_data_element'][$field][0];
-                }
-            }
+            $headerFields = [
+                'Email',
+                'Unternehmen',
+                'Straße',
+                'PLZ',
+                'Ort',
+                'Land',
+                'Telefon',
+                'Mobil'
+            ];
 
             $csvData = [
                 $headerFields,

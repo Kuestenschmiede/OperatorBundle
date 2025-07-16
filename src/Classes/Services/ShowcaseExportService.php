@@ -38,8 +38,31 @@ class ShowcaseExportService
         $showcaseData = $this->connection->prepare($query)
             ->executeQuery($types)->fetchAllAssociative();
 
-        // TODO additional data cleaning if needed
+        $result = [];
+        foreach ($showcaseData as $showcase) {
+            $tmp = [
+                'email' => $showcase['email'],
+                'name' => $showcase['name'],
+                'street' => $showcase['locationStreet'] .  " " .  $showcase['locationStreetNumber'],
+                'zip' => $showcase['locationZip'],
+                'city' => $showcase['locationCity'],
+                'country' => "DE", // we dont support multiple countries
+                'phone' => $showcase['phone'],
+                'mobile' => $showcase['mobile']
+            ];
 
-        return $showcaseData;
+            if ($showcase['contactable']) {
+                $tmp['name'] = $showcase['contactName'];
+                $tmp['street'] = $showcase['contactStreet'] . " " . $showcase['contactStreetNumber'];
+                $tmp['zip'] = $showcase['contactZip'];
+                $tmp['city'] = $showcase['contactCity'];
+                $tmp['phone'] = $showcase['contactPhone'];
+                $tmp['mobile'] = $showcase['contactMobile'];
+            }
+
+            $result[] = $tmp;
+        }
+
+        return $result;
     }
 }

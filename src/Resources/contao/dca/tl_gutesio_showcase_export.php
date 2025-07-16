@@ -11,10 +11,9 @@
 
 
 /**
- * Table tl_c4g_pwa_configuration
+ * Table tl_gutesio_showcase_export
  */
 
-use con4gis\PwaBundle\Classes\Callbacks\PwaConfigurationCallback;
 use Contao\DC_Table;
 
 $strName = 'tl_gutesio_showcase_export';

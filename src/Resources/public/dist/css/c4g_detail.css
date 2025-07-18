@@ -12247,7 +12247,7 @@ html {
   width: 100%;
   -o-object-fit: contain;
   object-fit: contain;
-  background: rgba(255,255,255,.5);
+  background: rgba(255,255,255,.7);
   padding: 2vh 0
 }
 .detail-hero2__title,

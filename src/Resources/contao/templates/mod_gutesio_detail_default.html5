@@ -27,12 +27,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
 <?php $this->endblock(); //detailpage_scripts ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
-<?php if ($imageCDN = C4GUtils::replaceInsertTags("{{showcase::".$alias."::imageCDN}}")): ?>
-
-    <?php
-    $image = $imageCDN;
-    $bgImage = $image;//C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}");
-    ?>
+<?php if ($image = C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}")): ?>
 
     <style>
         .detail-hero2 {
@@ -41,7 +36,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
 
         @media screen and (min-width: 901px) {
             .detail-hero2 {
-                background-image: url(<?= $bgImage ?>);
+                background-image: url(<?= $image ?>);
             }
         }
     </style>

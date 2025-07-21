@@ -16,6 +16,7 @@ use Knp\Menu\Renderer\ListRenderer;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -49,7 +50,8 @@ class ShowcaseExportController extends AbstractController
 
         if (!$exportId) {
             // we need an export ID
-            return new Response();
+            Message::addError("Beim Exportieren ist ein Fehler aufgetreten.");
+            return new RedirectResponse("/contao?do=gutesio_showcase_export");
         }
 
         $exportResponse = $this->handleExport($exportId);
@@ -62,7 +64,7 @@ class ShowcaseExportController extends AbstractController
 
         Message::addError("Beim Exportieren ist ein Fehler aufgetreten.");
 
-        return new Response();
+        return new RedirectResponse("/contao?do=gutesio_showcase_export");
     }
 
     private function handleExport(string $exportId)

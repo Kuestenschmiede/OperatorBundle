@@ -129,7 +129,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
                 $childData = $model->gutesio_without_tiles ? [] : $this->getChildTileData($request, $elementUuid ?: $detailData['uuid'], $model->gutesio_data_max_data);
-                if (count($childData) > 0) {
+                if ($childData !== null && count($childData) > 0) {
                     $template->hasOffers = true;
                 }
                 if (key_exists('imprintData', $detailData) && $detailData['imprintData']) {

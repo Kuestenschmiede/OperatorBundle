@@ -122,7 +122,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $conf->setLanguage($objPage->language);
         $requestUserAgent = $request->headers->get("User-Agent");
         // only render content when it's the Googlebot
-        if (str_contains($requestUserAgent, "Googlebot")) {
+        if (str_contains($requestUserAgent, "Googlebot") || str_contains($requestUserAgent, "contao")) {
             if ($this->model->gutesio_data_render_searchHtml) {
                 $sc = new SearchConfiguration();
                 $sc->addData($this->getSearchLinks($model), ['link']);

@@ -135,7 +135,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
             $requestUserAgent = $request->headers->get("User-Agent");
             // only render content when it's the Googlebot
-            if (str_contains($requestUserAgent, "Googlebot")) {
+            if (str_contains($requestUserAgent, "Googlebot") || str_contains($requestUserAgent, "contao")) {
                 $elements = $this->getAllData($this->model);
 
                 if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_enable_filter) {

@@ -30,7 +30,8 @@ $last_key = end(array_keys($data));
         window.frameworkData = window.frameworkData || [];
         window.frameworkData.push(<?php echo $this->configuration; ?>);
     </script>
-    <div style="display: none">
-        <?php echo $this->searchHTML; ?>
-    </div>
+</div>
+
+<div style="display: none">
+    <?php echo $this->searchHTML; ?>
 </div>

@@ -22,7 +22,8 @@ $count = is_array($this->itemListElement) && key_exists(1, $this->itemListElemen
       window.frameworkData = window.frameworkData || [];
       window.frameworkData.push(<?php echo $this->configuration; ?>);
     </script>
-    <div style="display: none">
-        <?php echo $this->searchHTML; ?>
-    </div>
+</div>
+
+<div style="display: none;">
+    <?php echo $this->searchHTML; ?>
 </div>

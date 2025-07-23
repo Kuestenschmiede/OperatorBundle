@@ -210,6 +210,11 @@ services:
       tags:
         - { name: kernel.event_listener, event: contao.sitemap, method: onCreateSitemap, priority: 1024 }
 
+    gutesio.onImportSkip_checkRelations:
+      class: gutesio\OperatorBundle\Classes\Listener\ImportSkipDatasetListener
+      tags:
+        - { name: kernel.event_listener, event: con4gis.import.skip_dataset, method: onImportSkip, priority: 1024 }
+
     gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator:
       tags:
         - { name: contao.cronjob, interval: hourly }

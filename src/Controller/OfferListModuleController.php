@@ -220,6 +220,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $type = $request->getSession()->get('gutesio_child_type', '');
         $results = $this->offerService->getListData($search, $offset, $type, $filterData);
         $clientUuid = $this->checkCookieForClientUuid($request);
+
+        $elementIds = $module->gutesio_data_elements ? deserialize($module->gutesio_data_elements) : [];
+
         foreach ($results as $key => $row) {
             $types = [];
             if ($clientUuid !== null) {
@@ -241,6 +244,22 @@ class OfferListModuleController extends AbstractFrontendModuleController
             }
 
             $results[$key] = $row;
+
+            if (count($elementIds)) {
+                $foundElementId = false;
+                $db = Database::getInstance();
+                foreach($elementIds as $elementId) {
+                    $sql = "SELECT * FROM tl_gutesio_data_child_connection WHERE `childId` = ? AND `elementId` = ?";
+                    $result = $db->prepare($sql)->execute($row['uuid'], $elementId)->fetchAssoc();
+                    if ($result) {
+                        $foundElementId = true;
+                        break;
+                    }
+                }
+                if (!$foundElementId) {
+                    unset($results[$key]);
+                }
+            }
         }
 
 

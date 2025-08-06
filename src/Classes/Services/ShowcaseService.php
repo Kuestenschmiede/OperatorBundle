@@ -419,9 +419,9 @@ class ShowcaseService
             $sql .= " WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') ";
 
             if ($searchString) {
-                $sql .= 'AND ' . self::getFilterSQLString("e.");
+                $sql .= 'AND (' . self::getFilterSQLString("e.");
                 // type search
-                $sql .= " OR (UPPER(tl_gutesio_data_type.name) LIKE ? OR UPPER(tl_gutesio_data_type.extendedSearchTerms) LIKE ?) ";
+                $sql .= " OR (UPPER(tl_gutesio_data_type.name) LIKE ? OR UPPER(tl_gutesio_data_type.extendedSearchTerms) LIKE ?)) ";
                 $params[] = $searchString;
                 $params[] = $searchString;
                 if (!empty($restrictedPostals)) {

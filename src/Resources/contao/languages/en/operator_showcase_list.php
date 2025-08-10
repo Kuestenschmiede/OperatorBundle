@@ -50,6 +50,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCreditsOffer'] = "Offer 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['onlineReservationButton'] = "Book online";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailReservationButton'] = "Book per email";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneReservationButton'] = "Book per phone";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['onlineApplicationButton'] = "Application online";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['eMailApplicationButton'] = "Application per email";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['phoneApplicationButton'] = "Application per phone";
 
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name and Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";

@@ -85,7 +85,7 @@ class JobDataService
 
             $job = $this->helper->setImageAndDetailLinks($job);
 
-            if ((string) $job['beginDate'] === '') {
+            if (!key_exists('beginDate', $job) ||!$job['beginDate']) {
                 $job['beginDate'] = 'ab sofort';
             } else {
                 $job['beginDate'] = date('d.m.Y', $job['beginDate']);

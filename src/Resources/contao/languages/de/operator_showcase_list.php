@@ -52,6 +52,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['imprintAdditionalInfos'] = "Q
 $GLOBALS['TL_LANG'][$strName]['details']['label']['onlineReservationButton'] = "Jetzt buchen";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailReservationButton'] = "Per E-Mail reservieren";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneReservationButton'] = "Telefonisch reservieren";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['onlineApplicationButton'] = "Jetzt bewerben";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['eMailApplicationButton'] = "Per E-Mail bewerben";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['phoneApplicationButton'] = "Telefonisch bewerben";
 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['timesuffix'] = "Uhr";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name und Logo";

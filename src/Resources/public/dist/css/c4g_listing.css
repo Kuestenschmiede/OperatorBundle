@@ -12648,7 +12648,6 @@ html {
 .c4g-plain-outer .c4g-list-element__title {
   font-size: var(--gutes-font-size-title);
   font-weight: var(--gutes-font-weight-title);
-  -webkit-hyphens: auto;
   hyphens: auto
 }
 .c4g-grid-outer .c4g-list-element__elementname-wrapper,

@@ -33,6 +33,9 @@ class JobDataService
                 tl_gutesio_data_element.name as vendorName, ' . '
                 tl_gutesio_data_element.alias as vendorAlias, ' .
                 'j.beginDate as beginDate, '.
+                'j.applicationContactUrl as applicationContactUrl, '.
+                'j.applicationContactEMail as applicationContactEMail, '.
+                'j.applicationContactPhone as applicationContactPhone, '.
             (
             $termsSet ?
                 'match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, '
@@ -85,10 +88,11 @@ class JobDataService
 
             $job = $this->helper->setImageAndDetailLinks($job);
 
-            if (!key_exists('beginDate', $job) ||!$job['beginDate']) {
-                $job['beginDate'] = 'ab sofort';
-            } else {
-                $job['beginDate'] = date('d.m.Y', $job['beginDate']);
+            $job['beginDateDisplay'] = '';
+            if (!key_exists('beginDate', $job) || !$job['beginDate'] || (time() > intval($job['beginDate']))) {
+                $job['beginDateDisplay'] = 'ab sofort';
+            } else if (key_exists('beginDate', $job) || $job['beginDate']) {
+                $job['beginDateDisplay'] = date('d.m.Y', $job['beginDate']);
             }
 
             $job['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$job['uuid']]);

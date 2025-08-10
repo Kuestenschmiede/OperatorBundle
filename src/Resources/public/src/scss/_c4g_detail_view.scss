@@ -284,13 +284,20 @@
   }
 
   &__section-tags {
-    .bookingGroup {
+    .bookingGroup, .applicationGroup {
       display:flex;
     }
     .bookingButton {
       > a {
         @extend .c4g-btn;
         @include button-variant($gutes-tag-fields-tag-reservation, $gutes-tag-fields-tag-reservation);
+        margin-right: 1rem;
+      }
+    }
+    .applicationButton {
+      > a {
+        @extend .c4g-btn;
+        @include button-variant($gutes-button-application, $gutes-button-application);
         margin-right: 1rem;
       }
     }

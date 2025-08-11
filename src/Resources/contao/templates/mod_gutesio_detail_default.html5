@@ -701,6 +701,28 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                             </div>
                         <?php endif; ?>
 
+                        <?php if ((isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)) || (isset($data->applicationContactEMail) && !empty($data->applicationContactEMail)) || (isset($data->applicationContactPhone) && !empty($data->applicationContactPhone))): ?>
+                                <div class="applicationGroup">
+                                    <?php if (isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)): ?>
+                                        <div class="applicationButton">
+                                            <a href="<?= $data->applicationContactUrl ?>" target="_blank" rel="noopener" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineApplicationButton'] ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineApplicationButton']?></a>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($data->applicationContactEMail) && !empty($data->applicationContactEMail)): ?>
+                                        <div class="applicationButton entry-content email" itemprop="email">
+                                            <a href="mailto:{{email_url::<?= $data->applicationContactEMail ?>}}?subject=Stellenangebot: <?= str_replace(',','.', $data->name) ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailApplicationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailApplicationButton']?></a>
+                                        </div>
+                                    <?php endif; ?>
+
+                                     <?php if (isset($data->applicationContactPhone) && !empty($data->applicationContactPhone)): ?>
+                                        <div class="applicationButton entry-content phone" itemprop="phone">
+                                            <a href="tel:<?= $data->applicationButton ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneApplicationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneApplicationButton']?></a>
+                                        </div>
+                                     <?php endif; ?>
+                                 </div>
+                        <?php endif; ?>
+
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
@@ -807,28 +829,6 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                     </div>
                 </div>
             <?php endif; ?>
-
-            <?php if ((isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)) || (isset($data->applicationContactEMail) && !empty($data->applicationContactEMail)) || (isset($data->applicationContactPhone) && !empty($data->applicationContactPhone))): ?>
-                <div class="applicationGroup">
-                    <?php if (isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)): ?>
-                        <div class="applicationButton">
-                            <a href="<?= $data->applicationContactUrl ?>" target="_blank" rel="noopener" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineApplicationButton'] ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineApplicationButton']?></a>
-                        </div>
-                    <?php endif; ?>
-
-                    <?php if (isset($data->applicationContactEMail) && !empty($data->applicationContactEMail)): ?>
-                        div class="applicationButton entry-content email" itemprop="email">
-                            <a href="mailto:{{email_url::<?= $data->applicationContactEMail ?>}}?subject=Stellenangebot: <?= str_replace(',','.', $data->name) ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailApplicationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['eMailApplicationButton']?></a>
-                        </div>
-                    <?php endif; ?>
-
-                     <?php if (isset($data->applicationContactPhone) && !empty($data->applicationContactPhone)): ?>
-                        <div class="applicationButton entry-content phone" itemprop="phone">
-                            <a href="tel:<?= $data->applicationButton ?>" title="<?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneApplicationButton']?>"><?=$GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['phoneApplicationButton']?></a>
-                        </div>
-                     <?php endif; ?>
-                 </div>
-             <?php endif; ?>
 
             <?php if (!isset($this->model) || !$this->model->gutesio_without_contact): ?>
             <div class="detail-view__section-contact-map" id="section-id-contact">

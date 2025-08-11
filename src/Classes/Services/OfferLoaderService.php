@@ -1003,7 +1003,7 @@ class OfferLoaderService
                     break;
 
                 case 'job':
-                    $jobData = $database->prepare('SELECT beginDate AS beginDate ' .
+                    $jobData = $database->prepare('SELECT beginDate AS beginDate, applicationContactUrl, applicationContactEMail, applicationContactPhone ' .
                         'FROM tl_gutesio_data_child_job ' .
                         'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_job.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')

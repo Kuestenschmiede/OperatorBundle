@@ -35,7 +35,7 @@ class JobDataService
                 'j.beginDate as beginDate, '.
                 'j.applicationContactUrl as applicationContactUrl, '.
                 'j.applicationContactEMail as applicationContactEMail, '.
-                'j.applicationContactPhone as applicationContactPhone '.
+                'j.applicationContactPhone as applicationContactPhone, '.
             (
             $termsSet ?
                 'match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, '

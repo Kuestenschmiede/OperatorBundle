@@ -1010,11 +1010,13 @@ class OfferLoaderService
                         ->execute($row['uuid'])->fetchAssoc();
 
                     if (!empty($jobData)) {
-                        if ((string) $jobData['beginDate'] === '') {
-                            $jobData['beginDate'] = 'ab sofort';
-                        } else {
-                            $jobData['beginDate'] = date('d.m.Y', $jobData['beginDate']);
+                        $job['beginDateDisplay'] = '';
+                        if (!key_exists('beginDate', $jobData) || !$jobData['beginDate'] || (time() > intval($jobData['beginDate']))) {
+                            $jobData['beginDateDisplay'] = 'ab sofort';
+                        } else if (key_exists('beginDate', $jobData) || $jobData['beginDate']) {
+                            $job['beginDateDisplay'] = date('d.m.Y', $jobData['beginDate']);
                         }
+
                         $childRows[$key] = array_merge($row, $jobData);
                     }
 

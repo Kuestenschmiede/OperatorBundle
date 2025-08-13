@@ -1014,7 +1014,7 @@ class OfferLoaderService
                         if (!key_exists('beginDate', $jobData) || !$jobData['beginDate'] || (time() > intval($jobData['beginDate']))) {
                             $jobData['beginDateDisplay'] = 'ab sofort';
                         } else if (key_exists('beginDate', $jobData) || $jobData['beginDate']) {
-                            $job['beginDateDisplay'] = date('d.m.Y', $jobData['beginDate']);
+                            $jobData['beginDateDisplay'] = date('d.m.Y', $jobData['beginDate']);
                         }
 
                         $childRows[$key] = array_merge($row, $jobData);

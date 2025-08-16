@@ -483,11 +483,15 @@ class OfferLoaderService
 
             $row['tagLinks'] = $tagLinks;
 
-            $result = $database->prepare('SELECT name, imageCDN, technicalKey FROM tl_gutesio_data_tag ' .
+            $result = $database->prepare('SELECT name, imageCDN, technicalKey, fixedIconUrl FROM tl_gutesio_data_tag ' .
                 'JOIN tl_gutesio_data_child_tag ON tl_gutesio_data_tag.uuid = tl_gutesio_data_child_tag.tagId ' .
                 'WHERE tl_gutesio_data_tag.published = 1 AND tl_gutesio_data_child_tag.childId = ?')
                 ->execute($row['uuid'])->fetchAllAssoc();
             foreach ($result as $r) {
+                if (key_exists('fixedIconUrl', $r) && $r['fixedIconUrl']) {
+                    $icon['linkHref'] = C4GUtils::addProtocolToLink($r['fixedIconUrl']);
+                }
+
                 //$model = FilesModel::findByUuid($r['image']);
                 $file = $fileUtils->addUrlToPath($cdnUrl,$r['imageCDN']);
                 foreach ($row['tagLinks'] as $addedIcons) {
@@ -812,6 +816,10 @@ class OfferLoaderService
                     ];
                 } else {
                     unset($rows[$key]['tags'][$tagKey]['image']);
+                }
+
+                if (key_exists('fixedIconUrl', $tagRow) && $tagRow['fixedIconUrl']) {
+                    $rows[$key]['tags'][$tagKey]['linkHref'] = C4GUtils::addProtocolToLink($tagRow['fixedIconUrl']);
                 }
 
                 if ((string) $tagRow['technicalKey'] !== '') {

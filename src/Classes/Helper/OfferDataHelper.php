@@ -38,7 +38,31 @@ class OfferDataHelper
 
         $offerData['elementLink'] = $this->getElementLink($offerData);
 
-        $childPage = PageModel::findByPk($this->settings->eventDetailPage);
+        switch ($offerData['type']) {
+            case 'product':
+                $childPage = PageModel::findByPk($this->settings->productDetailPage);
+                break;
+            case 'event':
+                $childPage = PageModel::findByPk($this->settings->eventDetailPage);
+                break;
+            case 'job':
+                $childPage = PageModel::findByPk($this->settings->jobDetailPage);
+                break;
+            case 'arrangement':
+                $$childPage = PageModel::findByPk($this->settings->arrangementDetailPage);
+                break;
+            case 'service':
+                $childPage = PageModel::findByPk($this->settings->serviceDetailPage);
+                break;
+            case 'person':
+                $childPage = PageModel::findByPk($this->settings->personDetailPage);
+                break;
+            case 'voucher':
+                $childPage = PageModel::findByPk($this->settings->voucherDetailPage);
+                break;
+            default:
+                $childPage = PageModel::findByPk($this->settings->eventDetailPage);
+        }
 
         if ($childPage !== null) {
             $cleanUuid = strtolower(str_replace(['{', '}'], '', $offerData['uuid']));
@@ -71,8 +95,8 @@ class OfferDataHelper
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
         if ($elementPage !== null) {
-            if ($isContao5) {
-                $url = $elementPage->getAbsoluteUrl();
+            if ($isContao5 && $offerData['vendorAlias']) {
+                $url = $elementPage->getAbsoluteUrl(['parameters' => "/" . $offerData['vendorAlias']]);
             } else {
                 $url = $elementPage->getAbsoluteUrl();
             }

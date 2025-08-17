@@ -38,6 +38,7 @@ class EventDataService
                 tl_gutesio_data_element.uuid as elementId, ' . '
                 tl_gutesio_data_element.name as vendorName, ' . '
                 tl_gutesio_data_element.alias as vendorAlias, ' . '
+                tl_gutesio_data_element.locationCity as locationCity, ' . '
                 e.beginDate,
                 e.beginTime,
                 e.endDate,

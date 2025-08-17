@@ -635,6 +635,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
     {
         $objSettings = GutesioOperatorSettingsModel::findSettings();
         $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->showcaseDetailPage . "}}");
+
         $href = $url . '/alias';
         $urlSuffix = Config::get('urlSuffix');
         $href = str_replace($urlSuffix, "", $href);

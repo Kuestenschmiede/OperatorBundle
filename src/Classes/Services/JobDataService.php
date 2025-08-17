@@ -31,7 +31,8 @@ class JobDataService
                 tl_gutesio_data_child_type.uuid AS typeId, tl_gutesio_data_child_type.type AS type, tl_gutesio_data_child_type.name as typeName, ' . '
                 tl_gutesio_data_element.uuid as elementId, ' . '
                 tl_gutesio_data_element.name as vendorName, ' . '
-                tl_gutesio_data_element.alias as vendorAlias, ' .
+                tl_gutesio_data_element.alias as vendorAlias, ' . '
+                tl_gutesio_data_element.locationCity as locationCity, ' .
                 'j.beginDate as beginDate, '.
                 'j.applicationContactUrl as applicationContactUrl, '.
                 'j.applicationContactEMail as applicationContactEMail, '.
@@ -96,6 +97,10 @@ class JobDataService
             }
 
             $job['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$job['uuid']]);
+
+            if ($job['vendorName'] && $job['vendorAlias']) {
+                $job = $this->helper->setImageAndDetailLinks($job);
+            }
 
             $jobs[$key] = $job;
         }

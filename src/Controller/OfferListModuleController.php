@@ -718,7 +718,6 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $field->setConditionValue($key);
             $field->setCheckOrientation($this->model->gutesio_data_layoutType !== "plain");
             $fields[] = $field;
-            //break;
         }
 
         $field = new HeadlineTileField();
@@ -727,6 +726,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $field->setWrapperClass("c4g-list-element__name-wrapper");
         $field->setClass("c4g-list-element__name");
         $fields[] = $field;
+
+        if ($this->model->gutesio_data_show_city) {
+            $field = new TextTileField();
+            $field->setName("locationCity");
+            $field->setWrapperClass("c4g-list-element__city-wrapper");
+            $field->setClass("c4g-list-element__city");
+            $fields[] = $field;
+        }
 
         $field = new TextTileField();
         $field->setName('typeName');

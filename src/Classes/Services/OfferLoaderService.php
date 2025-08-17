@@ -183,7 +183,6 @@ class OfferLoaderService
         foreach ($types as $type) {
             switch ($type) {
                 case "event":
-
                     $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $tagData, $this->model->gutesio_hide_events_without_date);
                     $offerData = array_merge($offerData, $eventResults);
                     break;
@@ -642,6 +641,8 @@ class OfferLoaderService
             ELSE NULL END) AS description, ' . '
             tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, 
             tl_gutesio_data_element.uuid as elementId, 
+            tl_gutesio_data_element.name as vendorName,
+            tl_gutesio_data_element.alias as vendorAlias,
             tl_gutesio_data_child_type.extendedSearchTerms as extendedSearchTerms FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
@@ -661,6 +662,8 @@ class OfferLoaderService
             ELSE NULL END) AS description, ' . '
             tl_gutesio_data_child_type.type, tl_gutesio_data_child_type.name as typeName, 
             tl_gutesio_data_element.uuid as elementId, 
+            tl_gutesio_data_element.name as vendorName,
+            tl_gutesio_data_element.alias as vendorAlias,
             tl_gutesio_data_child_type.extendedSearchTerms as extendedSearchTerms FROM tl_gutesio_data_child a ' . '
             LEFT JOIN tl_gutesio_data_child b ON a.parentChildId = b.uuid ' . '
             LEFT JOIN tl_gutesio_data_child c ON b.parentChildId = c.uuid ' . '
@@ -1355,6 +1358,8 @@ class OfferLoaderService
 
                 //hotfix special char
                 $childRows[$key]['elementName'] = str_replace('&#39;', "'", $childRows[$key]['elementName']);
+
+                $childRows[$key]['locationCity'] = $vendor['locationCity'];
 
                 $objSettings = GutesioOperatorSettingsModel::findSettings();
                 $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);

@@ -335,6 +335,8 @@ class ShowcaseService
                 $returnData = $this->converter->convertDbResult($showcases, ['loadTagsComplete' => true]);
                 if (count($elementIds) === 1) {
                     $returnData = [$returnData];
+                } else {
+                    //ToDo if there are more than one showcase linked
                 }
             } else {
                 $returnData = [];

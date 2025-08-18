@@ -57,7 +57,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailApplicationButton'] = "P
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneApplicationButton'] = "Telefonisch bewerben";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['remoteType'] = "Remote Arbeit?";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['workHours'] = "Arbeitszeit:";
-$GLOBALS['TL_LANG'][$strName]['details']['label']['jobBenefits'] = "Benefits:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['jobBenefits'] = "Unsere Benefits:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['beginDateJob'] = "Möglicher Beginn:";
 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['releasedAt'] = "Veröffentlicht vor:";

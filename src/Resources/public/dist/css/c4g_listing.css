@@ -13009,6 +13009,14 @@ html {
   margin-top: 1rem;
   margin-bottom: 1rem
 }
+.c4g-list-outer .c4g-listfilter-default .c4g-list-elements,
+.c4g-listfilter-default .c4g-list-outer .c4g-list-elements,
+.c4g-listfilter-default .c4g-listfilter-default,
+.c4g-listfilter-default .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
+.c4g-listfilter-default .container,
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-default .c4g-listfilter-inner {
+  z-index: 20
+}
 @media (max-width:991.98px) {
   .c4g-listfilter-default {
     flex-direction: column;

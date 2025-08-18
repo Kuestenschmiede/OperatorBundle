@@ -198,6 +198,9 @@
 /** DEFAULT WITHOUT EXTENDED FILTER BUTTON **/
 
 .c4g-listfilter-default {
+    .container {
+      z-index: 20;
+    }
 
 //  .c4g-listfilter-inner {
     @include make-container();

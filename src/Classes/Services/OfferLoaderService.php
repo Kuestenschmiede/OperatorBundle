@@ -28,6 +28,7 @@ use gutesio\OperatorBundle\Classes\Cache\OfferDataCache;
 use gutesio\OperatorBundle\Classes\Helper\OfferDataHelper;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
 use Symfony\Component\HttpFoundation\Request;
+use Carbon\Carbon;
 
 class OfferLoaderService
 {
@@ -416,7 +417,7 @@ class OfferLoaderService
         $limit = $limit * 2;
         // TODO quickfix
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.imageCDN, a.foreignLink, a.directLink, ' . '
+        a.imageCDN, a.foreignLink, a.directLink, a.releasedAt, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -632,7 +633,7 @@ class OfferLoaderService
             $keyString .= ')';
 
             $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
+            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale, a.releasedAt,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '
@@ -653,7 +654,7 @@ class OfferLoaderService
             WHERE a.uuid = ? AND tl_gutesio_data_child_type.type IN '.$keyString;
         } else {
             $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale,' . '
+            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale, a.releasedAt,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '
@@ -1014,18 +1015,47 @@ class OfferLoaderService
                     break;
 
                 case 'job':
-                    $jobData = $database->prepare('SELECT beginDate AS beginDate, applicationContactUrl, applicationContactEMail, applicationContactPhone ' .
+                    $jobData = $database->prepare('SELECT beginDate AS beginDate, applicationContactUrl, applicationContactEMail, applicationContactPhone, ' .
+                        'workHours, remoteType, jobBenefits ' .
                         'FROM tl_gutesio_data_child_job ' .
                         'JOIN tl_gutesio_data_child ON tl_gutesio_data_child_job.childId = tl_gutesio_data_child.uuid ' .
                         'WHERE childId = ?')
                         ->execute($row['uuid'])->fetchAssoc();
 
                     if (!empty($jobData)) {
-                        $job['beginDateDisplay'] = '';
+                        $job['beginDateJob'] = '';
                         if (!key_exists('beginDate', $jobData) || !$jobData['beginDate'] || (time() > intval($jobData['beginDate']))) {
-                            $jobData['beginDateDisplay'] = 'ab sofort';
+                            $jobData['beginDateJob'] = 'sofort';
                         } else if (key_exists('beginDate', $jobData) || $jobData['beginDate']) {
-                            $jobData['beginDateDisplay'] = date('d.m.Y', $jobData['beginDate']);
+                            $jobData['beginDateJob'] = 'zum '.date('d.m.Y', $jobData['beginDate']);
+                        }
+
+                        if (key_exists('remoteType', $jobData)) {
+                            switch ($jobData['remoteType']) {
+                                case 1:
+                                    $jobData['remoteTypeDisplay'] = 'Nur vor Ort';
+                                    break;
+                                case 2:
+                                    $jobData['remoteTypeDisplay'] = '100% Remote';
+                                    break;
+                                case 3:
+                                    $jobData['remoteTypeDisplay'] = 'Hybrid';
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+
+                        if (key_exists('releasedAt', $row)) {
+                            Carbon::setLocale('de'); //ToDo lang
+                            $releaseDate = Carbon::createFromTimestamp($row['releasedAt'] ?: $row['tstamp']);
+                            $diff = $releaseDate->diffForHumans(null, true);
+
+                            $addN = 'n';
+                            if ((strpos($diff,'1') === 0) && !preg_match("/1[0-9]+/", $diff)) {
+                                $addN = '';
+                            }
+                            $row['releasedAtDisplay'] = $diff.$addN;
                         }
 
                         $childRows[$key] = array_merge($row, $jobData);

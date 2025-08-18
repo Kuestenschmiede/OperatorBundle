@@ -55,6 +55,12 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneReservationButton'] = "T
 $GLOBALS['TL_LANG'][$strName]['details']['label']['onlineApplicationButton'] = "Jetzt bewerben";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailApplicationButton'] = "Per E-Mail bewerben";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneApplicationButton'] = "Telefonisch bewerben";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['remoteType'] = "Remote Arbeit?";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['workHours'] = "Arbeitszeit:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['jobBenefits'] = "Benefits:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['beginDateJob'] = "Möglicher Beginn:";
+
+$GLOBALS['TL_LANG'][$strName]['details']['label']['releasedAt'] = "Veröffentlicht vor:";
 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['timesuffix'] = "Uhr";
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name und Logo";

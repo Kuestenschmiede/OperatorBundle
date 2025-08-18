@@ -607,6 +607,63 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                             <?php endif; ?>
                         <?php endif; ?>
 
+                        <?php if (isset($data->remoteTypeDisplay) && !empty($data->remoteTypeDisplay)): ?>
+                            <div class="c4g-container">
+                                <div class="c4g-row remoteType">
+                                    <div class="col-12">
+                                        <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['remoteType'] ?> </strong>
+                                       <span><?= $data->remoteTypeDisplay ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->workHours) && !empty($data->workHours)): ?>
+                            <div class="c4g-container">
+                                <div class="c4g-row workHours">
+                                    <div class="col-12">
+                                        <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['workHours'] ?> </strong>
+                                       <span><?= $data->workHours ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->beginDateJob) && !empty($data->beginDateJob)): ?>
+                            <div class="c4g-container">
+                                <div class="c4g-row beginDate">
+                                    <div class="col-12">
+                                        <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['beginDateJob'] ?> </strong>
+                                       <span><?= $data->beginDateJob ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->releasedAtDisplay) && !empty($data->releasedAtDisplay)): ?>
+                            <div class="c4g-container">
+                                <div class="c4g-row releasedAt">
+                                    <div class="col-12">
+                                       <strong><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['releasedAt']?></strong>
+                                       <span><?= $data->releasedAtDisplay ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->jobBenefits) && !empty($data->jobBenefits)): ?>
+                            <div class="c4g-container">
+                                <div class="c4g-row jobBenefits">
+                                    <div class="col-12">
+                                        <div class="detail-field-text jobBenefits">
+                                            <strong><div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['jobBenefits'] ?></div></strong>
+                                            <span class="detail-field-text__text"><?= $data->jobBenefits ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if (isset($data->admissionPrices) && !empty($data->admissionPrices)): ?>
                             <div class="detail-field-text admissionPrices">
                                 <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['admissionPrices'] ?></div>

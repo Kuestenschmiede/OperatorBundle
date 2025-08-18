@@ -5,6 +5,7 @@ namespace gutesio\OperatorBundle\Classes\Services;
 use con4gis\CoreBundle\Classes\C4GUtils;
 use Contao\Database;
 use gutesio\OperatorBundle\Classes\Helper\OfferDataHelper;
+use Carbon\Carbon;
 
 class JobDataService
 {
@@ -26,7 +27,7 @@ class JobDataService
         $sqlExtendedCategoryTerms = " OR tl_gutesio_data_child_type.extendedSearchTerms LIKE ?";
 
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-            'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+            'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, a.releasedAt, ' . '
                 COALESCE(a.shortDescription) AS shortDescription, ' . '
                 tl_gutesio_data_child_type.uuid AS typeId, tl_gutesio_data_child_type.type AS type, tl_gutesio_data_child_type.name as typeName, ' . '
                 tl_gutesio_data_element.uuid as elementId, ' . '
@@ -34,6 +35,9 @@ class JobDataService
                 tl_gutesio_data_element.alias as vendorAlias, ' . '
                 tl_gutesio_data_element.locationCity as locationCity, ' .
                 'j.beginDate as beginDate, '.
+                'j.workHours as workHours, '.
+                'j.remoteType as remoteType, '.
+                'j.jobBenefits as jobBenefits, '.
                 'j.applicationContactUrl as applicationContactUrl, '.
                 'j.applicationContactEMail as applicationContactEMail, '.
                 'j.applicationContactPhone as applicationContactPhone, '.
@@ -89,17 +93,33 @@ class JobDataService
 
             $job = $this->helper->setImageAndDetailLinks($job);
 
-            $job['beginDateDisplay'] = '';
+            $job['beginDateJob'] = '';
             if (!key_exists('beginDate', $job) || !$job['beginDate'] || (time() > intval($job['beginDate']))) {
-                $job['beginDateDisplay'] = 'ab sofort';
+                $job['beginDateJob'] = 'sofort';
             } else if (key_exists('beginDate', $job) || $job['beginDate']) {
-                $job['beginDateDisplay'] = date('d.m.Y', $job['beginDate']);
+                $job['beginDateJob'] = 'zum '.date('d.m.Y', $job['beginDate']);
             }
 
             $job['tagLinks'] = $this->helper->generateTagLinks($tags, $offerTagRelations[$job['uuid']]);
 
             if ($job['vendorName'] && $job['vendorAlias']) {
                 $job = $this->helper->setImageAndDetailLinks($job);
+            }
+
+            if (key_exists('remoteType', $job)) {
+                switch ($job['remoteType']) {
+                    case 1:
+                        $job['remoteTypeDisplay'] = 'Nur vor Ort';
+                        break;
+                    case 2:
+                        $job['remoteTypeDisplay'] = '100% Remote';
+                        break;
+                    case 3:
+                        $job['remoteTypeDisplay'] = 'Hybrid';
+                        break;
+                    default:
+                        break;
+                }
             }
 
             $jobs[$key] = $job;

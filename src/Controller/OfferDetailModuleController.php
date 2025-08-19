@@ -852,6 +852,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setClass("c4g-list-element__price");
         $fields[] = $field;
 
+        /*
         $field = new TextTileField();
         $field->setName('releasedAtDisplay');
         $field->setWrapperClass("c4g-list-element__releasedat-wrapper");
@@ -863,6 +864,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setWrapperClass("c4g-list-element__remotetype-wrapper");
         $field->setClass("c4g-list-element__remoteType");
         $fields[] = $field;
+        */
         
         $field = new TextTileField();
         $field->setName('beginDateDisplay');

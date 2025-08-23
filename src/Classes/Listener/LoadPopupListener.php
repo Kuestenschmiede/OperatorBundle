@@ -190,7 +190,7 @@ class LoadPopupListener
 
             $desc = C4GUtils::truncate(mb_convert_encoding($element['description'], 'UTF-8', mb_detect_encoding($element['description'])), 275);
             try  {
-                \Safe\json_encode($desc);
+                json_encode($desc);
             } catch (JsonException $exception) {
                 // fallback to fix weird encoding problem with some datasets
                 $desc = mb_convert_encoding($desc, 'ISO-8859-1', 'UTF-8');

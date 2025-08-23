@@ -865,7 +865,7 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $field->setClass("c4g-list-element__remoteType");
         $fields[] = $field;
         */
-        
+
         $field = new TextTileField();
         $field->setName('beginDateDisplay');
         $field->setWrapperClass("c4g-list-element__begindate-wrapper");

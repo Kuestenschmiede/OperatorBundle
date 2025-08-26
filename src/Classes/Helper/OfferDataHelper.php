@@ -49,7 +49,7 @@ class OfferDataHelper
                 $childPage = PageModel::findByPk($this->settings->jobDetailPage);
                 break;
             case 'arrangement':
-                $$childPage = PageModel::findByPk($this->settings->arrangementDetailPage);
+                $childPage = PageModel::findByPk($this->settings->arrangementDetailPage);
                 break;
             case 'service':
                 $childPage = PageModel::findByPk($this->settings->serviceDetailPage);

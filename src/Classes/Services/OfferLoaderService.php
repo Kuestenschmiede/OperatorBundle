@@ -867,6 +867,7 @@ class OfferLoaderService
             }
 
             $rows[$key]['internal_type'] = $row['type'];
+
             // translate type for detail display
             $rows[$key]['displayType'] = $row['typeName'];
             $clientUuid = $this->checkCookieForClientUuid($this->request);
@@ -890,8 +891,11 @@ class OfferLoaderService
         }
 
         $rows = $this->getAdditionalData($rows, false, !$isPreview);
-
-        return $rows[0];
+        if ($rows[0] && $this->checkUrl($rows[0]['type'], $alias)) {
+          return $rows[0];
+        } else {
+            return [];
+        }
     }
 
     public function getAdditionalData($childRows, $dateFilter = false, $checkEventTime = true)
@@ -1574,6 +1578,61 @@ class OfferLoaderService
         }
 
         return strtoupper($alias);
+    }
+
+    private function areURLsEqual($url1, $url2) {
+        $url1 = rtrim($url1, '/');
+        $url2 = rtrim($url2, '/');
+
+        $url1 = strtolower($url1);
+        $url2 = strtolower($url2);
+
+        $url1 = (parse_url($url1, PHP_URL_SCHEME) === null)? 'http://' . $url1 : $url1;
+        $url2 = (parse_url($url2, PHP_URL_SCHEME) === null)? 'http://' . $url2 : $url2;
+
+        return $url1 == $url2;
+    }
+
+    private function checkUrl(string $type, string $alias) {
+        $result = false;
+        $page = '';
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        if ($objSettings && $type) {
+            switch ($type) {
+                case 'product':
+                    $page = $objSettings->productDetailPage;
+                    break;
+                case 'event':
+                    $page = $objSettings->eventDetailPage;
+                    break;
+                case 'job':
+                    $page = $objSettings->jobDetailPage;
+                    break;
+                case 'arrangement':
+                    $page = $objSettings->arrangementDetailPage;
+                    break;
+                case 'service':
+                    $page = $objSettings->serviceDetailPage;
+                    break;
+                case 'person':
+                    $page = $objSettings->personDetailPage;
+                    break;
+                case 'voucher':
+                    $page = $objSettings->voucherDetailPage;
+                    break;
+            }
+        }
+
+        $page = $page ? PageModel::findByPk($page) : '';
+        $goodUrl = $page ? $page->getAbsoluteUrl() . '/' . $alias : '';
+
+        if ($goodUrl) {
+            $actUrl = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $result = $this->areURLsEqual($actUrl, $goodUrl);
+
+        }
+
+        return $result;
     }
 
     /**

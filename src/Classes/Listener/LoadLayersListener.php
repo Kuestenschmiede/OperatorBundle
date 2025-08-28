@@ -646,7 +646,7 @@ class LoadLayersListener
         //$strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
         return $this->database->prepare(
             'SELECT * FROM tl_gutesio_data_element WHERE alias = ?'
-        )->execute($alias)->fetchAssoc();
+        )->execute($alias)->fetchAssoc() ?: [];
     }
 
     private function getElementType(string $elementId): ?array
@@ -656,7 +656,7 @@ class LoadLayersListener
              INNER JOIN tl_gutesio_data_element_type AS typeElem 
              ON typeElem.typeId = type.uuid
              WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1'
-        )->execute($elementId)->fetchAssoc();
+        )->execute($elementId)->fetchAssoc() ?: [];
     }
 
     private function loadChildElements(array $elem, array $type, array $dataLayer): array

@@ -320,7 +320,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_tag_filter_selection'] = [
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_show_city'] = [
     'exclude'                 => true,
-    'default'                 => true,
+    'default'                 => false,
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr'],
     'sql'                     => "char(1) NOT NULL default '0'"

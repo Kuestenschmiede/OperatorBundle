@@ -138,7 +138,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 $relatedShowcaseData = $this->getRelatedShowcaseData($detailData, $request);
                 $relatedShowcaseTileList = $model->gutesio_without_tiles ? [] : $this->createRelatedShowcaseTileList();
                 $relatedShowcaseFields = $model->gutesio_without_tiles ? [] : $this->getRelatedShowcaseTileFields();
-                if (count($childData) > 0) {
+                if (is_array($childData) && count($childData) > 0) {
                     $conf->addTileList($this->getChildTileList(), $this->getChildTileFields(), $childData);
                 }
                 if (count($relatedShowcaseData) > 0) {

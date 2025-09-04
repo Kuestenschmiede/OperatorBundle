@@ -5,18 +5,16 @@ $this->block('detailpage_default'); ?>
 <?php $this->block('detailpage_offer_meta'); ?>
     {{offer::meta}}
 <?php $this->endblock();//detailpage_offer_meta ?>
+<?php $this->block('detailpage_showcase_meta'); ?>
+	{{showcase::meta}}
+<?php $this->endblock(); //detailpage_showcase_meta ?>
 
 <?php
 $data = json_decode(json_encode($this->detailData));
 $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
-
 ?>
 
 <script>window.detailData = <?php echo json_encode($data); ?></script>
-
-<?php $this->block('detailpage_showcase_meta'); ?>
-    <?php echo C4GUtils::replaceInsertTags("{{showcase::<?=".$alias."?>::meta}}"); ?>
-<?php $this->endblock(); //detailpage_showcase_meta ?>
 
 <?php $this->block('detailpage_scripts'); ?>
 <?php if ($this->loadKlaro): ?>

@@ -633,7 +633,7 @@ class OfferLoaderService
             $keyString .= ')';
 
             $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale, a.releasedAt,' . '
+            a.name, a.alias, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale, a.releasedAt,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '
@@ -651,10 +651,10 @@ class OfferLoaderService
             LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
             LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-            WHERE a.uuid = ? AND tl_gutesio_data_child_type.type IN '.$keyString;
+            WHERE a.uuid = ? or a.alias = ? AND tl_gutesio_data_child_type.type IN '.$keyString;
         } else {
             $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, a.tstamp, a.typeId, ' . '
-            a.name, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale, a.releasedAt,' . '
+            a.name, a.alias, a.imageCDN, a.imageGalleryCDN, a.imageCredits, a.source, a.videoType, a.videoLink, a.videoPreviewImageCDN, a.memberId, a.infoFileCDN, a.offerForSale, a.releasedAt,' . '
             (CASE ' . '
                 WHEN a.description IS NOT NULL THEN a.description ' . '
                 WHEN b.description IS NOT NULL THEN b.description ' . '
@@ -672,13 +672,13 @@ class OfferLoaderService
             LEFT JOIN tl_gutesio_data_child_connection ON a.uuid = tl_gutesio_data_child_connection.childId ' . '
             LEFT JOIN tl_gutesio_data_element ON tl_gutesio_data_element.uuid = tl_gutesio_data_child_connection.elementId ' . '
             JOIN tl_gutesio_data_child_type ON tl_gutesio_data_child_type.uuid = a.typeId ' . '
-            WHERE a.uuid = ?';
+            WHERE a.uuid = ? or a.alias = ?';
         }
 
         if ($published) {
             $sql .= ' AND a.published = 1';
         }
-        $rows = $database->prepare($sql)->execute('{' . $alias . '}')->fetchAllAssoc();
+        $rows = $database->prepare($sql)->execute('{' . $alias . '}', $alias)->fetchAllAssoc();
 
         if (empty($rows)) {
             return [];

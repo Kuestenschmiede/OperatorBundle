@@ -253,7 +253,7 @@ class GutesBlogGenerator
         return $result;
     }
 
-
+    //ToDo check using
     private function addGutesNews($db, $archive, $currentDate, $gutesCategories, $gutesEvents): void
     {
         $archiveId = $archive['id'];

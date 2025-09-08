@@ -49,9 +49,9 @@ class OfferInsertTag
             $objSettings = GutesioOperatorSettingsModel::findSettings();
             $cdnUrl = $objSettings->cdnUrl;
 
-            $alias = '{' . strtoupper($alias) . '}';
-            $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ?')
-                ->execute($alias);
+            $uuidAlias = '{' . strtoupper($alias) . '}';
+            $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ? OR `alias` = ? ')
+                ->execute($uuidAlias, $alias);
             $arrOffer = $objOffer->fetchAllAssoc();
             if ($arrOffer) {
                 $arrOffer = $arrOffer[0];

@@ -615,6 +615,8 @@ class OfferLoaderService
 
     public function getSingleDataset($alias, $published, $isPreview = false, $typeKeys = [])
     {
+        // TODO hier zwischen alias und uuid unterscheiden
+        // TODO wenn kein match für alias, dann nach uuid suchen als fallback
         $database = Database::getInstance();
         $alias = $this->cleanAlias($alias);
 
@@ -687,7 +689,7 @@ class OfferLoaderService
         foreach ($rows as $key => $row) {
             $result = $database->prepare(
                 'SELECT * FROM tl_gutesio_data_child_connection WHERE childId = ? LIMIT 1'
-            )->execute('{' . strtoupper($alias) . '}')->fetchAssoc();
+            )->execute($row['uuid'])->fetchAssoc();
             $result = $database->prepare(
                 'SELECT * FROM tl_gutesio_data_element WHERE uuid = ?'
             )->execute($result['elementId'])->fetchAssoc();

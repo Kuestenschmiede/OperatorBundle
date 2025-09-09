@@ -40,7 +40,7 @@ class SimpleOfferDataService
         ];
 
         $sql = 'SELECT DISTINCT a.id, a.parentChildId, a.uuid, ' .
-            'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, ' . '
+            'a.tstamp, a.typeId, a.name, a.imageCDN, a.foreignLink, a.directLink, a.offerForSale, a.alias, ' . '
                 COALESCE(a.shortDescription) AS shortDescription, ' . '
                 tl_gutesio_data_child_type.uuid AS typeId, tl_gutesio_data_child_type.type AS type, tl_gutesio_data_child_type.name as typeName, ' . '
                 tl_gutesio_data_element.uuid as elementId, ' . '
@@ -51,7 +51,7 @@ class SimpleOfferDataService
                 'match(a.fullTextContent) against(\'' . $searchTerm . '\' in boolean mode) as relevance, '
                 : ""
             ) .
-            'a.uuid as alias, ' . '
+            'a.uuid as uuid, ' . '
                 tl_gutesio_data_element.ownerGroupId as ownerGroupId, ' . '
                 tl_gutesio_data_element.ownerMemberId as ownerMemberId ' . '
                 

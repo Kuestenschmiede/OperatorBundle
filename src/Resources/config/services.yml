@@ -205,10 +205,10 @@ services:
       tags:
         - { name: kernel.event_listener, event: maps.mapdata.load, method: onLoadMapDataDoIt, priority: 6900 }
 
-    gutesio.sitemaplistener:
+    gutesio.operator_sitemaplistener:
       class: gutesio\OperatorBundle\Classes\Listener\SitemapListener
       tags:
-        - { name: kernel.event_listener, event: contao.sitemap, method: onCreateSitemap, priority: 1024 }
+        - { name: kernel.event_listener, event: contao.sitemap, method: onCreateSitemap, priority: 1023 }
 
     gutesio.onImportSkip_checkRelations:
       class: gutesio\OperatorBundle\Classes\Listener\ImportSkipDatasetListener

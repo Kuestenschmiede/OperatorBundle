@@ -66,7 +66,12 @@ class OfferDataHelper
 
         if ($childPage !== null) {
             $cleanUuid = strtolower(str_replace(['{', '}'], '', $offerData['uuid']));
-            $offerData['href'] = $cleanUuid;
+            // use alias instead of uuid in the URL, if possible
+            if (array_key_exists('alias', $offerData) && $offerData['alias']) {
+                $offerData['href'] = $offerData['alias'];
+            } else {
+                $offerData['href'] = $cleanUuid;
+            }
         }
 
         $offerData['image'] = [

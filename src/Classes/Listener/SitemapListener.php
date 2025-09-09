@@ -69,7 +69,7 @@ class SitemapListener
     private function getOfferUrls(array $pageIds) : array
     {
         $db = Database::getInstance();
-        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type, t.uuid as category FROM tl_gutesio_data_child c ' .
+        $result = $db->prepare('SELECT c.uuid as uuid, t.type as type, t.uuid as category, c.alias as alias FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'WHERE c.published = 1')->execute()->fetchAllAssoc();
 
@@ -119,7 +119,11 @@ class SitemapListener
                 }
                 $page = PageModel::findByPk($page);
                 $url = $page->getAbsoluteUrl();
-                $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                if (array_key_exists('alias', $row) && $row['alias']) {
+                    $alias = $row['alias'];
+                } else {
+                    $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+                }
 
                 $urls[$alias] = $this->combineUrl($page, $url, $alias);
             }
@@ -158,7 +162,7 @@ class SitemapListener
 
     private function combineUrl(PageModel $page, string $url, string $alias) : string
     {
-        if (System::getContainer()->getParameter('contao.legacy_routing')) {
+        if (System::getContainer()->hasParameter('contao.legacy_routing') && System::getContainer()->getParameter('contao.legacy_routing')) {
             $urlSuffix = System::getContainer()->getParameter('contao.url_suffix');
         } else {
             $page->loadDetails();

@@ -417,7 +417,7 @@ class OfferLoaderService
         $limit = $limit * 2;
         // TODO quickfix
         $childRows = $database->prepare('SELECT a.id, a.parentChildId, a.uuid, a.tstamp, a.name, ' . '
-        a.imageCDN, a.foreignLink, a.directLink, a.releasedAt, ' . '
+        a.imageCDN, a.foreignLink, a.directLink, a.releasedAt, a.alias, ' . '
             (CASE ' . '
                 WHEN a.shortDescription IS NOT NULL THEN a.shortDescription ' . '
                 WHEN b.shortDescription IS NOT NULL THEN b.shortDescription ' . '
@@ -584,7 +584,12 @@ class OfferLoaderService
                 array_unique($row['tagLinks']);
             }
 
-            $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            if (array_key_exists('alias', $row) && $row['alias']) {
+                $row['href'] = $row['alias'];
+            } else {
+                $row['href'] = strtolower(str_replace(['{', '}'], '', $row['uuid']));
+            }
+
             if ($row['foreignLink']) {
                 $row['foreignLink'] = C4GUtils::addProtocolToLink($row['foreignLink']);
             }

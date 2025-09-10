@@ -531,8 +531,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-product');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($productUrl."/uuid" . $urlSuffix);
-        $field->setHrefFields(["uuid"]);
+        $field->setHref($productUrl."/alias" . $urlSuffix);
+        $field->setHrefFields(["alias"]);
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("product");
@@ -544,8 +544,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-event');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($eventUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($eventUrl."/alias" . $urlSuffix);
+        $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("event");
@@ -557,8 +557,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-job');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($jobUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($jobUrl."/alias" . $urlSuffix);
+        $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("job");
@@ -570,8 +570,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-arrangement');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($arrangementUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($arrangementUrl."/alias" . $urlSuffix);
+        $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("arrangement");
@@ -583,8 +583,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-service');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($serviceUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($serviceUrl."/alias" . $urlSuffix);
+        $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("service");
@@ -596,8 +596,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-person');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($personUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($personUrl."/alias" . $urlSuffix);
+        $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("person");
@@ -609,8 +609,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
         $field->setName("alias");
         $field->setWrapperClass('c4g-list-element__more-wrapper c4g-list-element__more-wrapper-voucher');
         $field->setClass('c4g-list-element__more-link');
-        $field->setHref($voucherUrl."/uuid" . $urlSuffix);
-        $field->setHrefField("uuid");
+        $field->setHref($voucherUrl."/alias" . $urlSuffix);
+        $field->setHrefField("alias");
         $field->setLinkText($GLOBALS['TL_LANG']['tl_gutesio_mini_wishlist']['moreInfos']);
         $field->setConditionField("internal_type");
         $field->setConditionValue("voucher");
@@ -746,7 +746,8 @@ class WishlistModuleController extends AbstractFrontendModuleController
                 $offer['elementId'] = strtolower(str_replace(['{', '}'], '', $vendor['uuid']));
                 $type = GutesioDataChildTypeModel::findBy("uuid", $element['typeId'])->fetchAll()[0];
                 $offer['types'] = $type['name'];
-                $offer['alias'] = key_exists('alias', $element) ? $element['alias'] : '';
+                $offer['alias'] = key_exists('alias', $element) ? $element['alias'] : $element['uuid'];
+
                 if ($element['foreignLink'] && $element['directLink']) {
                     $offer['external_link'] = $element['foreignLink'];
                 }

@@ -634,6 +634,7 @@ class LoadLayersListener
     private function resolveElement(string $alias): ?array
     {
         if (C4GUtils::isValidGUID($alias)) {
+
             $offerConnections = $this->database->prepare(
                 'SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?'
             )->execute('{' . strtoupper($alias) . '}')->fetchAllAssoc();
@@ -641,9 +642,23 @@ class LoadLayersListener
             if ($offerConnections && count($offerConnections) > 0) {
                 return $this->getElement($offerConnections[0]['elementId']);
             }
+
+        } else {
+            // offer alias found in URL, no uuid
+            $child = $this->database->prepare("SELECT uuid FROM tl_gutesio_data_child WHERE alias = ?")
+                ->execute($alias)->fetchAssoc();
+
+            if ($child) {
+                $offerConnections = $this->database->prepare(
+                    'SELECT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?'
+                )->execute($child['uuid'])->fetchAllAssoc();
+
+                if ($offerConnections && count($offerConnections) > 0) {
+                    return $this->getElement($offerConnections[0]['elementId']);
+                }
+            }
         }
 
-        //$strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
         return $this->database->prepare(
             'SELECT * FROM tl_gutesio_data_element WHERE alias = ?'
         )->execute($alias)->fetchAssoc() ?: [];

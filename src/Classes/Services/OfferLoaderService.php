@@ -620,8 +620,6 @@ class OfferLoaderService
 
     public function getSingleDataset($alias, $published, $isPreview = false, $typeKeys = [])
     {
-        // TODO hier zwischen alias und uuid unterscheiden
-        // TODO wenn kein match für alias, dann nach uuid suchen als fallback
         $database = Database::getInstance();
         $alias = $this->cleanAlias($alias);
 
@@ -898,7 +896,8 @@ class OfferLoaderService
         }
 
         $rows = $this->getAdditionalData($rows, false, !$isPreview);
-        if ($rows[0] && $this->checkUrl($rows[0]['type'], $alias)) {
+//        if ($rows[0] && $this->checkUrl($rows[0]['type'], $alias)) {
+        if ($rows[0]) {
           return $rows[0];
         } else {
             return [];

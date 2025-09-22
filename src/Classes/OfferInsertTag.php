@@ -63,11 +63,11 @@ class OfferInsertTag
                     case 'firstGalleryImage':
                         $arrUrls = StringUtil::deserialize($arrOffer['imageGalleryCDN']);
 
-                        if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
+                        /*if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
                             $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrUrls[0]);
-                        } else {
+                        } else {*/
                             $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrOffer['imageCDN']);
-                        }
+                        //}
                         $result = $fileUtils->getImageSizeAndOrientation($url);
                         $orientation = $result[1];
 
@@ -79,11 +79,11 @@ class OfferInsertTag
                             $height = 1040;
                         }
 
-                        if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
+                        /*if ($arrUrls && is_array($arrUrls) && count($arrUrls)) {
                             $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrUrls[0], '', $width, $height);
-                        } else {
+                        } else {*/
                             $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$arrOffer['imageCDN'], '', $width, $height);
-                        }
+                        //}
 
                         return $url ?: ''; //Further processing in the template
                     case 'meta':

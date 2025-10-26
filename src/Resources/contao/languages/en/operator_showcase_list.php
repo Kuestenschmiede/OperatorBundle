@@ -53,6 +53,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneReservationButton'] = "B
 $GLOBALS['TL_LANG'][$strName]['details']['label']['onlineApplicationButton'] = "Application online";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailApplicationButton'] = "Application per email";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['phoneApplicationButton'] = "Application per phone";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['equipment'] = "Equipment:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['numberOfRooms'] = "Number of rooms:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['numberOfBeds'] = "Number of beds:";
 
 $GLOBALS['TL_LANG'][$strName]['sections']['name_logo'] = "Name and Logo";
 $GLOBALS['TL_LANG'][$strName]['sections']['header'] = "Header";

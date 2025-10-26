@@ -59,6 +59,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['remoteType'] = "Remote Arbeit
 $GLOBALS['TL_LANG'][$strName]['details']['label']['workHours'] = "Arbeitszeit:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['jobBenefits'] = "Unsere Benefits:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['beginDateJob'] = "Möglicher Beginn:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['equipment'] = "Ausstattung:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['numberOfRooms'] = "Anzahl Räume:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['numberOfBeds'] = "Anzahl Betten:";
 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['releasedAt'] = "Veröffentlicht vor:";
 

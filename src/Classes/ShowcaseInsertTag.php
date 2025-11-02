@@ -62,17 +62,21 @@ class ShowcaseInsertTag
 
             $fileUtils = new FileUtils();
 
-            $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ?')
+            if ($alias) {
+               $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ?')
                 ->execute($alias);
-            $arrShowcase = $objShowcase->fetchAssoc();
-            if (empty($arrShowcase)) {
-                $arrShowcase = Database::getInstance()->prepare(
-                    'SELECT DISTINCT tl_gutesio_data_element.* FROM tl_gutesio_data_element ' .
-                    'JOIN tl_gutesio_data_child_connection ON ' .
-                    'tl_gutesio_data_child_connection.elementId = tl_gutesio_data_element.uuid ' .
-                    'WHERE tl_gutesio_data_child_connection.childId = ?'
-                )->execute('{' . $alias . '}')->fetchAssoc();
+                $arrShowcase = $objShowcase->fetchAssoc();
+
+                if (empty($arrShowcase)) {
+                    $arrShowcase = Database::getInstance()->prepare(
+                        'SELECT DISTINCT tl_gutesio_data_element.* FROM tl_gutesio_data_element ' .
+                        'JOIN tl_gutesio_data_child_connection ON ' .
+                        'tl_gutesio_data_child_connection.elementId = tl_gutesio_data_element.uuid ' .
+                        'WHERE tl_gutesio_data_child_connection.childId = ?'
+                    )->execute('{' . $alias . '}')->fetchAssoc();
+                }
             }
+
             if ($arrShowcase) {
                 switch ($field) {
                     case 'name':

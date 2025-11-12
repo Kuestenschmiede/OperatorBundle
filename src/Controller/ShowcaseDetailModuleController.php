@@ -631,6 +631,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $field->setName("image");
         $field->setWrapperClass("c4g-list-element__image-wrapper");
         $field->setClass("c4g-list-element__image");
+        $field->setHrefField("alias");
         $field->setHref($href);
         $field->setExternalLinkField('foreignLink');
         $field->setExternalLinkFieldConditionField("directLink");

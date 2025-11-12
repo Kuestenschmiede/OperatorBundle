@@ -470,10 +470,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $field->setHookName("removeFromWishlist");
         $fields[] = $field;
 
-        $detailLinks = $this->getOfferDetailLinks();
-        $urlSuffix = Config::get('urlSuffix');
         foreach ($detailLinks as $key => $value) {
-            $value = str_replace($urlSuffix, "", $value);
             $field = new LinkButtonTileField();
             $field->setName("href");
             $field->setWrapperClass("c4g-list-element__more-wrapper");

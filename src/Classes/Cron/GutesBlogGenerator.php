@@ -32,7 +32,7 @@ class GutesBlogGenerator
     public function onHourly(): void
     {
         $this->framework->initialize();
-        $this->logger->error("Start GutesBlogGenerator run...");
+        $this->logger->info("Start GutesBlogGenerator run...");
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
         if (isset($objSettings->syncDataAutomaticly) && $objSettings->syncDataAutomaticly !== null && $objSettings->syncDataAutomaticly) {
             $db = Database::getInstance();
@@ -43,7 +43,7 @@ class GutesBlogGenerator
             $currentDate = $currentDate->getTimestamp();
 
             // check operator settings
-            $this->logger->error("Checking push configuration...");
+            $this->logger->info("Checking push configuration...");
             $settings = GutesioOperatorSettingsModel::findSettings();
             $pushConfiguration = StringUtil::deserialize($settings->dailyEventPushConfig, true);
             $subTypeRepo = $this->entityManager->getRepository(PushSubscriptionType::class);
@@ -130,7 +130,7 @@ class GutesBlogGenerator
                             $event->setSubscriptionTypes($types);
                             $event->setClickUrl($clickUrl);
                             $this->eventDispatcher->dispatch($event, PushNotificationEvent::NAME);
-                            $this->logger->error("Sent notification with text: " . $event->getMessage() . " to " . count($event->getSubscriptions()) . " recipients.");
+                            $this->logger->info("Sent notification with text: " . $event->getMessage() . " to " . count($event->getSubscriptions()) . " recipients.");
                             if ($updateMode === "insert") {
                                 $sql = "INSERT INTO tl_gutesio_event_push_notifications (`identifier`, `sentTime`) VALUES (?,?)";
                                 $db->prepare($sql)->execute($identifier, time());
@@ -142,10 +142,10 @@ class GutesBlogGenerator
                     }
                 }
             } else {
-                $this->logger->error("No valid push configuration found.");
+                $this->logger->info("No valid push configuration found.");
             }
         }
-        $this->logger->error("...finished GutesBlogGenerator run.");
+        $this->logger->info("...finished GutesBlogGenerator run.");
     }
 
     private function checkArchives($db)
@@ -245,10 +245,10 @@ class GutesBlogGenerator
             ->fetchAllAssoc();
 
         if (count($result) === 0) {
-            $this->logger->error("No events found that match the configuration.");
+            $this->logger->info("No events found that match the configuration.");
         }
 
-        $this->logger->error("result count: " . count($result));
+        $this->logger->info("result count: " . count($result));
 
         return $result;
     }

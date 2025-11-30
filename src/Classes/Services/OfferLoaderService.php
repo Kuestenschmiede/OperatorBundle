@@ -1489,6 +1489,7 @@ class OfferLoaderService
             $sql = 'SELECT * FROM tl_gutesio_data_child_tag WHERE `childId` = ? AND `tagId` ' . $tagString;
             $params = array_merge([$datum['uuid']], $tagIds);
             $tagChildConnections = $db->prepare($sql)->execute($params)->fetchAllAssoc();
+            $tagChildConnections = $db->prepare($sql)->execute(...$params)->fetchAllAssoc();
             if (count($tagChildConnections) > 0) {
                 $result[] = $datum;
             }

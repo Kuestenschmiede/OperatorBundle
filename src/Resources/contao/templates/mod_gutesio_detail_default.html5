@@ -1328,7 +1328,7 @@ if ($imprintData) {
     </div>
 <?php endif; ?>
 
-<span class="detail-view_additionalImprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
+<span class="detail-view_additionalImprint-io" style="display: block; text-align: center; font-style: italic;">Jetzt mitmachen bei <a target="_blank" href="https://gutes.digital">gutes.digital</a> oder <a target="_blank" href="https://mitmachen.nordsee.digital">nordsee.digital</a></span>
 
 <?php $this->endblock(); //detailpage_imprint ?>
 

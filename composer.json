@@ -25,13 +25,13 @@
   "require": {
     "php": ">=8.1",
     "contao/core-bundle": "^4.13 || ^5.3",
-    "gutesio/data-model": "^2.2.43",
+    "gutesio/data-model": "^2.2.44",
     "con4gis/framework": "^2.0.11",
     "con4gis/maps": "^10.1",
     "con4gis/pwa": "^2.8",
     "bacon/bacon-qr-code": "^2.0",
     "guzzlehttp/guzzle": "^7",
-    "org_heigl/hyphenator": "^v3.1.0",
+    "org_heigl/hyphenator": "^3.1",
     "nesbot/carbon": "^3.10.2"
   },
   "conflict": {

@@ -728,6 +728,15 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($data->infoFile) && !empty($data->infoFile)): ?>
+                        <div class="detail-field-pdf infoFile">
+                            <a class="btn btn-primary"
+                               href="<?= $data->infoFile->path ?>"
+                               title="Infodatei öffnen" target="_blank" rel="nofollow noopener">Infodatei
+                                [pdf]</a>
+                        </div>
+                        <?php endif; ?>
+
                         <?php if (!empty($data->selfHelpFocus)): ?>
                             <div class="detail-field-text self-help-focus">
                                 <div class="detail-field-text__label">Selbsthilfethemen</div>

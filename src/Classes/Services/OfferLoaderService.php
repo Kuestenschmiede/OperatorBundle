@@ -215,7 +215,7 @@ class OfferLoaderService
             }
         }
 
-//        $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
+        $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
         if (count($offerData) > $this->limit) {
             $offerData = array_slice($offerData, $offset, $this->limit);
         }
@@ -253,43 +253,66 @@ class OfferLoaderService
         if ($sortFilter) {
             switch ($sortFilter) {
                 case 'date':
-                    $dateOffers = [];
-                    $noDateOffers = [];
+                    // Deterministic sorting by date, then time, then name, then uuid (stable for same-day events)
+                    $dated = [];
+                    $undated = [];
                     foreach ($offers as $offer) {
-                        if ($offer['beginDate']) {
-                            $dateOffers[] = $offer;
+                        if (!empty($offer['beginDate'])) {
+                            $dated[] = $offer;
                         } else {
-                            $noDateOffers[] = $offer;
+                            $undated[] = $offer;
                         }
                     }
-                    $sort = 'desc';
-                    usort($dateOffers, function ($a, $b) use ($sort) {
-                        $a['storeBeginTime'] = $a['storeBeginTime'] ?: strtotime($a['beginTime']);
-                        $b['storeBeginTime'] = $b['storeBeginTime'] ?: strtotime($b['beginTime']);
-                        $a['storeBeginDate'] = $a['storeBeginDate'] ?: strtotime($a['beginDate']);
-                        $b['storeBeginDate'] = $b['storeBeginDate'] ?: strtotime($b['beginDate']);
 
-                        $aDate = $a['storeBeginTime'] ? $a['storeBeginDate'] + $a['storeBeginTime'] : $a['storeBeginDate'];
-                        $bDate = $b['storeBeginTime'] ? $b['storeBeginDate'] + $b['storeBeginTime'] : $b['storeBeginDate'];
-                        if ($aDate === null) {
-                            return 1;
-                        }
-                        if ($bDate === null) {
-                            return -1;
-                        }
-                        if ($aDate > $bDate) {
-                            return 1;
-                        } elseif ($aDate < $bDate) {
-                            return -1;
+                    usort($dated, function ($a, $b) {
+                        // Resolve date timestamps (treat numeric as timestamp; strings via strtotime)
+                        $aDate = $this->normalizeDateValue($a['storeBeginDate'] ?? $a['beginDate'] ?? null);
+                        $bDate = $this->normalizeDateValue($b['storeBeginDate'] ?? $b['beginDate'] ?? null);
+
+                        // Treat missing/invalid dates as greater (push to end of dated list)
+                        if (!$aDate && $bDate) { return 1; }
+                        if (!$bDate && $aDate) { return -1; }
+                        if ($aDate !== $bDate) {
+                            // Ascending: earlier dates first
+                            return $aDate <=> $bDate;
                         }
 
-                        return 0;
+                        // Same day: compare time (seconds since midnight)
+                        $aTime = $this->normalizeTimeOfDay($a['storeBeginTime'] ?? $a['beginTime'] ?? null, $aDate);
+                        $bTime = $this->normalizeTimeOfDay($b['storeBeginTime'] ?? $b['beginTime'] ?? null, $bDate);
+
+                        if ($aTime !== $bTime) {
+                            return $aTime <=> $bTime; // Ascending: earlier times first
+                        }
+
+                        // Next tie-breaker: name (case-insensitive)
+                        $aName = isset($a['name']) ? mb_strtolower((string) $a['name']) : '';
+                        $bName = isset($b['name']) ? mb_strtolower((string) $b['name']) : '';
+                        if ($aName !== $bName) {
+                            return $aName <=> $bName;
+                        }
+
+                        // Final tie-breaker: uuid (string) or id if present to ensure stable order
+                        $aUuid = (string) ($a['uuid'] ?? ($a['id'] ?? ''));
+                        $bUuid = (string) ($b['uuid'] ?? ($b['id'] ?? ''));
+                        return $aUuid <=> $bUuid;
                     });
-                    foreach ($noDateOffers as $noDateOffer) {
-                        $index = rand(0, count($dateOffers));
-                        array_splice($dateOffers, $index, 0, [$noDateOffer]);
+
+                    // Append undated offers at the end in a deterministic order (by name then uuid)
+                    if (!empty($undated)) {
+                        usort($undated, function ($a, $b) {
+                            $aName = isset($a['name']) ? mb_strtolower((string) $a['name']) : '';
+                            $bName = isset($b['name']) ? mb_strtolower((string) $b['name']) : '';
+                            if ($aName !== $bName) {
+                                return $aName <=> $bName;
+                            }
+                            $aUuid = (string) ($a['uuid'] ?? ($a['id'] ?? ''));
+                            $bUuid = (string) ($b['uuid'] ?? ($b['id'] ?? ''));
+                            return $aUuid <=> $bUuid;
+                        });
                     }
-                    $offers = $dateOffers;
+
+                    $offers = array_merge($dated, $undated);
                     break;
                 case 'price_asc':
                     $sort = 'asc';
@@ -399,6 +422,69 @@ class OfferLoaderService
         }
 
         return $offers;
+    }
+
+    /**
+     * Normalizes a date value to a UNIX timestamp at 00:00 of that day.
+     * Accepts integers (timestamp), numeric strings, or date strings parsable by strtotime().
+     */
+    private function normalizeDateValue($value): ?int
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+        // If numeric, assume it is already a timestamp (seconds)
+        if (is_int($value) || (is_string($value) && ctype_digit($value))) {
+            $ts = (int) $value;
+            if ($ts <= 0) {
+                return null;
+            }
+            // Normalize to 00:00 of the same day
+            $dt = (new \DateTime())->setTimestamp($ts);
+            $dt->setTime(0, 0, 0);
+            return $dt->getTimestamp();
+        }
+        // Try to parse date strings
+        $ts = @strtotime((string) $value);
+        if ($ts === false) {
+            return null;
+        }
+        $dt = (new \DateTime())->setTimestamp($ts);
+        $dt->setTime(0, 0, 0);
+        return $dt->getTimestamp();
+    }
+
+    /**
+     * Normalizes a time-of-day to seconds since midnight.
+     * Accepts integer seconds, numeric strings, or time strings (e.g., "14:30").
+     * If no valid time is given, returns 0 (treat as 00:00).
+     * $dateTs is optional and only used when parsing time strings via strtotime relative to a date.
+     */
+    private function normalizeTimeOfDay($value, ?int $dateTs = null): int
+    {
+        if ($value === null || $value === '') {
+            return 0;
+        }
+        if (is_int($value) || (is_string($value) && ctype_digit($value))) {
+            $sec = (int) $value;
+            if ($sec < 0) { $sec = 0; }
+            // Some stores might store HHMM or HHMMSS; if value looks like HHMM (< 2400) convert to seconds
+            if ($sec > 0 && $sec < 2400 && strlen((string)$value) <= 4) {
+                $hours = intdiv($sec, 100);
+                $minutes = $sec % 100;
+                return max(0, min(86399, $hours * 3600 + $minutes * 60));
+            }
+            // Otherwise assume seconds since midnight already
+            return max(0, min(86399, $sec));
+        }
+        // Parse time string relative to the given date (to avoid timezone/day issues)
+        $base = $dateTs ?: time();
+        $ts = @strtotime((string) $value, $base);
+        if ($ts === false) {
+            return 0;
+        }
+        $dt = (new \DateTime())->setTimestamp($ts);
+        return (int) $dt->format('H') * 3600 + (int) $dt->format('i') * 60 + (int) $dt->format('s');
     }
 
     public function loadOffersForShowcase($showcaseId, $excludedOffer = null, int $limit = 100)

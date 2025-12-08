@@ -1,155 +1,513 @@
 <?php
+// Keep optional uses if needed by downstream templates/extensions
 use Contao\Input;
 use gutesio\DataModelBundle\Classes\FileUtils;
+
+// Precompute safe values for use in attributes/scripts
+$bannerId = (int)($this->id ?? 0);
+$isFullscreen = ($this->bannerFullscreen === '1' || $this->bannerFullscreen === 1);
+$mediaBgPortrait = !empty($this->bannerMediaBgPortrait);
+$reloadFlag = ($this->reloadBanner === '1' || $this->reloadBanner === 1);
+$lazyMode = (string)($this->bannerLazyMode ?? '0');
+$deferAssets = !empty($this->bannerDeferAssets);
+$bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digital</a>
+<img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
+     alt="gutes.digital Logo">';
 ?>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.4/tiny-slider.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+<link rel="stylesheet" href="bundles/gutesiooperator/dist/css/tiny-slider.css" />
+<link rel="stylesheet" href="bundles/gutesiooperator/dist/css/animate.min.css" />
 
-<section class="banner-section">
-    <div class="banner__tns-container">
-        <?php foreach ($this->arr as $key => $item): ?>
+<div id="banner-module-<?php echo $bannerId; ?>" class="banner-section<?php echo $isFullscreen ? ' is-fullscreen' : ''; ?><?php echo $this->bannerHidePoweredBy ? ' no-footer' : ''; ?><?php echo $mediaBgPortrait ? ' media-bg-portrait' : ''; ?>" data-reload="<?php echo $reloadFlag ? '1' : '0'; ?>" data-lazy-mode="<?php echo htmlspecialchars($lazyMode, ENT_QUOTES, 'UTF-8'); ?>" data-defer-assets="<?php echo $deferAssets ? '1' : '0'; ?>" data-poweredby-text="<?php echo htmlspecialchars($bannerPoweredByText ?: 'Powered by', ENT_QUOTES, 'UTF-8'); ?>" data-bg-portrait="<?php echo $mediaBgPortrait ? '1' : '0'; ?>">
+    <div class="banner-slide banner__tns-container">
         <?php
-        $slideClass = " slide-offer";
-        if ($item['type'] == "element") {
-            $slideClass = " slide-element";
+        $renderSlides = [];
+        if ($lazyMode === '2' && isset($this->slidesInitial) && is_array($this->slidesInitial)) {
+            $renderSlides = $this->slidesInitial;
+        } elseif (!empty($this->arr) && is_array($this->arr)) {
+            $renderSlides = $this->arr;
         }
-        $loadlazy = Input::get('loading') == "lazy" ?: $this->loadlazy;
-
-        // Image Orientation
-        $fileUtils = new FileUtils();
-        $result = $fileUtils->getImageSizeAndOrientation($item['image']['src']);
-        $orientation = $result[1];
         ?>
-        <div class="banner-slide">
-            <a href="<?= $item['href'] ?>">
-
-                <div class="banner__text-wrapper<?= $slideClass ?>">
-
-                    <div class="text-wrapper-inner">
-                        <?php if (($item['type'] == "element") && key_exists('logo', $item) && $item['logo'] && $loadlazy): ?>
-                            <img class="banner__text-wrapper-image" data-src="<?= $item['logo']['src'] ?>"
-                                 alt="<?= $item['logo']['alt'] ?>">
-                        <?php elseif (($item['type'] == "element") && key_exists('logo', $item) && $item['logo']): ?>
-                            <img class="banner__text-wrapper-image" src="<?= $item['logo']['src'] ?>"
-                                 alt="<?= $item['logo']['alt'] ?>">
+        <?php $___idx = 0; $___firstPreloadHref = null; ?>
+        <?php foreach ($renderSlides as $slide): ?>
+        <?php
+          $type   = $slide['type'] ?? 'image';
+          $isImg  = ($type === 'image');
+          $isVideo = ($type === 'video');
+          $isElement = ($type === 'element');
+          $isEvent   = ($type === 'event');
+          $image  = $slide['image'] ?? [];
+          $src    = $image['src'] ?? '';
+          $alt    = $image['alt'] ?? '';
+          $href   = $slide['href'] ?? '';
+          $title  = $slide['title'] ?? '';
+          $slogan = $slide['slogan'] ?? '';
+          $logo   = $slide['logo']['src'] ?? '';
+          $qrcode = $slide['qrcode'] ?? '';
+          $video  = $slide['video']['src'] ?? '';
+          $isFirst = ($___idx === 0);
+        ?>
+        <?php
+          // Capture first media href for a lightweight preload hint
+          if ($isFirst && $___firstPreloadHref === null) {
+              if ($isImg && !empty($src)) { $___firstPreloadHref = $src; }
+              elseif ($isVideo && !empty($video)) { $___firstPreloadHref = $video; }
+          }
+        ?>
+        <div class="banner__item">
+            <?php if (!$isImg && !$isVideo): ?>
+            <div class="banner__text-wrapper <?php echo $isElement ? 'slide-element' : 'slide-offer'; ?>">
+                <div class="text-wrapper-inner">
+                    <?php if ($title): ?><h2 class="banner__headline"><?php echo $title; ?></h2><?php endif; ?>
+                    <?php if ($slogan): ?><div class="banner__slogan-wrapper"><?php echo $slogan; ?></div><?php endif; ?>
+                    <?php if ($isEvent && (!empty($slide['dateTime']) || !empty($slide['location']))): ?>
+                      <div class="banner__detail-wrapper">
+                        <?php if (!empty($slide['dateTime'])): ?>
+                          <div class="detail-line"><span class="detail-label">Termin:</span><span class="detail-value"><?php echo htmlspecialchars($slide['dateTime'], ENT_QUOTES, 'UTF-8'); ?></span></div>
                         <?php endif; ?>
-                        <div class="inner-text">
-                            <div class="banner__headline-wrapper">
-                                <h1 class="banner__headline"><?= $item['title'] ?></h1>
-                            </div>
-
-                            <div class="banner__slogan-wrapper">
-                                <p>
-                                    <?= $item['slogan'] ?>
-                                </p>
-                            </div>
-                        </div>
-
-                        <?php if ((key_exists('dateTime', $item ) && $item['dateTime']) || (key_exists('location', $item) && $item['location'])): ?>
-                            <div class="banner__detail-wrapper">
-                                <?php if (key_exists('dateTime', $item ) && $item['dateTime']): ?>
-                                    <div class="datetime-wrapper">
-                                        <span class="detail-label">Termin:</span><span
-                                                class="detail-info"><?= $item['dateTime'] ?></span>
-                                    </div>
-                                <?php endif; ?>
-                                <?php if (key_exists('location', $item) && $item['location']): ?>
-                                    <div class="location-wrapper">
-                                        <span class="detail-label">Ort: </span><span
-                                                class="detail-info"><?= $item['location'] ?></span>
-                                    </div>
-                                <?php endif; ?>
-                            </div>
+                        <?php if (!empty($slide['location'])): ?>
+                          <div class="detail-line"><span class="detail-label">Ort:</span><span class="detail-value"><?php echo htmlspecialchars($slide['location'], ENT_QUOTES, 'UTF-8'); ?></span></div>
                         <?php endif; ?>
-                    </div>
-                </div>
-
-                <div class="banner__image-wrapper<?= $slideClass ?>">
-                    <?php if ($loadlazy): ?>
-                        <img class="banner__image-item <?= $orientation ?>" data-src="<?= $item['image']['src'] ?>"
-                             alt="<?= $item['image']['alt'] ?>">
-                    <?php else: ?>
-                        <img class="banner__image-item <?= $orientation ?>" src="<?= $item['image']['src'] ?>"
-                             alt="<?= $item['image']['alt'] ?>">
+                      </div>
                     <?php endif; ?>
                 </div>
+            </div>
+            <?php endif; ?>
 
+            <div class="banner__image-wrapper <?php
+                // Map classes to match existing bundle CSS sizing rules:
+                // - element  => slide-element (full height)
+                // - event    => slide-offer  (75vh in landscape)
+                // - image    => if footer hidden => slide-element (full height cover), else slide-offer
+                if ($isElement) {
+                    echo 'slide-element';
+                } elseif ($isEvent) {
+                    echo 'slide-offer';
+                } else {
+                    echo $this->bannerHidePoweredBy ? 'slide-element' : 'slide-offer';
+                }
+            ?>">
+                <?php if ($isVideo && $video): ?>
+                  <?php if ($lazyMode === '1' || $lazyMode === '2'): ?>
+                    <video class="banner__video-item" data-src="<?php echo $video; ?>" muted loop playsinline preload="none"></video>
+                  <?php else: ?>
+                    <video class="banner__video-item" src="<?php echo $video; ?>" muted autoplay loop playsinline preload="auto"></video>
+                  <?php endif; ?>
+                  <?php if ($href): ?><a class="banner__cover-link" href="<?php echo $href; ?>" aria-label="<?php echo htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8'); ?>"></a><?php endif; ?>
+                <?php else: ?>
+                  <?php
+                  // If background-on-portrait is enabled, use a full-cover link overlay (keeps media structure simple)
+                  if (!empty($this->bannerMediaBgPortrait) && $href): ?>
+                    <a class="banner__cover-link" href="<?php echo $href; ?>" aria-label="<?php echo htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8'); ?>"></a>
+                  <?php endif; ?>
+                  <?php if ($href && empty($this->bannerMediaBgPortrait)): ?><a href="<?php echo $href; ?>" aria-label="<?php echo htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8'); ?>"><?php endif; ?>
+                  <?php if ($src): ?>
+                    <?php if ($lazyMode === '1' || $lazyMode === '2'): ?>
+                      <img class="banner__image-item" data-src="<?php echo $src; ?>" alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>" loading="lazy" decoding="async">
+                    <?php else: ?>
+                      <img class="banner__image-item" src="<?php echo $src; ?>" alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>">
+                    <?php endif; ?>
+                  <?php endif; ?>
+                  <?php if ($href && empty($this->bannerMediaBgPortrait)): ?></a><?php endif; ?>
+                <?php endif; ?>
+            </div>
 
-                <div class="banner__footer">
-                    <div class="banner__footer-pre">
-                        <div class="banner__footer-logo-text">
-
-                            <?php if (($item['type'] == "event") && $item['logo']): ?>
-                                <div class="banner__footer-logo">
-                                    <?php if ($loadlazy): ?>
-                                        <img class="banner__footer-logo-image" data-src="<?= $item['logo']['src'] ?>"
-                                             alt="<?= $item['logo']['alt'] ?>">
-                                    <?php else: ?>
-                                        <img class="banner__footer-logo-image" src="<?= $item['logo']['src'] ?>"
-                                             alt="<?= $item['logo']['alt'] ?>">
-                                    <?php endif; ?>
-
-                                </div>
-                            <?php endif; ?>
-
-                            <div class="banner__footer-text">
-                                <?php if ($item['type'] == "event"): ?>
-                                    <span class="footer-text-label">Angeboten von:</span>
-                                    <br>
-                                <?php endif; ?>
-                                <?= key_exists('contact', $item) ? $item['contact'] : '' ?>
-                            </div>
-
+            <?php // Per-slide footer (logo/text/QR + blue sub bar) — only if not globally hidden ?>
+            <?php if (!$this->bannerHidePoweredBy): ?>
+            <div class="banner__footer" role="contentinfo">
+                <div class="banner__footer-pre">
+                    <div class="banner__footer-logo-text">
+                        <?php if (!$isImg && !empty($slide['contact'])): ?>
+                        <div class="banner__footer-contact">
+                            <span class="footer-contact-label">Angeboten von</span>
+                            <span class="footer-contact-name"><?php echo htmlspecialchars($slide['contact'], ENT_QUOTES, 'UTF-8'); ?></span>
                         </div>
-                        <div class="banner__footer-qrcode">
-                            <?php if ($loadlazy): ?>
-                                <img data-src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
-                            <?php else: ?>
-                                <img src="data:image/png;base64, <?= $item['qrcode'] ?>" alt="">
-                            <?php endif; ?>
-                        </div>
+                        <?php endif; ?>
+                        <?php if ($logo): ?>
+                        <div class="banner__footer-logo"><img src="<?php echo $logo; ?>" alt=""></div>
+                        <?php endif; ?>
                     </div>
-            </a>
+                    <?php if (!empty($qrcode)): ?>
+                    <div class="banner__footer-qrcode">
+                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code">
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <div class="banner__footer-sub">
+                    <span class="footer-text-label">
+                        <?php echo $bannerPoweredByText ?: 'Powered by'; ?>
+                    </span>
+                </div>
+            </div>
+            <?php endif; ?>
         </div>
+        <?php $___idx++; endforeach; ?>
 
     </div>
-    <?php endforeach; ?>
-    </div>
-    <div class="banner__footer-sub">
-        Powered by <a href="https://nordsee.digital/">Nordsee Digital</a>
-        <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
-             alt="nordsee.digital Logo">
-    </div>
-</section>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tiny-slider/2.9.2/min/tiny-slider.js"></script>
-
-<script type="module">
-  var slider = tns({
-    container: '.banner__tns-container',
-    mode: 'gallery',
-    items: 1,
-    slideBy: 'page',
-    animateIn: 'animate__backInLeft',
-    animateOut: 'animate__backOutRight',
-    //speed: 5000,
-    speed: 2000,
-      <?php if ($loadlazy): ?>
-    lazyload: true,
-    lazyloadSelector: "banner__image-item",
+    <?php // Preload first slide media to improve LCP on websites ?>
+    <?php if (!empty($___firstPreloadHref)): ?>
+      <?php if (pathinfo(parse_url($___firstPreloadHref, PHP_URL_PATH) ?? '', PATHINFO_EXTENSION) === 'mp4'): ?>
+        <link rel="preload" as="video" href="<?php echo $___firstPreloadHref; ?>" />
+      <?php else: ?>
+        <link rel="preload" as="image" href="<?php echo $___firstPreloadHref; ?>" />
       <?php endif; ?>
-    autoplayTimeout: 15000,
-    autoplay: true,
-    // autoplay: false,
-    controls: false,
-    mouseDrag: true,
-    nav: false,
-    autoplayButtonOutput: false
-  });
-  <?php if($this->reloadBanner): ?>
-  window.setTimeout(()=> {
-    location.reload();
-  }, 3600000);
-  <?php endif; ?>
+    <?php endif; ?>
+    <?php if ($lazyMode === '2' && !empty($this->slidesDeferred)): ?>
+      <?php $___deferred = base64_encode($this->slidesDeferred); ?>
+      <script id="banner-deferred-<?php echo $bannerId; ?>" type="application/json" data-enc="b64"><?php echo $___deferred; ?></script>
+    <?php endif; ?>
+</div>
+
+<?php // Noscript fallback for SEO: render the first initial slide media plainly so crawlers without JS see content ?>
+<?php if (!empty($renderSlides) && is_array($renderSlides)): ?>
+<noscript>
+  <?php $__s = $renderSlides[0];
+    $__type  = $__s['type'] ?? 'image';
+    $__img   = $__s['image']['src'] ?? '';
+    $__alt   = $__s['image']['alt'] ?? ($__s['title'] ?? '');
+    $__vid   = $__s['video']['src'] ?? '';
+    $__href  = $__s['href'] ?? '';
+  ?>
+  <div class="banner-noscript">
+    <?php if ($__href): ?><a href="<?php echo $__href; ?>"><?php endif; ?>
+    <?php if ($__type === 'video' && $__vid): ?>
+      <video src="<?php echo $__vid; ?>" muted playsinline preload="metadata"></video>
+    <?php elseif ($__img): ?>
+      <img src="<?php echo $__img; ?>" alt="<?php echo htmlspecialchars($__alt, ENT_QUOTES, 'UTF-8'); ?>">
+    <?php endif; ?>
+    <?php if ($__href): ?></a><?php endif; ?>
+  </div>
+</noscript>
+<?php endif; ?>
+
+<?php if (!$deferAssets): ?>
+  <script src="bundles/gutesiooperator/dist/js/tiny-slider.min.js"></script>
+<?php endif; ?>
+
+<script>
+(function(){
+  var root = document.getElementById('banner-module-<?php echo $bannerId; ?>');
+  if (!root) { return; }
+  var container = root.querySelector('.banner-slide');
+  if (!container) { return; }
+
+  var lazyMode = root.getAttribute('data-lazy-mode') || '0';
+  var deferAssets = root.getAttribute('data-defer-assets') === '1';
+  var hideFooter = root.classList.contains('no-footer');
+  // Derive powered-by text from the already rendered footer label (allows HTML, avoids PHP in JS)
+  var footerLabelEl = root.querySelector('.banner__footer-sub .footer-text-label');
+  var poweredText = footerLabelEl ? footerLabelEl.innerHTML : 'Powered by';
+  var mediaBgPortrait = root.getAttribute('data-bg-portrait') === '1';
+
+  function swapLazyMedia(scope){
+    var imgs = (scope || root).querySelectorAll('img[data-src]');
+    imgs.forEach(function(img, idx){
+      img.setAttribute('src', img.getAttribute('data-src'));
+      img.removeAttribute('data-src');
+      // First image gets high fetch priority to help LCP
+      if (idx === 0) {
+        img.setAttribute('fetchpriority','high');
+        img.setAttribute('loading','eager');
+        img.removeAttribute('decoding');
+      }
+    });
+    var vids = (scope || root).querySelectorAll('video[data-src]');
+    vids.forEach(function(v){
+      v.setAttribute('src', v.getAttribute('data-src'));
+      v.removeAttribute('data-src');
+      // Autoplay once activated to preserve CPU pre-init
+      v.setAttribute('autoplay','');
+      try { v.load(); } catch(e){}
+    });
+    // After swapping, re-evaluate media orientation for portrait handling
+    markPortraitMedia(scope || root);
+  }
+
+  function getSlideWrapperClass(type){
+    if (type === 'element') { return 'slide-element'; }
+    if (type === 'event') { return 'slide-offer'; }
+    // images/videos: if footer hidden, behave like element (full height), else like offer (contain/75vh)
+    return hideFooter ? 'slide-element' : 'slide-offer';
+  }
+
+  function createEl(tag, cls, attrs){
+    var el = document.createElement(tag);
+    if (cls) { el.className = cls; }
+    if (attrs){ Object.keys(attrs).forEach(function(k){
+      if (attrs[k] !== null && attrs[k] !== undefined) el.setAttribute(k, attrs[k]);
+    }); }
+    return el;
+  }
+
+  function safeText(el, txt){ if (txt){ el.textContent = txt; } }
+
+  function buildFooter(slide) {
+      if (hideFooter) return null;
+      var hasContact = slide.contact && (slide.type !== 'image');
+      var hasLogo = slide.logo && slide.logo.src;
+      var hasQr = !!slide.qrcode;
+      var footer = createEl('div', 'banner__footer', {role: 'contentinfo'});
+      var pre = createEl('div', 'banner__footer-pre');
+      var logoText = createEl('div', 'banner__footer-logo-text');
+      if (hasContact) {
+          var contact = createEl('div', 'banner__footer-contact');
+          var l = createEl('span', 'footer-contact-label');
+          safeText(l, 'Angeboten von');
+          var n = createEl('span', 'footer-contact-name');
+          safeText(n, slide.contact);
+          contact.appendChild(l);
+          contact.appendChild(n);
+          logoText.appendChild(contact);
+      }
+      if (hasLogo) {
+          var logo = createEl('div', 'banner__footer-logo');
+          var img = createEl('img');
+          img.src = slide.logo.src;
+          img.alt = '';
+          logo.appendChild(img);
+          logoText.appendChild(logo);
+      }
+      pre.appendChild(logoText);
+      if (hasQr) {
+          var qr = createEl('div', 'banner__footer-qrcode');
+          var qri = createEl('img');
+          qri.src = 'data:image/png;base64,' + slide.qrcode;
+          qri.alt = 'QR-Code';
+          qr.appendChild(qri);
+          pre.appendChild(qr);
+      }
+      footer.appendChild(pre);
+      var sub = createEl('div', 'banner__footer-sub');
+      var label = createEl('span', 'footer-text-label');
+      // allow HTML (links) in powered-by text
+      label.innerHTML = poweredText;
+      sub.appendChild(label);
+      footer.appendChild(sub);
+      return footer;
+  }
+
+    function buildSlide(slide) {
+        var type = slide.type || 'image';
+        var isImg = type === 'image';
+        var isVideo = type === 'video';
+        var isElement = type === 'element';
+        var isEvent = type === 'event';
+        var href = slide.href || '';
+        var title = slide.title || '';
+        var alt = (slide.image && slide.image.alt) || title || '';
+        var src = (slide.image && slide.image.src) || '';
+    var videoSrc = (slide.video && slide.video.src) || '';
+    var slogan = slide.slogan || '';
+    var dateTime = slide.dateTime || '';
+    var location = slide.location || '';
+
+    var item = createEl('div', 'banner__item');
+
+    if (!isImg && !isVideo){
+      var txtWrap = createEl('div', 'banner__text-wrapper ' + (isElement ? 'slide-element' : 'slide-offer'));
+      var inner = createEl('div', 'text-wrapper-inner');
+      if (title){ var h = createEl('h2', 'banner__headline'); safeText(h, title); inner.appendChild(h); }
+      if (slogan){ var s = createEl('div', 'banner__slogan-wrapper'); s.innerHTML = slogan; inner.appendChild(s); }
+      if (isEvent && (dateTime || location)){
+        var details = createEl('div', 'banner__detail-wrapper');
+        if (dateTime){
+          var line1 = createEl('div', 'detail-line');
+          var dl1 = createEl('span', 'detail-label'); safeText(dl1, 'Termin:');
+          var dv1 = createEl('span', 'detail-value'); safeText(dv1, dateTime);
+          line1.appendChild(dl1); line1.appendChild(dv1); details.appendChild(line1);
+        }
+        if (location){
+          var line2 = createEl('div', 'detail-line');
+          var dl2 = createEl('span', 'detail-label'); safeText(dl2, 'Ort:');
+          var dv2 = createEl('span', 'detail-value'); safeText(dv2, location);
+          line2.appendChild(dl2); line2.appendChild(dv2); details.appendChild(line2);
+        }
+        inner.appendChild(details);
+      }
+      txtWrap.appendChild(inner);
+      item.appendChild(txtWrap);
+    }
+
+    var imgWrap = createEl('div', 'banner__image-wrapper ' + getSlideWrapperClass(type));
+    if (isVideo && videoSrc){
+      var vid;
+      if (lazyMode === '1' || lazyMode === '2'){
+        vid = createEl('video', 'banner__video-item', { 'data-src': videoSrc, muted: '', loop: '', playsinline: '', preload: 'none' });
+      } else {
+        vid = createEl('video', 'banner__video-item', { src: videoSrc, muted: '', autoplay: '', loop: '', playsinline: '', preload: 'auto' });
+      }
+      imgWrap.appendChild(vid);
+      if (href){ imgWrap.appendChild(createEl('a', 'banner__cover-link', { href: href, 'aria-label': title || alt })); }
+    } else {
+      var mediaParent = imgWrap;
+      var linkEl = null;
+      // If background-on-portrait mode is enabled, prefer a full-cover link overlay
+      if (href && mediaBgPortrait){
+        mediaParent.appendChild(createEl('a', 'banner__cover-link', { href: href, 'aria-label': title || alt }));
+      } else if (href){
+        linkEl = createEl('a', null, { href: href, 'aria-label': title || alt }); mediaParent.appendChild(linkEl);
+      }
+      if (src){
+        var imgAttrs = { alt: alt };
+        if (lazyMode === '1' || lazyMode === '2') { imgAttrs['data-src'] = src; imgAttrs.loading = 'lazy'; imgAttrs.decoding = 'async'; imgAttrs.fetchpriority = 'low'; }
+        else { imgAttrs.src = src; }
+        var img = createEl('img', 'banner__image-item', imgAttrs);
+        (linkEl || mediaParent).appendChild(img);
+      }
+    }
+    item.appendChild(imgWrap);
+
+    var footer = buildFooter(slide);
+    if (footer) item.appendChild(footer);
+
+    return item;
+  }
+
+  function hydrateDeferred(){
+    if (lazyMode !== '2') return;
+    var jsonEl = document.getElementById('banner-deferred-<?php echo $bannerId; ?>');
+    if (!jsonEl) return;
+    var txt = jsonEl.textContent || '';
+    if (!txt) return;
+    var data = [];
+    try {
+      if (jsonEl.getAttribute('data-enc') === 'b64') {
+        // Decode base64 safely for potential UTF-8 content
+        try {
+          txt = decodeURIComponent(escape(atob(txt)));
+        } catch (e) {
+          txt = atob(txt); // fallback
+        }
+      }
+      data = JSON.parse(txt);
+    } catch(e){ return; }
+    if (!Array.isArray(data) || !data.length) return;
+    // Append all slides before initializing the slider
+    var frag = document.createDocumentFragment();
+    data.forEach(function(slide){
+      try {
+        var node = buildSlide(slide);
+        frag.appendChild(node);
+      } catch (e) { /* ignore broken slide */ }
+    });
+    container.appendChild(frag);
+    // After hydrating, check media orientation for new slides
+    markPortraitMedia(container);
+  }
+
+  function ensureTinySlider(cb){
+    if (typeof tns === 'function') { cb(); return; }
+    var s = document.createElement('script');
+    s.src = 'bundles/gutesiooperator/dist/js/tiny-slider.min.js';
+    s.onload = cb;
+    document.body.appendChild(s);
+  }
+
+  function initSlider(){
+    try {
+      // For now, lazyMode '2' behaves like '1' on the client (server already limited the number if needed).
+
+      // Swap lazy media now that items exist
+      if (lazyMode === '1' || lazyMode === '2') { swapLazyMedia(); }
+      // Evaluate orientation for already available media (non-lazy first slide or eager images)
+      markPortraitMedia(root);
+
+      var slider = tns({
+        container: container,
+        mode: 'gallery',
+        items: 1,
+        slideBy: 'page',
+        speed: 2000,
+        autoplayTimeout: 15000,
+        autoplay: true,
+        controls: false,
+        mouseDrag: true,
+        nav: false,
+        autoplayButtonOutput: false
+      });
+    } catch (e) {
+      console && console.warn && console.warn('Banner slider init failed:', e);
+    }
+
+    if (root.getAttribute('data-reload') === '1') {
+      window.setTimeout(function(){ location.reload(); }, 3600000);
+    }
+  }
+
+  function onEnter(){
+    // In SEO Static-First, hydrate additional slides before initializing Tiny-Slider
+    if (lazyMode === '2') { hydrateDeferred(); }
+    if (deferAssets) {
+      ensureTinySlider(initSlider);
+    } else {
+      initSlider();
+    }
+  }
+
+  if (deferAssets && 'IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if (e.isIntersecting) { onEnter(); obs.disconnect(); } });
+    }, { rootMargin: '200px' });
+    obs.observe(root);
+  } else {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', onEnter);
+    } else {
+      onEnter();
+    }
+  }
+
+  // --- Portrait media handling on small/mobile portrait screens ---
+  // If an image or video is portrait (height > width), we mark its slide so CSS can
+  // show the full media (contain) and overlay footer/contents on top of it.
+  function markPortraitMedia(scope){
+    var context = scope || root;
+    var items = context.querySelectorAll('.banner__item');
+    items.forEach(function(item){
+      // Prefer image if present, otherwise fall back to video
+      var img = item.querySelector('.banner__image-item');
+      var vid = img ? null : item.querySelector('.banner__video-item');
+
+      var applyFlag = function(w,h){
+        if (!w || !h) return;
+        if (h > w) { item.classList.add('media-portrait'); }
+        else { item.classList.remove('media-portrait'); }
+      };
+
+      if (img) {
+        if (img.naturalWidth && img.naturalHeight) {
+          applyFlag(img.naturalWidth, img.naturalHeight);
+        } else {
+          // In case the image hasn't loaded yet, attach a one-time listener
+          img.addEventListener('load', function handler(){
+            img.removeEventListener('load', handler);
+            applyFlag(img.naturalWidth, img.naturalHeight);
+          });
+        }
+        return;
+      }
+
+      if (vid) {
+        // For videos, use metadata dimensions
+        if (vid.videoWidth && vid.videoHeight) {
+          applyFlag(vid.videoWidth, vid.videoHeight);
+        } else {
+          vid.addEventListener('loadedmetadata', function handler(){
+            vid.removeEventListener('loadedmetadata', handler);
+            applyFlag(vid.videoWidth, vid.videoHeight);
+          });
+        }
+        return;
+      }
+
+      // No media found -> remove flag
+      item.classList.remove('media-portrait');
+    });
+  }
+
+  // Re-evaluate on resize/orientation change to adapt when device is rotated
+  window.addEventListener('resize', function(){ markPortraitMedia(root); });
+})();
 </script>
+
+<!-- Styling moved to SCSS/CSS assets (Resources/public/src/scss and dist css). -->

@@ -57,6 +57,7 @@ class BannerModuleController extends AbstractFrontendModuleController
 
         $db = Database::getInstance();
         $mode = $model->gutesio_data_mode;
+        $qrForImages = ($model->gutesio_banner_qr_for_images === '1' || $model->gutesio_banner_qr_for_images === 1);
         $arrReturn = [];
         switch ($mode) {
             case 0: {
@@ -64,64 +65,70 @@ class BannerModuleController extends AbstractFrontendModuleController
                 break;
             }
             case 1: {
-                $types = unserialize($model->gutesio_data_type);
-                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                $types = StringUtil::deserialize($model->gutesio_data_type, true);
+                if (!empty($types)) {
+                    $in = implode(',', array_fill(0, count($types), '?'));
+                    $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
                                 JOIN tl_gutesio_data_element_type AS con ON con.elementId = elem.uuid
-                            WHERE elem.displayComply=1 AND con.typeId IN(";
-                foreach ($types as $type) {
-                    $strSql .= "'" . $type . "',";
+                            WHERE elem.displayComply=1 AND con.typeId IN($in)";
+                    $arrElements = $db->prepare($strSql)->execute(...$types)->fetchAllAssoc();
+                } else {
+                    $arrElements = [];
                 }
-                $strSql = trim($strSql, ",") . ")";
-                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
                 break;
             }
             case 2: {
-                $directories = unserialize($model->gutesio_data_directory);
-                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                $directories = StringUtil::deserialize($model->gutesio_data_directory, true);
+                if (!empty($directories)) {
+                    $in = implode(',', array_fill(0, count($directories), '?'));
+                    $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
                                 JOIN tl_gutesio_data_element_type AS con ON con.elementId = elem.uuid
                                 JOIN tl_gutesio_data_directory_type as dirType ON dirType.typeId = con.typeId
-                            WHERE elem.displayComply=1 AND dirType.directoryId IN(";
-                foreach ($directories as $directory) {
-                    $strSql .= "'" . $directory . "',";
+                            WHERE elem.displayComply=1 AND dirType.directoryId IN($in)";
+                    $arrElements = $db->prepare($strSql)->execute(...$directories)->fetchAllAssoc();
+                } else {
+                    $arrElements = [];
                 }
-                $strSql = trim($strSql, ",") . ")";
-                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
                 break;
             }
             case 3: {
-                $arrTags = unserialize($model->gutesio_data_tags);
-                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                $arrTags = StringUtil::deserialize($model->gutesio_data_tags, true);
+                if (!empty($arrTags)) {
+                    $in = implode(',', array_fill(0, count($arrTags), '?'));
+                    $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
                                 JOIN tl_gutesio_data_tag_element AS con ON con.elementId = elem.uuid
-                            WHERE elem.displayComply=1 AND con.tagId IN(";
-                foreach ($arrTags as $tag) {
-                    $strSql .= "'" . $tag . "',";
-                }
-                $strSql = trim($strSql, ",") . ")";
-                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
-                foreach ($tags as $tag) {
-                    $strSql = 'SELECT elem.* FROM tl_gutesio_data_element AS elem 
-                                JOIN tl_gutesio_data_tag_element AS con ON con.elementId = elem.uuid
-                            WHERE elem.displayComply=1 AND con.tagId=?';
-                    $arrElements = array_merge($arrElements,  $db->prepare($strSql)->execute($tag)->fetchAllAssoc());
+                            WHERE elem.displayComply=1 AND con.tagId IN($in)";
+                    $arrElements = $db->prepare($strSql)->execute(...$arrTags)->fetchAllAssoc();
+                } else {
+                    $arrElements = [];
                 }
                 break;
             }
             case 4: {
-                $blockedTypes = unserialize($model->gutesio_data_blocked_types);
-                $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
+                $blockedTypes = StringUtil::deserialize($model->gutesio_data_blocked_types, true);
+                if (!empty($blockedTypes)) {
+                    $in = implode(',', array_fill(0, count($blockedTypes), '?'));
+                    $strSql = "SELECT DISTINCT elem.* FROM tl_gutesio_data_element AS elem 
                                 JOIN tl_gutesio_data_element_type AS con ON con.elementId = elem.uuid
-                            WHERE elem.displayComply=1 AND con.typeId NOT IN(";
-                foreach ($blockedTypes as $blockedType) {
-                    $strSql .= "'" . $blockedType . "',";
+                            WHERE elem.displayComply=1 AND con.typeId NOT IN($in)";
+                    $arrElements = $db->prepare($strSql)->execute(...$blockedTypes)->fetchAllAssoc();
+                } else {
+                    $arrElements = [];
                 }
-                $strSql = trim($strSql, ",") . ")";
-                $arrElements = $db->prepare($strSql)->execute()->fetchAllAssoc();
                 break;
             }
             case 5: {
                 $elementUuidArr = StringUtil::deserialize($model->gutesio_data_elements, true);
-                $elementUuids = implode("','",$elementUuidArr);
-                $arrElements = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE displayComply=1 AND uuid IN ('" . $elementUuids . "')")->execute()->fetchAllAssoc();
+                if (!empty($elementUuidArr)) {
+                    $in = implode(',', array_fill(0, count($elementUuidArr), '?'));
+                    $arrElements = $db->prepare("SELECT * FROM tl_gutesio_data_element WHERE displayComply=1 AND uuid IN ($in)")->execute(...$elementUuidArr)->fetchAllAssoc();
+                } else {
+                    $arrElements = [];
+                }
+                break;
+            }
+            case 6: { // Kein Schaufenster laden
+                $arrElements = [];
                 break;
             }
             default: {
@@ -133,11 +140,112 @@ class BannerModuleController extends AbstractFrontendModuleController
         foreach ($arrElements as $element) {
             $arrReturn = $this->getSlidesForElement($element, $arrReturn);
         }
+        // additionally mix in images from selected folder(s) (tl_files) if configured
+        try {
+            $skipUnlinked = ($model->gutesio_banner_skip_unlinked === '1' || $model->gutesio_banner_skip_unlinked === 1);
+            $folderUuids = StringUtil::deserialize($model->gutesio_banner_folder, true);
+            if (!empty($folderUuids)) {
+                $objFolders = FilesModel::findMultipleByUuids($folderUuids);
+                if ($objFolders) {
+                    // Allow both images and videos from folders
+                    $extensions = ['jpg','jpeg','png','gif','webp','bmp','tiff','svg','mp4'];
+                    $placeholders = rtrim(str_repeat('?,', count($extensions)), ',');
+                    $lang = $GLOBALS['TL_LANGUAGE'] ?? 'de';
+                    $seen = [];
+                    while ($objFolders->next()) {
+                        if ($objFolders->type !== 'folder') { continue; }
+                        $folderPath = $objFolders->path;
+                        $sql = "SELECT * FROM tl_files WHERE type='file' AND path LIKE ? AND extension IN ($placeholders)";
+                        $params = array_merge([$folderPath.'%'], $extensions);
+                        $files = $db->prepare($sql)->execute(...$params)->fetchAllAssoc();
+                        foreach ($files as $file) {
+                            if (isset($seen[$file['path']])) { continue; }
+                            $seen[$file['path']] = true;
+
+                            $meta = @unserialize($file['meta']);
+                            if (!is_array($meta)) { $meta = []; }
+                            $metaLang = [];
+                            if (isset($meta[$lang]) && is_array($meta[$lang])) {
+                                $metaLang = $meta[$lang];
+                            } elseif (!empty($meta) && is_array(reset($meta))) {
+                                $metaLang = reset($meta);
+                            }
+                            $title = $metaLang['title'] ?? basename($file['name'] ?: $file['path']);
+                            $alt = $metaLang['alt'] ?? $title;
+                            $href = $metaLang['link'] ?? null;
+                            if ($skipUnlinked && !$href) { continue; }
+
+                            $srcPath = '/' . ltrim($file['path'], '/');
+                            $ext = strtolower((string)($file['extension'] ?? pathinfo($file['path'], PATHINFO_EXTENSION)));
+                            if ($ext === 'mp4') {
+                                // Build a video slide (no overlay, behaves like image)
+                                $arrReturn[] = [
+                                    'type'  => 'video',
+                                    'video' => [
+                                        'src' => $srcPath,
+                                    ],
+                                    'title' => $title,
+                                    'href'  => $href,
+                                ];
+                            } else {
+                                // Image slide
+                                $imageSlide = [
+                                    'type'  => 'image',
+                                    'image' => [
+                                        'src' => $srcPath,
+                                        'alt' => $alt,
+                                    ],
+                                    'title' => $title,
+                                    'href'  => $href,
+                                ];
+                                if ($qrForImages && $href) {
+                                    $imageSlide['qrcode'] = base64_encode($this->generateQrCode($href));
+                                }
+                                $arrReturn[] = $imageSlide;
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $t) {
+            // fail silently, do not block the module rendering
+        }
         $arrReturn = $arrReturn ?: [];
         shuffle($arrReturn);
-        $template->arr = $arrReturn;
+        // Performance / lazy options
+        $lazyMode = (string) ($model->gutesio_banner_lazy_mode ?? '0'); // '0','1','2'
+        $deferAssets = ($model->gutesio_banner_defer_assets === '1' || $model->gutesio_banner_defer_assets === 1);
+        $limitInitial = (int) ($model->gutesio_banner_limit_initial ?: 1);
+        $deferQr = ($model->gutesio_banner_defer_qr === '1' || $model->gutesio_banner_defer_qr === 1);
+
+        if ($lazyMode === '2' && !empty($arrReturn)) {
+            // Render only the first N slides initially, defer the rest (for SEO)
+            $initial = array_slice($arrReturn, 0, max(1, $limitInitial));
+            $deferred = array_slice($arrReturn, max(1, $limitInitial));
+            if ($deferQr && !empty($deferred)) {
+                foreach ($deferred as &$d) {
+                    if (isset($d['qrcode'])) { unset($d['qrcode']); }
+                }
+                unset($d);
+            }
+            $template->slidesInitial = $initial;
+            $template->slidesDeferred = !empty($deferred) ? json_encode($deferred) : '';
+        } else {
+            $template->arr = $arrReturn;
+        }
+
+        $template->bannerLazyMode = $lazyMode;
+        $template->bannerDeferAssets = $deferAssets;
+        $template->bannerLimitInitial = $limitInitial;
+        $template->bannerDeferQr = $deferQr;
+
         $template->loadlazy = $model->lazyBanner === "1";
         $template->reloadBanner = $model->reloadBanner === "1";
+        // New options for rendering/behavior
+        $template->bannerHidePoweredBy = ($model->gutesio_banner_hide_poweredby === '1' || $model->gutesio_banner_hide_poweredby === 1);
+        $template->bannerPoweredByText = $model->gutesio_banner_poweredby_text ?: 'Powered by';
+        $template->bannerFullscreen = ($model->gutesio_banner_fullscreen === '1' || $model->gutesio_banner_fullscreen === 1);
+        $template->bannerMediaBgPortrait = ($model->gutesio_banner_media_bg_portrait === '1' || $model->gutesio_banner_media_bg_portrait === 1);
         $response = $template->getResponse();
 
         return $response;
@@ -162,42 +270,52 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
                 break;
             }
+            case 5: { // Kein Inhalt laden
+                $arrChilds = [];
+                break;
+            }
             case 1: {
-                $arrTypes = unserialize($model->gutesio_child_type);
-                $strSql = "SELECT DISTINCT child.* FROM tl_gutesio_data_child AS child
+                $arrTypes = StringUtil::deserialize($model->gutesio_child_type, true);
+                if (!empty($arrTypes)) {
+                    $in = implode(',', array_fill(0, count($arrTypes), '?'));
+                    $strSql = "SELECT DISTINCT child.* FROM tl_gutesio_data_child AS child
                     JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
                     JOIN tl_gutesio_data_child_type As type ON child.typeId = type.uuid
-                WHERE con.elementId = ? AND type.type IN(";
-                foreach ($arrTypes as $type) {
-                    $strSql .= "'" . $type . "',";
+                WHERE con.elementId = ? AND type.type IN($in)";
+                    $params = array_merge([$element['uuid']], $arrTypes);
+                    $arrChilds = $db->prepare($strSql)->execute(...$params)->fetchAllAssoc();
+                } else {
+                    $arrChilds = [];
                 }
-                $strSql = trim($strSql, ",") . ")";
-                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
                 break;
             }
             case 2: {
-                $arrTypes = unserialize($model->gutesio_child_category);
-                $strSql = "SELECT child.* FROM tl_gutesio_data_child AS child
+                $arrTypes = StringUtil::deserialize($model->gutesio_child_category, true);
+                if (!empty($arrTypes)) {
+                    $in = implode(',', array_fill(0, count($arrTypes), '?'));
+                    $strSql = "SELECT child.* FROM tl_gutesio_data_child AS child
                     JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
-                WHERE con.elementId = ? AND child.typeId IN(";
-                foreach ($arrTypes as $type) {
-                    $strSql .= "'" . $type . "',";
+                WHERE con.elementId = ? AND child.typeId IN($in)";
+                    $params = array_merge([$element['uuid']], $arrTypes);
+                    $arrChilds = $db->prepare($strSql)->execute(...$params)->fetchAllAssoc();
+                } else {
+                    $arrChilds = [];
                 }
-                $strSql = trim($strSql, ",") . ")";
-                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
                 break;
             }
             case 3: {
-                $arrTags = unserialize($model->gutesio_child_tag);
-                $strSql = "SELECT DISTINCT child.* FROM tl_gutesio_data_child AS child
+                $arrTags = StringUtil::deserialize($model->gutesio_child_tag, true);
+                if (!empty($arrTags)) {
+                    $in = implode(',', array_fill(0, count($arrTags), '?'));
+                    $strSql = "SELECT DISTINCT child.* FROM tl_gutesio_data_child AS child
                     JOIN tl_gutesio_data_child_connection AS con ON child.uuid = con.childId
                     JOIN tl_gutesio_data_child_tag As tag ON child.uuid = tag.childId
-                WHERE con.elementId = ? AND tag.tagId IN(";
-                foreach ($arrTags as $tag) {
-                    $strSql .= "'" . $tag . "',";
+                WHERE con.elementId = ? AND tag.tagId IN($in)";
+                    $params = array_merge([$element['uuid']], $arrTags);
+                    $arrChilds = $db->prepare($strSql)->execute(...$params)->fetchAllAssoc();
+                } else {
+                    $arrChilds = [];
                 }
-                $strSql = trim($strSql, ",") . ")";
-                $arrChilds = $db->prepare($strSql)->execute($element['uuid'])->fetchAllAssoc();
                 break;
             }
             default: {

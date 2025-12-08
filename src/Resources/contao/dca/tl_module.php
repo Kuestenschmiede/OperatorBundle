@@ -80,8 +80,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{titl
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_selfHelpFocus;{cart_legend},cart_page;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
-    '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth;';
-
+        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked,gutesio_banner_fullscreen,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_lazy_mode,gutesio_banner_defer_assets,gutesio_banner_limit_initial,gutesio_banner_defer_qr,gutesio_banner_qr_for_images;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
 
@@ -89,7 +88,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
     'exclude'                 => true,
     'default'                 => "0",
     'inputType'               => 'radio',
-    'options'                 => ['0', '1', '2', '3', '4', '5'],
+    'options'                 => ['0', '1', '2', '3', '4', '5', '6'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option'],
     'sql'                     => "char(1) NOT NULL default '0'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
@@ -358,7 +357,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_child_data_mode'] = [
     'exclude'                 => true,
     'default'                 => "0",
     'inputType'               => 'radio',
-    'options'                 => ['0', '1', '2', '3', '4'],
+    'options'                 => ['0', '1', '2', '3', '4', '5'],
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option'],
     'sql'                     => "char(1) NOT NULL default '0'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
@@ -610,4 +609,103 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_hide_events_without_date'] = 
     'inputType'               => 'checkbox',
     'eval'                    => ['tl_class'=>'clr'],
     'sql'                     => "int NOT NULL default 0"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_folder'] = [
+    'exclude'   => true,
+    'inputType' => 'fileTree',
+    'eval'      => [
+        'files' => false,
+        'fieldType' => 'checkbox', // allow multi-folder selection
+        'isFolder' => true,
+        'multiple' => true,
+        'tl_class' => 'clr'
+    ],
+    'sql'       => 'blob NULL'
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_skip_unlinked'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'"
+];
+
+// Banner options: fullscreen, hide footer, override footer text
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_fullscreen'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'"
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_hide_poweredby'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'"
+];
+
+// Banner option: render media below content as background on portrait screens
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_media_bg_portrait'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_poweredby_text'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'default'   => '',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "varchar(255) NOT NULL default ''"
+];
+
+// Performance/Lazy options for banner
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_lazy_mode'] = [
+    'exclude'   => true,
+    'inputType' => 'select',
+    'default'   => '0',
+    'options'   => ['0','1','2'],
+    'reference' => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option'],
+    'eval'      => ['includeBlankOption' => false, 'tl_class' => 'w50 clr'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_defer_assets'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '1',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_limit_initial'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'default'   => 1,
+    'eval'      => ['rgxp' => 'digit', 'tl_class' => 'w50'],
+    'sql'       => 'int(10) unsigned NOT NULL default 1',
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_defer_qr'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '1',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
+];
+
+// Banner option: also generate QR for image slides when a link exists
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_qr_for_images'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
 ];

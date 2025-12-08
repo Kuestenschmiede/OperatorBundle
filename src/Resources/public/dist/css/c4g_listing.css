@@ -12319,12 +12319,6 @@ html {
     opacity: 1
   }
 }
-.c4g-listfilter-outer {
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 0;
-  padding-right: 0
-}
 .c4g-listfilter-default .c4g-btn-filter-wrapper .c4g-listfilter-outer button.executeSubmit,
 .c4g-listfilter-form-wrapper:not(.react-c4g-listfilter-opened) .c4g-btn-filter-wrapper .c4g-listfilter-outer button.executeSubmit,
 .c4g-listfilter-outer .c4g-btn-filter.executeSubmit,
@@ -12380,21 +12374,18 @@ html {
   width: 400px;
   max-width: 100%;
   box-shadow: var(--gutes-box-shadow);
-  animation: fadeIn .5s;
+  animation: fadeIn .5s
+}
+.c4g-listfilter-outer.react-c4g-listfilter-opened .c4g-listfilter-form-wrapper {
+  display: block
+}
+.c4g-listfilter-outer.react-c4g-listfilter-opened {
   margin-left: 15px;
   margin-right: 15px;
   padding-left: 15px;
   padding-right: 15px
 }
-.c4g-listfilter-outer.react-c4g-listfilter-opened .c4g-listfilter-form-wrapper {
-  display: block
-}
-.c4g-listfilter-default {
-  position: flex;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 100%;
+.c4g-listfilter-outer {
   margin-left: 0;
   margin-right: 0;
   padding-left: 0;
@@ -12448,8 +12439,21 @@ html {
   display: flex;
   flex-direction: column
 }
+.c4g-listfilter-default {
+  position: flex;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%
+}
 .c4g-listfilter-default .c4g-listfilter-form-wrapper {
   display: block
+}
+.c4g-listfilter-default {
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 0;
+  padding-right: 0
 }
 .c4g-listfilter-inner {
   text-align: left
@@ -12522,11 +12526,6 @@ html {
 :before {
   box-sizing: inherit
 }
-.c4g-grid-outer,
-.c4g-plain-outer {
-  width: 100%;
-  font-family: var(--gutes-base-font-family)
-}
 .c4g-grid-outer .c4g-list-elements,
 .c4g-grid-outer .nomasonry-grid,
 .c4g-plain-outer .c4g-list-elements,
@@ -12542,6 +12541,11 @@ html {
 .c4g-plain-outer .nomasonry-item {
   display: inline-block;
   width: 100%
+}
+.c4g-grid-outer,
+.c4g-plain-outer {
+  width: 100%;
+  font-family: var(--gutes-base-font-family)
 }
 .c4g-grid-outer img,
 .c4g-plain-outer img {
@@ -12598,8 +12602,7 @@ html {
 }
 .c4g-grid-outer .c4g-list-element__inner > div,
 .c4g-plain-outer .c4g-list-element__inner > div {
-  margin-bottom: var(--gutes-base-spacing-unit);
-  padding: 0 var(--gutes-base-spacing-unit)
+  margin-bottom: var(--gutes-base-spacing-unit)
 }
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__elementname-wrapper a.c4g-list-element__elementname-link:before,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__elementname-wrapper a.c4g-list-element__elementname-link:before {
@@ -12637,6 +12640,10 @@ html {
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__buttons-wrapper {
   margin-bottom: 0;
   margin-top: var(--gutes-base-spacing-unit)
+}
+.c4g-grid-outer .c4g-list-element__inner > div,
+.c4g-plain-outer .c4g-list-element__inner > div {
+  padding: 0 var(--gutes-base-spacing-unit)
 }
 .c4g-grid-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper,
 .c4g-plain-outer .c4g-list-element__inner > div.c4g-list-element__image-wrapper {
@@ -12994,6 +13001,14 @@ html {
 .react-c4g-listfilter-opened .c4g-form-field > label {
   display: block
 }
+.c4g-list-outer .c4g-listfilter-default .c4g-list-elements,
+.c4g-listfilter-default .c4g-list-outer .c4g-list-elements,
+.c4g-listfilter-default .c4g-listfilter-default,
+.c4g-listfilter-default .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
+.c4g-listfilter-default .container,
+.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-default .c4g-listfilter-inner {
+  z-index: 20
+}
 .c4g-listfilter-default {
   width: 100%;
   padding-right: 15px;
@@ -13008,14 +13023,6 @@ html {
   align-items: flex-end;
   margin-top: 1rem;
   margin-bottom: 1rem
-}
-.c4g-list-outer .c4g-listfilter-default .c4g-list-elements,
-.c4g-listfilter-default .c4g-list-outer .c4g-list-elements,
-.c4g-listfilter-default .c4g-listfilter-default,
-.c4g-listfilter-default .c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-inner,
-.c4g-listfilter-default .container,
-.c4g-listfilter-outer:not(.react-c4g-listfilter-opened) .c4g-listfilter-default .c4g-listfilter-inner {
-  z-index: 20
 }
 @media (max-width:991.98px) {
   .c4g-listfilter-default {

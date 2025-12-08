@@ -5458,13 +5458,15 @@ a.text-dark:hover {
   pointer-events: none
 }
 .modal.fade .modal-dialog {
-  transition: transform .3s ease-out;
-  transform: translate(0,-50px)
+  transition: transform .3s ease-out
 }
 @media (prefers-reduced-motion:reduce) {
   .modal.fade .modal-dialog {
     transition: none
   }
+}
+.modal.fade .modal-dialog {
+  transform: translate(0,-50px)
 }
 .modal.show .modal-dialog {
   transform: none

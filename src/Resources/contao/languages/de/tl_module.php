@@ -97,12 +97,14 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['2'] = 'Schaufenste
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['3'] = 'Schaufenster nach Tags laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['4'] = 'Schaufensterkategorien ausschließen';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['5'] = 'Schaufenster auswählen';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['6'] = 'Kein Schaufenster laden';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Alle Inhalte laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Inhalte nach Typ laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['2'] = 'Inhalte nach Kategorie laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['3'] = 'Inhalte nach Tags laden';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['4'] = 'Inhalte auswählen';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['5'] = 'Keinen Inhalt laden';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['price'] = "Preissortierung";
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['range'] = "Datumsfilter";
@@ -125,3 +127,65 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_check_position'] = ['Positionsermittlu
 $GLOBALS['TL_LANG']['tl_module']['gutesio_show_detail_link'] = ['Detail-Link anzeigen', 'Über diese Checkbox kann der Link auf die Detailseite ein- und ausgeblendet werden.'];
 $GLOBALS['TL_LANG']['tl_module']['limit_detail_offers'] = ['Angebotsanzahl begrenzen', 'Hier kann die Anzahl der in den Details angezeigten weiteren Angebote des Anbieters begrenzt werden.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_hide_events_without_date'] = ['Veranstaltungen ohne Datum ausblenden', 'Sollen Veranstaltungen ohne Datum angezeigt werden oder nicht?'];
+// Banner module: mix images from folder
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_folder'] = [
+    'Bilder-Verzeichnis(se)',
+    'Wählen Sie ein oder mehrere Verzeichnisse aus der Dateiverwaltung (tl_files). Alle Bilder aus den ausgewählten Verzeichnissen werden zufällig in den Slider gemischt. Der in den Metadaten gesetzte Link wird automatisch als Bildlink verwendet.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_skip_unlinked'] = [
+    'Bilder ohne Link überspringen',
+    'Wenn aktiviert, werden Bilder ohne in den Metadaten gesetzten Link übersprungen.'
+];
+
+// Banner module: Darstellung & Footer
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_fullscreen'] = [
+    'Fullscreen erzwingen',
+    'Bilder bildschirmfüllend darstellen (100% der Bildschirmfläche). Bilder werden zentriert mit Zuschnitt (object-fit: cover) angezeigt.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_poweredby'] = [
+    'Powered-by-Footer ausblenden',
+    'Wenn aktiviert, wird der „Powered by“-Footer nicht angezeigt.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_poweredby_text'] = [
+    'Powered-by-Text',
+    'Optionaler Text für den Footer (Standard: "Powered by").'
+];
+
+// Medien als Hintergrund im Portrait
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_media_bg_portrait'] = [
+    'Medien im Hochformat als Hintergrund darstellen',
+    'Zeigt Bilder/Videos in der mobilen Portrait-Ansicht hinter dem Inhalt (ohne Beschnitt). Overlay/QR/Logo/Footerteil liegen darüber. Der Slide bleibt klickbar.'
+];
+
+// Performance / Lazy-Loading Optionen
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode'] = [
+    'Lazy-Loading Modus',
+    'Steuert, wie die Slides initial gerendert und Medien nachgeladen werden (für bessere SEO/LCP in Websites).'
+];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option']['0'] = 'Aus (Kompatibilitätsmodus)';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option']['1'] = 'Native Lazy (alle Slides, Bilder/Video lazy)';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option']['2'] = 'SEO Static-First (nur erster Slide, Rest nachladen)';
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_defer_assets'] = [
+    'Slider-Assets verzögert laden',
+    'Lädt die Tiny‑Slider Skripte/Styles erst, wenn das Modul in den Viewport kommt.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_limit_initial'] = [
+    'Anzahl initialer Slides',
+    'Wie viele Slides werden initial serverseitig gerendert (nur für "SEO Static-First", Standard: 1).'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_defer_qr'] = [
+    'QR-Codes für nachgeladene Slides überspringen',
+    'Reduziert die Initialkosten, indem QR‑Codes erst nachgeladen/gebaut werden (betrifft nur nicht initial gerenderte Slides).'
+];
+
+// Banner: QR auch für Bild-Slides mit Link
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_qr_for_images'] = [
+    'QR‑Code auch für Bilder mit Link generieren',
+    'Wenn aktiviert, wird für Bild‑Slides mit gesetztem Link ebenfalls ein QR‑Code erzeugt und im Footer angezeigt.'
+];

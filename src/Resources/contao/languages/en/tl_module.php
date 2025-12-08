@@ -40,7 +40,7 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_tags'] = ['Tags', 'Only showcases
 $GLOBALS['TL_LANG']['tl_module']['gutesio_enable_tag_filter'] = ['Tag filter', 'Activates the tag selection above this showcase list.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_tag_filter_selection'] = ['Tag selection', 'Determines the tags that are available in the tag filter.'];
 
-$GLOBALS['TL_LANG']['tl_module']['gutesio_data_elements'] = ['Restrict showcases’, ‘Only the selected showcases are loaded. Default: all.'];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_elements'] = ['Restrict showcases', 'Only the selected showcases are loaded. Default: all.'];
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_search_label'] = ['Label of the search field', 'The label of the search box.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter'] = ['Offer filter', 'Select which filters should be available above the list.'];
@@ -78,11 +78,16 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['0'] = 'Load all sh
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['1'] = 'Load by categories';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['2'] = 'Load by directories';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['3'] = 'Load by tags';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['4'] = 'Exclude categories';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['5'] = 'Select showcases';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option']['6'] = 'Do not load showcases';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['0'] = 'Load all offers';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['1'] = 'Load by type';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['2'] = 'Load by category';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['3'] = 'Load by tags';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['4'] = 'Select offers';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_child_data_mode_option']['5'] = 'Do not load offers';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['price'] = "Price sorting";
 $GLOBALS['TL_LANG']['tl_module']['gutesio_child_filter_option']['range'] = "Date filter";
@@ -105,3 +110,60 @@ $GLOBALS['TL_LANG']['tl_module']['reloadBanner'] = ['Automatically reload banner
 $GLOBALS['TL_LANG']['tl_module']['gutesio_disable_sorting_filter'] = ['Sortierfilter ausblenden', 'Blendet die Sortiermöglichkeiten aus. sehr Sinnvoll bei einer Veranstaltungsliste.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_without_tiles'] = ['Kacheln unterhalb ausblenden','Alle Kacheln unterhalb der Details werden ausgeblendet.'];
 $GLOBALS['TL_LANG']['tl_module']['gutesio_without_contact'] = ['Kontaktdaten ausblenden','Alle Kontaktdaten werden ausgeblendet.'];
+
+// Banner module: mix images from folder
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_folder'] = [
+    'Images folders',
+    'Choose one or more folders. Images from these folders are mixed randomly into the slider. The link defined in the file metadata is used as the image link.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_skip_unlinked'] = [
+    'Skip images without link',
+    'If enabled, images that do not have a link set in their file metadata will be skipped.'
+];
+
+// Banner module: rendering & footer options
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_fullscreen'] = [
+    'Force fullscreen',
+    'Display images full screen (100% of the viewport). Images are centered with cropping (object-fit: cover).'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_poweredby'] = [
+    'Hide powered-by footer',
+    'If enabled, the “Powered by” footer will not be displayed.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_poweredby_text'] = [
+    'Powered-by text',
+    'Optional text for the footer (default: "Powered by").'
+];
+
+// Media as background on portrait
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_media_bg_portrait'] = [
+    'Render media as background on portrait',
+    'Displays images/videos behind the content on mobile portrait (no cropping). Overlay/QR/Logo/footer stay on top. The slide remains clickable.'
+];
+
+// Performance / Lazy-Loading options
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode'] = [
+    'Lazy-loading mode',
+    'Controls how slides are initially rendered and how media is lazy-loaded (improves SEO/LCP on websites).'
+];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option']['0'] = 'Off (compatibility mode)';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option']['1'] = 'Native lazy (all slides, images/video lazy)';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_lazy_mode_option']['2'] = 'SEO static-first (only first slide, load the rest later)';
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_defer_assets'] = [
+    'Defer slider assets',
+    'Loads Tiny‑Slider scripts/styles only when the module enters the viewport.'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_limit_initial'] = [
+    'Number of initial slides',
+    'How many slides are initially rendered server-side (SEO static-first only, default: 1).'
+];
+
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_defer_qr'] = [
+    'Skip QR codes for deferred slides',
+    'Reduces initial cost by adding QR codes only for initially rendered slides (deferred slides hydrate later).'
+];

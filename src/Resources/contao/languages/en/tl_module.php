@@ -70,6 +70,16 @@ $GLOBALS['TL_LANG']['tl_module']['cart_legend'] = 'Cart settings';
 $GLOBALS['TL_LANG']['tl_module']['appearance_legend'] = 'Appearence settings';
 $GLOBALS['TL_LANG']['tl_module']['performance_legend'] = 'Performance settings';
 
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
+    'Banner theme color',
+    'Primary accent color for overlays, the ad label and the powered-by bar (hex, e.g. #2ea1db).'];
+
+// Banner: configurable slide interval
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_interval'] = [
+    'Slide change interval (ms)',
+    'Time between two slides in milliseconds. Default: 15000.'
+];
+
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'random';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_asc'] = 'ascending';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_desc'] = 'descending';
@@ -140,6 +150,18 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_poweredby_text'] = [
     'Optional text for the footer (default: "Powered by").'
 ];
 
+// Footer alignment (contact + logo left-aligned)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_footer_align_left'] = [
+    'Footer left-aligned (contact + logo)',
+    'If enabled, the “Offered by …” line and the logo in the footer are left-aligned. The QR code stays on the right when space allows, or wraps below.'
+];
+
+// Banner: Ad label "Anzeige"
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_ad_label'] = [
+    'Show ad label ("Anzeige")',
+    'Displays a small “Anzeige” label in the top-left of the banner to clearly mark paid/sponsored content.'
+];
+
 // Media as background on portrait
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_media_bg_portrait'] = [
     'Render media as background on portrait',
@@ -168,4 +190,10 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_limit_initial'] = [
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_defer_qr'] = [
     'Skip QR codes for deferred slides',
     'Reduces initial cost by adding QR codes only for initially rendered slides (deferred slides hydrate later).'
+];
+
+// Banner: option to hide event end time (show only start time)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_event_endtime'] = [
+    'Hide end time for events',
+    'If enabled, event slides show only the start time (no end time).'
 ];

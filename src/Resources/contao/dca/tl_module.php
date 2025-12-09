@@ -81,8 +81,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend}
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
         '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked;'.
-        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait;'.
-        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images;';
+        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label;'.
+        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images,gutesio_banner_interval;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
 
@@ -148,7 +148,65 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_type'] = [
     'inputType'               => 'select',
     'options_callback'        => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, "getTypeOptions"],
     'eval'                    => ['includeBlankOption' => true, 'multiple' => true, 'chosen' => true, 'tl_class' => 'clr'],
-    'sql'                     => "text NULL"
+    'sql'                     => "blob NULL"
+];
+
+// Banner: Hide end time for events (show only start time)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_hide_event_endtime'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_event_endtime'],
+    'default'   => '1',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
+];
+
+// Banner: Option to align footer contact+logo to the left
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_footer_align_left'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_footer_align_left'],
+    'default'   => '1',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
+];
+
+// Banner: Optionales Werbelabel „Anzeige“ ein-/ausblenden
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_show_ad_label'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_ad_label'],
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner: Wechselintervall der Slides (in Millisekunden)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_interval'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_interval'],
+    // Standard entspricht der bisherigen Hardcodierung im Template (15000 ms)
+    'default'   => '15000',
+    'eval'      => ['rgxp' => 'digit', 'maxlength' => 6, 'tl_class' => 'w50', 'helpwizard' => false],
+    'sql'       => "varchar(6) NOT NULL default '15000'",
+];
+
+// Banner: Theme-Farbe für Overlays/Badge/Footer (Hex)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_theme_color'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'],
+    'default'   => '#2ea1db',
+    'eval'      => [
+        'maxlength' => 7,
+        'tl_class'  => 'clr w50',
+        'colorpicker' => true,
+        'isHexColor'  => true,
+        'decodeEntities' => true,
+        'rgxp' => 'custom'
+    ],
+    'sql'       => "varchar(7) NOT NULL default '#2ea1db'",
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_type_filter_selection'] = [

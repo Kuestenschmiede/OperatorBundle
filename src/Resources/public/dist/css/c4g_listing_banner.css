@@ -535,8 +535,8 @@ a:hover {
   text-align: center;
   font-size: 16px;
   padding: 15px;
-  background-color: #2ea1db;
-  color: #fff;
+  background-color: var(--banner-accent,#2ea1db);
+  color: var(--banner-accent-contrast,#fff);
   font-family: "Maven Pro";
   font-weight: 400
 }
@@ -654,7 +654,7 @@ a:hover {
   z-index: 1
 }
 .banner-section .banner__text-wrapper {
-  z-index: 3
+  z-index: 10
 }
 .banner-section .banner__footer {
   position: absolute;
@@ -700,6 +700,56 @@ a:hover {
   object-fit: cover;
   width: 100%;
   height: 100%
+}
+.banner-section .banner__text-wrapper.slide-element .text-wrapper-inner {
+  background: rgba(var(--banner-accent-rgb,46,161,219),.7);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  max-width: 92%;
+  backdrop-filter: saturate(115%) blur(.5px)
+}
+.banner-section .banner__text-wrapper.slide-element .banner__headline,
+.banner-section .banner__text-wrapper.slide-element .banner__slogan-wrapper,
+.banner-section .banner__text-wrapper.slide-element .detail-line {
+  color: #fff
+}
+.banner-section .banner__text-wrapper.slide-offer .text-wrapper-inner {
+  background: linear-gradient(180deg,rgba(var(--banner-accent-rgb,46,161,219),.7) 0,rgba(var(--banner-accent-rgb,46,161,219),.55) 100%);
+  color: #fff;
+  padding: 12px 14px;
+  border-radius: 8px;
+  max-width: 86%;
+  backdrop-filter: saturate(115%) blur(.5px)
+}
+.banner-section .banner__text-wrapper.slide-offer .banner__headline,
+.banner-section .banner__text-wrapper.slide-offer .banner__slogan-wrapper,
+.banner-section .banner__text-wrapper.slide-offer .detail-line {
+  color: #fff
+}
+.banner-section .banner__image-wrapper.slide-element .banner__image-item {
+  -o-object-position: center center;
+  object-position: center center
+}
+.banner-section .banner__image-wrapper.slide-element .banner__video-item {
+  -o-object-position: center center;
+  object-position: center center
+}
+@media screen and (orientation:portrait) {
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .text-wrapper-inner {
+    background: linear-gradient(180deg,rgba(var(--banner-accent-rgb,46,161,219),.75) 0,rgba(var(--banner-accent-rgb,46,161,219),.6) 60%,rgba(var(--banner-accent-rgb,46,161,219),.5) 100%);
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 8px;
+    backdrop-filter: saturate(120%) blur(.5px);
+    max-width: 92%;
+    margin: 8px 8px clamp(12px,2.8vh,28px) 8px
+  }
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .banner__headline,
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .banner__slogan-wrapper,
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .detail-line {
+    color: #fff
+  }
 }
 @media screen and (orientation:landscape) {
   .banner-section .banner__image-wrapper.slide-offer img {

@@ -16,14 +16,181 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
 // Prepare custom size values (applied client-side)
 $customHeight = isset($this->bannerCustomHeight) ? trim((string)$this->bannerCustomHeight) : '';
 $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCustomWidth) : '';
+// Slider interval (ms), configurable via module field, default to previous hardcoded value 15000
+$autoplayTimeout = 15000;
+if (isset($this->gutesio_banner_interval)) {
+    $tmpInterval = (int)($this->gutesio_banner_interval);
+    if ($tmpInterval > 0) {
+        // enforce a sane minimum to avoid too rapid changes
+        $autoplayTimeout = max(1000, $tmpInterval);
+    }
+}
 ?>
 
 <link rel="stylesheet" href="bundles/gutesiooperator/dist/css/tiny-slider.css" />
 <link rel="stylesheet" href="bundles/gutesiooperator/dist/css/animate.min.css" />
 
+<style>
+/* Portrait/low-height footer improvements (scoped to banner-section) */
+.banner-section .banner__footer-pre{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.5rem 1rem}
+/* Optional left-aligned variant: keep contact+logo left, let QR push to the right */
+.banner-section.footer-align-left .banner__footer-pre{justify-content:flex-start !important}
+.banner-section.footer-align-left .banner__footer-logo-text{justify-content:flex-start;align-items:center;text-align:left !important}
+.banner-section.footer-align-left .banner__footer-contact{text-align:left !important}
+.banner-section.footer-align-left .banner__footer-qrcode{margin-left:auto}
+/* Ensure the footer logo itself is left-aligned in the left-aligned variant */
+.banner-section.footer-align-left .banner__footer-logo{display:inline-flex;align-items:center;justify-content:flex-start;text-align:left !important;margin-left:0 !important;margin-right:0 !important}
+.banner-section.footer-align-left .banner__footer-logo img{display:block;margin:0 !important}
+/* Keep contact + logo as a single visual group */
+.banner-section .banner__footer-logo-text{display:flex;align-items:center;gap:.5rem 1rem;flex:1 1 60%;min-width:200px}
+.banner-section .banner__footer-contact{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.banner-section .banner__footer-logo img{height:auto;width:auto}
+.banner-section .banner__footer-qrcode img{height:auto;width:auto}
+
+/* Small ad label (Anzeige) for paid/sponsored content */
+.banner-section .banner__ad-label{
+  position:absolute;top:8px;left:8px;z-index:20;
+  background: var(--banner-accent, #2ea1db); color: var(--banner-accent-contrast, #fff);
+  font-family:'Maven Pro', sans-serif;font-weight:700;font-size:14px;line-height:1;
+  padding:6px 10px;border-radius:6px;
+  box-shadow:0 1px 2px rgba(0,0,0,.15)
+}
+@media (max-width:420px){
+  .banner-section .banner__ad-label{font-size:12px;padding:5px 8px;border-radius:5px}
+}
+
+/* Overlay: position texts at the top and center horizontally */
+.banner-section .banner__text-wrapper{display:flex;align-items:flex-start;justify-content:center;padding-bottom:clamp(8px,3vh,48px);z-index:10}
+.banner-section .banner__text-wrapper .text-wrapper-inner{margin:8px auto clamp(10px,2.5vh,24px) auto;text-align:center}
+
+/* Readability overlay for showcase (element) slides: accent background under logo + texts */
+.banner-section .banner__text-wrapper.slide-element .text-wrapper-inner{
+  background: rgba(var(--banner-accent-rgb, 46,161,219), 0.70); /* darken for better contrast */
+  color:#fff;
+  padding:12px 14px;
+  border-radius:8px;
+  max-width: 92%;
+}
+.banner-section .banner__text-wrapper.slide-element .banner__headline,
+.banner-section .banner__text-wrapper.slide-element .banner__slogan-wrapper,
+.banner-section .banner__text-wrapper.slide-element .detail-line{color:#fff}
+
+/* Center showcase (element) media within their wrapper */
+.banner-section .banner__image-wrapper.slide-element .banner__image-item{
+  object-position:center center !important;
+  display:block;
+  margin-left:auto;
+  margin-right:auto;
+}
+.banner-section .banner__image-wrapper.slide-element .banner__video-item{
+  object-position:center center !important;
+}
+
+@media screen and (orientation: portrait){
+  /* When the ad label is visible, add some top offset so the overlay does not sit under the label */
+  .banner-section.has-ad-label .banner__text-wrapper{padding-top:clamp(16px,5vh,56px)}
+  .banner-section .banner__footer-pre{padding:.75rem}
+  /* Stack contact directly above the logo to keep them adjacent on portrait */
+  .banner-section .banner__footer-logo-text{flex-direction:column;align-items:flex-start}
+  /* Ensure left-aligned variant also aligns to the left in portrait */
+  .banner-section.footer-align-left .banner__footer-logo-text{align-items:flex-start}
+  .banner-section.footer-align-left .banner__footer-logo{justify-content:flex-start}
+  .banner-section.footer-align-left .banner__footer-pre{justify-content:flex-start !important}
+  .banner-section .banner__footer-contact{font-size:15px;padding:.5rem .75rem 0 .75rem}
+  .banner-section .banner__footer-logo img{max-height:clamp(48px,12vh,96px)}
+  /* Default (portrait): QR mittig und in eigener Zeile unter Kontakt+Logo */
+  .banner-section .banner__footer-qrcode{width:100%;text-align:center;margin-top:.25rem;margin-left:0}
+  .banner-section .footer-align-left .banner__footer-qrcode{margin-left:0}
+  .banner-section .banner__footer-qrcode img{max-height:clamp(64px,18vh,130px)}
+  .banner-section .banner__footer-sub{padding:.5rem .75rem;font-size:14px}
+}
+
+@media screen and (orientation: portrait) and (max-height: 700px){
+  .banner-section .banner__footer-contact{font-size:14px}
+  .banner-section .banner__footer-logo img{max-height:clamp(40px,10vh,80px)}
+  .banner-section .banner__footer-qrcode img{max-height:clamp(56px,14vh,110px)}
+  .banner-section .banner__footer-sub{font-size:13px}
+}
+
+@media screen and (orientation: portrait) and (max-height: 600px){
+  .banner-section .banner__footer-pre{gap:.25rem .5rem}
+  /* Bei sehr geringer Höhe darf der QR-Code auf gleicher Höhe rechts stehen */
+  .banner-section .banner__footer-qrcode{width:auto;text-align:right;margin-top:0}
+  .banner-section .banner__footer-sub{font-size:12px;padding:.4rem .6rem}
+}
+
+/* Readability overlay for overlay texts on portrait media */
+@media screen and (orientation: portrait){
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .text-wrapper-inner{
+    background: linear-gradient(180deg, rgba(var(--banner-accent-rgb, 46,161,219), 0.75) 0%, rgba(var(--banner-accent-rgb, 46,161,219), 0.60) 60%, rgba(var(--banner-accent-rgb, 46,161,219), 0.50) 100%);
+    color:#fff;
+    padding:12px 14px;
+    border-radius:8px;
+    backdrop-filter: saturate(120%) blur(0.5px);
+    max-width: 92%;
+    margin: 8px 8px clamp(12px,2.8vh,28px) 8px;
+  }
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .banner__headline,
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .banner__slogan-wrapper,
+  .banner-section .banner__item.media-portrait .banner__text-wrapper .detail-line{
+    color:#fff;
+  }
+}
+
+@media screen and (orientation: portrait) and (max-height: 520px){
+  .banner-section .banner__footer-contact{font-size:13px}
+  .banner-section .banner__footer-logo img{max-height:56px}
+  .banner-section .banner__footer-qrcode img{max-height:80px}
+}
+
+/* Readability overlay for overlay texts on landscape as well (prevents text bleeding into image) */
+@media screen and (orientation: landscape){
+  /* Apply to non-element slides (events/offers), element slides already have an overlay background above */
+  .banner-section .banner__text-wrapper.slide-offer{
+    position:absolute; /* allow overlap over the image */
+    right: clamp(24px, 5vw, 160px); /* keep some breathing room to the right edge */
+    top: 50%;
+    transform: translateY(-50%); /* vertically centered as requested */
+    bottom: auto;
+    width: min(46%, 680px); /* keep overlay on the right side */
+  }
+  .banner-section .banner__text-wrapper.slide-offer .text-wrapper-inner{
+    background: linear-gradient(180deg, rgba(var(--banner-accent-rgb, 46,161,219), 0.70) 0%, rgba(var(--banner-accent-rgb, 46,161,219), 0.55) 100%);
+    color:#fff;
+    padding:16px 18px; /* a bit more spacing */
+    border-radius:8px;
+    max-width: 100%;
+    backdrop-filter: saturate(115%) blur(.5px);
+  }
+  .banner-section .banner__text-wrapper.slide-offer .banner__headline,
+  .banner-section .banner__text-wrapper.slide-offer .banner__slogan-wrapper,
+  .banner-section .banner__text-wrapper.slide-offer .detail-line{color:#fff}
+  /* keep the offer image visually on the left side */
+  .banner-section .banner__image-wrapper.slide-offer img.banner__image-item{ object-position: left center; }
+}
+
+/* Wide-screen footer alignment improvements: keep contact+logo and QR on a single line and vertically centered */
+@media screen and (min-width: 1024px){
+  .banner-section .banner__footer-pre{flex-wrap:nowrap;align-items:center}
+  .banner-section .banner__footer-contact{width:auto;padding:0 10px 0 0}
+  .banner-section .banner__footer-logo{margin:0}
+  .banner-section .banner__footer-qrcode{width:auto;text-align:right;margin-top:0;align-self:center}
+  /* Left-aligned variant on wide screens: ensure contact sits under the logo, both left-aligned */
+  .banner-section.footer-align-left .banner__footer-logo-text{flex-direction:column;align-items:flex-start;justify-content:flex-start}
+  .banner-section.footer-align-left .banner__footer-logo{order:0;justify-content:flex-start}
+  .banner-section.footer-align-left .banner__footer-contact{order:1;text-align:left !important;padding:6px 0 0 0}
+}
+
+/* Ensure powered-by bar uses the theme accent color */
+.banner-section .banner__footer-sub{ background-color: var(--banner-accent, #2ea1db); color: var(--banner-accent-contrast, #fff); }
+</style>
+
 <?php $onlyImages = !empty($this->bannerOnlyImages); $isAutoSize = ($onlyImages && !$isFullscreen && !$customHeight); ?>
 <div id="banner-module-<?php echo $bannerId; ?>"
-  class="banner-section<?php echo $isFullscreen ? ' is-fullscreen' : ''; ?><?php echo $this->bannerHidePoweredBy ? ' no-footer' : ''; ?><?php echo $mediaBgPortrait ? ' media-bg-portrait' : ''; ?><?php echo $isAutoSize ? ' auto-size' : ''; ?>"
+  class="banner-section<?php echo $isFullscreen ? ' is-fullscreen' : ''; ?><?php echo $this->bannerHidePoweredBy ? ' no-footer' : ''; ?><?php echo $mediaBgPortrait ? ' media-bg-portrait' : ''; ?><?php echo $isAutoSize ? ' auto-size' : ''; ?><?php echo !empty($this->bannerFooterAlignLeft) ? ' footer-align-left' : ''; ?><?php echo !empty($this->bannerShowAdLabel) ? ' has-ad-label' : ''; ?>"
+  data-theme-hex="<?php echo htmlspecialchars($this->bannerThemeColorHex ?? '#2ea1db', ENT_QUOTES, 'UTF-8'); ?>"
+  data-theme-rgb="<?php echo htmlspecialchars($this->bannerThemeColorRgb ?? '46, 161, 219', ENT_QUOTES, 'UTF-8'); ?>"
+  data-theme-contrast="<?php echo htmlspecialchars($this->bannerThemeContrastHex ?? '#ffffff', ENT_QUOTES, 'UTF-8'); ?>"
   data-reload="<?php echo $reloadFlag ? '1' : '0'; ?>"
   data-lazy-mode="<?php echo htmlspecialchars($lazyMode, ENT_QUOTES, 'UTF-8'); ?>"
   data-defer-assets="<?php echo $deferAssets ? '1' : '0'; ?>"
@@ -32,6 +199,9 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
   data-custom-h="<?php echo htmlspecialchars($customHeight, ENT_QUOTES, 'UTF-8'); ?>"
   data-custom-w="<?php echo htmlspecialchars($customWidth, ENT_QUOTES, 'UTF-8'); ?>"
   data-only-images="<?php echo $onlyImages ? '1' : '0'; ?>">
+    <?php if (!empty($this->bannerShowAdLabel)): ?>
+      <div class="banner__ad-label" aria-label="Anzeige">Anzeige</div>
+    <?php endif; ?>
     <div class="banner-slide banner__tns-container">
         <?php
         $renderSlides = [];
@@ -75,8 +245,8 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
                     <?php if ($isElement && $logo): ?>
                       <div class="banner__overlay-logo"><img src="<?php echo $logo; ?>" alt=""></div>
                     <?php endif; ?>
-                    <?php if ($title): ?><h2 class="banner__headline"><?php echo $title; ?></h2><?php endif; ?>
-                    <?php if ($slogan): ?><div class="banner__slogan-wrapper"><?php echo $slogan; ?></div><?php endif; ?>
+                    <?php if ($title): ?><h2 class="banner__headline"><?php echo htmlspecialchars($title, ENT_QUOTES, 'UTF-8'); ?></h2><?php endif; ?>
+                    <?php if ($slogan): ?><div class="banner__slogan-wrapper"><?php echo htmlspecialchars($slogan, ENT_QUOTES, 'UTF-8'); ?></div><?php endif; ?>
                     <?php if ($isEvent && (!empty($slide['dateTime']) || !empty($slide['location']))): ?>
                       <div class="banner__detail-wrapper">
                         <?php if (!empty($slide['dateTime'])): ?>
@@ -207,6 +377,14 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
 (function(){
   var root = document.getElementById('banner-module-<?php echo $bannerId; ?>');
   if (!root) { return; }
+  try {
+    var hex = root.getAttribute('data-theme-hex') || '#2ea1db';
+    var rgb = root.getAttribute('data-theme-rgb') || '46, 161, 219';
+    var contrast = root.getAttribute('data-theme-contrast') || '#ffffff';
+    root.style.setProperty('--banner-accent', hex);
+    root.style.setProperty('--banner-accent-rgb', rgb);
+    root.style.setProperty('--banner-accent-contrast', contrast);
+  } catch(e) {}
   var container = root.querySelector('.banner-slide');
   if (!container) { return; }
 
@@ -263,6 +441,14 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
         img.style.width = '100%';
         img.style.height = '100%';
         img.style.objectFit = 'contain';
+        img.style.objectPosition = 'center center';
+      });
+      // Make videos fill the available viewport while preserving aspect ratio
+      ctx.querySelectorAll('video.banner__video-item').forEach(function(vid){
+        vid.style.width = '100%';
+        vid.style.height = '100%';
+        vid.style.objectFit = 'contain';
+        vid.style.objectPosition = 'center center';
       });
     }
   }
@@ -284,8 +470,22 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
       v.setAttribute('src', v.getAttribute('data-src'));
       v.removeAttribute('data-src');
       // Autoplay once activated to preserve CPU pre-init
+      v.muted = true;
+      v.setAttribute('muted','');
+      v.setAttribute('playsinline','');
       v.setAttribute('autoplay','');
       try { v.load(); } catch(e){}
+      // Try to start playback once enough data is available
+      var tryPlay = function(){
+        try {
+          var p = v.play();
+          if (p && typeof p.then === 'function') { p.catch(function(){ /* ignore autoplay block */ }); }
+        } catch(e) { /* ignore */ }
+      };
+      v.addEventListener('loadeddata', tryPlay, { once: true });
+      v.addEventListener('canplay', tryPlay, { once: true });
+      // Also attempt immediately
+      tryPlay();
     });
     // After swapping, re-evaluate media orientation for portrait handling
     markPortraitMedia(scope || root);
@@ -305,8 +505,42 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
       img.style.width = '100%';
       img.style.height = 'auto';
       img.style.objectFit = 'contain';
+      img.style.objectPosition = 'center center';
+    });
+    ctx.querySelectorAll('video.banner__video-item').forEach(function(vid){
+      vid.style.width = '100%';
+      vid.style.height = 'auto';
+      vid.style.objectFit = 'contain';
+      vid.style.objectPosition = 'center center';
     });
     // Keep footer absolutely positioned so it does not add to layout height in auto-size mode
+  }
+
+  // Ensure videos have appropriate fit rules depending on mode
+  function applyVideoFitMode(scope){
+    var ctx = scope || root;
+    var vids = ctx.querySelectorAll('video.banner__video-item');
+    if (!vids.length) return;
+    vids.forEach(function(v){
+      if (isFullscreen || hideFooter) {
+        v.style.width = '100%';
+        v.style.height = '100%';
+        v.style.objectFit = 'cover';
+      } else if (isAutoSize) {
+        v.style.width = '100%';
+        v.style.height = 'auto';
+        v.style.objectFit = 'contain';
+      } else if (customH) {
+        v.style.width = '100%';
+        v.style.height = '100%';
+        v.style.objectFit = 'contain';
+      } else {
+        // default safe behavior
+        v.style.width = '100%';
+        v.style.height = '100%';
+        v.style.objectFit = 'cover';
+      }
+    });
   }
 
   function getSlideWrapperClass(type){
@@ -403,7 +637,8 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
         inner.appendChild(overlayLogo);
       }
       if (title){ var h = createEl('h2', 'banner__headline'); safeText(h, title); inner.appendChild(h); }
-      if (slogan){ var s = createEl('div', 'banner__slogan-wrapper'); s.innerHTML = slogan; inner.appendChild(s); }
+      // Use textContent for slogan to prevent HTML injection and ensure proper display of brackets
+      if (slogan){ var s = createEl('div', 'banner__slogan-wrapper'); safeText(s, slogan); inner.appendChild(s); }
       if (isEvent && (dateTime || location)){
         var details = createEl('div', 'banner__detail-wrapper');
         if (dateTime){
@@ -522,6 +757,15 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
       if (lazyMode === '1' || lazyMode === '2') { swapLazyMedia(); }
       // Evaluate orientation for already available media (non-lazy first slide or eager images)
       markPortraitMedia(root);
+      // Ensure videos have proper fit and attempt autoplay for non-lazy videos, too
+      applyVideoFitMode(root);
+      root.querySelectorAll('video.banner__video-item').forEach(function(v){
+        try {
+          // make sure attributes are present
+          v.muted = true; v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('autoplay','');
+          var p = v.play(); if (p && typeof p.then === 'function') { p.catch(function(){}); }
+        } catch(e) {}
+      });
 
       window.__gutesBanner = window.__gutesBanner || {};
       var slider = tns({
@@ -530,7 +774,7 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
         items: 1,
         slideBy: 'page',
         speed: 2000,
-        autoplayTimeout: 15000,
+        autoplayTimeout: parseInt('<?php echo (int)$autoplayTimeout; ?>', 10),
         autoplay: true,
         controls: false,
         mouseDrag: true,
@@ -559,6 +803,7 @@ $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCust
     // In SEO Static-First, hydrate additional slides before initializing Tiny-Slider
     if (lazyMode === '2') { hydrateDeferred(); }
     if (isAutoSize) { applyAutoSizeStyles(); }
+    applyVideoFitMode();
     if (deferAssets) {
       ensureTinySlider(initSlider);
     } else {

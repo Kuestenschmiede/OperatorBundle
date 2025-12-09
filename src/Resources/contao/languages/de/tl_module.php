@@ -87,6 +87,17 @@ $GLOBALS['TL_LANG']['tl_module']['cart_legend'] = 'Warenkorb-Einstellungen';
 $GLOBALS['TL_LANG']['tl_module']['appearance_legend'] = 'Anpassungseinstellungen';
 $GLOBALS['TL_LANG']['tl_module']['performance_legend'] = 'Leistungseinstellungen';
 
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
+    'Banner-Theme-Farbe',
+    'Primäre Akzentfarbe für Overlays, das Werbelabel und die Powered-by-Leiste (Hex, z. B. #2ea1db).'
+];
+
+// Banner: Wechselintervall konfigurierbar
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_interval'] = [
+    'Slide-Wechselintervall (ms)',
+    'Zeit zwischen zwei Slides in Millisekunden. Standard: 15000.'
+];
+
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'zufällig';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_asc'] = 'aufsteigend';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_desc'] = 'absteigend';
@@ -156,6 +167,18 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_poweredby_text'] = [
     'Optionaler Text für den Footer (Standard: "Powered by").'
 ];
 
+// Footer-Ausrichtung (Kontakt + Logo linksbündig)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_footer_align_left'] = [
+    'Footer linksbündig (Kontakt + Logo)',
+    'Wenn aktiviert, werden „Angeboten von …“ und das Logo im Footer linksbündig angezeigt. Der QR‑Code bleibt rechts, sofern Platz ist, oder wird darunter umgebrochen.'
+];
+
+// Banner: Werbelabel „Anzeige“
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_ad_label'] = [
+    'Werbelabel „Anzeige“ anzeigen',
+    'Blendet im Banner ein kleines Label „Anzeige“ oben links ein, um bezahlte oder fremdfinanzierte Inhalte klar zu kennzeichnen.'
+];
+
 // Medien als Hintergrund im Portrait
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_media_bg_portrait'] = [
     'Medien im Hochformat als Hintergrund darstellen',
@@ -190,4 +213,10 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_defer_qr'] = [
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_qr_for_images'] = [
     'QR‑Code auch für Bilder mit Link generieren',
     'Wenn aktiviert, wird für Bild‑Slides mit gesetztem Link ebenfalls ein QR‑Code erzeugt und im Footer angezeigt.'
+];
+
+// Banner: Option zum Ausblenden der Endzeit bei Veranstaltungen
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_event_endtime'] = [
+    'Endzeit bei Veranstaltungen ausblenden',
+    'Wenn aktiviert, zeigen Veranstaltungs‑Slides nur die Startzeit an (keine Endzeit).'
 ];

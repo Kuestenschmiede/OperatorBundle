@@ -243,6 +243,33 @@ class BannerModuleController extends AbstractFrontendModuleController
         // Pass only-images flag so the template/JS can auto-size to image heights when appropriate
         $template->bannerOnlyImages = $onlyImages;
 
+        // Theme color (accent) handling: read from module, sanitize, compute RGB/contrast and pass to template
+        $defaultHex = '#2ea1db';
+        $hexRaw = trim((string)($model->gutesio_banner_theme_color ?? $defaultHex));
+        // Accept values with or without leading '#', and both 3/6-digit
+        if ($hexRaw !== '' && $hexRaw[0] !== '#') {
+            $hexRaw = '#' . $hexRaw;
+        }
+        $isValidHex = (bool) preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $hexRaw);
+        $hex = $isValidHex ? $hexRaw : $defaultHex;
+        // Normalize to 6-digit
+        if (strlen($hex) === 4) {
+            $hex = sprintf('#%1$s%1$s%2$s%2$s%3$s%3$s', $hex[1], $hex[2], $hex[3]);
+        }
+        $r = hexdec(substr($hex, 1, 2));
+        $g = hexdec(substr($hex, 3, 2));
+        $b = hexdec(substr($hex, 5, 2));
+        $template->bannerThemeColorHex = $hex;
+        $template->bannerThemeColorRgb = $r . ', ' . $g . ', ' . $b;
+
+        // Compute contrast color (black or white) for text on accent backgrounds
+        // Relative luminance (sRGB) heuristic
+        $sr = $r / 255; $sg = $g / 255; $sb = $b / 255;
+        $lin = function($c){ return ($c <= 0.03928) ? ($c/12.92) : pow(($c+0.055)/1.055, 2.4); };
+        $L = 0.2126 * $lin($sr) + 0.7152 * $lin($sg) + 0.0722 * $lin($sb);
+        $contrastHex = ($L > 0.5) ? '#000000' : '#ffffff';
+        $template->bannerThemeContrastHex = $contrastHex;
+
         $template->loadlazy = $model->lazyBanner === "1";
         $template->reloadBanner = $model->reloadBanner === "1";
         // New options for rendering/behavior
@@ -250,6 +277,10 @@ class BannerModuleController extends AbstractFrontendModuleController
         $template->bannerPoweredByText = $model->gutesio_banner_poweredby_text ?: 'Powered by';
         $template->bannerFullscreen = ($model->gutesio_banner_fullscreen === '1' || $model->gutesio_banner_fullscreen === 1);
         $template->bannerMediaBgPortrait = ($model->gutesio_banner_media_bg_portrait === '1' || $model->gutesio_banner_media_bg_portrait === 1);
+        // Footer alignment option (left align contact + logo)
+        $template->bannerFooterAlignLeft = ($model->gutesio_banner_footer_align_left === '1' || $model->gutesio_banner_footer_align_left === 1);
+        // Optional ad label ("Anzeige") toggle
+        $template->bannerShowAdLabel = ($model->gutesio_banner_show_ad_label === '1' || $model->gutesio_banner_show_ad_label === 1);
 
         // Compute optional custom viewport size (height/width) for the banner
         // Ignore custom values when fullscreen is enabled
@@ -357,7 +388,11 @@ class BannerModuleController extends AbstractFrontendModuleController
         }
         //$objLogo = FilesModel::findByUuid($element['logo']);
         $fileUtils = new FileUtils();
-        $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN'], '',0, 0, 86400);
+        // Restore legacy ImageCache handling: serves from local cache if present, otherwise fetches once from CDN
+        $logoSrc = '';
+        if (!empty($element['logoCDN'])) {
+            $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $element['logoCDN']);
+        }
         foreach ($arrChilds as $key => $child) {
             // Respect the optional maximum number of children to include.
             // Break once we have added the configured amount. Off-by-one fixed: allow indexes 0..(max-1).
@@ -366,19 +401,31 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
-
-        $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['imageCDN'], '',2400, 86400);
+        // Restore legacy ImageCache handling for main element image
+        $imageSrc = '';
+        if (!empty($element['imageCDN'])) {
+            $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $element['imageCDN']);
+        }
 
         $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
+        // Normalize and sanitize textual fields. Some instances store already HTML-encoded content
+        // (e.g., quotes as &quot; / &#34;). Decode entities first, then strip tags; escaping is handled in the template.
+        $rawElementName = html_entity_decode((string)($element['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeElementName = strip_tags($rawElementName);
         $shortDescription = key_exists('shortDescription', $element) ? $element['shortDescription'] : '';
+        $rawShort = html_entity_decode((string)$shortDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeShortDescription = strip_tags($rawShort);
         $singleEle = [
             'type'  => "element",
             'image' => [
                 'src' =>    $imageSrc,
-                'alt' =>    $element['name']
+                'alt' =>    $safeElementName
             ],
-            'title' => $element['name'],
-            'slogan' => $element ['displaySlogan'] ?: $shortDescription,
+            'title' => $safeElementName,
+            'slogan' => (function($val){
+                $decoded = html_entity_decode((string)$val, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                return strip_tags($decoded);
+            })(($element['displaySlogan'] ?? '')) ?: $safeShortDescription,
             'href' => $detailRoute,
             //'contact' => $value['name'],
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
@@ -386,7 +433,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         if ($logoSrc) {
             $singleEle['logo'] = [
                 'src' => $logoSrc,
-                'alt' => $element['name']
+                'alt' => $safeElementName
             ];
         }
         $arrReturn[] = $singleEle;
@@ -410,6 +457,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                 WHERE uuid = ?')->execute($child['typeId'])->fetchAssoc();
         $termin = '';
         $location = '';
+        $hideEventEndTime = ($this->model->gutesio_banner_hide_event_endtime === '1' || $this->model->gutesio_banner_hide_event_endtime === 1);
         if ($type['type'] === "event") {
             $event = $db->prepare('SELECT * FROM tl_gutesio_data_child_event WHERE childId=?')->execute($child['uuid'])->fetchAssoc();
             $month = $this->model->loadMonth ?: 6;
@@ -434,7 +482,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                 $termin .= ", " . $beginTime;
             }
             $endTime = (isset($event['endTime']) && !empty($event['endTime']) && ($event['endTime'] !== '0')) ? gmdate('H:i', $event['endTime']) : false;
-            if ($endTime && $endTime !== $beginTime) {
+            if (!$hideEventEndTime && $endTime && $endTime !== $beginTime) {
                 $termin .= " - " . $endTime;
             }
             if ($beginTime) {
@@ -442,11 +490,29 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
             if ($event['locationElementId'] && $event['locationElementId'] !== $element['uuid']) {
                 $locationResult = $db->prepare("SELECT name FROM tl_gutesio_data_element WHERE uuid=?")->execute($event['locationElementId'])->fetchAssoc();
-                $location = $locationResult ? $locationResult['name'] : '';
+                if ($locationResult && isset($locationResult['name'])) {
+                    $locRaw = html_entity_decode((string)$locationResult['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $location = strip_tags($locRaw);
+                } else {
+                    $location = '';
+                }
             }
         }
 
-        $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$child['imageCDN'], '',0,0,86400);
+        // Restore legacy ImageCache handling for child/event image
+        // Normalize unexpected directory segment (e.g., "/images/events/..." -> "/images/offers/{uuid}/...")
+        $offerSrc = '';
+        if (!empty($child['imageCDN'])) {
+            $normalizedCdnPath = $this->normalizeOfferImageCdnPath((string)$child['imageCDN'], (string)$child['uuid']);
+            $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $normalizedCdnPath);
+        }
+        // Normalize and sanitize child/title/contact texts (decode HTML entities first to avoid showing &#34; etc.)
+        $childNameRaw = html_entity_decode((string)($child['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeChildName = strip_tags($childNameRaw);
+        $childShortRaw = html_entity_decode((string)($child['shortDescription'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeShort = strip_tags($childShortRaw);
+        $contactRaw = html_entity_decode((string)($element['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $safeContact = strip_tags($contactRaw);
 
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images
@@ -458,14 +524,14 @@ class BannerModuleController extends AbstractFrontendModuleController
             'type'  => "event",
             'image' => [
                 'src' =>    $offerSrc,
-                'alt' =>    $child['name']
+                'alt' =>    $safeChildName
             ],
             'dateTime' => $termin,
             'location' => $location,
-            'title' => $child['name'],
-            'slogan' => $child['shortDescription'],
+            'title' => $safeChildName,
+            'slogan' => $safeShort,
             'href' => $detailRoute,
-            'contact' => $element['name'],
+            'contact' => $safeContact,
             'qrcode' => base64_encode($this->generateQrCode($detailRoute))
         ];
         if ($logoSrc) {
@@ -477,26 +543,143 @@ class BannerModuleController extends AbstractFrontendModuleController
         $arrReturn[] = $singleEle;
         return $arrReturn;
     }
+
+    /**
+     * Some instances provide child image CDN paths under an "events" directory that does not exist in the cache.
+     * Expected structure is "/images/offers/{uuid}/filename.ext".
+     * This helper rewrites known legacy/mistaken patterns to the expected "offers/{uuid}" pattern.
+     */
+    private function normalizeOfferImageCdnPath(string $path, string $childUuid): string
+    {
+        try {
+            $uuid = trim($childUuid, '{}');
+            if ($uuid === '') { return $path; }
+
+            $parts = parse_url($path);
+            // Absolute external URLs (http/https) should be left untouched
+            if (is_array($parts) && isset($parts['scheme']) && ($parts['scheme'] === 'http' || $parts['scheme'] === 'https')) {
+                return $path;
+            }
+
+            $onlyPath = is_array($parts) && isset($parts['path']) ? $parts['path'] : $path;
+
+            // If already in offers with a uuid segment, leave as-is
+            if (preg_match('~^/images/offer[s]?/[^/]+/.+~i', $onlyPath)) {
+                return $path;
+            }
+
+            // Replace "/images/events/{something}/..." with "/images/offers/{uuid}/..."
+            if (preg_match('~^/images/events/[^/]+/.+~i', $onlyPath)) {
+                $rewritten = preg_replace('~^/images/events/[^/]+/~i', '/images/offers/' . $uuid . '/', $onlyPath, 1);
+                // Reassemble with original query if present
+                if (is_array($parts) && isset($parts['query']) && $parts['query'] !== '') {
+                    $rewritten .= '?' . $parts['query'];
+                }
+                return $rewritten;
+            }
+
+            // Replace "/events/{something}/..." (missing leading "/images") with "/images/offers/{uuid}/..."
+            if (preg_match('~^/events/[^/]+/.+~i', $onlyPath)) {
+                // Keep only the basename to avoid nesting unexpected subfolders under the UUID
+                $basename = basename($onlyPath);
+                $rewritten = '/images/offers/' . $uuid . '/' . $basename;
+                if (is_array($parts) && isset($parts['query']) && $parts['query'] !== '') {
+                    $rewritten .= '?' . $parts['query'];
+                }
+                return $rewritten;
+            }
+
+            // Replace "/offers/{something}/..." (missing "/images" prefix) with "/images/offers/{uuid}/..."
+            if (preg_match('~^/offers/[^/]+/.+~i', $onlyPath)) {
+                $basename = basename($onlyPath);
+                $rewritten = '/images/offers/' . $uuid . '/' . $basename;
+                if (is_array($parts) && isset($parts['query']) && $parts['query'] !== '') {
+                    $rewritten .= '?' . $parts['query'];
+                }
+                return $rewritten;
+            }
+
+            // If path is missing the uuid segment but contains "/images/offers/", inject the expected uuid
+            if (preg_match('~^/images/offers/(?:[^/]+)?/?([^/]+)?$~i', $onlyPath)) {
+                // Build a safe fallback: put the file under the uuid directory
+                $basename = basename($onlyPath);
+                $dir = '/images/offers/' . $uuid . '/';
+                $rewritten = $dir . $basename;
+                if (is_array($parts) && isset($parts['query']) && $parts['query'] !== '') {
+                    $rewritten .= '?' . $parts['query'];
+                }
+                return $rewritten;
+            }
+
+            return $path;
+        } catch (\Throwable $t) {
+            return $path; // fail safe
+        }
+    }
+    /**
+     * Build a QR code PNG (binary string) for the given link using the module's theme color
+     * as the foreground color. Falls back to the classic blue if the color is not available.
+     */
     private function generateQrCode (String $link) {
-        $eye = SquareEye::instance();
-        $squareModule = SquareModule::instance();
+        try {
+            $eye = SquareEye::instance();
+            $squareModule = SquareModule::instance();
 
-        $eyeFill = new EyeFill(new Rgb(0, 155, 233), new Rgb(0, 155, 233));
-        $gradient = new Gradient(new Rgb(13, 59, 93), new Rgb(13, 59, 93), GradientType::HORIZONTAL());
+            // Resolve theme accent color from module, accept values with or without '#'
+            $hex = '';
+            if ($this->model) {
+                $hex = trim((string)($this->model->gutesio_banner_theme_color ?? ''));
+            }
+            if ($hex === '' || $hex[0] !== '#') {
+                $hex = ($hex !== '') ? ('#'.$hex) : '';
+            }
+            // Default blue if invalid/missing
+            if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $hex)) {
+                $hex = '#2ea1db';
+            }
+            // Normalize to 6-digit
+            if (strlen($hex) === 4) {
+                $hex = sprintf('#%1$s%1$s%2$s%2$s%3$s%3$s', $hex[1], $hex[2], $hex[3]);
+            }
+            $r = hexdec(substr($hex, 1, 2));
+            $g = hexdec(substr($hex, 3, 2));
+            $b = hexdec(substr($hex, 5, 2));
 
-        $renderer = new ImageRenderer(
-            new RendererStyle(
-                400,
-                2,
-                $squareModule,
-                $eye,
-                Fill::withForegroundGradient(new Rgb(255, 255, 255), $gradient, $eyeFill, $eyeFill, $eyeFill)
-            ),
-            new ImagickImageBackEnd('png')
-        );
+            // Create a slightly darker variant for the gradient to keep visual depth
+            $darken = function(int $c, float $f): int { $v = (int) floor($c * $f); return max(0, min(255, $v)); };
+            $dr = $darken($r, 0.55);
+            $dg = $darken($g, 0.55);
+            $db = $darken($b, 0.55);
 
-        $writer = new Writer($renderer);
-        $return = $writer->writeString($link);
-        return $return;
+            $eyeFill = new EyeFill(new Rgb($r, $g, $b), new Rgb($r, $g, $b));
+            // Foreground gradient uses darker tone to enrich modules; background stays white for scan contrast
+            $gradient = new Gradient(new Rgb($dr, $dg, $db), new Rgb($dr, $dg, $db), GradientType::HORIZONTAL());
+
+            $renderer = new ImageRenderer(
+                new RendererStyle(
+                    400, // size
+                    2,   // margin (quiet zone)
+                    $squareModule,
+                    $eye,
+                    Fill::withForegroundGradient(new Rgb(255, 255, 255), $gradient, $eyeFill, $eyeFill, $eyeFill)
+                ),
+                new ImagickImageBackEnd('png')
+            );
+
+            $writer = new Writer($renderer);
+            return $writer->writeString($link);
+        } catch (\Throwable $e) {
+            // Fallback: render with safe default colors if anything goes wrong
+            $eye = SquareEye::instance();
+            $squareModule = SquareModule::instance();
+            $eyeFill = new EyeFill(new Rgb(0, 0, 0), new Rgb(0, 0, 0));
+            $gradient = new Gradient(new Rgb(0, 0, 0), new Rgb(0, 0, 0), GradientType::HORIZONTAL());
+            $renderer = new ImageRenderer(
+                new RendererStyle(400, 2, $squareModule, $eye, Fill::withForegroundGradient(new Rgb(255,255,255), $gradient, $eyeFill, $eyeFill, $eyeFill)),
+                new ImagickImageBackEnd('png')
+            );
+            $writer = new Writer($renderer);
+            return $writer->writeString($link);
+        }
     }
 }

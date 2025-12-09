@@ -222,12 +222,9 @@ class BannerModuleController extends AbstractFrontendModuleController
             // Render only the first N slides initially, defer the rest (for SEO)
             $initial = array_slice($arrReturn, 0, max(1, $limitInitial));
             $deferred = array_slice($arrReturn, max(1, $limitInitial));
-            if ($deferQr && !empty($deferred)) {
-                foreach ($deferred as &$d) {
-                    if (isset($d['qrcode'])) { unset($d['qrcode']); }
-                }
-                unset($d);
-            }
+            // Keep QR codes within deferred slides as well, so they render after lazy loading.
+            // Previously, when `$deferQr` was enabled, QR codes were removed here but never reloaded on the client,
+            // resulting in missing QR codes. We keep them to ensure consistent rendering for elements and children.
             $template->slidesInitial = $initial;
             $template->slidesDeferred = !empty($deferred) ? json_encode($deferred) : '';
         } else {

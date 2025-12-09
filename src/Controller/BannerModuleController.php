@@ -359,7 +359,9 @@ class BannerModuleController extends AbstractFrontendModuleController
         $fileUtils = new FileUtils();
         $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$element['logoCDN'], '',0, 0, 86400);
         foreach ($arrChilds as $key => $child) {
-            if ($this->model->gutesio_max_childs && $this->model->gutesio_max_childs > $key) {
+            // Respect the optional maximum number of children to include.
+            // Break once we have added the configured amount. Off-by-one fixed: allow indexes 0..(max-1).
+            if ($this->model->gutesio_max_childs && $key >= (int) $this->model->gutesio_max_childs) {
                 break;
             }
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);

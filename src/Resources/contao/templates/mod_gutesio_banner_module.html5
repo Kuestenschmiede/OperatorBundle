@@ -13,12 +13,25 @@ $deferAssets = !empty($this->bannerDeferAssets);
 $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digital</a>
 <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
      alt="gutes.digital Logo">';
+// Prepare custom size values (applied client-side)
+$customHeight = isset($this->bannerCustomHeight) ? trim((string)$this->bannerCustomHeight) : '';
+$customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCustomWidth) : '';
 ?>
 
 <link rel="stylesheet" href="bundles/gutesiooperator/dist/css/tiny-slider.css" />
 <link rel="stylesheet" href="bundles/gutesiooperator/dist/css/animate.min.css" />
 
-<div id="banner-module-<?php echo $bannerId; ?>" class="banner-section<?php echo $isFullscreen ? ' is-fullscreen' : ''; ?><?php echo $this->bannerHidePoweredBy ? ' no-footer' : ''; ?><?php echo $mediaBgPortrait ? ' media-bg-portrait' : ''; ?>" data-reload="<?php echo $reloadFlag ? '1' : '0'; ?>" data-lazy-mode="<?php echo htmlspecialchars($lazyMode, ENT_QUOTES, 'UTF-8'); ?>" data-defer-assets="<?php echo $deferAssets ? '1' : '0'; ?>" data-poweredby-text="<?php echo htmlspecialchars($bannerPoweredByText ?: 'Powered by', ENT_QUOTES, 'UTF-8'); ?>" data-bg-portrait="<?php echo $mediaBgPortrait ? '1' : '0'; ?>">
+<?php $onlyImages = !empty($this->bannerOnlyImages); $isAutoSize = ($onlyImages && !$isFullscreen && !$customHeight); ?>
+<div id="banner-module-<?php echo $bannerId; ?>"
+  class="banner-section<?php echo $isFullscreen ? ' is-fullscreen' : ''; ?><?php echo $this->bannerHidePoweredBy ? ' no-footer' : ''; ?><?php echo $mediaBgPortrait ? ' media-bg-portrait' : ''; ?><?php echo $isAutoSize ? ' auto-size' : ''; ?>"
+  data-reload="<?php echo $reloadFlag ? '1' : '0'; ?>"
+  data-lazy-mode="<?php echo htmlspecialchars($lazyMode, ENT_QUOTES, 'UTF-8'); ?>"
+  data-defer-assets="<?php echo $deferAssets ? '1' : '0'; ?>"
+  data-poweredby-text="<?php echo htmlspecialchars($bannerPoweredByText ?: 'Powered by', ENT_QUOTES, 'UTF-8'); ?>"
+  data-bg-portrait="<?php echo $mediaBgPortrait ? '1' : '0'; ?>"
+  data-custom-h="<?php echo htmlspecialchars($customHeight, ENT_QUOTES, 'UTF-8'); ?>"
+  data-custom-w="<?php echo htmlspecialchars($customWidth, ENT_QUOTES, 'UTF-8'); ?>"
+  data-only-images="<?php echo $onlyImages ? '1' : '0'; ?>">
     <div class="banner-slide banner__tns-container">
         <?php
         $renderSlides = [];
@@ -197,13 +210,62 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
   var container = root.querySelector('.banner-slide');
   if (!container) { return; }
 
+  // Neutralize vertical paddings from Contao module wrappers to avoid extra space above/below the banner
+  try {
+    var inside = root.closest('.inside');
+    if (inside) {
+      inside.style.paddingTop = '0';
+      inside.style.paddingBottom = '0';
+      inside.style.overflow = 'visible';
+    }
+    // Also neutralize default vertical margins on the module wrapper to keep the viewport tight
+    var modWrapper = root.closest('[class*="mod_"]');
+    if (modWrapper) {
+      modWrapper.style.marginTop = '0';
+      modWrapper.style.marginBottom = '0';
+    }
+  } catch(e) {}
+
   var lazyMode = root.getAttribute('data-lazy-mode') || '0';
   var deferAssets = root.getAttribute('data-defer-assets') === '1';
   var hideFooter = root.classList.contains('no-footer');
+  var isFullscreen = root.classList.contains('is-fullscreen');
   // Derive powered-by text from the already rendered footer label (allows HTML, avoids PHP in JS)
   var footerLabelEl = root.querySelector('.banner__footer-sub .footer-text-label');
   var poweredText = footerLabelEl ? footerLabelEl.innerHTML : 'Powered by';
   var mediaBgPortrait = root.getAttribute('data-bg-portrait') === '1';
+  var customH = root.getAttribute('data-custom-h') || '';
+  var customW = root.getAttribute('data-custom-w') || '';
+  var onlyImages = root.getAttribute('data-only-images') === '1';
+  var isAutoSize = (!isFullscreen && !customH && onlyImages);
+
+  function applyCustomSize(scope){
+    if (isFullscreen || isAutoSize) return;
+    // Apply explicit viewport size to root
+    if (customH) { root.style.height = customH; }
+    if (customW) { root.style.width = customW; }
+    // Ensure any theme min-height is neutralized so viewport matches the custom size exactly
+    root.style.minHeight = '0';
+    var ctx = scope || root;
+    // Ensure the tiny-slider wrapper chain and slide wrappers inherit full height
+    if (customH) {
+      var heightSelectors = [
+        '.banner-slide', '.banner__tns-container', '.tns-outer', '.tns-ovh', '.tns-inner', '.tns-item', '.banner__item', '.banner__image-wrapper'
+      ];
+      heightSelectors.forEach(function(sel){
+        ctx.querySelectorAll(sel).forEach(function(el){
+          el.style.height = '100%';
+          el.style.minHeight = '0';
+        });
+      });
+      // Make images fill the available viewport while preserving aspect ratio
+      ctx.querySelectorAll('img.banner__image-item').forEach(function(img){
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'contain';
+      });
+    }
+  }
 
   function swapLazyMedia(scope){
     var imgs = (scope || root).querySelectorAll('img[data-src]');
@@ -227,6 +289,24 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
     });
     // After swapping, re-evaluate media orientation for portrait handling
     markPortraitMedia(scope || root);
+  }
+
+  function applyAutoSizeStyles(scope){
+    if (!isAutoSize) return;
+    var ctx = scope || root;
+    // Relax enforced heights so section adapts to image height
+    root.style.height = 'auto';
+    root.style.minHeight = '0';
+    var sel = [
+      '.banner-slide', '.banner__tns-container', '.tns-outer', '.tns-ovh', '.tns-inner', '.tns-item', '.banner__item', '.banner__image-wrapper'
+    ];
+    sel.forEach(function(s){ ctx.querySelectorAll(s).forEach(function(el){ el.style.height = 'auto'; el.style.minHeight = '0'; }); });
+    ctx.querySelectorAll('.banner__image-item').forEach(function(img){
+      img.style.width = '100%';
+      img.style.height = 'auto';
+      img.style.objectFit = 'contain';
+    });
+    // Keep footer absolutely positioned so it does not add to layout height in auto-size mode
   }
 
   function getSlideWrapperClass(type){
@@ -345,6 +425,7 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
     }
 
     var imgWrap = createEl('div', 'banner__image-wrapper ' + getSlideWrapperClass(type));
+    if (customH) { imgWrap.style.height = '100%'; }
     if (isVideo && videoSrc){
       var vid;
       if (lazyMode === '1' || lazyMode === '2'){
@@ -407,8 +488,18 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
       } catch (e) { /* ignore broken slide */ }
     });
     container.appendChild(frag);
+    // Ensure sizes apply to new nodes
+    applyCustomSize(container);
     // After hydrating, check media orientation for new slides
     markPortraitMedia(container);
+    // In auto-size mode, update slider height after images are appended
+    if (isAutoSize && window.__gutesBanner && window.__gutesBanner['<?php echo $bannerId; ?>']) {
+      var slider = window.__gutesBanner['<?php echo $bannerId; ?>'];
+      var upd = function(){ try { slider.updateSliderHeight(); } catch(e){} };
+      setTimeout(upd, 50);
+      setTimeout(upd, 250);
+      setTimeout(upd, 1000);
+    }
   }
 
   function ensureTinySlider(cb){
@@ -422,12 +513,17 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
   function initSlider(){
     try {
       // For now, lazyMode '2' behaves like '1' on the client (server already limited the number if needed).
+      // Apply optional custom sizing before media swap/slider init
+      applyCustomSize();
+      // In auto-size mode, remove fixed heights before initializing slider
+      applyAutoSizeStyles();
 
       // Swap lazy media now that items exist
       if (lazyMode === '1' || lazyMode === '2') { swapLazyMedia(); }
       // Evaluate orientation for already available media (non-lazy first slide or eager images)
       markPortraitMedia(root);
 
+      window.__gutesBanner = window.__gutesBanner || {};
       var slider = tns({
         container: container,
         mode: 'gallery',
@@ -439,8 +535,17 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
         controls: false,
         mouseDrag: true,
         nav: false,
-        autoplayButtonOutput: false
+        autoplayButtonOutput: false,
+        autoHeight: isAutoSize
       });
+      window.__gutesBanner['<?php echo $bannerId; ?>'] = slider;
+      if (isAutoSize) {
+        // Update height once images are definitely loaded
+        var upd = function(){ try { slider.updateSliderHeight(); } catch(e){} };
+        setTimeout(upd, 50);
+        setTimeout(upd, 250);
+        setTimeout(upd, 1000);
+      }
     } catch (e) {
       console && console.warn && console.warn('Banner slider init failed:', e);
     }
@@ -453,6 +558,7 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
   function onEnter(){
     // In SEO Static-First, hydrate additional slides before initializing Tiny-Slider
     if (lazyMode === '2') { hydrateDeferred(); }
+    if (isAutoSize) { applyAutoSizeStyles(); }
     if (deferAssets) {
       ensureTinySlider(initSlider);
     } else {
@@ -524,6 +630,7 @@ $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digita
   // Re-evaluate on resize/orientation change to adapt when device is rotated
   window.addEventListener('resize', function(){ markPortraitMedia(root); });
 })();
+
 </script>
 
 <!-- Styling moved to SCSS/CSS assets (Resources/public/src/scss and dist css). -->

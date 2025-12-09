@@ -80,7 +80,9 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{titl
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_selfHelpFocus;{cart_legend},cart_page;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
-        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked,gutesio_banner_fullscreen,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_lazy_mode,gutesio_banner_defer_assets,gutesio_banner_limit_initial,gutesio_banner_defer_qr,gutesio_banner_qr_for_images;';
+        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked;'.
+        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait;'.
+        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_defer_assets,gutesio_banner_limit_initial,gutesio_banner_defer_qr,gutesio_banner_qr_for_images;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
 
@@ -92,6 +94,53 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
     'reference'               => &$GLOBALS['TL_LANG']['tl_module']['gutesio_data_mode_option'],
     'sql'                     => "char(1) NOT NULL default '0'",
     'eval'                    => ['submitOnChange' => true, 'tl_class' => "clr"]
+];
+
+// Viewport size configuration for banner
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_height_value'] = [
+    'exclude' => true,
+    'label'   => ['Viewport-Höhe', 'Numerischer Wert für die Höhe des Banners (z. B. 60). In Kombination mit der Einheit. Bei Vollbild wird ignoriert.'],
+    'inputType' => 'text',
+    'eval' => ['rgxp' => 'digit', 'maxlength' => 5, 'tl_class' => 'w50'],
+    'sql'  => "varchar(5) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_height_unit'] = [
+    'exclude' => true,
+    'label'   => ['Höheneinheit', 'Einheit für die Bannerhöhe.'],
+    'inputType' => 'select',
+    'options' => ['vh', 'px', 'rem', '%'],
+    'reference' => [
+        'vh' => 'vh',
+        'px' => 'px',
+        'rem' => 'rem',
+        '%' => '%',
+    ],
+    'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
+    'sql'  => "varchar(5) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_width_value'] = [
+    'exclude' => true,
+    'label'   => ['Viewport-Breite', 'Numerischer Wert für die Breite des Banners (optional). In Kombination mit der Einheit. Standard ist 100%.'],
+    'inputType' => 'text',
+    'eval' => ['rgxp' => 'digit', 'maxlength' => 5, 'tl_class' => 'w50'],
+    'sql'  => "varchar(5) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_width_unit'] = [
+    'exclude' => true,
+    'label'   => ['Breiteneinheit', 'Einheit für die Bannerbreite.'],
+    'inputType' => 'select',
+    'options' => ['%', 'px', 'vw', 'rem'],
+    'reference' => [
+        '%' => '%',
+        'px' => 'px',
+        'vw' => 'vw',
+        'rem' => 'rem',
+    ],
+    'eval' => ['includeBlankOption' => true, 'tl_class' => 'w50'],
+    'sql'  => "varchar(5) NOT NULL default ''",
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_type'] = [

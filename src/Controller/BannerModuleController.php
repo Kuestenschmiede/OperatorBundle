@@ -211,6 +211,11 @@ class BannerModuleController extends AbstractFrontendModuleController
             // fail silently, do not block the module rendering
         }
         $arrReturn = $arrReturn ?: [];
+        // Determine if the banner will contain only image slides (used for auto-sizing)
+        $onlyImages = true;
+        foreach ($arrReturn as $s) {
+            if (($s['type'] ?? 'image') !== 'image') { $onlyImages = false; break; }
+        }
         shuffle($arrReturn);
         // Performance / lazy options
         $lazyMode = (string) ($model->gutesio_banner_lazy_mode ?? '0'); // '0','1','2'
@@ -235,6 +240,8 @@ class BannerModuleController extends AbstractFrontendModuleController
         $template->bannerDeferAssets = $deferAssets;
         $template->bannerLimitInitial = $limitInitial;
         $template->bannerDeferQr = $deferQr;
+        // Pass only-images flag so the template/JS can auto-size to image heights when appropriate
+        $template->bannerOnlyImages = $onlyImages;
 
         $template->loadlazy = $model->lazyBanner === "1";
         $template->reloadBanner = $model->reloadBanner === "1";
@@ -243,6 +250,35 @@ class BannerModuleController extends AbstractFrontendModuleController
         $template->bannerPoweredByText = $model->gutesio_banner_poweredby_text ?: 'Powered by';
         $template->bannerFullscreen = ($model->gutesio_banner_fullscreen === '1' || $model->gutesio_banner_fullscreen === 1);
         $template->bannerMediaBgPortrait = ($model->gutesio_banner_media_bg_portrait === '1' || $model->gutesio_banner_media_bg_portrait === 1);
+
+        // Compute optional custom viewport size (height/width) for the banner
+        // Ignore custom values when fullscreen is enabled
+        $heightCss = '';
+        $widthCss = '';
+        if (!$template->bannerFullscreen) {
+            try {
+                $hv = trim((string)($model->gutesio_banner_height_value ?? ''));
+                $hu = trim((string)($model->gutesio_banner_height_unit ?? ''));
+                if ($hv !== '' && ctype_digit($hv)) {
+                    $allowedHU = ['vh','px','rem','%'];
+                    if (in_array($hu, $allowedHU, true)) {
+                        $heightCss = $hv . $hu;
+                    }
+                }
+            } catch (\Throwable $t) { /* ignore */ }
+            try {
+                $wv = trim((string)($model->gutesio_banner_width_value ?? ''));
+                $wu = trim((string)($model->gutesio_banner_width_unit ?? ''));
+                if ($wv !== '' && ctype_digit($wv)) {
+                    $allowedWU = ['%','px','vw','rem'];
+                    if (in_array($wu, $allowedWU, true)) {
+                        $widthCss = $wv . $wu;
+                    }
+                }
+            } catch (\Throwable $t) { /* ignore */ }
+        }
+        $template->bannerCustomHeight = $heightCss;
+        $template->bannerCustomWidth = $widthCss;
         $response = $template->getResponse();
 
         return $response;

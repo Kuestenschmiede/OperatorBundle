@@ -82,7 +82,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend}
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
         '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked;'.
         '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait;'.
-        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_defer_assets,gutesio_banner_limit_initial,gutesio_banner_defer_qr,gutesio_banner_qr_for_images;';
+        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
 
@@ -101,7 +101,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_height_value'] = [
     'exclude' => true,
     'label'   => ['Viewport-Höhe', 'Numerischer Wert für die Höhe des Banners (z. B. 60). In Kombination mit der Einheit. Bei Vollbild wird ignoriert.'],
     'inputType' => 'text',
-    'eval' => ['rgxp' => 'digit', 'maxlength' => 5, 'tl_class' => 'w50'],
+    'eval' => ['rgxp' => 'digit', 'maxlength' => 5, 'tl_class' => 'clr w50'],
     'sql'  => "varchar(5) NOT NULL default ''",
 ];
 
@@ -124,7 +124,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_width_value'] = [
     'exclude' => true,
     'label'   => ['Viewport-Breite', 'Numerischer Wert für die Breite des Banners (optional). In Kombination mit der Einheit. Standard ist 100%.'],
     'inputType' => 'text',
-    'eval' => ['rgxp' => 'digit', 'maxlength' => 5, 'tl_class' => 'w50'],
+    'eval' => ['rgxp' => 'digit', 'maxlength' => 5, 'tl_class' => 'clr w50'],
     'sql'  => "varchar(5) NOT NULL default ''",
 ];
 
@@ -746,7 +746,7 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_defer_qr'] = [
     'exclude'   => true,
     'inputType' => 'checkbox',
     'default'   => '1',
-    'eval'      => ['tl_class' => 'w50'],
+    'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => "char(1) NOT NULL default '1'",
 ];
 

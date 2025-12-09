@@ -67,6 +67,8 @@ $GLOBALS['TL_LANG']['tl_module']['load_legend'] = 'Load settings';
 $GLOBALS['TL_LANG']['tl_module']['showcase_filter_legend'] = 'Filter settings';
 $GLOBALS['TL_LANG']['tl_module']['showcase_tag_filter_legend'] = 'Tag filter settings';
 $GLOBALS['TL_LANG']['tl_module']['cart_legend'] = 'Cart settings';
+$GLOBALS['TL_LANG']['tl_module']['appearance_legend'] = 'Appearence settings';
+$GLOBALS['TL_LANG']['tl_module']['performance_legend'] = 'Performance settings';
 
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['random'] = 'random';
 $GLOBALS['TL_LANG']['tl_module']['gutesio_initial_sorting_option']['name_asc'] = 'ascending';

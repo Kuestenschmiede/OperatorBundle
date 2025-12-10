@@ -92,6 +92,12 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
     'Primäre Akzentfarbe für Overlays, das Werbelabel und die Powered-by-Leiste (Hex, z. B. #2ea1db).'
 ];
 
+// Banner: Links in neuem Tab öffnen
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_links_new_tab'] = [
+    'Links in neuem Tab öffnen',
+    'Öffnet Banner-Links in einem neuen Browser-Tab (target="_blank").'
+];
+
 // Banner: Wechselintervall konfigurierbar
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_interval'] = [
     'Slide-Wechselintervall (ms)',

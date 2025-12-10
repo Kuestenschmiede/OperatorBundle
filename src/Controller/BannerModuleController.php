@@ -281,6 +281,8 @@ class BannerModuleController extends AbstractFrontendModuleController
         $template->bannerFooterAlignLeft = ($model->gutesio_banner_footer_align_left === '1' || $model->gutesio_banner_footer_align_left === 1);
         // Optional ad label ("Anzeige") toggle
         $template->bannerShowAdLabel = ($model->gutesio_banner_show_ad_label === '1' || $model->gutesio_banner_show_ad_label === 1);
+        // Open links in new tab option
+        $template->bannerLinksNewTab = ($model->gutesio_banner_links_new_tab === '1' || $model->gutesio_banner_links_new_tab === 1);
 
         // Compute optional custom viewport size (height/width) for the banner
         // Ignore custom values when fullscreen is enabled

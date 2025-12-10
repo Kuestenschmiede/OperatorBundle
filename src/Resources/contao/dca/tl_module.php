@@ -81,7 +81,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend}
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
         '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked;'.
-        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label;'.
+        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label,gutesio_banner_links_new_tab;'.
         '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images,gutesio_banner_interval;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
@@ -806,6 +806,15 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_defer_qr'] = [
     'default'   => '1',
     'eval'      => ['tl_class' => 'clr w50'],
     'sql'       => "char(1) NOT NULL default '1'",
+];
+
+// Banner option: open links in new tab
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_links_new_tab'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
 ];
 
 // Banner option: also generate QR for image slides when a link exists

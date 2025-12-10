@@ -74,6 +74,12 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
     'Banner theme color',
     'Primary accent color for overlays, the ad label and the powered-by bar (hex, e.g. #2ea1db).'];
 
+// Banner: open links in a new tab
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_links_new_tab'] = [
+    'Open links in a new tab',
+    'Opens banner links in a new browser tab (target="_blank").'
+];
+
 // Banner: configurable slide interval
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_interval'] = [
     'Slide change interval (ms)',

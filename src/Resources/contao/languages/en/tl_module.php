@@ -74,6 +74,29 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
     'Banner theme color',
     'Primary accent color for overlays, the ad label and the powered-by bar (hex, e.g. #2ea1db).'];
 
+// Banner: strict image mode
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_strict_images'] = [
+    'Enable strict image mode',
+    'Hides slides with missing images. Only shows images that are locally available or quickly confirmed by the CDN.'
+];
+
+// Lists: strict image mode (Showcase/Offer Lists)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_strict_images'] = [
+    'Enable strict image mode for lists',
+    'Hides list items without available images. Only images that are locally available or quickly confirmed by the CDN are shown.'
+];
+
+// Banner protection (optional via GET parameter)
+$GLOBALS['TL_LANG']['tl_module']['security_legend'] = 'Access protection';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_guard_param'] = [
+    'Guard parameter (GET)',
+    'Optional name of a GET parameter (e.g. "bannerKey"). If set, the banner only loads when the request contains this parameter.'
+];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_guard_value'] = [
+    'Expected parameter value',
+    'Optional expected value for the guard parameter. Leave empty if you only want to check for presence.'
+];
+
 // Banner: open links in a new tab
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_links_new_tab'] = [
     'Open links in a new tab',

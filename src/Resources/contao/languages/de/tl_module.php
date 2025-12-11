@@ -92,6 +92,29 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
     'Primäre Akzentfarbe für Overlays, das Werbelabel und die Powered-by-Leiste (Hex, z. B. #2ea1db).'
 ];
 
+// Banner: Strikter Bildmodus
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_strict_images'] = [
+    'Strikten Bildmodus aktivieren',
+    'Blendet Slides mit fehlenden Bildern aus. Es werden nur Bilder angezeigt, die lokal vorhanden sind oder vom CDN schnell bestätigt wurden.'
+];
+
+// Listen: Strikter Bildmodus (Showcase/Offer Listen)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_strict_images'] = [
+    'Strikten Bildmodus für Listen aktivieren',
+    'Blendet Listeneinträge ohne verfügbare Bilder aus. Es werden nur Bilder angezeigt, die lokal vorhanden sind oder vom CDN schnell bestätigt wurden.'
+];
+
+// Banner-Schutz (optional per GET-Parameter)
+$GLOBALS['TL_LANG']['tl_module']['security_legend'] = 'Zugriffsschutz';
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_guard_param'] = [
+    'Schutz-Parameter (GET)',
+    'Optionaler Name eines GET-Parameters (z. B. "bannerKey"). Ist er gesetzt, wird das Banner nur geladen, wenn der Request diesen Parameter enthält.'
+];
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_guard_value'] = [
+    'Erwarteter Parameterwert',
+    'Optionaler erwarteter Wert für den Schutz-Parameter. Leer lassen, wenn nur das Vorhandensein geprüft werden soll.'
+];
+
 // Banner: Links in neuem Tab öffnen
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_links_new_tab'] = [
     'Links in neuem Tab öffnen',

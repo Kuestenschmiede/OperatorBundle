@@ -20,7 +20,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_list_module'] =
     '{generic_legend},gutesio_data_render_searchHtml,gutesio_data_layoutType,'.
     'gutesio_data_redirect_page,gutesio_data_show_details,gutesio_data_limit,'.
     'gutesio_data_max_data,gutesio_data_mode,gutesio_data_restrict_postals,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_city,gutesio_data_show_selfHelpFocus;' .
-    '{showcase_filter_legend},gutesio_initial_sorting,gutesio_enable_filter,gutesio_enable_ext_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter,gutesio_enable_location_filter,gutesio_disable_sorting_filter;';
+    '{showcase_filter_legend},gutesio_initial_sorting,gutesio_enable_filter,gutesio_enable_ext_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter,gutesio_enable_type_filter,gutesio_enable_location_filter,gutesio_disable_sorting_filter;'.
+    '{performance_legend},gutesio_strict_images;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'gutesio_data_mode';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['gutesio_data_mode_0'] = '';
@@ -56,7 +57,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_list_module'] =
     '{cart_legend},cart_page;'.
     '{showcase_filter_legend},gutesio_enable_filter,gutesio_enable_location_filter,gutesio_enable_ext_filter,gutesio_child_search_label,gutesio_child_search_placeholder,'.
     'gutesio_child_search_description,gutesio_child_text_search,gutesio_child_text_no_results,'.
-    'gutesio_child_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter, gutesio_enable_category_filter,gutesio_disable_sorting_filter;';
+    'gutesio_child_filter,gutesio_data_change_layout_filter,gutesio_enable_tag_filter, gutesio_enable_category_filter,gutesio_disable_sorting_filter;'.
+    '{performance_legend},gutesio_strict_images;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['offer_detail_module'] =
     '{title_legend},name,headline,type;'.
@@ -82,7 +84,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend}
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
         '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked;'.
         '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label,gutesio_banner_links_new_tab;'.
-        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images,gutesio_banner_interval;';
+        '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images,gutesio_banner_interval,gutesio_banner_strict_images;';
+$GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] .= '{security_legend},gutesio_banner_guard_param,gutesio_banner_guard_value;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
 
@@ -824,4 +827,41 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_qr_for_images'] = [
     'default'   => '0',
     'eval'      => ['tl_class' => 'w50'],
     'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner option: strictly hide slides whose images are not locally present nor available on CDN
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_strict_images'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'clr w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Generic lists option: strictly hide items whose images are not locally present nor available on CDN
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_strict_images'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner protection: optional GET parameter guard
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_guard_param'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'default'   => '',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_guard_param'],
+    'eval'      => ['maxlength' => 64, 'tl_class' => 'w50 clr'],
+    'sql'       => "varchar(64) NOT NULL default ''",
+];
+
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_guard_value'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'default'   => '',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_guard_value'],
+    'eval'      => ['maxlength' => 255, 'tl_class' => 'w50'],
+    'sql'       => "varchar(255) NOT NULL default ''",
 ];

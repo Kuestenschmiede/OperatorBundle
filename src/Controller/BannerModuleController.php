@@ -53,11 +53,30 @@ class BannerModuleController extends AbstractFrontendModuleController
     protected function getResponse(Template $template, ModuleModel $model, Request $request): Response
     {
         $this->model = $model;
+        // Optional GET parameter guard to avoid unintended costly requests
+        try {
+            $guardParam = trim((string)($model->gutesio_banner_guard_param ?? ''));
+            if ($guardParam !== '') {
+                $expected = (string)($model->gutesio_banner_guard_value ?? '');
+                $has = $request->query->has($guardParam);
+                $val = $has ? (string)$request->query->get($guardParam) : null;
+                $ok = $has && ($expected === '' || $val === $expected);
+                if (!$ok) {
+                    // Return an empty response if guard is not satisfied (prevents DB load and rendering)
+                    return new Response('', 204);
+                }
+            }
+        } catch (\Throwable $t) {
+            // On any error with guard evaluation, fail closed to be safe
+            return new Response('', 204);
+        }
+
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_listing_banner.min.css");
 
         $db = Database::getInstance();
         $mode = $model->gutesio_data_mode;
         $qrForImages = ($model->gutesio_banner_qr_for_images === '1' || $model->gutesio_banner_qr_for_images === 1);
+        $strictImages = ($model->gutesio_banner_strict_images === '1' || $model->gutesio_banner_strict_images === 1);
         $arrReturn = [];
         switch ($mode) {
             case 0: {
@@ -393,7 +412,11 @@ class BannerModuleController extends AbstractFrontendModuleController
         // Restore legacy ImageCache handling: serves from local cache if present, otherwise fetches once from CDN
         $logoSrc = '';
         if (!empty($element['logoCDN'])) {
-            $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $element['logoCDN']);
+            if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1)) {
+                $logoSrc = $fileUtils->addUrlToPathAndGetImageStrict($cdnUrl, $element['logoCDN']);
+            } else {
+                $logoSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $element['logoCDN']);
+            }
         }
         foreach ($arrChilds as $key => $child) {
             // Respect the optional maximum number of children to include.
@@ -403,10 +426,14 @@ class BannerModuleController extends AbstractFrontendModuleController
             }
             $arrReturn = $this->getSlidesForChild($child, $element, $logoSrc, $arrReturn);
         }
-        // Restore legacy ImageCache handling for main element image
+        // Restore legacy ImageCache handling for main element image (strict variant optionally)
         $imageSrc = '';
         if (!empty($element['imageCDN'])) {
-            $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $element['imageCDN']);
+            if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1)) {
+                $imageSrc = $fileUtils->addUrlToPathAndGetImageStrict($cdnUrl, $element['imageCDN']);
+            } else {
+                $imageSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $element['imageCDN']);
+            }
         }
 
         $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->showcaseDetailPage . '::absolute}}') . '/' . $element['alias'];
@@ -417,6 +444,11 @@ class BannerModuleController extends AbstractFrontendModuleController
         $shortDescription = key_exists('shortDescription', $element) ? $element['shortDescription'] : '';
         $rawShort = html_entity_decode((string)$shortDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $safeShortDescription = strip_tags($rawShort);
+        // In strict mode, skip element slide if we don't have a valid image URL
+        if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1) && empty($imageSrc)) {
+            return $arrReturn;
+        }
+
         $singleEle = [
             'type'  => "element",
             'image' => [
@@ -506,7 +538,11 @@ class BannerModuleController extends AbstractFrontendModuleController
         $offerSrc = '';
         if (!empty($child['imageCDN'])) {
             $normalizedCdnPath = $this->normalizeOfferImageCdnPath((string)$child['imageCDN'], (string)$child['uuid']);
-            $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $normalizedCdnPath);
+            if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1)) {
+                $offerSrc = $fileUtils->addUrlToPathAndGetImageStrict($cdnUrl, $normalizedCdnPath);
+            } else {
+                $offerSrc = $fileUtils->addUrlToPathAndGetImage($cdnUrl, $normalizedCdnPath);
+            }
         }
         // Normalize and sanitize child/title/contact texts (decode HTML entities first to avoid showing &#34; etc.)
         $childNameRaw = html_entity_decode((string)($child['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
@@ -516,6 +552,10 @@ class BannerModuleController extends AbstractFrontendModuleController
         $contactRaw = html_entity_decode((string)($element['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $safeContact = strip_tags($contactRaw);
 
+        // In strict mode, skip child slide if image is missing
+        if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1) && empty($offerSrc)) {
+            return $arrReturn;
+        }
         if ($offerSrc && strpos($offerSrc, '/default/')) {
             return $arrReturn; //remove events with default images
         }

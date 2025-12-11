@@ -262,6 +262,32 @@ class OfferListModuleController extends AbstractFrontendModuleController
             }
         }
 
+        // Strict image mode: filter out items whose primary image is missing (local + CDN quick check)
+        try {
+            $strict = ($module->gutesio_strict_images === '1' || $module->gutesio_strict_images === 1);
+            if ($strict && !empty($results)) {
+                $fileUtils = new FileUtils();
+                $filtered = [];
+                foreach ($results as $k => $item) {
+                    $src = '';
+                    if (is_array($item)) {
+                        if (isset($item['image']) && is_array($item['image'])) {
+                            $src = (string)($item['image']['src'] ?? $item['image']['path'] ?? '');
+                        } elseif (isset($item['image']) && is_string($item['image'])) {
+                            $src = (string)$item['image'];
+                        }
+                    }
+                    if ($src !== '') {
+                        $ok = (string)$fileUtils->addUrlToPathAndGetImageStrict('', $src);
+                        if ($ok !== '') {
+                            $filtered[$k] = $item;
+                        }
+                    }
+                }
+                $results = $filtered;
+            }
+        } catch (\Throwable $t) { /* ignore */ }
+
 
         return new JsonResponse($results);
     }

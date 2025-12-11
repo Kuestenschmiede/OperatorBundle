@@ -408,6 +408,30 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
         }
 
+        // Strict image mode: remove items whose image is not available locally nor on CDN
+        try {
+            $strict = ($moduleModel->gutesio_strict_images === '1' || $moduleModel->gutesio_strict_images === 1);
+            if ($strict && !empty($rowData)) {
+                $fileUtils = new FileUtils();
+                $filtered = [];
+                foreach ($rowData as $k => $item) {
+                    $src = '';
+                    if (is_array($item) && isset($item['image']) && is_array($item['image'])) {
+                        $src = (string)($item['image']['src'] ?? $item['image']['path'] ?? '');
+                    } elseif (isset($item['image']) && is_string($item['image'])) {
+                        $src = (string)$item['image'];
+                    }
+                    if ($src !== '') {
+                        $ok = (string)$fileUtils->addUrlToPathAndGetImageStrict('', $src);
+                        if ($ok !== '') {
+                            $filtered[$k] = $item;
+                        }
+                    }
+                }
+                $rowData = $filtered;
+            }
+        } catch (\Throwable $t) { /* ignore */ }
+
         return new JsonResponse($rowData);
     }
 
@@ -475,6 +499,30 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
             $data = $tmpData;
         }
+
+        // Strict image mode for initial (non-ajax) data consumers
+        try {
+            $strict = ($moduleModel->gutesio_strict_images === '1' || $moduleModel->gutesio_strict_images === 1);
+            if ($strict && is_array($data) && !empty($data)) {
+                $fileUtils = new FileUtils();
+                $filtered = [];
+                foreach ($data as $k => $item) {
+                    $src = '';
+                    if (is_array($item) && isset($item['image']) && is_array($item['image'])) {
+                        $src = (string)($item['image']['src'] ?? $item['image']['path'] ?? '');
+                    } elseif (isset($item['image']) && is_string($item['image'])) {
+                        $src = (string)$item['image'];
+                    }
+                    if ($src !== '') {
+                        $ok = (string)$fileUtils->addUrlToPathAndGetImageStrict('', $src);
+                        if ($ok !== '') {
+                            $filtered[$k] = $item;
+                        }
+                    }
+                }
+                $data = $filtered;
+            }
+        } catch (\Throwable $t) { /* ignore */ }
 
         return $data;
     }

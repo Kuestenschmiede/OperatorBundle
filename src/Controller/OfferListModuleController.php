@@ -121,12 +121,53 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $conf = $this->getListFrontendConfiguration($search, $this->model->gutesio_child_type);
         $conf->setLanguage($objPage->language);
         $requestUserAgent = $request->headers->get("User-Agent");
-        // only render content when it's the Googlebot
-        if (str_contains($requestUserAgent, "Googlebot") || str_contains($requestUserAgent, "contao")) {
+        // Render lightweight crawler-only content for selected bots to improve discoverability
+        if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao)/i', $requestUserAgent)) {
             if ($this->model->gutesio_data_render_searchHtml) {
-                $sc = new SearchConfiguration();
-                $sc->addData($this->getSearchLinks($model), ['link']);
-                $template->searchHTML = $sc->getHTML();
+                // Try fragment cache to avoid regenerating the same link dump repeatedly
+                try {
+                    $container = System::getContainer();
+                    $cache = $container->has('cache.app') ? $container->get('cache.app') : null;
+                } catch (\Throwable $t) {
+                    $cache = null;
+                }
+
+                $html = null;
+                $cacheKey = null;
+                if ($cache) {
+                    $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
+                    $childTypeCfg = (string)($this->model->gutesio_child_type ?? '');
+                    $cacheKey = 'seo_links_offers_' . (string)$this->model->id . '_' . md5($pageUrl . '|' . $lang . '|' . $childTypeCfg);
+                    try {
+                        $item = $cache->getItem($cacheKey);
+                        if ($item->isHit()) {
+                            $html = (string)$item->get();
+                        }
+                    } catch (\Throwable $t) {
+                        // ignore cache read errors
+                    }
+                }
+
+                if ($html === null) {
+                    $sc = new SearchConfiguration();
+                    $sc->addData($this->getSearchLinks($model), ['link']);
+                    $html = $sc->getHTML();
+
+                    if ($cache && $cacheKey) {
+                        try {
+                            $item = $cache->getItem($cacheKey);
+                            $item->set($html);
+                            if (method_exists($item, 'expiresAfter')) {
+                                $item->expiresAfter(43200); // 12h
+                            }
+                            $cache->save($item);
+                        } catch (\Throwable $t) {
+                            // ignore cache write errors
+                        }
+                    }
+                }
+
+                $template->searchHTML = $html;
             }
         }
 
@@ -979,7 +1020,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
     protected function getSearchLinks($model)
     {
         $database = Database::getInstance();
-        $result = $database->prepare('SELECT c.uuid as uuid, t.type as type FROM tl_gutesio_data_child c ' .
+        $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'where c.published = 1')->execute()->fetchAllAssoc();
         $links = [];
@@ -1040,7 +1081,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $href = $url . '/' . $alias;
             }
             $links[] = [
-                'link' => "<a href=\"$href\"></a>"
+                'link' => "<a href=\"$href\">" . htmlspecialchars((string)($row['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>"
             ];
         }
         return $links;

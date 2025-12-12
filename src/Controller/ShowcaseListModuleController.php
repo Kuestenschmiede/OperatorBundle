@@ -134,16 +134,55 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($this->model->gutesio_data_render_searchHtml) {
 
             $requestUserAgent = $request->headers->get("User-Agent");
-            // only render content when it's the Googlebot
-            if (str_contains($requestUserAgent, "Googlebot") || str_contains($requestUserAgent, "contao")) {
-                $elements = $this->getAllData($this->model);
-
-                if ($elements && is_array($elements) && is_array($elements[0]) && $this->model->gutesio_enable_filter) {
-                    $sc = new SearchConfiguration();
-                    $sc->addData($this->getSearchLinks($elements), ['link']);
-                    $template->searchHTML = $sc->getHTML();
-                    $template->itemListElement = $this->getMetaData($elements);
+            // Only render additional SEO content for selected crawlers (whitelist)
+            if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao)/i', $requestUserAgent)) {
+                // Lightweight with fragment cache: build simple anchor list for ALL showcases directly from DB
+                // Avoid heavy data loading and image processing to keep performance stable
+                try {
+                    $container = System::getContainer();
+                    $cache = $container->has('cache.app') ? $container->get('cache.app') : null;
+                } catch (\Throwable $t) {
+                    $cache = null;
                 }
+
+                $html = null;
+                $cacheKey = null;
+                if ($cache) {
+                    // Build a stable key based on module, language and page URL
+                    $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
+                    $cacheKey = 'seo_links_showcase_' . (string)$this->model->id . '_' . md5($this->pageUrl . '|' . $lang);
+                    try {
+                        $item = $cache->getItem($cacheKey);
+                        if ($item->isHit()) {
+                            $html = (string)$item->get();
+                        }
+                    } catch (\Throwable $t) {
+                        // ignore cache read errors
+                    }
+                }
+
+                if ($html === null) {
+                    $sc = new SearchConfiguration();
+                    $sc->addData($this->getSearchLinks(), ['link']);
+                    $html = $sc->getHTML();
+
+                    if ($cache && $cacheKey) {
+                        try {
+                            $item = $cache->getItem($cacheKey);
+                            $item->set($html);
+                            // Cache for 12 hours
+                            if (method_exists($item, 'expiresAfter')) {
+                                $item->expiresAfter(43200);
+                            }
+                            $cache->save($item);
+                        } catch (\Throwable $t) {
+                            // ignore cache write errors
+                        }
+                    }
+                }
+
+                $template->searchHTML = $html;
+                // Intentionally skip itemListElement meta generation for crawlers to prevent heavy processing
             }
         }
 

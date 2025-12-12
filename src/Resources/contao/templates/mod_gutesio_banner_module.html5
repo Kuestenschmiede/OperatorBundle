@@ -171,8 +171,10 @@ if (isset($this->gutesio_banner_interval)) {
   .banner-section .banner__image-wrapper.slide-offer img.banner__image-item{ object-position: left center; }
 }
 
-/* Wide-screen footer alignment improvements: keep contact+logo and QR on a single line and vertically centered */
-@media screen and (min-width: 1024px){
+/* Wide-screen footer alignment improvements (landscape only):
+   keep contact+logo and QR on a single line and vertically centered.
+   Important: scope to landscape so that large portrait screens keep the QR centered. */
+@media screen and (orientation: landscape) and (min-width: 1024px){
   .banner-section .banner__footer-pre{flex-wrap:nowrap;align-items:center}
   .banner-section .banner__footer-contact{width:auto;padding:0 10px 0 0}
   .banner-section .banner__footer-logo{margin:0}

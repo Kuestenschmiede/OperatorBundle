@@ -74,6 +74,48 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
     'Banner theme color',
     'Primary accent color for overlays, the ad label and the powered-by bar (hex, e.g. #2ea1db).'];
 
+// Banner: play videos
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_play_videos'] = [
+    'Play videos',
+    'Plays videos in the banner. Considers MP4 files from the selected folders as well as video links (field "videoLink") of the children. If a video is available, an additional video slide is inserted (in addition to the image slide).'
+];
+
+// Banner: mute videos
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_mute_videos'] = [
+    'Mute videos',
+    'Mutes all videos (MP4 and YouTube) by default. Recommended for kiosk/advertising screens.'
+];
+
+// Banner: Event overlay on videos
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_event_overlay'] = [
+    'Show event overlay on videos',
+    'Displays a subtle overlay on event video slides showing "Location, Date Time". Applies to YouTube and MP4 videos of events.'
+];
+
+// Banner: render images full cover
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_media_bg_full'] = [
+    'Render images full cover',
+    'Always render photos/images as full-cover background (object-fit: cover). Default: enabled.'
+];
+
+// Banner: overlay transparency
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_overlay_opacity'] = [
+    'Overlay transparency (%)',
+    'Controls the opacity of overlays (0–100). 0 = default (template fallback). Typical values: 45–80.'
+];
+
+// Banner: hide footer on video slides
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_footer_on_videos'] = [
+    'Hide footer on videos',
+    'Automatically hides the footer including QR code when a video slide is active.'
+];
+
+// Banner: maximum playback time for videos
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_video_timeout'] = [
+    'Max. playback time for videos (seconds)',
+    'Defines how long videos are played at most before switching to the next slide. 0 = full video length. Default: 180 seconds.'
+];
+
 // Banner: strict image mode
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_strict_images'] = [
     'Enable strict image mode',

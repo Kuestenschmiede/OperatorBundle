@@ -10,6 +10,7 @@ $mediaBgPortrait = !empty($this->bannerMediaBgPortrait);
 $reloadFlag = ($this->reloadBanner === '1' || $this->reloadBanner === 1);
 $lazyMode = (string)($this->bannerLazyMode ?? '0');
 $deferAssets = !empty($this->bannerDeferAssets);
+$videoTimeout = isset($this->bannerVideoTimeout) ? (int)$this->bannerVideoTimeout : 180;
 $bannerPoweredByText = 'Powered by <a href="https://gutes.digital/">Gutes Digital</a>
 <img class="banner__footer-sub-image" src="bundles/gutesiooperator/img/gutes_digital.svg"
      alt="gutes.digital Logo">';
@@ -18,6 +19,8 @@ $customHeight = isset($this->bannerCustomHeight) ? trim((string)$this->bannerCus
 $customWidth  = isset($this->bannerCustomWidth) ? trim((string)$this->bannerCustomWidth) : '';
 // Optional link attributes for opening in a new tab
 $__linkAttrs = !empty($this->bannerLinksNewTab) ? ' target="_blank" rel="noopener noreferrer"' : '';
+// Global muted attribute for HTML5 videos
+$__mutedAttr = !empty($this->bannerMuteVideos) ? ' muted' : '';
 // Slider interval (ms), configurable via module field, default to previous hardcoded value 15000
 $autoplayTimeout = 15000;
 if (isset($this->gutesio_banner_interval)) {
@@ -26,6 +29,12 @@ if (isset($this->gutesio_banner_interval)) {
         // enforce a sane minimum to avoid too rapid changes
         $autoplayTimeout = max(1000, $tmpInterval);
     }
+}
+// Optional overlay opacity style attribute
+$__overlayOpacity = isset($this->bannerOverlayOpacity) ? trim((string)$this->bannerOverlayOpacity) : '';
+$__styleOverlayAttr = '';
+if ($__overlayOpacity !== '') {
+    $__styleOverlayAttr = ' style="--banner-overlay-opacity: ' . htmlspecialchars($__overlayOpacity, ENT_QUOTES, 'UTF-8') . '"';
 }
 ?>
 
@@ -49,6 +58,10 @@ if (isset($this->gutesio_banner_interval)) {
 .banner-section .banner__footer-logo img{height:auto;width:auto}
 .banner-section .banner__footer-qrcode img{height:auto;width:auto}
 
+/* QR-Code Overlay für Video-Slides (wenn Footer auf Videos ausgeblendet wird) */
+.banner-section .banner__qrcode-overlay{position:absolute;right:8px;bottom:8px;z-index:24;background:rgba(0,0,0,var(--banner-overlay-opacity, .45));padding:6px;border-radius:6px}
+.banner-section .banner__qrcode-overlay img{display:block;height:auto;width:auto;max-height:18vh;max-width:28vw}
+
 /* Small ad label (Anzeige) for paid/sponsored content */
 .banner-section .banner__ad-label{
   position:absolute;top:8px;left:8px;z-index:20;
@@ -61,17 +74,39 @@ if (isset($this->gutesio_banner_interval)) {
   .banner-section .banner__ad-label{font-size:12px;padding:5px 8px;border-radius:5px}
 }
 
+/* Ensure media wrapper can position overlays */
+.banner-section .banner__image-wrapper{position:relative}
+
+/* Event badge for video slides (location, date time) */
+.banner-section .banner__event-badge{
+  position:absolute;left:8px;bottom:8px;z-index:22;
+  background: rgba(0,0,0,var(--banner-overlay-opacity, .45)); color:#fff;
+  font-family:'Maven Pro', sans-serif;font-weight:600;font-size:14px;line-height:1.2;
+  padding:6px 10px;border-radius:6px;
+  max-width:90%;
+  pointer-events:none; /* do not block links */
+}
+@media (max-width:420px){
+  .banner-section .banner__event-badge{font-size:12px;padding:5px 8px}
+}
+
 /* Overlay: position texts at the top and center horizontally */
 .banner-section .banner__text-wrapper{display:flex;align-items:flex-start;justify-content:center;padding-bottom:clamp(8px,3vh,48px);z-index:10}
 .banner-section .banner__text-wrapper .text-wrapper-inner{margin:8px auto clamp(10px,2.5vh,24px) auto;text-align:center}
 
 /* Readability overlay for showcase (element) slides: accent background under logo + texts */
 .banner-section .banner__text-wrapper.slide-element .text-wrapper-inner{
-  background: rgba(var(--banner-accent-rgb, 46,161,219), 0.70); /* darken for better contrast */
+  background: rgba(var(--banner-accent-rgb, 46,161,219), var(--banner-overlay-opacity, 0.70)); /* darken for better contrast */
   color:#fff;
   padding:12px 14px;
   border-radius:8px;
+  /* Overlay mittig und maximal 75% Breite auf größeren Screens */
   max-width: 92%;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (min-width: 640px){
+  .banner-section .banner__text-wrapper.slide-element .text-wrapper-inner{ max-width: 75%; }
 }
 .banner-section .banner__text-wrapper.slide-element .banner__headline,
 .banner-section .banner__text-wrapper.slide-element .banner__slogan-wrapper,
@@ -171,6 +206,16 @@ if (isset($this->gutesio_banner_interval)) {
   .banner-section .banner__image-wrapper.slide-offer img.banner__image-item{ object-position: left center; }
 }
 
+/* Bild-Fit-Strategie je nach Bildschirm-/Bild-Orientierung
+   - fit-cover: nur wenn Bild- und Bildschirmformat übereinstimmen
+   - fit-height: Portrait-Bild auf Landscape-Screen -> Höhe füllen, Breite ergibt sich (contain)
+   - fit-width:  Landscape-Bild auf Portrait-Screen -> Breite füllen, Höhe ergibt sich (contain)
+*/
+.banner-section .banner__image-wrapper img.banner__image-item{object-position:center center}
+.banner-section .banner__image-wrapper img.banner__image-item.fit-cover{width:100%;height:100%;object-fit:cover}
+.banner-section .banner__image-wrapper img.banner__image-item.fit-height{height:100%;width:auto;object-fit:contain}
+.banner-section .banner__image-wrapper img.banner__image-item.fit-width{width:100%;height:auto;object-fit:contain}
+
 /* Wide-screen footer alignment improvements (landscape only):
    keep contact+logo and QR on a single line and vertically centered.
    Important: scope to landscape so that large portrait screens keep the QR centered. */
@@ -187,11 +232,15 @@ if (isset($this->gutesio_banner_interval)) {
 
 /* Ensure powered-by bar uses the theme accent color */
 .banner-section .banner__footer-sub{ background-color: var(--banner-accent, #2ea1db); color: var(--banner-accent-contrast, #fff); }
+/* Hide footer/QR on video slides when toggled from module */
+.banner-section.video-hide-footer .banner__footer-pre,
+.banner-section.video-hide-footer .banner__footer-sub{ display:none !important; }
 </style>
 
 <?php $onlyImages = !empty($this->bannerOnlyImages); $isAutoSize = ($onlyImages && !$isFullscreen && !$customHeight); ?>
 <div id="banner-module-<?php echo $bannerId; ?>"
   class="banner-section<?php echo $isFullscreen ? ' is-fullscreen' : ''; ?><?php echo $this->bannerHidePoweredBy ? ' no-footer' : ''; ?><?php echo $mediaBgPortrait ? ' media-bg-portrait' : ''; ?><?php echo $isAutoSize ? ' auto-size' : ''; ?><?php echo !empty($this->bannerFooterAlignLeft) ? ' footer-align-left' : ''; ?><?php echo !empty($this->bannerShowAdLabel) ? ' has-ad-label' : ''; ?>"
+  data-overlay-opacity="<?php echo $__overlayOpacity !== '' ? htmlspecialchars($__overlayOpacity, ENT_QUOTES, 'UTF-8') : ''; ?>"
   data-theme-hex="<?php echo htmlspecialchars($this->bannerThemeColorHex ?? '#2ea1db', ENT_QUOTES, 'UTF-8'); ?>"
   data-theme-rgb="<?php echo htmlspecialchars($this->bannerThemeColorRgb ?? '46, 161, 219', ENT_QUOTES, 'UTF-8'); ?>"
   data-theme-contrast="<?php echo htmlspecialchars($this->bannerThemeContrastHex ?? '#ffffff', ENT_QUOTES, 'UTF-8'); ?>"
@@ -200,9 +249,13 @@ if (isset($this->gutesio_banner_interval)) {
   data-defer-assets="<?php echo $deferAssets ? '1' : '0'; ?>"
   data-poweredby-text="<?php echo htmlspecialchars($bannerPoweredByText ?: 'Powered by', ENT_QUOTES, 'UTF-8'); ?>"
   data-bg-portrait="<?php echo $mediaBgPortrait ? '1' : '0'; ?>"
+  data-bg-full="<?php echo !empty($this->bannerMediaBgFull) ? '1' : '0'; ?>"
   data-custom-h="<?php echo htmlspecialchars($customHeight, ENT_QUOTES, 'UTF-8'); ?>"
   data-custom-w="<?php echo htmlspecialchars($customWidth, ENT_QUOTES, 'UTF-8'); ?>"
-  data-only-images="<?php echo $onlyImages ? '1' : '0'; ?>">
+  data-only-images="<?php echo $onlyImages ? '1' : '0'; ?>"
+  data-video-timeout="<?php echo (int)$videoTimeout; ?>"
+  data-muted-default="<?php echo !empty($this->bannerMuteVideos) ? '1' : '0'; ?>"
+  data-hide-footer-on-videos="<?php echo !empty($this->bannerHideFooterOnVideos) ? '1' : '0'; ?>">
     <?php if (!empty($this->bannerShowAdLabel)): ?>
       <div class="banner__ad-label" aria-label="Anzeige">Anzeige</div>
     <?php endif; ?>
@@ -276,17 +329,83 @@ if (isset($this->gutesio_banner_interval)) {
                 } elseif ($isEvent) {
                     echo 'slide-offer';
                 } else {
-                    echo $this->bannerHidePoweredBy ? 'slide-element' : 'slide-offer';
+                    echo !empty($this->bannerMediaBgFull) ? 'slide-element' : ($this->bannerHidePoweredBy ? 'slide-element' : 'slide-offer');
                 }
             ?>">
-                <?php if ($isVideo && $video): ?>
-                  <?php if ($lazyMode === '1' || $lazyMode === '2'): ?>
-                    <video class="banner__video-item" data-src="<?php echo $video; ?>" muted loop playsinline preload="none"></video>
+                <?php
+                  $isYoutube = !empty($slide['youtube']['src']);
+                ?>
+                <?php if ($isYoutube): ?>
+                  <?php
+                    // YT-URL um origin ergänzen, um Policy-/Cookie-Seiteneffekte zu vermeiden
+                    $ytSrc = $slide['youtube']['src'];
+                    $origin = (isset($_SERVER['HTTP_HOST']) ? ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https://' : 'http://') . $_SERVER['HTTP_HOST'] : '');
+                    if ($origin) {
+                      $encOrigin = rawurlencode($origin);
+                      if (strpos($ytSrc, 'origin=') === false) {
+                        $ytSrc .= (strpos($ytSrc, '?') === false ? '?' : '&') . 'origin=' . $encOrigin;
+                      }
+                    }
+                  ?>
+                  <!-- Fix: bei initialem Slide src setzen, bei Lazy erst data-src; so stellt der erste Slide sicher, dass ein Video tatsächlich geladen wird. -->
+                  <?php if ($___idx === 0 && ($lazyMode === '1' || $lazyMode === '2')): ?>
+                    <iframe class="banner__video-item banner__youtube-item" src="<?php echo $ytSrc; ?>" title="YouTube video" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
                   <?php else: ?>
-                    <video class="banner__video-item" src="<?php echo $video; ?>" muted autoplay loop playsinline preload="auto"></video>
+                    <iframe class="banner__video-item banner__youtube-item" data-src="<?php echo $ytSrc; ?>" title="YouTube video" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
                   <?php endif; ?>
                   <?php if ($href): ?>
                     <?php echo '<a class="banner__cover-link" href="' . $href . '" aria-label="' . htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8') . '"' . $__linkAttrs . '></a>'; ?>
+                  <?php endif; ?>
+                  <?php // Wenn Footer bei Videos ausgeblendet wird, QR als Overlay einblenden ?>
+                  <?php if (!empty($this->bannerHideFooterOnVideos) && !empty($qrcode)): ?>
+                    <div class="banner__qrcode-overlay">
+                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code">
+                    </div>
+                  <?php endif; ?>
+                  <?php if (!empty($this->bannerShowEventOverlay) && $isEvent): ?>
+                    <?php
+                      $badgeParts = [];
+                      if (!empty($slide['location'])) { $badgeParts[] = $slide['location']; }
+                      if (!empty($slide['dateTime'])) { $badgeParts[] = $slide['dateTime']; }
+                      $badgeText = implode(', ', $badgeParts);
+                    ?>
+                    <?php if (!empty($badgeText)): ?>
+                      <div class="banner__event-badge"><?php echo htmlspecialchars($badgeText, ENT_QUOTES, 'UTF-8'); ?></div>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                <?php elseif ($isVideo && $video): ?>
+                  <?php if ($lazyMode === '1' || $lazyMode === '2'): ?>
+                    <?php if (!empty($this->bannerMuteVideos)): ?>
+                      <video class="banner__video-item" data-src="<?php echo $video; ?>" muted autoplay loop playsinline preload="none"></video>
+                    <?php else: ?>
+                      <video class="banner__video-item" data-src="<?php echo $video; ?>" autoplay loop playsinline preload="none"></video>
+                    <?php endif; ?>
+                  <?php else: ?>
+                    <?php if (!empty($this->bannerMuteVideos)): ?>
+                      <video class="banner__video-item" src="<?php echo $video; ?>" muted autoplay loop playsinline preload="metadata"></video>
+                    <?php else: ?>
+                      <video class="banner__video-item" src="<?php echo $video; ?>" autoplay loop playsinline preload="metadata"></video>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                  <?php if ($href): ?>
+                    <?php echo '<a class="banner__cover-link" href="' . $href . '" aria-label="' . htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8') . '"' . $__linkAttrs . '></a>'; ?>
+                  <?php endif; ?>
+                  <?php // Wenn Footer bei Videos ausgeblendet wird, QR als Overlay einblenden ?>
+                  <?php if (!empty($this->bannerHideFooterOnVideos) && !empty($qrcode)): ?>
+                    <div class="banner__qrcode-overlay">
+                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code">
+                    </div>
+                  <?php endif; ?>
+                  <?php if (!empty($this->bannerShowEventOverlay) && $isEvent): ?>
+                    <?php
+                      $badgeParts = [];
+                      if (!empty($slide['location'])) { $badgeParts[] = $slide['location']; }
+                      if (!empty($slide['dateTime'])) { $badgeParts[] = $slide['dateTime']; }
+                      $badgeText = implode(', ', $badgeParts);
+                    ?>
+                    <?php if (!empty($badgeText)): ?>
+                      <div class="banner__event-badge"><?php echo htmlspecialchars($badgeText, ENT_QUOTES, 'UTF-8'); ?></div>
+                    <?php endif; ?>
                   <?php endif; ?>
                 <?php else: ?>
                   <?php
@@ -388,7 +507,7 @@ if (isset($this->gutesio_banner_interval)) {
   var root = document.getElementById('banner-module-<?php echo $bannerId; ?>');
   if (!root) { return; }
   try {
-    var hex = root.getAttribute('data-theme-hex') || '#2ea1db';
+    var hex = root.getAttribute('data-theme-hex') || '#083c8a';
     var rgb = root.getAttribute('data-theme-rgb') || '46, 161, 219';
     var contrast = root.getAttribute('data-theme-contrast') || '#ffffff';
     root.style.setProperty('--banner-accent', hex);
@@ -397,6 +516,13 @@ if (isset($this->gutesio_banner_interval)) {
   } catch(e) {}
   var container = root.querySelector('.banner-slide');
   if (!container) { return; }
+  // Apply overlay opacity from data attribute if present
+  try {
+    var ov = root.getAttribute('data-overlay-opacity');
+    if (ov && ov !== '') {
+      root.style.setProperty('--banner-overlay-opacity', ov);
+    }
+  } catch(e) {}
 
   // Neutralize vertical paddings from Contao module wrappers to avoid extra space above/below the banner
   try {
@@ -551,6 +677,52 @@ if (isset($this->gutesio_banner_interval)) {
         v.style.objectFit = 'cover';
       }
     });
+  }
+
+  // Bild-Fit-Strategie abhängig von Bild- und Bildschirm-Orientation
+  // setzt je Bild eine der Klassen: fit-cover | fit-height | fit-width
+  function applyImageFitMode(scope){
+    var ctx = scope || root;
+    try {
+      var rect = root.getBoundingClientRect();
+      var screenPortrait = rect.height >= rect.width;
+      var imgs = ctx.querySelectorAll('img.banner__image-item');
+      if (!imgs.length) return;
+
+      var decide = function(img){
+        try {
+          var nw = img.naturalWidth || 0;
+          var nh = img.naturalHeight || 0;
+          if (!nw || !nh) return; // warten bis geladen
+          var imgPortrait = nh > nw;
+          // Klassen zurücksetzen
+          img.classList.remove('fit-cover','fit-height','fit-width');
+          if (imgPortrait === screenPortrait) {
+            img.classList.add('fit-cover');
+          } else if (imgPortrait && !screenPortrait) {
+            // Portrait-Bild auf Landscape-Screen -> Höhe füllen
+            img.classList.add('fit-height');
+          } else if (!imgPortrait && screenPortrait) {
+            // Landscape-Bild auf Portrait-Screen -> Breite füllen
+            img.classList.add('fit-width');
+          } else {
+            // Fallback: cover
+            img.classList.add('fit-cover');
+          }
+        } catch(e){}
+      };
+
+      imgs.forEach(function(img){
+        if (img.naturalWidth && img.naturalHeight) {
+          decide(img);
+        } else {
+          img.addEventListener('load', function handler(){
+            img.removeEventListener('load', handler);
+            decide(img);
+          });
+        }
+      });
+    } catch(e){}
   }
 
   function getSlideWrapperClass(type){
@@ -737,6 +909,7 @@ if (isset($this->gutesio_banner_interval)) {
     applyCustomSize(container);
     // After hydrating, check media orientation for new slides
     markPortraitMedia(container);
+    applyImageFitMode(container);
     // In auto-size mode, update slider height after images are appended
     if (isAutoSize && window.__gutesBanner && window.__gutesBanner['<?php echo $bannerId; ?>']) {
       var slider = window.__gutesBanner['<?php echo $bannerId; ?>'];
@@ -763,19 +936,14 @@ if (isset($this->gutesio_banner_interval)) {
       // In auto-size mode, remove fixed heights before initializing slider
       applyAutoSizeStyles();
 
-      // Swap lazy media now that items exist
+      // Swap lazy media now that items exist (only images/HTML5 videos). YouTube iframes werden bewusst NICHT vorab mit src befüllt,
+      // damit Autoplay erst auf der aktiven Slide greift.
       if (lazyMode === '1' || lazyMode === '2') { swapLazyMedia(); }
       // Evaluate orientation for already available media (non-lazy first slide or eager images)
       markPortraitMedia(root);
-      // Ensure videos have proper fit and attempt autoplay for non-lazy videos, too
+      applyImageFitMode(root);
+      // Ensure videos have proper fit
       applyVideoFitMode(root);
-      root.querySelectorAll('video.banner__video-item').forEach(function(v){
-        try {
-          // make sure attributes are present
-          v.muted = true; v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('autoplay','');
-          var p = v.play(); if (p && typeof p.then === 'function') { p.catch(function(){}); }
-        } catch(e) {}
-      });
 
       window.__gutesBanner = window.__gutesBanner || {};
       var slider = tns({
@@ -793,6 +961,7 @@ if (isset($this->gutesio_banner_interval)) {
         autoHeight: isAutoSize
       });
       window.__gutesBanner['<?php echo $bannerId; ?>'] = slider;
+      attachVideoTiming(slider);
       if (isAutoSize) {
         // Update height once images are definitely loaded
         var upd = function(){ try { slider.updateSliderHeight(); } catch(e){} };
@@ -814,6 +983,7 @@ if (isset($this->gutesio_banner_interval)) {
     if (lazyMode === '2') { hydrateDeferred(); }
     if (isAutoSize) { applyAutoSizeStyles(); }
     applyVideoFitMode();
+    applyImageFitMode();
     if (deferAssets) {
       ensureTinySlider(initSlider);
     } else {
@@ -832,6 +1002,310 @@ if (isset($this->gutesio_banner_interval)) {
     } else {
       onEnter();
     }
+  }
+
+  // ----- Video timing control (HTML5 + YouTube) -----
+  var YT_READY = false, YT_PENDING_CB = [];
+  function ensureYouTubeApi(cb){
+    if (typeof YT !== 'undefined' && YT && typeof YT.Player === 'function') { cb(); return; }
+    YT_PENDING_CB.push(cb);
+    if (YT_READY) return;
+    YT_READY = true;
+    var s = document.createElement('script');
+    s.src = 'https://www.youtube.com/iframe_api';
+    document.head.appendChild(s);
+    window.onYouTubeIframeAPIReady = function(){
+      var cbs = YT_PENDING_CB.slice(); YT_PENDING_CB.length = 0;
+      cbs.forEach(function(fn){ try{ fn(); }catch(e){} });
+    };
+  }
+
+  function attachVideoTiming(slider){
+    var rootEl = root;
+    var timeoutSec = parseInt(rootEl.getAttribute('data-video-timeout')||'180', 10);
+    if (isNaN(timeoutSec)) timeoutSec = 180;
+    var currentTimer = null;
+    var ytPlayers = {}; // index -> player
+    var readyPlayers = {}; // index -> boolean
+    var ytUnmuteTried = {}; // index -> bool (einmaliger Unmute-Versuch, wenn Modul-Mute aus)
+    var ytStartRetried = {}; // index -> bool (einmaliger Start-Retry bei UNSTARTED/PAUSED)
+
+    function clearTimer(){ if (currentTimer){ clearTimeout(currentTimer); currentTimer = null; } }
+    function nextSlide(){ try { slider.goTo('next'); } catch(e){} }
+    function pause(){ try { slider.pause(); } catch(e){} }
+    function play(){ try { slider.play(); } catch(e){} }
+
+    function handleHtml5Video(vid){
+      if (!vid) return;
+      try {
+        // Respect module mute default; if autoplay with sound is blocked, we already fallback in initSlider
+        var defaultMute = rootEl.getAttribute('data-muted-default') === '1';
+        if (defaultMute) { vid.muted = true; vid.setAttribute('muted',''); }
+        else { vid.muted = false; vid.removeAttribute('muted'); try{ vid.volume = 1.0; }catch(e){} }
+        vid.setAttribute('playsinline','');
+        var src = vid.getAttribute('src');
+        if (!src && vid.getAttribute('data-src')) { vid.setAttribute('src', vid.getAttribute('data-src')); }
+        var startLogic = function(){
+          var dur = (typeof vid.duration === 'number' && isFinite(vid.duration) && vid.duration>0) ? vid.duration : null;
+          var cap = (timeoutSec>0) ? timeoutSec : (dur ? Math.ceil(dur) : 180);
+          var ms = (dur ? Math.min(dur, cap) : cap) * 1000;
+          clearTimer(); currentTimer = setTimeout(function(){ play(); nextSlide(); }, ms);
+          try {
+            var p = vid.play();
+            if (p && p.then) {
+              p.catch(function(){
+                // Policy-Block: einmalig stumm schalten und erneut starten
+                if (!defaultMute) { try { vid.muted = true; vid.setAttribute('muted',''); vid.play(); } catch(e){} }
+              });
+            }
+          } catch(e){}
+          // Nach kurzem Delay erneut sicher entstummen, falls Mute-Flag aus ist (Race-Condition Guard)
+          if (!defaultMute) {
+            setTimeout(function(){
+              try { vid.muted = false; vid.removeAttribute('muted'); vid.volume = 1.0; } catch(e){}
+            }, 250);
+          }
+        };
+        // Immer auf loadedmetadata warten, um Play-Button-Erscheinungen zu vermeiden
+        var onMeta = function(){ try{ vid.removeEventListener('loadedmetadata', onMeta);}catch(e){} startLogic(); };
+        vid.addEventListener('loadedmetadata', onMeta);
+        // Falls Metadaten bereits vorhanden, sofort starten
+        if (!isNaN(vid.duration) && isFinite(vid.duration) && vid.duration>0){
+          startLogic();
+        }
+      } catch(e){}
+    }
+
+    function ensureOriginParamOnIframe(iframe){
+      try {
+        var src = iframe.getAttribute('src') || iframe.getAttribute('data-src') || '';
+        if (!src) return;
+        var hasOrigin = src.indexOf('origin=') !== -1;
+        if (!hasOrigin) {
+          var loc = window.location;
+          var origin = loc.origin || (loc.protocol + '//' + loc.host);
+          var sep = src.indexOf('?') === -1 ? '?' : '&';
+          var newSrc = src + sep + 'origin=' + encodeURIComponent(origin);
+          if (iframe.getAttribute('src')) iframe.setAttribute('src', newSrc);
+          else iframe.setAttribute('data-src', newSrc);
+        }
+      } catch(e){}
+    }
+
+    function isYTPlaying(p){
+      try { return p && typeof p.getPlayerState === 'function' && p.getPlayerState() === YT.PlayerState.PLAYING; } catch(e){ return false; }
+    }
+
+    // Startet den Player stabil: immer erst stumm (Autoplay-Policy), danach – wenn Modul-Mute aus – einmalig entstummen
+    function startYTWithRetry(p, defaultMute){
+      try {
+        if (!p) return;
+        // Immer zuerst muted starten, um Autoplay sicher zu erreichen
+        if (p.mute) p.mute();
+        if (p.playVideo) p.playVideo();
+        // Wenn Modul-Mute AUS: kurzer Versuch, nach Start zu entstummen
+        if (!defaultMute) {
+          setTimeout(function(){
+            try {
+              if (isYTPlaying(p)) {
+                p.unMute && p.unMute();
+                p.setVolume && p.setVolume(100);
+              }
+            } catch(e){}
+          }, 350);
+        }
+      } catch(e){}
+    }
+
+    function handleYouTubeIframe(iframe, index){
+      // ensure src is set from data-src just-in-time (prevents off-screen playback)
+      try {
+        ensureOriginParamOnIframe(iframe);
+        if (!iframe.getAttribute('src')) {
+          var ds = iframe.getAttribute('data-src');
+          if (ds) iframe.setAttribute('src', ds);
+        }
+      } catch(e){}
+      ensureYouTubeApi(function(){
+        try {
+          // Falls bereits ein Player für diesen Index existiert, wiederverwenden
+          if (ytPlayers[index]) {
+            try {
+              var p0 = ytPlayers[index];
+              var defaultMute = rootEl.getAttribute('data-muted-default') === '1';
+              startYTWithRetry(p0, defaultMute);
+            } catch(e){}
+            // Dauer neu auslesen und Timer setzen
+            var dur0 = 0; try{ dur0 = ytPlayers[index].getDuration() || 0; }catch(e){ dur0 = 0; }
+            var cap0 = (timeoutSec>0) ? timeoutSec : (dur0>0 ? Math.ceil(dur0) : 180);
+            var ms0 = (dur0>0 ? Math.min(dur0, cap0) : cap0) * 1000;
+            clearTimer(); currentTimer = setTimeout(function(){ play(); nextSlide(); }, ms0);
+            return;
+          }
+          var player = new YT.Player(iframe, {
+            events: {
+              'onReady': function(ev){
+                try {
+                  var defaultMute = rootEl.getAttribute('data-muted-default') === '1';
+                  startYTWithRetry(ev.target, defaultMute);
+                  readyPlayers[index] = true;
+                } catch(e){}
+                var dur = 0;
+                try { dur = ev.target.getDuration() || 0; } catch(e) { dur = 0; }
+                var cap = (timeoutSec>0) ? timeoutSec : (dur>0 ? Math.ceil(dur) : 180);
+                var ms = (dur>0 ? Math.min(dur, cap) : cap) * 1000;
+                clearTimer(); currentTimer = setTimeout(function(){ play(); nextSlide(); }, ms);
+              },
+              'onStateChange': function(e){
+                if (e.data === YT.PlayerState.ENDED) { clearTimer(); play(); nextSlide(); }
+                // Einmalig nach erfolgreichem Start entstummen, falls Modul-Mute AUS
+                if (e.data === YT.PlayerState.PLAYING) {
+                  try {
+                    var defaultMute = rootEl.getAttribute('data-muted-default') === '1';
+                    if (!defaultMute && !ytUnmuteTried[index]) {
+                      ytUnmuteTried[index] = true;
+                      setTimeout(function(){
+                        try { e.target.unMute && e.target.unMute(); e.target.setVolume && e.target.setVolume(100); } catch(err){}
+                      }, 250);
+                    }
+                  } catch(err){}
+                }
+                // Bei UNSTARTED/PAUSED nur einen sanften Start-Retry, ohne ständiges toggeln
+                if (e.data === YT.PlayerState.UNSTARTED || e.data === YT.PlayerState.PAUSED) {
+                  if (!ytStartRetried[index]) {
+                    ytStartRetried[index] = true;
+                    try { e.target.playVideo && e.target.playVideo(); } catch(err){}
+                  }
+                }
+              }
+            }
+          });
+          ytPlayers[index] = player;
+        } catch(e){}
+      });
+    }
+
+    function stopNonActive(idx){
+      // pause HTML5 videos that are not in the active slide
+      try {
+        var allVideos = container.querySelectorAll('video.banner__video-item');
+        allVideos.forEach(function(v){
+          var parent = v.closest('.banner__item');
+          var parentIndex = Array.prototype.indexOf.call(container.children, parent);
+          if (parentIndex !== idx) {
+            try {
+              // Nur pausieren und auf Anfang setzen; Mute-Status nicht dauerhaft überschreiben
+              v.pause();
+              try { v.currentTime = 0; } catch(e){}
+            } catch(e){}
+          }
+        });
+      } catch(e){}
+      // pause YT players that are not active
+      try {
+        Object.keys(ytPlayers).forEach(function(k){
+          var i = parseInt(k,10);
+          if (i !== idx) {
+            var p = ytPlayers[k];
+            try {
+              if (p && p.stopVideo) { p.stopVideo(); }
+              else if (p && p.pauseVideo) { p.pauseVideo(); }
+              if (p && p.mute) { p.mute(); }
+            } catch(e){}
+          }
+        });
+      } catch(e){}
+      // Hinweis: Quellen von nicht aktiven Medien NICHT entladen, um eine zuverlässige Re-Initialisierung zu sichern.
+    }
+
+    function toggleFooterForSlide(hasVideo){
+      try {
+        var shouldHide = rootEl.getAttribute('data-hide-footer-on-videos') === '1';
+        if (shouldHide) {
+          if (hasVideo) { rootEl.classList.add('video-hide-footer'); }
+          else { rootEl.classList.remove('video-hide-footer'); }
+        }
+      } catch(e){}
+    }
+
+    function onSlideChanged(){
+      try {
+        clearTimer();
+        var info = slider.getInfo ? slider.getInfo() : null;
+        var idx = info ? info.index : 0;
+        var slide = container && container.children ? container.children[idx] : null;
+        if (!slide) { play(); return; }
+        // find media
+        var yti = slide.querySelector('iframe.banner__youtube-item');
+        var vid = yti ? null : slide.querySelector('video.banner__video-item');
+        // stop all non-active media FIRST
+        stopNonActive(idx);
+        // pause slider autoplay if a video is present and ensure its source is ready before starting
+        if (yti || vid) {
+          pause();
+          // ensure sources for active media are present (we might have unloaded them on previous slide)
+          try {
+            if (vid) {
+              if (!vid.getAttribute('src') && vid.getAttribute('data-src')) {
+                vid.setAttribute('src', vid.getAttribute('data-src'));
+              }
+            }
+            if (yti) {
+              if (!yti.getAttribute('src') && yti.getAttribute('data-src')) {
+                yti.setAttribute('src', yti.getAttribute('data-src'));
+              }
+              ensureOriginParamOnIframe(yti);
+            }
+          } catch(e){}
+        } else {
+          toggleFooterForSlide(false);
+        }
+        if (vid) { toggleFooterForSlide(true);
+          // QR-Overlay sicherstellen, falls Footer versteckt ist und QR vorhanden
+          try{
+            var hasHide = rootEl.getAttribute('data-hide-footer-on-videos') === '1';
+            if (hasHide) {
+              // nichts weiter nötig, Overlay wird serverseitig gerendert, hier nur Sichtbarkeit
+            }
+          }catch(e){}
+          // kleinen Jitter, um gleichförmige Startmuster zu vermeiden
+          var jitter = 100 + Math.floor(Math.random()*200);
+          setTimeout(function(){ handleHtml5Video(vid); }, jitter);
+          return; }
+        if (yti) { toggleFooterForSlide(true);
+          try{
+            var hasHide2 = rootEl.getAttribute('data-hide-footer-on-videos') === '1';
+            if (hasHide2) {
+              // Overlay-QR ist bereits im Markup vorhanden
+            }
+          }catch(e){}
+          // Falls Player bereits ready und pausiert, direkt fortsetzen; sonst normal initialisieren
+          if (readyPlayers[idx] && ytPlayers[idx] && typeof ytPlayers[idx].playVideo === 'function') {
+            try {
+              var defaultMute3 = rootEl.getAttribute('data-muted-default') === '1';
+              if (defaultMute3 && ytPlayers[idx].mute) ytPlayers[idx].mute(); else if (ytPlayers[idx].unMute) { ytPlayers[idx].unMute(); if (ytPlayers[idx].setVolume) ytPlayers[idx].setVolume(100); }
+              // kleinen Jitter vor dem Start, um Bot-Heuristiken zu vermeiden
+              var jitter2 = 100 + Math.floor(Math.random()*200);
+              setTimeout(function(){ try{ ytPlayers[idx].playVideo(); }catch(e){} }, jitter2);
+              var durp = 0; try { durp = ytPlayers[idx].getDuration() || 0; } catch(e) { durp = 0; }
+              var capp = (timeoutSec>0) ? timeoutSec : (durp>0 ? Math.ceil(durp) : 180);
+              var msp = (durp>0 ? Math.min(durp, capp) : capp) * 1000;
+              clearTimer(); currentTimer = setTimeout(function(){ play(); nextSlide(); }, msp);
+            } catch(e){}
+          } else {
+            // auch hier einen kurzen Jitter vor der Initialisierung
+            var jitter3 = 100 + Math.floor(Math.random()*200);
+            setTimeout(function(){ handleYouTubeIframe(yti, idx); }, jitter3);
+          }
+          return; }
+        // not a video: normal autoplay resumes
+        toggleFooterForSlide(false); play();
+      } catch(e){}
+    }
+
+    // initial attach and on change
+    try { onSlideChanged(); } catch(e){}
+    try { slider.events.on('indexChanged', onSlideChanged); } catch(e){}
   }
 
   // --- Portrait media handling on small/mobile portrait screens ---

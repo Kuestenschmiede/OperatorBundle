@@ -76,6 +76,8 @@ class BannerModuleController extends AbstractFrontendModuleController
         $db = Database::getInstance();
         $mode = $model->gutesio_data_mode;
         $qrForImages = ($model->gutesio_banner_qr_for_images === '1' || $model->gutesio_banner_qr_for_images === 1);
+        $playVideos  = ($model->gutesio_banner_play_videos === '1' || $model->gutesio_banner_play_videos === 1);
+        $muteVideos  = ($model->gutesio_banner_mute_videos === '1' || $model->gutesio_banner_mute_videos === 1);
         $strictImages = ($model->gutesio_banner_strict_images === '1' || $model->gutesio_banner_strict_images === 1);
         $arrReturn = [];
         switch ($mode) {
@@ -159,15 +161,16 @@ class BannerModuleController extends AbstractFrontendModuleController
         foreach ($arrElements as $element) {
             $arrReturn = $this->getSlidesForElement($element, $arrReturn);
         }
-        // additionally mix in images from selected folder(s) (tl_files) if configured
+        // additionally mix in media from selected folder(s) (tl_files) if configured
         try {
             $skipUnlinked = ($model->gutesio_banner_skip_unlinked === '1' || $model->gutesio_banner_skip_unlinked === 1);
             $folderUuids = StringUtil::deserialize($model->gutesio_banner_folder, true);
             if (!empty($folderUuids)) {
                 $objFolders = FilesModel::findMultipleByUuids($folderUuids);
                 if ($objFolders) {
-                    // Allow both images and videos from folders
-                    $extensions = ['jpg','jpeg','png','gif','webp','bmp','tiff','svg','mp4'];
+                    // Allow images always; allow videos only if flag is set
+                    $extensions = ['jpg','jpeg','png','gif','webp','bmp','tiff','svg'];
+                    if ($playVideos) { $extensions[] = 'mp4'; }
                     $placeholders = rtrim(str_repeat('?,', count($extensions)), ',');
                     $lang = $GLOBALS['TL_LANGUAGE'] ?? 'de';
                     $seen = [];
@@ -197,6 +200,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                             $srcPath = '/' . ltrim($file['path'], '/');
                             $ext = strtolower((string)($file['extension'] ?? pathinfo($file['path'], PATHINFO_EXTENSION)));
                             if ($ext === 'mp4') {
+                                if (!$playVideos) { continue; }
                                 // Build a video slide (no overlay, behaves like image)
                                 $arrReturn[] = [
                                     'type'  => 'video',
@@ -289,6 +293,19 @@ class BannerModuleController extends AbstractFrontendModuleController
         $contrastHex = ($L > 0.5) ? '#000000' : '#ffffff';
         $template->bannerThemeContrastHex = $contrastHex;
 
+        // Optional: Overlay-Transparenz (0–100 %) -> in 0..1 normiert als CSS-Variable im Template
+        try {
+            $op = (int) ($model->gutesio_banner_overlay_opacity ?? 0);
+            if ($op < 0) { $op = 0; }
+            if ($op > 100) { $op = 100; }
+            if ($op > 0) {
+                // auf zwei Nachkommastellen runden, als String ausgeben (z. B. "0.7")
+                $template->bannerOverlayOpacity = rtrim(rtrim(number_format($op / 100, 2, '.', ''), '0'), '.');
+            }
+        } catch (\Throwable $t) {
+            // Ignorieren – Template nutzt Default-Fallbacks
+        }
+
         $template->loadlazy = $model->lazyBanner === "1";
         $template->reloadBanner = $model->reloadBanner === "1";
         // New options for rendering/behavior
@@ -296,12 +313,18 @@ class BannerModuleController extends AbstractFrontendModuleController
         $template->bannerPoweredByText = $model->gutesio_banner_poweredby_text ?: 'Powered by';
         $template->bannerFullscreen = ($model->gutesio_banner_fullscreen === '1' || $model->gutesio_banner_fullscreen === 1);
         $template->bannerMediaBgPortrait = ($model->gutesio_banner_media_bg_portrait === '1' || $model->gutesio_banner_media_bg_portrait === 1);
+        // Neuer globaler Schalter: Bilder vollflächig im Hintergrund (Default aktiv)
+        $template->bannerMediaBgFull = ($model->gutesio_banner_media_bg_full === '1' || $model->gutesio_banner_media_bg_full === 1);
         // Footer alignment option (left align contact + logo)
         $template->bannerFooterAlignLeft = ($model->gutesio_banner_footer_align_left === '1' || $model->gutesio_banner_footer_align_left === 1);
         // Optional ad label ("Anzeige") toggle
         $template->bannerShowAdLabel = ($model->gutesio_banner_show_ad_label === '1' || $model->gutesio_banner_show_ad_label === 1);
         // Open links in new tab option
         $template->bannerLinksNewTab = ($model->gutesio_banner_links_new_tab === '1' || $model->gutesio_banner_links_new_tab === 1);
+        // Optional overlay on event video slides (location + date/time)
+        $template->bannerShowEventOverlay = ($model->gutesio_banner_show_event_overlay === '1' || $model->gutesio_banner_show_event_overlay === 1);
+        // Hide footer on video slides
+        $template->bannerHideFooterOnVideos = ($model->gutesio_banner_hide_footer_on_videos === '1' || $model->gutesio_banner_hide_footer_on_videos === 1);
 
         // Compute optional custom viewport size (height/width) for the banner
         // Ignore custom values when fullscreen is enabled
@@ -331,6 +354,18 @@ class BannerModuleController extends AbstractFrontendModuleController
         }
         $template->bannerCustomHeight = $heightCss;
         $template->bannerCustomWidth = $widthCss;
+        // expose mute flag for template rendering of HTML5 <video> and YouTube iframes
+        $template->bannerMuteVideos = $muteVideos;
+        // Video timeout (seconds): if > 0, a video may run at most this duration; 0 means full length
+        try {
+            $vt = (int) ($model->gutesio_banner_video_timeout ?? 180);
+            if ($vt < 0) { $vt = 0; }
+            // Clamp to sane bounds (min 5s when non-zero, max 3600s)
+            if ($vt !== 0) { $vt = max(5, min(3600, $vt)); }
+            $template->bannerVideoTimeout = $vt;
+        } catch (\Throwable $t) {
+            $template->bannerVideoTimeout = 180;
+        }
         $response = $template->getResponse();
 
         return $response;
@@ -474,6 +509,24 @@ class BannerModuleController extends AbstractFrontendModuleController
         return $arrReturn;
 
     }
+
+    /**
+     * Extract YouTube video ID from common URL formats.
+     */
+    private function extractYouTubeId(string $url): ?string
+    {
+        $u = trim($url);
+        if ($u === '') { return null; }
+        // youtu.be/<id>
+        if (preg_match('~youtu\.be/([A-Za-z0-9_-]{6,})~', $u, $m)) { return $m[1]; }
+        // youtube.com/watch?v=<id>
+        if (preg_match('~v=([A-Za-z0-9_-]{6,})~', $u, $m)) { return $m[1]; }
+        // youtube.com/embed/<id>
+        if (preg_match('~/embed/([A-Za-z0-9_-]{6,})~', $u, $m)) { return $m[1]; }
+        // shorts/<id>
+        if (preg_match('~/shorts/([A-Za-z0-9_-]{6,})~', $u, $m)) { return $m[1]; }
+        return null;
+    }
     /**
      * get the slides for the element and its children
      * @param array $child
@@ -552,37 +605,94 @@ class BannerModuleController extends AbstractFrontendModuleController
         $contactRaw = html_entity_decode((string)($element['name'] ?? ''), ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $safeContact = strip_tags($contactRaw);
 
-        // In strict mode, skip child slide if image is missing
+        // Bild-Slide nur erstellen, wenn ein valides Bild vorhanden ist. Videos sollen unabhängig davon angezeigt werden.
+        $canAddImageSlide = true;
         if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1) && empty($offerSrc)) {
-            return $arrReturn;
+            $canAddImageSlide = false; // in Strict-Mode keine Bild-Slide ohne lokales/valides Bild
         }
-        if ($offerSrc && strpos($offerSrc, '/default/')) {
-            return $arrReturn; //remove events with default images
+        if ($offerSrc && strpos($offerSrc, '/default/') !== false) {
+            $canAddImageSlide = false; // Default-Platzhalter nicht als Bild-Slide anzeigen
         }
         $detailPage = $type['type'] . "DetailPage";
         $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($child['uuid'],'{}');
 
-        $singleEle = [
-            'type'  => "event",
-            'image' => [
-                'src' =>    $offerSrc,
-                'alt' =>    $safeChildName
-            ],
-            'dateTime' => $termin,
-            'location' => $location,
-            'title' => $safeChildName,
-            'slogan' => $safeShort,
-            'href' => $detailRoute,
-            'contact' => $safeContact,
-            'qrcode' => base64_encode($this->generateQrCode($detailRoute))
-        ];
-        if ($logoSrc) {
-            $singleEle['logo'] = [
-                'src' => $logoSrc,
-                'alt' => $element['name']
+        if ($canAddImageSlide) {
+            $singleEle = [
+                'type'  => "event",
+                'image' => [
+                    'src' =>    $offerSrc,
+                    'alt' =>    $safeChildName
+                ],
+                'dateTime' => $termin,
+                'location' => $location,
+                'title' => $safeChildName,
+                'slogan' => $safeShort,
+                'href' => $detailRoute,
+                'contact' => $safeContact,
+                'qrcode' => base64_encode($this->generateQrCode($detailRoute))
             ];
+            if ($logoSrc) {
+                $singleEle['logo'] = [
+                    'src' => $logoSrc,
+                    'alt' => $element['name']
+                ];
+            }
+            $arrReturn[] = $singleEle;
         }
-        $arrReturn[] = $singleEle;
+
+        // Zusätzliches Video-Slide für Kinder mit VideoLink (MP4/YouTube), wenn im Modul aktiviert
+        try {
+            $playVideos  = ($this->model->gutesio_banner_play_videos === '1' || $this->model->gutesio_banner_play_videos === 1);
+        } catch (\Throwable $t) { $playVideos = false; }
+        if ($playVideos) {
+            $videoLink = trim((string)($child['videoLink'] ?? ''));
+            $videoType = strtolower(trim((string)($child['videoType'] ?? '')));
+            if ($videoLink !== '') {
+                $urlPath = parse_url($videoLink, PHP_URL_PATH) ?: '';
+                $isMp4 = is_string($urlPath) && (strtolower(pathinfo($urlPath, PATHINFO_EXTENSION)) === 'mp4');
+                if ($videoType === 'mp4' || $isMp4) {
+                    $videoSlide = [
+                        'type'  => 'event',
+                        'video' => [ 'src' => $videoLink ],
+                        'dateTime' => $termin,
+                        'location' => $location,
+                        'title' => $safeChildName,
+                        'slogan' => $safeShort,
+                        'href' => $detailRoute,
+                        'contact' => $safeContact,
+                        // QR-Code für Videos hinzufügen (Detailseite)
+                        'qrcode' => base64_encode($this->generateQrCode($detailRoute)),
+                    ];
+                    if ($logoSrc) {
+                        $videoSlide['logo'] = [ 'src' => $logoSrc, 'alt' => $element['name'] ];
+                    }
+                    $arrReturn[] = $videoSlide;
+                } elseif ($videoType === 'youtube' || stripos($videoLink, 'youtube') !== false || stripos($videoLink, 'youtu.be') !== false) {
+                    $ytId = $this->extractYouTubeId($videoLink);
+                    if ($ytId) {
+                        $mute = ($this->model->gutesio_banner_mute_videos === '1' || $this->model->gutesio_banner_mute_videos === 1) ? '1' : '0';
+                        $ytSrc = sprintf('https://www.youtube-nocookie.com/embed/%s?autoplay=1&mute=%s&playsinline=1&loop=1&playlist=%s&controls=0&modestbranding=1&rel=0&enablejsapi=1', $ytId, $mute, $ytId);
+                        $ytSlide = [
+                            'type'    => 'event',
+                            'youtube' => [ 'src' => $ytSrc, 'id' => $ytId ],
+                            'dateTime' => $termin,
+                            'location' => $location,
+                            'title' => $safeChildName,
+                            'slogan' => $safeShort,
+                            'href' => $detailRoute,
+                            'contact' => $safeContact,
+                            // QR-Code für Videos hinzufügen (Detailseite)
+                            'qrcode' => base64_encode($this->generateQrCode($detailRoute)),
+                        ];
+                        if ($logoSrc) {
+                            $ytSlide['logo'] = [ 'src' => $logoSrc, 'alt' => $element['name'] ];
+                        }
+                        $arrReturn[] = $ytSlide;
+                    }
+                }
+            }
+        }
+
         return $arrReturn;
     }
 

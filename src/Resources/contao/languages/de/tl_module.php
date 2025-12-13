@@ -92,6 +92,48 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_theme_color'] = [
     'Primäre Akzentfarbe für Overlays, das Werbelabel und die Powered-by-Leiste (Hex, z. B. #2ea1db).'
 ];
 
+// Banner: Videos abspielen
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_play_videos'] = [
+    'Videos ausspielen',
+    'Spielt Videos im Banner ab. Berücksichtigt MP4-Dateien aus den ausgewählten Ordnern sowie Video-Links (Feld "videoLink") der Inhalte. Bei vorhandenem Video wird zusätzlich eine Video-Slide eingefügt (neben der Bild-Slide).'
+];
+
+// Banner: Videos stumm schalten
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_mute_videos'] = [
+    'Videos stumm schalten',
+    'Schaltet alle Videos (MP4 und YouTube) standardmäßig stumm. Empfohlen für Werbebildschirme.'
+];
+
+// Banner: Event-Overlay auf Videos
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_event_overlay'] = [
+    'Event-Overlay auf Videos',
+    'Blendet auf Video-Slides von Veranstaltungen ein dezentes Overlay mit „Veranstaltungsort, Datum Uhrzeit“ ein. Gilt für YouTube- und MP4-Videos von Events.'
+];
+
+// Banner: Bilder vollflächig im Hintergrund
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_media_bg_full'] = [
+    'Bilder vollflächig im Hintergrund',
+    'Stellt Fotos/Bilder immer vollflächig (object-fit: cover) dar. Standard: aktiv.'
+];
+
+// Banner: Overlay-Transparenz
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_overlay_opacity'] = [
+    'Overlay-Transparenz (%)',
+    'Legt die Transparenz der Overlays fest (0–100). 0 = Standard (Template-Voreinstellung). Typische Werte: 45–80.'
+];
+
+// Banner: Footer auf Videos ausblenden
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_footer_on_videos'] = [
+    'Footer bei Videos ausblenden',
+    'Blendt den Footer inklusive QR-Code automatisch aus, wenn eine Video-Slide aktiv ist.'
+];
+
+// Banner: Maximale Spieldauer für Videos
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_video_timeout'] = [
+    'Max. Spieldauer für Videos (Sekunden)',
+    'Legt fest, wie lange Videos maximal abgespielt werden, bevor zur nächsten Slide gewechselt wird. 0 = gesamte Videolänge. Standard: 180 Sekunden.'
+];
+
 // Banner: Strikter Bildmodus
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_strict_images'] = [
     'Strikten Bildmodus aktivieren',

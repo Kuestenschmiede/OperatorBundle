@@ -82,8 +82,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{titl
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_selfHelpFocus;{cart_legend},cart_page;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
-        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked;'.
-        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label,gutesio_banner_links_new_tab;'.
+        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked,gutesio_banner_play_videos,gutesio_banner_mute_videos,gutesio_banner_show_event_overlay,gutesio_banner_video_timeout;'.
+        '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_overlay_opacity,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_media_bg_full,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label,gutesio_banner_links_new_tab,gutesio_banner_hide_footer_on_videos;'.
         '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images,gutesio_banner_interval,gutesio_banner_strict_images;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] .= '{security_legend},gutesio_banner_guard_param,gutesio_banner_guard_value;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
@@ -734,6 +734,56 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_folder'] = [
     'sql'       => 'blob NULL'
 ];
 
+// Banner option: toggle whether videos should be played (from folders and child videoLink)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_play_videos'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_play_videos'],
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner option: mute all videos (MP4/YouTube) — default enabled for kiosk screens
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_mute_videos'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '1',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_mute_videos'],
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
+];
+
+// Banner option: event overlay on video slides (location + date/time)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_show_event_overlay'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_event_overlay'],
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner option: overlay opacity (percent 0-100). 0 = Standard (nutze Template-Defaults)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_overlay_opacity'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'default'   => 0,
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_overlay_opacity'],
+    'eval'      => ['rgxp' => 'digit', 'maxlength' => 3, 'tl_class' => 'w50'],
+    'sql'       => 'int(10) unsigned NOT NULL default 0',
+];
+
+// Banner option: max video playback time (seconds). 0 = play full length
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_video_timeout'] = [
+    'exclude'   => true,
+    'inputType' => 'text',
+    'default'   => 180,
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_video_timeout'],
+    'eval'      => ['rgxp' => 'digit', 'tl_class' => 'w50'],
+    'sql'       => 'int(10) unsigned NOT NULL default 180',
+];
+
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_skip_unlinked'] = [
     'exclude'   => true,
     'inputType' => 'checkbox',
@@ -766,6 +816,15 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_media_bg_portrait'] = 
     'default'   => '0',
     'eval'      => ['tl_class' => 'w50'],
     'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner option: render images full-cover in background on all orientations
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_media_bg_full'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '1',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
 ];
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_poweredby_text'] = [
@@ -816,6 +875,16 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_links_new_tab'] = [
     'exclude'   => true,
     'inputType' => 'checkbox',
     'default'   => '0',
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner option: hide footer on video slides
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_hide_footer_on_videos'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_footer_on_videos'],
     'eval'      => ['tl_class' => 'w50'],
     'sql'       => "char(1) NOT NULL default '0'",
 ];

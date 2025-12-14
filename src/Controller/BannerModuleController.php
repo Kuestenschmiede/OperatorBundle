@@ -356,6 +356,15 @@ class BannerModuleController extends AbstractFrontendModuleController
         $template->bannerCustomWidth = $widthCss;
         // expose mute flag for template rendering of HTML5 <video> and YouTube iframes
         $template->bannerMuteVideos = $muteVideos;
+        // expose kiosk/chromium mode (force sound) and show-sound-button flag
+        try {
+            $kioskMode = ($model->gutesio_kiosk_mode === '1' || $model->gutesio_kiosk_mode === 1);
+        } catch (\Throwable $t) { $kioskMode = false; }
+        try {
+            $showSoundBtn = ($model->gutesio_banner_show_sound_button === '1' || $model->gutesio_banner_show_sound_button === 1);
+        } catch (\Throwable $t) { $showSoundBtn = true; }
+        $template->bannerKioskMode = $kioskMode;
+        $template->bannerShowSoundButton = $showSoundBtn;
         // Video timeout (seconds): if > 0, a video may run at most this duration; 0 means full length
         try {
             $vt = (int) ($model->gutesio_banner_video_timeout ?? 180);
@@ -670,8 +679,22 @@ class BannerModuleController extends AbstractFrontendModuleController
                 } elseif ($videoType === 'youtube' || stripos($videoLink, 'youtube') !== false || stripos($videoLink, 'youtu.be') !== false) {
                     $ytId = $this->extractYouTubeId($videoLink);
                     if ($ytId) {
-                        $mute = ($this->model->gutesio_banner_mute_videos === '1' || $this->model->gutesio_banner_mute_videos === 1) ? '1' : '0';
-                        $ytSrc = sprintf('https://www.youtube-nocookie.com/embed/%s?autoplay=1&mute=%s&playsinline=1&loop=1&playlist=%s&controls=0&modestbranding=1&rel=0&enablejsapi=1', $ytId, $mute, $ytId);
+                        // In Kiosk/Chromium-Modus versuchen wir, mit Ton zu starten (mute=0).
+                        // Fallbacks werden clientseitig gehandhabt, falls der Browser blockt.
+                        try {
+                            $kiosk = ($this->model->gutesio_kiosk_mode === '1' || $this->model->gutesio_kiosk_mode === 1);
+                        } catch (\Throwable $t) { $kiosk = false; }
+                        $mute = $kiosk ? '0' : '1';
+                        // Ergänzte Player-Parameter für stabileres Autoplay ohne Endscreen/Interaktionen
+                        // - fs=0 (kein Vollbild-Button)
+                        // - disablekb=1 (Tastatur deaktivieren)
+                        // - iv_load_policy=3 (Annotations/Overlays aus)
+                        $ytSrc = sprintf(
+                            'https://www.youtube-nocookie.com/embed/%s?autoplay=1&mute=%s&playsinline=1&loop=1&playlist=%s&controls=0&modestbranding=1&rel=0&enablejsapi=1&fs=0&disablekb=1&iv_load_policy=3',
+                            $ytId,
+                            $mute,
+                            $ytId
+                        );
                         $ytSlide = [
                             'type'    => 'event',
                             'youtube' => [ 'src' => $ytSrc, 'id' => $ytId ],

@@ -104,6 +104,18 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_mute_videos'] = [
     'Schaltet alle Videos (MP4 und YouTube) standardmäßig stumm. Empfohlen für Werbebildschirme.'
 ];
 
+// Banner: Kiosk-/Chromium-Modus (Ton erzwingen – erfordert Geräte-Policy)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_kiosk_mode'] = [
+    'Kiosk-/Chromium-Modus (Ton erzwingen)',
+    'Versucht, YouTube-Videos mit Ton automatisch zu starten (mute=0). Hinweis: Funktioniert zuverlässig nur, wenn der Kiosk-Browser Autoplay mit Ton erlaubt (z. B. Chromium-Flag oder Enterprise-Policy). Bei Blockade fällt der Player automatisch auf stumm zurück.'
+];
+
+// Banner: Sound-Button anzeigen (für Notebooks)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_sound_button'] = [
+    'Sound-Button anzeigen',
+    'Zeigt einen Button an, mit dem Nutzer den Ton manuell aktivieren können (für Notebook/Manualbetrieb).'
+];
+
 // Banner: Event-Overlay auf Videos
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_event_overlay'] = [
     'Event-Overlay auf Videos',

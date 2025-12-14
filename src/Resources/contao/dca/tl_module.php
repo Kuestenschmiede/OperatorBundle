@@ -82,7 +82,7 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['showcase_carousel_module'] = '{titl
 $GLOBALS['TL_DCA']['tl_module']['palettes']['wishlist_module'] = '{title_legend},name,headline,type,gutesio_show_contact_data,gutesio_data_show_image,gutesio_data_show_category,gutesio_data_show_selfHelpFocus;{cart_legend},cart_page;';
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] = '{title_legend},name,headline,type;'.
-        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked,gutesio_banner_play_videos,gutesio_banner_mute_videos,gutesio_banner_show_event_overlay,gutesio_banner_video_timeout;'.
+        '{load_legend},gutesio_data_mode,gutesio_child_data_mode,gutesio_max_childs,lazyBanner,reloadBanner,loadMonth,gutesio_banner_folder,gutesio_banner_skip_unlinked,gutesio_banner_play_videos,gutesio_banner_mute_videos,gutesio_kiosk_mode,gutesio_banner_show_sound_button,gutesio_banner_show_event_overlay,gutesio_banner_video_timeout;'.
         '{appearance_legend},gutesio_banner_fullscreen,gutesio_banner_height_value,gutesio_banner_height_unit,gutesio_banner_width_value,gutesio_banner_width_unit,gutesio_banner_theme_color,gutesio_banner_overlay_opacity,gutesio_banner_hide_poweredby,gutesio_banner_media_bg_portrait,gutesio_banner_media_bg_full,gutesio_banner_hide_event_endtime,gutesio_banner_footer_align_left,gutesio_banner_show_ad_label,gutesio_banner_links_new_tab,gutesio_banner_hide_footer_on_videos;'.
         '{performance_legend},gutesio_banner_lazy_mode,gutesio_banner_limit_initial,gutesio_banner_defer_assets,gutesio_banner_defer_qr,gutesio_banner_qr_for_images,gutesio_banner_interval,gutesio_banner_strict_images;';
 $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] .= '{security_legend},gutesio_banner_guard_param,gutesio_banner_guard_value;';
@@ -750,6 +750,26 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_mute_videos'] = [
     'inputType' => 'checkbox',
     'default'   => '1',
     'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_mute_videos'],
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '1'",
+];
+
+// Banner option: kiosk/chromium mode (try autoplay with sound)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_kiosk_mode'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '0',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_kiosk_mode'],
+    'eval'      => ['tl_class' => 'w50'],
+    'sql'       => "char(1) NOT NULL default '0'",
+];
+
+// Banner option: show sound button (manual unmute on notebooks)
+$GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_banner_show_sound_button'] = [
+    'exclude'   => true,
+    'inputType' => 'checkbox',
+    'default'   => '1',
+    'label'     => &$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_sound_button'],
     'eval'      => ['tl_class' => 'w50'],
     'sql'       => "char(1) NOT NULL default '1'",
 ];

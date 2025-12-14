@@ -36,6 +36,9 @@ $__styleOverlayAttr = '';
 if ($__overlayOpacity !== '') {
     $__styleOverlayAttr = ' style="--banner-overlay-opacity: ' . htmlspecialchars($__overlayOpacity, ENT_QUOTES, 'UTF-8') . '"';
 }
+// Kiosk-/Chromium-Modus und optionaler Sound-Button
+$kioskMode = !empty($this->bannerKioskMode);
+$showSoundButton = !empty($this->bannerShowSoundButton);
 ?>
 
 <link rel="stylesheet" href="bundles/gutesiooperator/dist/css/tiny-slider.css" />
@@ -62,6 +65,12 @@ if ($__overlayOpacity !== '') {
 .banner-section .banner__qrcode-overlay{position:absolute;right:8px;bottom:8px;z-index:24;background:rgba(0,0,0,var(--banner-overlay-opacity, .45));padding:6px;border-radius:6px}
 .banner-section .banner__qrcode-overlay img{display:block;height:auto;width:auto;max-height:18vh;max-width:28vw}
 
+/* Sound-Button (manuelles Entstummen) */
+.banner-section .banner__sound-btn{position:absolute;right:8px;top:8px;z-index:21;display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,.45);color:#fff;border:0;border-radius:20px;padding:6px 10px;cursor:pointer}
+.banner-section .banner__sound-btn:hover{background:rgba(0,0,0,.6)}
+.banner-section .banner__sound-btn .icon{width:16px;height:16px;display:inline-block}
+.banner-section .banner__sound-btn .label{font-family:'Maven Pro',sans-serif;font-weight:600;font-size:13px}
+
 /* Small ad label (Anzeige) for paid/sponsored content */
 .banner-section .banner__ad-label{
   position:absolute;top:8px;left:8px;z-index:20;
@@ -76,6 +85,9 @@ if ($__overlayOpacity !== '') {
 
 /* Ensure media wrapper can position overlays */
 .banner-section .banner__image-wrapper{position:relative}
+/* Rendering-Entlastung während Slider-Transition (GPU hint) */
+.banner-section.is-transitioning .banner__image-wrapper{will-change:transform, opacity; backface-visibility:hidden}
+.banner-section.is-transitioning .banner__youtube-item{transform:translateZ(0); backface-visibility:hidden}
 
 /* Event badge for video slides (location, date time) */
 .banner-section .banner__event-badge{
@@ -255,9 +267,17 @@ if ($__overlayOpacity !== '') {
   data-only-images="<?php echo $onlyImages ? '1' : '0'; ?>"
   data-video-timeout="<?php echo (int)$videoTimeout; ?>"
   data-muted-default="<?php echo !empty($this->bannerMuteVideos) ? '1' : '0'; ?>"
+  data-kiosk-mode="<?php echo $kioskMode ? '1' : '0'; ?>"
+  data-show-sound-button="<?php echo $showSoundButton ? '1' : '0'; ?>"
   data-hide-footer-on-videos="<?php echo !empty($this->bannerHideFooterOnVideos) ? '1' : '0'; ?>">
     <?php if (!empty($this->bannerShowAdLabel)): ?>
       <div class="banner__ad-label" aria-label="Anzeige">Anzeige</div>
+    <?php endif; ?>
+    <?php if ($showSoundButton && !$kioskMode): ?>
+      <button type="button" class="banner__sound-btn" data-role="sound-btn" aria-label="Ton aktivieren">
+        <span class="icon" aria-hidden="true">🔊</span>
+        <span class="label">Ton</span>
+      </button>
     <?php endif; ?>
     <div class="banner-slide banner__tns-container">
         <?php
@@ -349,9 +369,9 @@ if ($__overlayOpacity !== '') {
                   ?>
                   <!-- Fix: bei initialem Slide src setzen, bei Lazy erst data-src; so stellt der erste Slide sicher, dass ein Video tatsächlich geladen wird. -->
                   <?php if ($___idx === 0 && ($lazyMode === '1' || $lazyMode === '2')): ?>
-                    <iframe class="banner__video-item banner__youtube-item" src="<?php echo $ytSrc; ?>" title="YouTube video" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                    <iframe class="banner__video-item banner__youtube-item" src="<?php echo $ytSrc; ?>" title="YouTube video" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                   <?php else: ?>
-                    <iframe class="banner__video-item banner__youtube-item" data-src="<?php echo $ytSrc; ?>" title="YouTube video" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" allowfullscreen></iframe>
+                    <iframe class="banner__video-item banner__youtube-item" data-src="<?php echo $ytSrc; ?>" title="YouTube video" frameborder="0" allow="autoplay; encrypted-media; fullscreen; picture-in-picture" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                   <?php endif; ?>
                   <?php if ($href): ?>
                     <?php echo '<a class="banner__cover-link" href="' . $href . '" aria-label="' . htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8') . '"' . $__linkAttrs . '></a>'; ?>
@@ -542,6 +562,8 @@ if ($__overlayOpacity !== '') {
 
   var lazyMode = root.getAttribute('data-lazy-mode') || '0';
   var deferAssets = root.getAttribute('data-defer-assets') === '1';
+  var kioskMode = root.getAttribute('data-kiosk-mode') === '1';
+  var showSoundBtn = root.getAttribute('data-show-sound-button') === '1';
   var hideFooter = root.classList.contains('no-footer');
   var isFullscreen = root.classList.contains('is-fullscreen');
   // Derive powered-by text from the already rendered footer label (allows HTML, avoids PHP in JS)
@@ -951,7 +973,8 @@ if ($__overlayOpacity !== '') {
         mode: 'gallery',
         items: 1,
         slideBy: 'page',
-        speed: 2000,
+        // Kürzere Transition reduziert potenzielle Ruckler bei Video/Canvas-Frames
+        speed: 350,
         autoplayTimeout: parseInt('<?php echo (int)$autoplayTimeout; ?>', 10),
         autoplay: true,
         controls: false,
@@ -961,6 +984,11 @@ if ($__overlayOpacity !== '') {
         autoHeight: isAutoSize
       });
       window.__gutesBanner['<?php echo $bannerId; ?>'] = slider;
+      // GPU-Hinweise nur während Transition setzen
+      try {
+        slider.events && slider.events.on && slider.events.on('transitionStart', function(){ try{ root.classList.add('is-transitioning'); }catch(e){} });
+        slider.events && slider.events.on && slider.events.on('transitionEnd', function(){ try{ root.classList.remove('is-transitioning'); }catch(e){} });
+      } catch(e){}
       attachVideoTiming(slider);
       if (isAutoSize) {
         // Update height once images are definitely loaded
@@ -1027,8 +1055,14 @@ if ($__overlayOpacity !== '') {
     var currentTimer = null;
     var ytPlayers = {}; // index -> player
     var readyPlayers = {}; // index -> boolean
-    var ytUnmuteTried = {}; // index -> bool (einmaliger Unmute-Versuch, wenn Modul-Mute aus)
-    var ytStartRetried = {}; // index -> bool (einmaliger Start-Retry bei UNSTARTED/PAUSED)
+    var ytStartRetried = {}; // index -> Zähler für sanfte Start-Retries bei UNSTARTED/PAUSED
+    var userGrantedAudio = false;
+    try {
+      // Persistente Nutzerentscheidung optional lesen
+      userGrantedAudio = (localStorage.getItem('bannerSoundGranted') === '1');
+    } catch(e){}
+    // Watchdog, der nur für die aktive YT-Slide läuft, um Hänger (PAUSED/UNSTARTED) zu vermeiden
+    var ytWatchdog = { timer: null, idx: -1, tries: 0, lastTryAt: 0 };
 
     function clearTimer(){ if (currentTimer){ clearTimeout(currentTimer); currentTimer = null; } }
     function nextSlide(){ try { slider.goTo('next'); } catch(e){} }
@@ -1095,25 +1129,21 @@ if ($__overlayOpacity !== '') {
     function isYTPlaying(p){
       try { return p && typeof p.getPlayerState === 'function' && p.getPlayerState() === YT.PlayerState.PLAYING; } catch(e){ return false; }
     }
+    function isYTActiveOrBuffering(p){
+      try {
+        if (!p || typeof p.getPlayerState !== 'function') return false;
+        var s = p.getPlayerState();
+        return s === YT.PlayerState.PLAYING || s === YT.PlayerState.BUFFERING;
+      } catch(e){ return false; }
+    }
 
-    // Startet den Player stabil: immer erst stumm (Autoplay-Policy), danach – wenn Modul-Mute aus – einmalig entstummen
+    // Startet den Player stabil: immer stumm (Autoplay-Policy). Kein automatisches Entstummen!
     function startYTWithRetry(p, defaultMute){
       try {
         if (!p) return;
         // Immer zuerst muted starten, um Autoplay sicher zu erreichen
         if (p.mute) p.mute();
         if (p.playVideo) p.playVideo();
-        // Wenn Modul-Mute AUS: kurzer Versuch, nach Start zu entstummen
-        if (!defaultMute) {
-          setTimeout(function(){
-            try {
-              if (isYTPlaying(p)) {
-                p.unMute && p.unMute();
-                p.setVolume && p.setVolume(100);
-              }
-            } catch(e){}
-          }, 350);
-        }
       } catch(e){}
     }
 
@@ -1150,32 +1180,47 @@ if ($__overlayOpacity !== '') {
                   startYTWithRetry(ev.target, defaultMute);
                   readyPlayers[index] = true;
                 } catch(e){}
+                // Kiosk-Modus: Einmalig versuchen zu entstummen (nur wenn Geräte-Policy es erlaubt)
+                try {
+                  if (kioskMode) {
+                    var jitter = 120 + Math.floor(Math.random()*180);
+                    setTimeout(function(){ try { ev.target.unMute && ev.target.unMute(); ev.target.setVolume && ev.target.setVolume(100); } catch(err){} }, jitter);
+                  }
+                } catch(err){}
                 var dur = 0;
                 try { dur = ev.target.getDuration() || 0; } catch(e) { dur = 0; }
                 var cap = (timeoutSec>0) ? timeoutSec : (dur>0 ? Math.ceil(dur) : 180);
                 var ms = (dur>0 ? Math.min(dur, cap) : cap) * 1000;
                 clearTimer(); currentTimer = setTimeout(function(){ play(); nextSlide(); }, ms);
+                // Nach onReady den Watchdog für die aktive Slide starten, falls sie aktiv ist
+                try {
+                  var info0 = slider.getInfo && slider.getInfo();
+                  var activeIdx0 = info0 && typeof info0.index === 'number' ? info0.index : -1;
+                  if (activeIdx0 === index) { startYTWatchdog(index); }
+                } catch(e){}
               },
               'onStateChange': function(e){
                 if (e.data === YT.PlayerState.ENDED) { clearTimer(); play(); nextSlide(); }
-                // Einmalig nach erfolgreichem Start entstummen, falls Modul-Mute AUS
+                // Bei PLAYING Watchdog-Versuche zurücksetzen (kein automatisches Unmute)
                 if (e.data === YT.PlayerState.PLAYING) {
+                  try { if (ytWatchdog.idx === index) { ytWatchdog.tries = 0; } } catch(err){}
+                }
+                // Bei UNSTARTED/PAUSED: wenn die Slide aktiv ist, einige sanfte Play-Retries
+                if (e.data === YT.PlayerState.UNSTARTED || e.data === YT.PlayerState.PAUSED) {
                   try {
-                    var defaultMute = rootEl.getAttribute('data-muted-default') === '1';
-                    if (!defaultMute && !ytUnmuteTried[index]) {
-                      ytUnmuteTried[index] = true;
-                      setTimeout(function(){
-                        try { e.target.unMute && e.target.unMute(); e.target.setVolume && e.target.setVolume(100); } catch(err){}
-                      }, 250);
+                    var info = slider.getInfo && slider.getInfo();
+                    var activeIdx = info && typeof info.index === 'number' ? info.index : -1;
+                    if (activeIdx === index) {
+                      var key = String(index);
+                      ytStartRetried[key] = ytStartRetried[key] || 0;
+                      if (ytStartRetried[key] < 2) {
+                        ytStartRetried[key]++;
+                        setTimeout(function(){ try { e.target.playVideo && e.target.playVideo(); } catch(err){} }, 150 * ytStartRetried[key]);
+                      }
+                      // Sicherstellen, dass der Watchdog läuft
+                      startYTWatchdog(index);
                     }
                   } catch(err){}
-                }
-                // Bei UNSTARTED/PAUSED nur einen sanften Start-Retry, ohne ständiges toggeln
-                if (e.data === YT.PlayerState.UNSTARTED || e.data === YT.PlayerState.PAUSED) {
-                  if (!ytStartRetried[index]) {
-                    ytStartRetried[index] = true;
-                    try { e.target.playVideo && e.target.playVideo(); } catch(err){}
-                  }
                 }
               }
             }
@@ -1218,6 +1263,49 @@ if ($__overlayOpacity !== '') {
       // Hinweis: Quellen von nicht aktiven Medien NICHT entladen, um eine zuverlässige Re-Initialisierung zu sichern.
     }
 
+    function stopYTWatchdog(){
+      try { if (ytWatchdog.timer) { clearInterval(ytWatchdog.timer); } } catch(e){}
+      ytWatchdog.timer = null; ytWatchdog.idx = -1; ytWatchdog.tries = 0; ytWatchdog.lastTryAt = 0;
+    }
+
+    function startYTWatchdog(index){
+      try {
+        if (ytWatchdog.idx === index && ytWatchdog.timer) { return; }
+        stopYTWatchdog();
+        ytWatchdog.idx = index; ytWatchdog.tries = 0; ytWatchdog.lastTryAt = 0;
+        var defaultMuteW = rootEl.getAttribute('data-muted-default') === '1';
+        var loop = function(){
+          try {
+            // Abbrechen, wenn Slide nicht mehr aktiv ist
+            var info = slider.getInfo && slider.getInfo();
+            var activeIdx = info && typeof info.index === 'number' ? info.index : -1;
+            if (activeIdx !== index) { stopYTWatchdog(); return; }
+            var p = ytPlayers[index];
+            if (!p) { stopYTWatchdog(); return; }
+            // Wenn aktiv oder puffert, nicht eingreifen
+            if (isYTActiveOrBuffering(p)) {
+              ytWatchdog.tries = 0; // stabil, Zähler zurücksetzen
+            } else {
+              // Nur bei tatsächlichen Problemzuständen retryen und entprellen
+              var now = Date.now();
+              var gapOk = (ytWatchdog.lastTryAt === 0) || (now - ytWatchdog.lastTryAt >= 2000);
+              if (gapOk) {
+                ytWatchdog.tries++;
+                ytWatchdog.lastTryAt = now;
+                try { if (p.mute) p.mute(); if (p.playVideo) p.playVideo(); } catch(e){}
+                // Bei zu vielen Versuchen Slide weiter
+                if (ytWatchdog.tries >= 2) { stopYTWatchdog(); clearTimer(); play(); nextSlide(); return; }
+              }
+            }
+          } catch(e){}
+          // Nächsten Check mit Jitter planen (entprellt)
+          try { ytWatchdog.timer = setTimeout(loop, 2600 + Math.floor(Math.random()*600)); } catch(e){}
+        };
+        // Watchdog erst nach >2.5s aktiv werden lassen
+        ytWatchdog.timer = setTimeout(loop, 2600);
+      } catch(e){}
+    }
+
     function toggleFooterForSlide(hasVideo){
       try {
         var shouldHide = rootEl.getAttribute('data-hide-footer-on-videos') === '1';
@@ -1231,6 +1319,7 @@ if ($__overlayOpacity !== '') {
     function onSlideChanged(){
       try {
         clearTimer();
+        stopYTWatchdog();
         var info = slider.getInfo ? slider.getInfo() : null;
         var idx = info ? info.index : 0;
         var slide = container && container.children ? container.children[idx] : null;
@@ -1282,15 +1371,21 @@ if ($__overlayOpacity !== '') {
           // Falls Player bereits ready und pausiert, direkt fortsetzen; sonst normal initialisieren
           if (readyPlayers[idx] && ytPlayers[idx] && typeof ytPlayers[idx].playVideo === 'function') {
             try {
-              var defaultMute3 = rootEl.getAttribute('data-muted-default') === '1';
-              if (defaultMute3 && ytPlayers[idx].mute) ytPlayers[idx].mute(); else if (ytPlayers[idx].unMute) { ytPlayers[idx].unMute(); if (ytPlayers[idx].setVolume) ytPlayers[idx].setVolume(100); }
+              // Immer stumm weiter abspielen (kein automatisches Unmute)
+              if (ytPlayers[idx].mute) ytPlayers[idx].mute();
               // kleinen Jitter vor dem Start, um Bot-Heuristiken zu vermeiden
               var jitter2 = 100 + Math.floor(Math.random()*200);
               setTimeout(function(){ try{ ytPlayers[idx].playVideo(); }catch(e){} }, jitter2);
+              // Wenn Nutzer Ton erlaubt hat, einmalig entstummen
+              if (userGrantedAudio) {
+                setTimeout(function(){ try { ytPlayers[idx].unMute && ytPlayers[idx].unMute(); ytPlayers[idx].setVolume && ytPlayers[idx].setVolume(100); } catch(err){} }, jitter2 + 80);
+              }
               var durp = 0; try { durp = ytPlayers[idx].getDuration() || 0; } catch(e) { durp = 0; }
               var capp = (timeoutSec>0) ? timeoutSec : (durp>0 ? Math.ceil(durp) : 180);
               var msp = (durp>0 ? Math.min(durp, capp) : capp) * 1000;
               clearTimer(); currentTimer = setTimeout(function(){ play(); nextSlide(); }, msp);
+              // Watchdog für die aktive YT-Slide starten
+              startYTWatchdog(idx);
             } catch(e){}
           } else {
             // auch hier einen kurzen Jitter vor der Initialisierung
@@ -1306,6 +1401,27 @@ if ($__overlayOpacity !== '') {
     // initial attach and on change
     try { onSlideChanged(); } catch(e){}
     try { slider.events.on('indexChanged', onSlideChanged); } catch(e){}
+
+    // Sound-Button: manuelles Entstummen
+    try {
+      if (showSoundBtn) {
+        var btn = root.querySelector('[data-role="sound-btn"]');
+        if (btn) {
+          btn.addEventListener('click', function(){
+            try { localStorage.setItem('bannerSoundGranted','1'); } catch(e){}
+            userGrantedAudio = true;
+            try {
+              var info = slider.getInfo && slider.getInfo();
+              var idx = info && typeof info.index === 'number' ? info.index : -1;
+              if (idx >= 0 && ytPlayers[idx]) {
+                ytPlayers[idx].unMute && ytPlayers[idx].unMute();
+                ytPlayers[idx].setVolume && ytPlayers[idx].setVolume(100);
+              }
+            } catch(e){}
+          });
+        }
+      }
+    } catch(e){}
   }
 
   // --- Portrait media handling on small/mobile portrait screens ---

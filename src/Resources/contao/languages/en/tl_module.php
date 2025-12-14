@@ -86,6 +86,18 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_mute_videos'] = [
     'Mutes all videos (MP4 and YouTube) by default. Recommended for kiosk/advertising screens.'
 ];
 
+// Banner: kiosk/chromium mode (force sound – requires device policy)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_kiosk_mode'] = [
+    'Kiosk/Chromium mode (force sound)',
+    'Attempts to start YouTube videos with sound automatically (mute=0). Note: Works reliably only if the kiosk browser allows autoplay with sound (e.g. Chromium flag or enterprise policy). If blocked, the player will automatically fall back to muted playback.'
+];
+
+// Banner: show sound button (for notebooks)
+$GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_sound_button'] = [
+    'Show sound button',
+    'Displays a button that lets users enable audio manually (useful for notebook/manual operation).'
+];
+
 // Banner: Event overlay on videos
 $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_show_event_overlay'] = [
     'Show event overlay on videos',

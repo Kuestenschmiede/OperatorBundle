@@ -72,6 +72,25 @@ class OfferDataHelper
             } else {
                 $offerData['href'] = $cleanUuid;
             }
+
+            // Build absolute childLink for use in cart (needed by main instance)
+            $baseUrl = $childPage->getAbsoluteUrl();
+            $childIdentifier = $offerData['alias'] ?: $cleanUuid;
+            $childLink = '';
+            if ($baseUrl) {
+                if (\con4gis\CoreBundle\Classes\C4GUtils::endsWith($baseUrl, '.html')) {
+                    $childLink = str_replace(
+                        '.html',
+                        '/' . strtolower(str_replace(['{', '}'], '', $childIdentifier)) . '.html',
+                        $baseUrl
+                    );
+                } elseif (str_ends_with($baseUrl, $childIdentifier)) {
+                    $childLink = $baseUrl;
+                } else {
+                    $childLink = rtrim($baseUrl, '/') . '/' . strtolower(str_replace(['{', '}'], '', $childIdentifier));
+                }
+            }
+            $offerData['childLink'] = $childLink;
         }
 
         $offerData['image'] = [

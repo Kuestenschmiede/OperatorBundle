@@ -153,6 +153,32 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             }
             $template->childId = $data['uuid'];
             $template->elementId = $data['elementId'];
+            // Build element (showcase) link for cart usage, analogous to OfferDataHelper::getElementLink
+            try {
+                $objSettings = GutesioOperatorSettingsModel::findSettings();
+                $elementPage = PageModel::findByPk($objSettings->showcaseDetailPage);
+                $vendorAlias = $data['vendorAlias'] ?? '';
+                $elementLink = '';
+                if ($elementPage !== null && $vendorAlias) {
+                    $url = $elementPage->getAbsoluteUrl();
+                    if ($url) {
+                        if (\con4gis\CoreBundle\Classes\C4GUtils::endsWith($url, '.html')) {
+                            $elementLink = str_replace(
+                                '.html',
+                                '/' . strtolower(str_replace(['{', '}'], '', $vendorAlias)) . '.html',
+                                $url
+                            );
+                        } elseif (str_ends_with($url, $vendorAlias)) {
+                            $elementLink = $url;
+                        } else {
+                            $elementLink = rtrim($url, '/') . '/' . strtolower(str_replace(['{', '}'], '', $vendorAlias));
+                        }
+                    }
+                }
+                $template->elementLink = $elementLink;
+            } catch (\Throwable $t) {
+                $template->elementLink = '';
+            }
             if ($data) {
                 $objPage->pageTitle = $data['name'];
                 $conf = new FrontendConfiguration('entrypoint_' . $model->id);

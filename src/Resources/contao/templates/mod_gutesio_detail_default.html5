@@ -469,6 +469,9 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                     const data = new FormData();
                     data.set('uuid', '<?php echo $this->childId;?>');
                     data.set('elementId', '<?php echo $this->elementId;?>');
+                    // provide links for main instance cart storage
+                    data.set('elementLink', '<?php echo $this->elementLink ?? '';?>');
+                    try { data.set('childLink', window.location.href); } catch (e) { data.set('childLink', ''); }
                     const button = this;
                     const request = fetch('<?php echo $this->addToCartUrl;?>', {
                         method: 'POST',

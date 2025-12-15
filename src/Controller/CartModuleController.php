@@ -41,8 +41,12 @@ class CartModuleController extends AbstractFrontendModuleController
         $con4gisSettings = C4gSettingsModel::findSettings();
 
         // Operator-Frontend: Cart-API liegt auf der Main-Instance → absolute URL verwenden
-        // Grundlage ist die in con4gis-Settings hinterlegte IO-URL
-        $template->getCartUrl = rtrim($con4gisSettings->con4gisIoUrl, '/') . '/gutesio/main/cart/items';
+        // Basis-URL ermitteln: Protokoll nur ergänzen, wenn keines vorhanden ist
+        $baseUrl = $this->serverService->getMainServerURL();
+        if (!preg_match('#^https?://#i', $baseUrl)) {
+            $baseUrl = 'https://' . ltrim($baseUrl, '/');
+        }
+        $template->getCartUrl = rtrim($baseUrl, '/') . '/gutesio/main/cart/items';
         $template->cart_payment_url = rtrim($con4gisSettings->con4gisIoUrl, '/') . '/cart.php';
         $template->cart_no_items_text = nl2br($model->cart_no_items_text);
 

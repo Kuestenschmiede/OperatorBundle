@@ -477,11 +477,15 @@ class WishlistModuleController extends AbstractFrontendModuleController
                     new FieldValueCondition('type', 'product'),
                     new FieldValueCondition('type', 'voucher')
                 );
+                $baseUrl = $this->serverService->getMainServerURL();
+                if (!preg_match('#^https?://#i', $baseUrl)) {
+                    $baseUrl = 'https://' . ltrim($baseUrl, '/');
+                }
                 $field = new LinkButtonTileField();
                 $field->setName("uuid");
                 $field->setWrapperClass("c4g-list-element__cart-wrapper");
                 $field->setClass("c4g-list-element__cart-link put-in-cart");
-                $field->setHref($this->serverService->getMainServerURL() . "/gutesio/main/cart/add");
+                $field->setHref(rtrim($baseUrl, '/') . '/gutesio/main/cart/add');
                 $field->setLinkText($GLOBALS['TL_LANG']['offer_list']['frontend']['putInCart']);
                 $field->setRenderSection(TileField::RENDERSECTION_FOOTER);
                 $field->addConditionalClass("in_cart", "in-cart");

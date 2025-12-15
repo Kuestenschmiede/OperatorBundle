@@ -462,27 +462,34 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
             </div>
 
             <?php $this->block('cart-button'); ?>
-            <?php if ($this->offerForSale && $this->cartUrl) {?>
+            <?php if ($this->offerForSale && $this->cartPageUrl) {?><!-- use cartPageUrl set by controller -->
+            <div class="c4g-container">
             <div class="cart-btn__wrapper">
                 <button class="btn btn--primary" onclick="
-                    let data = new FormData();
+                    const data = new FormData();
                     data.set('uuid', '<?php echo $this->childId;?>');
                     data.set('elementId', '<?php echo $this->elementId;?>');
-                    let button = this;
-                    console.log(this);
-                    let promise = fetch('<?php echo $this->addToCartUrl;?>', {
+                    const button = this;
+                    const request = fetch('<?php echo $this->addToCartUrl;?>', {
                         method: 'POST',
                         mode: 'cors',
                         cache: 'no-cache',
-                        credentials: 'same-origin',
+                        credentials: 'include', // allow cross-origin cookies if main server URL differs
                         redirect: 'follow',
-                        referrerPolicy: 'no-referrer',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
                         body: data
-                        });
-                    promise.then((response) => {if (response.ok) {
-                      window.location = '<?php echo $this->cartUrl;?>';
-                    }});">In den Warenkorb
+                    });
+                    request.then((response) => {
+                        if (response && response.ok) {
+                            window.location = '<?php echo $this->cartPageUrl;?>';
+                        } else {
+                            console.error('Add to cart failed', response && response.status);
+                        }
+                    }).catch((e) => console.error('Add to cart error', e));">In den Warenkorb
                 </button>
+            </div>
             </div>
             <?php }?>
             <?php $this->endblock();?>

@@ -11,6 +11,7 @@
 namespace gutesio\OperatorBundle\Classes\Services;
 
 use con4gis\CoreBundle\Classes\C4GUtils;
+use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
 use con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel;
 use gutesio\OperatorBundle\Classes\Curl\CurlGetRequest;
 use gutesio\OperatorBundle\Classes\Models\GutesioOperatorSettingsModel;
@@ -28,13 +29,18 @@ class ServerService
         if ($settings->mainServerUrl) {
             return $settings->mainServerUrl;
         }
-        $mainServerUrl = $this->fetchMainServerURL();
+        try {
+            $mainServerUrl = $this->fetchMainServerURL();
+        } catch (\Throwable $exception) {
+            C4gLogModel::addLogEntry("operator", $exception->getMessage());
+            return "";
+        }
+
         if ($mainServerUrl !== '') {
             $settings->mainServerUrl = $mainServerUrl;
             $settings->save();
             return $mainServerUrl;
         }
-        throw new Exception('Cannot determine main server url.');
     }
 
     /**

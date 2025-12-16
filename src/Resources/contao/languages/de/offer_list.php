@@ -57,7 +57,7 @@ $GLOBALS['TL_LANG'][$strName]['frontend']['details']['contact'] = 'Kontakt';
 $GLOBALS['TL_LANG'][$strName]['frontend']['putOnWishlist'] = 'Merken';
 $GLOBALS['TL_LANG'][$strName]['frontend']['removeFromWishlist'] = 'Gemerkt';
 
-$GLOBALS['TL_LANG'][$strName]['frontend']['putInCart'] = 'In den Warenkorb';
+$GLOBALS['TL_LANG'][$strName]['frontend']['putInCart'] = 'Warenkorb';
 $GLOBALS['TL_LANG'][$strName]['frontend']['removeFromCart'] = 'Im Warenkorb';
 
 $GLOBALS['TL_LANG'][$strName]['description'] = "Beschreibung";

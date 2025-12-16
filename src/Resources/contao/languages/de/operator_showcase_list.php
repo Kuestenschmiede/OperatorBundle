@@ -108,7 +108,7 @@ $GLOBALS['TL_LANG'][$strName]['androidAppLink'] = "Android";
 $GLOBALS['TL_LANG'][$strName]['iosAppLink'] = "iOS";
 $GLOBALS['TL_LANG'][$strName]['alsoInteresting'] = "Auch interessant";
 $GLOBALS['TL_LANG'][$strName]['more'] = "Mehr";
-$GLOBALS['TL_LANG'][$strName]['frontend']['putInCart'] = 'In den Warenkorb';
+$GLOBALS['TL_LANG'][$strName]['frontend']['putInCart'] = 'Warenkorb';
 
 $GLOBALS['TL_LANG'][$strName]['filter']['open_filter'] = 'Filter';
 $GLOBALS['TL_LANG'][$strName]['filter']['close_filter'] = 'Filter schliessen';

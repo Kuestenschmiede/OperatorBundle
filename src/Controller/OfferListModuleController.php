@@ -283,15 +283,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
             }
 
-            // Robustere Defaults für Warenkorb-Button (nur für kaufbare Offer-Typen)
-            // Hintergrund: Der Button wird über Conditions gesteuert (offerForSale=1, rawPrice vorhanden, priceStartingAt != 1, availableAmount != 0, nicht eigener Anbieter).
-            // In manchen Response-Situationen können einzelne Felder fehlen (z. B. durch reduzierte Datensichten).
-            // Wir stellen daher sinnvolle Defaults/Herleitungen bereit, damit der Button nicht unnötig verschwindet.
             if (isset($row['type']) && ($row['type'] === 'product' || $row['type'] === 'voucher')) {
-                // offerForSale: Fallback auf '1', wenn nicht explizit deaktiviert
-                if (!isset($row['offerForSale'])) {
-                    $row['offerForSale'] = '1';
-                }
                 // priceStartingAt: fehlend bedeutet i. d. R. kein "ab"-Preis → auf '0' setzen
                 if (!isset($row['priceStartingAt'])) {
                     $row['priceStartingAt'] = '0';

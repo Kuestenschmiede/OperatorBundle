@@ -115,6 +115,8 @@ class OfferLoaderService
         $termString = implode(',', $terms);
 
         $offerData = [];
+        // Zusätzlich: pro Typ sammeln, um bei "random" fair zu mergen
+        $offerBuckets = [];
 
         $childDataMode = $this->model->gutesio_child_data_mode;
 
@@ -186,38 +188,100 @@ class OfferLoaderService
                 case "event":
                     $eventResults = $this->eventDataService->getEventData($termString, $offset, $eventFilterData, $limit, $tagData, $this->model->gutesio_hide_events_without_date);
                     $offerData = array_merge($offerData, $eventResults);
+                    $offerBuckets['event'] = $eventResults;
                     break;
 
                 case "product":
                     $productResults = $this->productDataService->getProductData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $productResults);
+                    $offerBuckets['product'] = $productResults;
                     break;
 
                 case "job":
                     $jobResults = $this->jobDataService->getJobData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $jobResults);
+                    $offerBuckets['job'] = $jobResults;
                     break;
 
                 case "person":
                     $personResults = $this->personDataService->getPersonData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $personResults);
+                    $offerBuckets['person'] = $personResults;
                     break;
 
                 case "voucher":
                     $voucherResults = $this->voucherDataService->getVoucherData($termString, $offset, $eventFilterData, $limit, $tagData);
                     $offerData = array_merge($offerData, $voucherResults);
+                    $offerBuckets['voucher'] = $voucherResults;
                     break;
-
+                
                 default:
                     $simpleOfferResults = $this->simpleOfferDataService->getOfferData($termString, $offset, $eventFilterData, $limit, $type, $tagData);
                     $offerData = array_merge($offerData, $simpleOfferResults);
+                    $offerBuckets[$type] = $simpleOfferResults;
                     break;
             }
         }
 
-        $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
-        if (count($offerData) > $this->limit) {
-            $offerData = array_slice($offerData, $offset, $this->limit);
+        // Bei Sortierung "random": faires, deterministisches Interleave über die Typ-Buckets,
+        // damit keine Typen durch das spätere Slicing benachteiligt/abgeschnitten werden.
+        if ($sortFilter === 'random') {
+            // Reihenfolge der Typen: wie in $types ermittelt (ggf. Rotation anhand Seed)
+            $orderTypes = array_values(array_unique(array_filter($types, function ($t) use ($offerBuckets) {
+                return isset($offerBuckets[$t]) && is_array($offerBuckets[$t]) && count($offerBuckets[$t]) > 0;
+            })));
+
+            if (count($orderTypes) > 1 && isset($this->randomSeed)) {
+                $rot = $this->randomSeed % count($orderTypes);
+                if ($rot > 0) {
+                    $orderTypes = array_merge(array_slice($orderTypes, $rot), array_slice($orderTypes, 0, $rot));
+                }
+            }
+
+            // WICHTIG: Die Service-Calls oben wurden bereits mit dem globalen $offset ausgeführt.
+            // Das heißt: Die Buckets beginnen bereits ab diesem Offset. Daher benötigen wir hier
+            // nur noch die aktuelle Seitenlänge ($limit) und dürfen NICHT erneut mit $offset schneiden.
+            $need = $this->limit;
+            $merged = [];
+            $idx = [];
+            foreach ($orderTypes as $t) { $idx[$t] = 0; }
+
+            // Round-Robin über die Buckets, bis genug Ergebnisse für die Page vorhanden sind
+            while (count($merged) < $need) {
+                $progress = false;
+                foreach ($orderTypes as $t) {
+                    $i = $idx[$t];
+                    $bucket = $offerBuckets[$t] ?? [];
+                    if ($i < count($bucket)) {
+                        $merged[] = $bucket[$i];
+                        $idx[$t] = $i + 1;
+                        $progress = true;
+                        if (count($merged) >= $need) { break; }
+                    }
+                }
+                if (!$progress) {
+                    // alle Buckets leer → abbrechen
+                    break;
+                }
+            }
+
+            $offerData = $merged;
+        } else {
+            // bestehende deterministische Sortierungen beibehalten
+            $offerData = $this->sortOfferData($sortFilter, $filterData, $offerData);
+        }
+
+        // Abschließend nur die gewünschte Seite liefern – ohne Typen systematisch auszuschließen
+        if ($sortFilter === 'random') {
+            // Im random‑Pfad enthalten die Buckets bereits den angewendeten globalen Offset.
+            // Daher hier NICHT erneut mit $offset slicen – maximal auf $limit begrenzen.
+            if (count($offerData) > $this->limit) {
+                $offerData = array_slice($offerData, 0, $this->limit);
+            }
+        } else {
+            if (count($offerData) > $this->limit || $offset > 0) {
+                $offerData = array_slice($offerData, $offset, $this->limit);
+            }
         }
 
         // data cleaning

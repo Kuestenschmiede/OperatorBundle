@@ -275,6 +275,49 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 } else {
                     $row['not_on_wishlist'] = "1";
                 }
+            } else {
+                // Kein Client-Cookie vorhanden: Standardmäßig "Merken" anzeigen,
+                // damit die Buttons nicht ganz verschwinden, wenn neutrale Antworten ausgeliefert werden.
+                if (!isset($row['on_wishlist']) && !isset($row['not_on_wishlist'])) {
+                    $row['not_on_wishlist'] = "1";
+                }
+            }
+
+            // Robustere Defaults für Warenkorb-Button (nur für kaufbare Offer-Typen)
+            // Hintergrund: Der Button wird über Conditions gesteuert (offerForSale=1, rawPrice vorhanden, priceStartingAt != 1, availableAmount != 0, nicht eigener Anbieter).
+            // In manchen Response-Situationen können einzelne Felder fehlen (z. B. durch reduzierte Datensichten).
+            // Wir stellen daher sinnvolle Defaults/Herleitungen bereit, damit der Button nicht unnötig verschwindet.
+            if (isset($row['type']) && ($row['type'] === 'product' || $row['type'] === 'voucher')) {
+                // offerForSale: Fallback auf '1', wenn nicht explizit deaktiviert
+                if (!isset($row['offerForSale'])) {
+                    $row['offerForSale'] = '1';
+                }
+                // priceStartingAt: fehlend bedeutet i. d. R. kein "ab"-Preis → auf '0' setzen
+                if (!isset($row['priceStartingAt'])) {
+                    $row['priceStartingAt'] = '0';
+                }
+                // availableAmount: wenn nicht gesetzt, nicht als 0 behandeln (Button soll nicht als "nicht verfügbar" erscheinen)
+                if (!isset($row['availableAmount'])) {
+                    $row['availableAmount'] = '';
+                }
+                // rawPrice ableiten, wenn nicht vorhanden (z. B. bei vereinfachten Antworten)
+                if (!isset($row['rawPrice'])) {
+                    $derivedRaw = '';
+                    if (isset($row['price']) && is_string($row['price']) && $row['price'] !== '') {
+                        // Versuche, eine Zahl aus der Preis-Textdarstellung zu extrahieren
+                        if (preg_match('/([0-9]+(?:[\.,][0-9]{1,2})?)/u', $row['price'], $m)) {
+                            $num = str_replace(',', '.', $m[1]);
+                            // Nur dann setzen, wenn > 0
+                            if (((float)$num) > 0) {
+                                // als String setzen, da Conditions auf Strings prüfen
+                                $derivedRaw = (string)((float)$num);
+                            }
+                        }
+                    }
+                    if ($derivedRaw !== '') {
+                        $row['rawPrice'] = $derivedRaw;
+                    }
+                }
             }
 
             if (key_exists('types', $row) && is_array($row['types'])) {

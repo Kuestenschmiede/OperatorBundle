@@ -56,6 +56,29 @@ class ShowcaseCarouselModuleController extends AbstractFrontendModuleController
         $tileList = $this->getTileList();
         $fields = $this->getFields();
         $data = $this->getData();
+        // Wishlist-Defaults/Status ergänzen, damit Merken-Buttons nie verschwinden
+        $clientUuid = $request->cookies->get('clientUuid');
+        if (is_array($data)) {
+            foreach ($data as $k => $row) {
+                if (!is_array($row) || !isset($row['uuid'])) {
+                    continue;
+                }
+                if ($clientUuid) {
+                    $db = Database::getInstance();
+                    $res = $db->prepare('SELECT 1 FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ? LIMIT 1')
+                        ->execute($clientUuid, $row['uuid'])->fetchAssoc();
+                    if ($res) {
+                        $data[$k]['on_wishlist'] = '1';
+                    } else {
+                        $data[$k]['not_on_wishlist'] = '1';
+                    }
+                } else {
+                    if (!isset($data[$k]['on_wishlist']) && !isset($data[$k]['not_on_wishlist'])) {
+                        $data[$k]['not_on_wishlist'] = '1';
+                    }
+                }
+            }
+        }
         $fc = new FrontendConfiguration('entrypoint_' . $this->model->id);
         $fc->addTileList($tileList, $fields, $data);
         $jsonConf = json_encode($fc);

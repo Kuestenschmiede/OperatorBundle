@@ -428,6 +428,13 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 } else {
                     $row['not_on_wishlist'] = "1";
                 }
+            } else {
+                // Kein Client-Cookie vorhanden: Standardmäßig "Merken" anzeigen,
+                // damit die Buttons nicht ganz verschwinden, wenn gecachte/neutralisierte
+                // Antworten ausgeliefert werden.
+                if (!isset($row['on_wishlist']) && !isset($row['not_on_wishlist'])) {
+                    $row['not_on_wishlist'] = "1";
+                }
             }
             foreach ($row['types'] as $type) {
                 $types[] = $type['label'];

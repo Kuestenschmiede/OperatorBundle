@@ -228,4 +228,9 @@ class NearbyShowcaseListModuleController extends AbstractFrontendModuleControlle
         return array_slice($showcases, 0, $limit);
     }
 
+    private function checkCookieForClientUuid(Request $request)
+    {
+        $clientUuidCookie = $request->cookies->get('clientUuid');
+        return $clientUuidCookie === null ? null : $clientUuidCookie;
+    }
 }

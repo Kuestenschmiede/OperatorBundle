@@ -1,0 +1,21 @@
+// mandatory
+@import "variables_custom";
+@import "node_modules/bootstrap/scss/functions";
+@import "node_modules/bootstrap/scss/variables";
+@import "node_modules/bootstrap/scss/mixins";
+
+@import "node_modules/bootstrap/scss/reboot";
+@import "node_modules/bootstrap/scss/forms";
+
+@import "gutes_vars";
+@import "gutes_mixins";
+
+// used
+@import "node_modules/bootstrap/scss/grid";
+@import "node_modules/bootstrap/scss/buttons";
+@import "node_modules/bootstrap/scss/images";
+@import "node_modules/bootstrap/scss/badge";
+
+@import "fontawesome";
+
+@import "gutes-cart";

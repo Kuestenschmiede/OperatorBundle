@@ -23,7 +23,7 @@ html {
   .nomasonry-grid {
     display: grid;
     grid-gap: 1rem;
-    grid-template-columns: repeat( auto-fill, minmax(280px, 1fr) );
+    grid-template-columns: repeat( auto-fill, minmax(350px, 1fr) );
     grid-auto-rows: auto;
   }
 
@@ -63,13 +63,14 @@ html {
 
   .c4g-list-element {
     position: relative;
-    padding-bottom: calc(var(--gutes-base-spacing-unit) * 3);
+    padding-bottom: calc(var(--gutes-base-spacing-unit) * 4);
     background-color: var(--gutes-element-bgcolor);
     @extend .nomasonry-item;
     //@extend .masonry-item;
     border-radius: var(--gutes-base-border-radius);
     border: var(--gutes-base-border-width) solid darken($gutes-element-bgcolor, 10%);
     overflow: hidden;
+    min-width: 350px;
     @include transition();
 
     &__image-wrapper {
@@ -222,6 +223,36 @@ html {
     &__notice-link, &__cart-link {
       &.remove-from-wishlist {
         @extend .c4g-btn-on-wishlist;
+      }
+
+    }
+
+    &__notice-link {
+      &.put-on-wishlist:before {
+        @include fa-content("\f004", 400);
+        padding-right: 0.3em;
+      }
+      &.remove-from-wishlist:before {
+        @include fa-content("\f004", 900);
+        padding-right: 0.3em;
+      }
+    }
+
+    &__cart-link {
+      &.put-in-cart {
+        font-size: 14px !important;
+
+        &:before {
+          @include fa-content("\f07a");
+          padding-right: 0.3em;
+        }
+      }
+    }
+
+    &__more-link {
+      &:after {
+        @include fa-content("\f101");
+        padding-left: 0.3em;
       }
     }
 

@@ -16,3 +16,9 @@
 @mixin transition($ms: 300ms) {
   transition: $ms ease-in-out;
 }
+
+@mixin fa-content($code, $weight: 900) {
+  content: $code;
+  font-weight: $weight;
+  font-family: 'Font Awesome 5 Free';
+}

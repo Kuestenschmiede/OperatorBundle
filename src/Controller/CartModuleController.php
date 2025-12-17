@@ -38,6 +38,8 @@ class CartModuleController extends AbstractFrontendModuleController
             ResourceLoader::HEAD
         );
 
+        ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_cart.min.css");
+
         $con4gisSettings = C4gSettingsModel::findSettings();
 
         // Operator-Frontend: Cart-API liegt auf der Main-Instance → absolute URL verwenden

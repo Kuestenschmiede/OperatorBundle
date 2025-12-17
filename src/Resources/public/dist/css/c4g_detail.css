@@ -11256,6 +11256,7 @@ html {
   --gutes-color-default: #333;
   --gutes-color-primary: #103a5d;
   --gutes-color-secondary: #d35400;
+  --gutes-color-danger: #dc3545;
   --gutes-base-font-size--xs: 0.875rem;
   --gutes-base-font-size: 1rem;
   --gutes-base-font-size--xl: 1.125rem;
@@ -11454,7 +11455,10 @@ html {
 }
 .c4g-btn-on-wishlist,
 .c4g-list-element__cart-link.remove-from-wishlist,
-.c4g-list-element__notice-link.remove-from-wishlist {
+.c4g-list-element__notice-link.remove-from-wishlist,
+.c4g-list-outer .c4g-list-element__cart-link.put-in-cart,
+.c4g-list-outer .c4g-list-element__cart-link.remove-from-wishlist,
+.c4g-list-outer .c4g-list-element__notice-link.remove-from-wishlist {
   color: var(--btn-secondary-color);
   background-color: var(--btn-secondary-background-color);
   border-color: var(--btn-secondary-border-color)
@@ -12510,6 +12514,30 @@ html {
   padding-top: 1rem;
   bottom: 10px;
   right: 10px
+}
+.c4g-list-outer .c4g-list-element__notice-link.put-on-wishlist:before {
+  content: "\f004";
+  font-weight: 400;
+  font-family: "Font Awesome 5 Free";
+  padding-right: .3em
+}
+.c4g-list-outer .c4g-list-element__notice-link.remove-from-wishlist:before {
+  content: "\f004";
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  padding-right: .3em
+}
+.c4g-list-outer .c4g-list-element__cart-link.put-in-cart:before {
+  content: "\f07a";
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  padding-right: .3em
+}
+.c4g-list-outer .c4g-list-element__more-link:after {
+  content: "\f101";
+  font-weight: 900;
+  font-family: "Font Awesome 5 Free";
+  padding-left: .3em
 }
 .c4g-modal-outer {
   position: fixed;

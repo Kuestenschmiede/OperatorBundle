@@ -219,12 +219,48 @@ html {
       right: 10px;
     }
 
-    &__more-link,
     &__notice-link,
-    &__cart-link{
+    &__cart-link,
+    &__more-link {
       @extend .c4g-btn;
       @extend .c4g-btn-sm;
       @extend .c4g-btn-primary;
+    }
+
+    &__notice-link, &__cart-link {
+      &.remove-from-wishlist {
+        @extend .c4g-btn-on-wishlist;
+      }
+
+    }
+
+    &__notice-link {
+      &.put-on-wishlist:before {
+        @include fa-content("\f004", 400);
+        padding-right: 0.3em;
+      }
+      &.remove-from-wishlist:before {
+        @include fa-content("\f004", 900);
+        padding-right: 0.3em;
+      }
+    }
+
+    &__cart-link {
+      &.put-in-cart {
+        @extend .c4g-btn-on-wishlist;
+
+        &:before {
+          @include fa-content("\f07a");
+          padding-right: 0.3em;
+        }
+      }
+    }
+
+    &__more-link {
+      &:after {
+        @include fa-content("\f101");
+        padding-left: 0.3em;
+      }
     }
   }
 

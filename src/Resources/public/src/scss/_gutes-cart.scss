@@ -1,0 +1,116 @@
+/* Cart */
+.card-header {
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 0;
+  background-color: var(--gutes-element-bgcolor);
+  border-bottom: 1px solid rgba(0, 0, 0, .125);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row-reverse;
+
+  &__image {
+    img {
+      max-width: 150px;
+      max-height: 150px;
+    }
+  }
+
+  &__title {
+    font-weight: 600;
+    font-size: 1.5em;
+
+    a {
+      color: var(--gutes-color-brand);
+    }
+
+    &:before {
+      @include fa-content("\f54e");
+      padding-right: 10px;
+      color: var(--gutes-color-brand);
+    }
+  }
+}
+
+.shopping-cart {
+  .card {
+    border: none;
+  }
+
+  .card-header__title {
+    font-size: 1.55em;
+  }
+
+  .btn-primary {
+    color: var(--gutes-element-bgcolor);
+    background-color: var(--gutes-color-secondary);
+    border-color: var(--gutes-color-secondary);
+  }
+}
+
+.c4g-cart-wrapper {
+  .btn-danger {
+    color: var(--gutes-element-bgcolor);
+    background-color: var(--gutes-color-danger);
+    border-color: var(--gutes-color-danger);
+    margin: 0.5em;
+  }
+}
+
+.cart__article-name {
+  font-size: 1.5em;
+}
+
+.cart__article-amount {
+  input {
+    margin: 0.5em;
+
+    &[type="number"] {
+      text-align: right;
+    }
+  }
+}
+
+.cart__article-row--one {
+  display: grid;
+  grid-template-columns: auto auto;
+  padding: 1em;
+  border: 1px solid;
+}
+
+.cart__article-detail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 0 0;
+  grid-template-areas:
+    "cart__article-name cart__article-name"
+    "cart__article-amount cart__article-action";
+}
+
+.cart__article-amount { grid-area: cart__article-amount; }
+.cart__article-name { grid-area: cart__article-name; }
+.cart__article-action { grid-area: cart__article-action; }
+
+.cart__article-info {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+}
+
+.cart__article-image {
+  padding: 1em;
+}
+
+.cart__article-price {
+  vertical-align: middle;
+  margin: auto;
+  text-align: right;
+}
+
+.cart__article-price .article-price__sum {
+  font-weight: 600;
+}
+
+.c4g-cart-wrapper #cleanListModal {
+  display: none;
+}

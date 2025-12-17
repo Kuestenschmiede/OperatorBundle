@@ -7,6 +7,7 @@ $gutes-color-brand: $gutes-color-one !default;
 $gutes-color-default: #333 !default;
 $gutes-color-primary: $gutes-color-brand !default;
 $gutes-color-secondary: $gutes-color-two !default;
+$color-color-danger: #dc3545 !default;
 
 // font and font-colors
 $gutes-base-font-color: #111111 !default;
@@ -79,6 +80,7 @@ html {
   --gutes-color-default: #{$gutes-color-default};
   --gutes-color-primary: #{$gutes-color-primary};
   --gutes-color-secondary: #{$gutes-color-secondary};
+  --gutes-color-danger: #{$color-color-danger};
 
   // Base Font Settings
   --gutes-base-font-size--xs: #{$gutes-base-font-size--xs};

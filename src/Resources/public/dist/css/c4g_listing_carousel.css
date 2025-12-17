@@ -282,6 +282,7 @@ html {
   --gutes-color-default: #333;
   --gutes-color-primary: #103a5d;
   --gutes-color-secondary: #d35400;
+  --gutes-color-danger: #dc3545;
   --gutes-base-font-size--xs: 0.875rem;
   --gutes-base-font-size: 1rem;
   --gutes-base-font-size--xl: 1.125rem;

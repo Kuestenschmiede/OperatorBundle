@@ -67,12 +67,43 @@ class LoadLayersListener
             $this->cache['tags'][$tag['uuid']] = $tag;
         }
 
-        // Load element types
-        $elementTypesResult = $this->database->execute(
-            "SELECT elementId, typeId FROM tl_gutesio_data_element_type"
+        // Load all tag-element assignments at once
+        $tagElements = $this->database->execute(
+            "SELECT tagId, elementId FROM tl_gutesio_data_tag_element"
         )->fetchAllAssoc();
+        foreach ($tagElements as $row) {
+            $this->cache['elementTags'][$row['elementId']][] = $row['tagId'];
+        }
+
+        // Load element types and their styles
+        $elementTypesResult = $this->database->execute(
+            "SELECT typeElem.elementId, typeElem.typeId, type.locstyle, type.loctype, type.showLinkedElements,
+                    type.uuid as type_uuid, type.name as type_name
+             FROM tl_gutesio_data_element_type AS typeElem
+             INNER JOIN tl_gutesio_data_type AS type ON typeElem.typeId = type.uuid
+             ORDER BY typeElem.rank ASC"
+        )->fetchAllAssoc();
+        
         foreach ($elementTypesResult as $elementType) {
             $this->cache['elementTypes'][$elementType['elementId']][] = $elementType['typeId'];
+            
+            // Pre-cache the first (highest rank) location style for each element
+            if (!isset($this->cache['locStyles'][$elementType['elementId']])) {
+                $this->cache['locStyles'][$elementType['elementId']] = [
+                    'locstyle' => $elementType['locstyle'],
+                    'loctype' => $elementType['loctype']
+                ];
+            }
+
+            if (!isset($this->cache['types'][$elementType['typeId']])) {
+                $this->cache['types'][$elementType['typeId']] = [
+                    'uuid' => $elementType['type_uuid'],
+                    'name' => $elementType['type_name'],
+                    'locstyle' => $elementType['locstyle'],
+                    'loctype' => $elementType['loctype'],
+                    'showLinkedElements' => $elementType['showLinkedElements']
+                ];
+            }
         }
     }
 
@@ -92,21 +123,7 @@ class LoadLayersListener
 
     private function getLocationStyle(string $elementId): ?array
     {
-        if (!isset($this->cache['locStyles'][$elementId])) {
-            $result = $this->database->prepare(
-                'SELECT type.locstyle, type.loctype 
-                 FROM tl_gutesio_data_type AS type
-                 INNER JOIN tl_gutesio_data_element_type AS typeElem 
-                 ON typeElem.typeId = type.uuid
-                 WHERE typeElem.elementId = ? 
-                 ORDER BY typeElem.rank ASC 
-                 LIMIT 1'
-            )->execute($elementId)->fetchAssoc();
-            
-            $this->cache['locStyles'][$elementId] = $result ?: null;
-        }
-        
-        return $this->cache['locStyles'][$elementId];
+        return $this->cache['locStyles'][$elementId] ?? null;
     }
 
     public function onLoadLayersLoadElement(
@@ -177,14 +194,22 @@ class LoadLayersListener
     {
         $configuredTypes = unserialize($objDataLayer->types);
         if ($configuredTypes) {
-            return array_filter(array_map(function($type) {
-                return GutesioDataTypeModel::findOneBy('uuid', $type);
-            }, $configuredTypes));
+            $types = $this->database->prepare(
+                "SELECT * FROM tl_gutesio_data_type WHERE uuid IN ('" . implode("','", $configuredTypes) . "')"
+            )->execute()->fetchAllAssoc();
+            
+            return array_map(function($row) {
+                return (object) ['uuid' => $row['uuid'], 'name' => $row['name'], 'row' => function() use ($row) { return $row; }];
+            }, $types);
         }
 
-        return GutesioDataTypeModel::findAll([
-            'order' => "tl_gutesio_data_type.name ASC"
-        ]) ?: [];
+        $types = $this->database->execute(
+            "SELECT * FROM tl_gutesio_data_type ORDER BY name ASC"
+        )->fetchAllAssoc();
+
+        return array_map(function($row) {
+            return (object) ['uuid' => $row['uuid'], 'name' => $row['name'], 'row' => function() use ($row) { return $row; }];
+        }, $types);
     }
 
     private function processTypes(array $types, array $dataLayer, array $skipElements, array &$sameElements, $objDataLayer): array
@@ -192,15 +217,56 @@ class LoadLayersListener
         $typeElements = [];
         $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
 
+        // Batch load all elements for all types at once
+        $typeUuids = array_map(function($type) { return $type->uuid; }, $types);
+        $query = 'SELECT elem.*, typeElem.typeId FROM tl_gutesio_data_element AS elem
+                 INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
+                 WHERE typeElem.typeId IN (\'' . implode("','", $typeUuids) . '\')' . $strPublishedElem . ' ORDER BY elem.name ASC';
+        
+        $allElements = $this->database->execute($query)->fetchAllAssoc();
+        
+        // Cache elements to avoid individual queries later
+        $showcaseIdsToLoad = [];
+        foreach ($allElements as $elem) {
+            $this->cache['elements'][$elem['uuid']] = $elem;
+            if ($elem['showcaseIds']) {
+                $ids = StringUtil::deserialize($elem['showcaseIds'], true);
+                foreach ($ids as $id) {
+                    if (!isset($this->cache['elements'][$id])) {
+                        $showcaseIdsToLoad[] = $id;
+                    }
+                }
+            }
+        }
+
+        // Batch load showcase elements if needed
+        if (!empty($showcaseIdsToLoad)) {
+            $showcaseResult = $this->database->execute(
+                "SELECT * FROM tl_gutesio_data_element WHERE uuid IN ('" . implode("','", array_unique($showcaseIdsToLoad)) . "')"
+            )->fetchAllAssoc();
+            foreach ($showcaseResult as $showcaseElem) {
+                $this->cache['elements'][$showcaseElem['uuid']] = $showcaseElem;
+            }
+        }
+
+        $elementsByType = [];
+        foreach ($allElements as $elem) {
+            $elementsByType[$elem['typeId']][] = $elem;
+        }
+
         foreach ($types as $type) {
             $typeData = $type->row();
-            $elements = $this->loadTypeElements($typeData['uuid'], $strPublishedElem, $skipElements);
+            $elements = $elementsByType[$typeData['uuid']] ?? [];
             
+            $elements = array_filter($elements, function($elem) use ($skipElements) {
+                return !in_array($elem['uuid'], $skipElements);
+            });
+
             if (empty($elements)) {
                 continue;
             }
 
-            $processedElements = $this->processTypeElements($elements, $dataLayer, $type, $sameElements);
+            $processedElements = $this->processTypeElements($elements, $dataLayer, $typeData, $sameElements);
             
             if (!empty($processedElements)) {
                 $typeElements[$typeData['uuid']] = array_merge($dataLayer, [
@@ -217,33 +283,21 @@ class LoadLayersListener
         return $typeElements;
     }
 
-    private function loadTypeElements(string $typeId, string $publishedCondition, array $skipElements): array
-    {
-        $query = 'SELECT elem.* FROM tl_gutesio_data_element AS elem
-                 INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
-                 WHERE typeElem.typeId = ?' . $publishedCondition . ' ORDER BY elem.name ASC';
-                 
-        $elements = $this->database->prepare($query)->execute($typeId)->fetchAllAssoc();
-        
-        return array_filter($elements, function($elem) use ($skipElements) {
-            return !in_array($elem['uuid'], $skipElements);
-        });
-    }
 
-    private function processTypeElements(array $elements, array $dataLayer, $type, array &$sameElements): array
+    private function processTypeElements(array $elements, array $dataLayer, array $type, array &$sameElements): array
     {
         $processedElements = [];
         $checkDuplicates = [];
 
         foreach ($elements as $elem) {
             $sameElements[$elem['uuid']][] = $elem;
-            $childElements = $this->loadChildElements($elem, $type->row(), $dataLayer);
+            $childElements = $this->loadChildElements($elem, $type, $dataLayer);
 
-            if ($this->shouldCreateElement($elem['uuid'], $type->uuid, $checkDuplicates)) {
+            if ($this->shouldCreateElement($elem['uuid'], $type['uuid'], $checkDuplicates)) {
                 $processedElements[] = $this->createElement(
                     $elem, 
                     $dataLayer, 
-                    $type->row(), 
+                    $type, 
                     $childElements, 
                     true, 
                     false, 
@@ -251,7 +305,7 @@ class LoadLayersListener
                 );
             }
             
-            $checkDuplicates[$elem['uuid']][] = $type->uuid;
+            $checkDuplicates[$elem['uuid']][] = $type['uuid'];
         }
 
         return $processedElements;
@@ -352,12 +406,55 @@ class LoadLayersListener
     private function processDirectories(array $directories, array $dataLayer, $objDataLayer): array
     {
         $processedDirectories = [];
-        $directoryElements = [];
         $typeElements = [];
         $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
 
+        // Batch load all elements for all directories at once
+        $directoryUuids = array_filter(array_map(function($dir) { return $dir['uuid'] ?? null; }, $directories));
+        if (empty($directoryUuids)) {
+            return [];
+        }
+
+        $query = 'SELECT elem.*, type.uuid AS typeId, type.name AS typeName, dirType.directoryId AS directoryId 
+                 FROM tl_gutesio_data_type AS type
+                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
+                 INNER JOIN tl_gutesio_data_element_type AS elemType ON dirType.typeId = elemType.typeId
+                 INNER JOIN tl_gutesio_data_element AS elem ON elemType.elementId = elem.uuid
+                 WHERE dirType.directoryId IN (\'' . implode("','", $directoryUuids) . '\')
+                 ORDER BY type.name ASC';
+        
+        $allElements = $this->database->execute($query)->fetchAllAssoc();
+        
+        // Cache elements to avoid individual queries later
+        $showcaseIdsToLoad = [];
+        foreach ($allElements as $elem) {
+            $this->cache['elements'][$elem['uuid']] = $elem;
+            if ($elem['showcaseIds']) {
+                $ids = StringUtil::deserialize($elem['showcaseIds'], true);
+                foreach ($ids as $id) {
+                    if (!isset($this->cache['elements'][$id])) {
+                        $showcaseIdsToLoad[] = $id;
+                    }
+                }
+            }
+        }
+
+        // Batch load showcase elements if needed
+        if (!empty($showcaseIdsToLoad)) {
+            $showcaseResult = $this->database->execute(
+                "SELECT * FROM tl_gutesio_data_element WHERE uuid IN ('" . implode("','", array_unique($showcaseIdsToLoad)) . "')"
+            )->fetchAllAssoc();
+            foreach ($showcaseResult as $showcaseElem) {
+                $this->cache['elements'][$showcaseElem['uuid']] = $showcaseElem;
+            }
+        }
+
+        $elementsByDirectory = [];
+        foreach ($allElements as $elem) {
+            $elementsByDirectory[$elem['directoryId']][] = $elem;
+        }
+
         foreach ($directories as $directory) {
-            // Da wir jetzt ein Array haben, müssen wir den Zugriff anpassen
             $directoryUuid = $directory['uuid'] ?? null;
             $directoryName = $directory['name'] ?? '';
 
@@ -365,7 +462,7 @@ class LoadLayersListener
                 continue;
             }
 
-            $elements = $this->loadDirectoryElements($directoryUuid);
+            $elements = $elementsByDirectory[$directoryUuid] ?? [];
             $validTypes = $this->processDirectoryElements(
                 $elements,
                 $dataLayer,
@@ -383,7 +480,6 @@ class LoadLayersListener
                     'hideInStarboard' => empty($validTypes),
                     'childs' => array_values($validTypes),
                 ];
-                $directoryElements[$directoryUuid][] = $singleDir;
                 $processedDirectories[] = array_merge($dataLayer, $singleDir);
             }
         }
@@ -391,18 +487,6 @@ class LoadLayersListener
         return $processedDirectories;
     }
 
-    private function loadDirectoryElements(string $directoryId): array
-    {
-        $query = 'SELECT elem.*, type.uuid AS typeId, type.name AS typeName, dirType.directoryId AS directoryId 
-                 FROM tl_gutesio_data_type AS type
-                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
-                 INNER JOIN tl_gutesio_data_element_type AS elemType ON dirType.typeId = elemType.typeId
-                 INNER JOIN tl_gutesio_data_element AS elem ON elemType.elementId = elem.uuid
-                 WHERE dirType.directoryId = ?
-                 ORDER BY type.name ASC';
-                 
-        return $this->database->prepare($query)->execute($directoryId)->fetchAllAssoc();
-    }
 
     private function processDirectoryElements(
         array $elements, 
@@ -483,16 +567,13 @@ class LoadLayersListener
 
     private function getElementTags(string $elementId): array
     {
-        $elementTags = $this->database->prepare(
-            "SELECT tagId FROM tl_gutesio_data_tag_element WHERE elementId = ?"
-        )->execute($elementId)->fetchAllAssoc();
+        $elementTags = $this->cache['elementTags'][$elementId] ?? [];
 
         $tags = [];
         $tagUuids = [];
-        foreach ($elementTags as $key => $elementTag) {
-            $tag = $this->cache['tags'][$elementTag['tagId']] ?? null;
+        foreach ($elementTags as $tagId) {
+            $tag = $this->cache['tags'][$tagId] ?? null;
             if ($tag && $tag['name'] && !isset($tagUuids[$tag['uuid']])) {
-                $tags[$key] = $tag['name'];
                 $tagUuids[$tag['uuid']] = true;
             }
         }
@@ -561,14 +642,17 @@ class LoadLayersListener
         $element['cluster'] = false;
         $element['excludeFromSingleLayer'] = true;
         
-        $geojson = strpos($objElement['geojson'], 'FeatureCollection') 
-            ? $objElement['geojson'] 
-            : '{"type": "FeatureCollection", "features": ' . $objElement['geojson'] . '}';
+        $geojson = $objElement['geojson'];
+        if (strpos($geojson, 'FeatureCollection') === false) {
+             $geojson = '{"type": "FeatureCollection", "features": ' . $geojson . '}';
+        }
             
         $data = json_decode($geojson, true);
         
-        foreach ($data['features'] as $key => $feature) {
-            $data['features'][$key]['properties']['zindex'] = -5;
+        if (isset($data['features'])) {
+            foreach ($data['features'] as $key => $feature) {
+                $data['features'][$key]['properties']['zindex'] = -5;
+            }
         }
         
         $data['properties'] = $properties;
@@ -666,12 +750,18 @@ class LoadLayersListener
 
     private function getElementType(string $elementId): ?array
     {
-        return $this->database->prepare(
-            'SELECT type.* FROM tl_gutesio_data_type AS type 
-             INNER JOIN tl_gutesio_data_element_type AS typeElem 
-             ON typeElem.typeId = type.uuid
-             WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1'
-        )->execute($elementId)->fetchAssoc() ?: [];
+        $typeIds = $this->cache['elementTypes'][$elementId] ?? [];
+        if (empty($typeIds)) {
+            return $this->database->prepare(
+                'SELECT type.* FROM tl_gutesio_data_type AS type 
+                 INNER JOIN tl_gutesio_data_element_type AS typeElem 
+                 ON typeElem.typeId = type.uuid
+                 WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1'
+            )->execute($elementId)->fetchAssoc() ?: [];
+        }
+
+        $typeId = $typeIds[0];
+        return $this->cache['types'][$typeId] ?? [];
     }
 
     private function loadChildElements(array $elem, array $type, array $dataLayer): array

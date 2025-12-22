@@ -190,10 +190,22 @@ class LoadLayersListener
         $sameElements = [];
         $typeElements = $this->processTypes($types, $dataLayer, $skipElements, $sameElements, $objDataLayer);
         
-        $dataLayer['childs'] = array_values($typeElements);
-        $dataLayer['initial_opened'] = '';
-        $dataLayer['data_hidelayer'] = '1';
-        $dataLayer['hide'] = '1';
+        if ($objDataLayer->skipTypes) {
+            $childs = [];
+            foreach ($typeElements as $typeElement) {
+                foreach ($typeElement['childs'] as $child) {
+                    $child['pid'] = $dataLayer['id'];
+                    $childs[] = $child;
+                }
+            }
+            $dataLayer['childs'] = $childs;
+        } else {
+            $dataLayer['childs'] = array_values($typeElements);
+        }
+
+        $dataLayer['initial_opened'] = $objDataLayer->initial_opened;
+        $dataLayer['data_hidelayer'] = $objDataLayer->data_hidelayer;
+        $dataLayer['hide'] = $objDataLayer->data_hidelayer;
         $dataLayer['display'] = true;
         $event->setLayerData($dataLayer);
     }
@@ -263,7 +275,7 @@ class LoadLayersListener
         }
 
         foreach ($types as $type) {
-            $typeData = $type->row();
+            $typeData = ($type->row)();
             $elements = $elementsByType[$typeData['uuid']] ?? [];
             
             $elements = array_filter($elements, function($elem) use ($skipElements) {
@@ -286,8 +298,9 @@ class LoadLayersListener
                     'layername' => $typeData['name'],
                     'childs' => $processedElements,
                     'zoomTo' => false,
-                    'data_hidelayer' => '1',
-                    'initial_opened' => false,
+                    'data_hidelayer' => $objDataLayer->data_hidelayer,
+                    'initial_opened' => $objDataLayer->initial_opened,
+                    'hideInStarboard' => false,
                 ]);
             }
         }
@@ -301,7 +314,7 @@ class LoadLayersListener
         $processedElements = [];
         $checkDuplicates = [];
         $limit = $objDataLayer->be_optimize_checkboxes_limit ?: 3;
-        $hideInStarboard = count($elements) > $limit;
+        $hideInStarboard = $objDataLayer->hideInStarboard ?: count($elements) > $limit;
 
         foreach ($elements as $elem) {
             $sameElements[$elem['uuid']][] = $elem;
@@ -310,7 +323,7 @@ class LoadLayersListener
                 if ($type['showLinkedElements']) {
                     $childElements = $this->loadChildElements($elem, $type, $dataLayer);
                 }
-                $processedElements[] = $this->createElement(
+                $treeElement = $this->createElement(
                     $elem, 
                     $dataLayer, 
                     $type, 
@@ -319,8 +332,9 @@ class LoadLayersListener
                     false, 
                     $sameElements[$elem['uuid']],
                     $hideInStarboard,
-                    false
+                    $objDataLayer->initial_opened ? true : false
                 );
+                $processedElements[] = $treeElement;
             }
             
             $checkDuplicates[$elem['uuid']][] = $type['uuid'];
@@ -362,9 +376,9 @@ class LoadLayersListener
         $processedDirectories = $this->processDirectories($directories, $dataLayer, $objDataLayer);
         
         $dataLayer['childs'] = $processedDirectories;
-        $dataLayer['initial_opened'] = '';
-        $dataLayer['data_hidelayer'] = '1';
-        $dataLayer['hide'] = '1';
+        $dataLayer['initial_opened'] = $objDataLayer->initial_opened;
+        $dataLayer['data_hidelayer'] = $objDataLayer->data_hidelayer;
+        $dataLayer['hide'] = $objDataLayer->data_hidelayer;
         $dataLayer['display'] = true;
         $event->setLayerData($dataLayer);
     }
@@ -505,8 +519,8 @@ class LoadLayersListener
                     'name' => $directoryName,
                     'layername' => $directoryName,
                     'childs' => array_values($validTypes),
-                    'data_hidelayer' => '1',
-                    'initial_opened' => false,
+                    'data_hidelayer' => $objDataLayer->data_hidelayer,
+                    'initial_opened' => $objDataLayer->initial_opened,
                     'hideInStarboard' => false,
                     'zoomTo' => false,
                 ];
@@ -553,8 +567,8 @@ class LoadLayersListener
                     'hideInStarboard' => false,
                     'childs' => [],
                     'zoomTo' => false,
-                    'data_hidelayer' => '1',
-                    'initial_opened' => false,
+                    'data_hidelayer' => $objDataLayer->data_hidelayer,
+                    'initial_opened' => $objDataLayer->initial_opened,
                 ];
                 $typeElements[$typeKey] = array_merge($baseData, $singleType);
                 $validTypes[$typeKey] = &$typeElements[$typeKey];
@@ -567,7 +581,7 @@ class LoadLayersListener
                     $childElements = $this->loadChildElements($elem, $type, $dataLayer);
                 }
                 
-                $treeElement = $this->createElement($elem, $dataLayer, ['id' => $typeKey], $childElements, true, false, [], true, false);
+                $treeElement = $this->createElement($elem, $dataLayer, ['id' => $typeKey], $childElements, true, false, [], $objDataLayer->hideInStarboard ?: false, $objDataLayer->initial_opened ? true : false);
                 $typeElements[$typeKey]['childs'][] = $treeElement;
             }
         }

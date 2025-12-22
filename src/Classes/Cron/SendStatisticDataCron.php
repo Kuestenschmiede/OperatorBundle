@@ -36,14 +36,19 @@ class SendStatisticDataCron
                 'headers' => $headers,
                 'body' => json_encode($data)
             ]);
-            $response = $client->request('POST', $statisticUrl, ['timeout' => 20]);
-            if ($response->getStatusCode() !== 200) {
-                C4gLogModel::addLogEntry('operator', $response->getContent());
+            try {
+                $response = $client->request('POST', $statisticUrl, ['timeout' => 20]);
+                if ($response->getStatusCode() !== 200) {
+                    C4gLogModel::addLogEntry('operator', $response->getContent(false));
+                }
+
+                $responseContent = $response->getContent();
+            } catch (\Exception $e) {
+                C4gLogModel::addLogEntry('operator', $e->getMessage());
+                return;
             }
 
-            $response = $response->getContent();
-
-            $responseData = json_decode($response, true);
+            $responseData = json_decode($responseContent, true);
             $success = $responseData['success'];
             if (json_last_error() !== JSON_ERROR_NONE) {
                 $error = json_last_error_msg();

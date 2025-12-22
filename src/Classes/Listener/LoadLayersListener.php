@@ -148,13 +148,15 @@ class LoadLayersListener
         }
 
         $this->preloadData();
+        $dataLayer['type'] = 'GeoJSON';
+        $dataLayer['format'] = 'GeoJSON';
         $type = $this->getElementType($elem['uuid']);
         $childElements = $this->loadChildElements($elem, $type, $dataLayer);
 
         if ($childElements && count($childElements) > 1 && $type['showLinkedElements']) {
             $dataLayer['childs'] = $childElements;
         } else {
-            $dataLayer['childs'] = [$this->createElement($elem, $dataLayer, $type, $childElements, false, true, [], true)];
+            $dataLayer['childs'] = [$this->createElement($elem, $dataLayer, $type, $childElements, false, true, [], true, true)];
         }
 
         $area = $this->addArea($elem, $dataLayer);
@@ -181,12 +183,18 @@ class LoadLayersListener
         }
 
         $this->preloadData();
+        $dataLayer['type'] = 'GeoJSON';
+        $dataLayer['format'] = 'GeoJSON';
         $types = $this->loadTypes($objDataLayer);
         $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
         $sameElements = [];
         $typeElements = $this->processTypes($types, $dataLayer, $skipElements, $sameElements, $objDataLayer);
         
         $dataLayer['childs'] = array_values($typeElements);
+        $dataLayer['initial_opened'] = '';
+        $dataLayer['data_hidelayer'] = '1';
+        $dataLayer['hide'] = '1';
+        $dataLayer['display'] = true;
         $event->setLayerData($dataLayer);
     }
 
@@ -310,7 +318,8 @@ class LoadLayersListener
                     true, 
                     false, 
                     $sameElements[$elem['uuid']],
-                    true
+                    $hideInStarboard,
+                    false
                 );
             }
             
@@ -345,12 +354,18 @@ class LoadLayersListener
         }
 
         $this->preloadData();
+        $dataLayer['type'] = 'GeoJSON';
+        $dataLayer['format'] = 'GeoJSON';
         $this->processShareSettings($dataLayer, $objDataLayer);
         
         $directories = $this->loadDirectories($objDataLayer);
         $processedDirectories = $this->processDirectories($directories, $dataLayer, $objDataLayer);
         
         $dataLayer['childs'] = $processedDirectories;
+        $dataLayer['initial_opened'] = '';
+        $dataLayer['data_hidelayer'] = '1';
+        $dataLayer['hide'] = '1';
+        $dataLayer['display'] = true;
         $event->setLayerData($dataLayer);
     }
 
@@ -552,7 +567,7 @@ class LoadLayersListener
                     $childElements = $this->loadChildElements($elem, $type, $dataLayer);
                 }
                 
-                $treeElement = $this->createElement($elem, $dataLayer, ['id' => $typeKey], $childElements, true, false, [], true);
+                $treeElement = $this->createElement($elem, $dataLayer, ['id' => $typeKey], $childElements, true, false, [], true, false);
                 $typeElements[$typeKey]['childs'][] = $treeElement;
             }
         }
@@ -568,7 +583,8 @@ class LoadLayersListener
         bool $withPopup = true, 
         bool $layerStyle = false, 
         array $sameElements = [],
-        bool $hideInStarboard = false
+        bool $hideInStarboard = false,
+        bool $forceInitialOpen = false
     ): array {
         $objLocstyle = $this->getLocationStyle($objElement['uuid']);
         $tags = $this->getElementTags($objElement['uuid']);
@@ -577,7 +593,7 @@ class LoadLayersListener
             [($parent['uuid'] ?? ($parent['id'] ?? '')) => true]
         );
 
-        $element = $this->buildBaseElement($objElement, $parent, $dataLayer, $layerStyle, $objLocstyle, $tags, $childElements, $hideInStarboard);
+        $element = $this->buildBaseElement($objElement, $parent, $dataLayer, $layerStyle, $objLocstyle, $tags, $childElements, $hideInStarboard, $forceInitialOpen);
 
         $popup = $withPopup ? [
             'async' => true,
@@ -637,7 +653,8 @@ class LoadLayersListener
         ?array $objLocstyle, 
         array $tags, 
         array $childElements,
-        bool $hideInStarboard = false
+        bool $hideInStarboard = false,
+        bool $forceInitialOpen = false
     ): array {
         $name = html_entity_decode($objElement['name']);
         $elementId = $objElement['uuid'] . ($parent['uuid'] ?? ($parent['id'] ?? ''));
@@ -646,6 +663,8 @@ class LoadLayersListener
             'id' => $elementId,
             'key' => $elementId,
             'type' => 'GeoJSON',
+            'projection' => $dataLayer['projection'] ?? 'EPSG:4326',
+            'format' => 'GeoJSON',
             'tags' => $tags,
             'childs' => $childElements,
             'name' => $name,
@@ -657,10 +676,12 @@ class LoadLayersListener
             $element['layername'] = $name;
             $element['zIndex'] = 2000;
             $element['zoomTo'] = false;
+            $element['display'] = true;
         }
 
-        $element['data_hidelayer'] = '1';
-        $element['initial_opened'] = false;
+        $element['data_hidelayer'] = $forceInitialOpen ? '' : '1';
+        $element['hide'] = $element['data_hidelayer'];
+        $element['initial_opened'] = $forceInitialOpen ? '1' : '';
 
         return $element;
     }
@@ -705,7 +726,7 @@ class LoadLayersListener
         ?array $objLocstyle
     ): void {
         $element['cluster'] = false;
-        $element['excludeFromSingleLayer'] = true;
+        $element['excludeFromSingleLayer'] = '1';
         
         $geojson = $objElement['geojson'];
         if (strpos($geojson, 'FeatureCollection') === false) {
@@ -717,6 +738,7 @@ class LoadLayersListener
         if (isset($data['features'])) {
             foreach ($data['features'] as $key => $feature) {
                 $data['features'][$key]['properties']['zindex'] = -5;
+                $data['features'][$key]['properties'] = array_merge($data['features'][$key]['properties'] ?? [], $properties);
             }
         }
         
@@ -841,7 +863,7 @@ class LoadLayersListener
         foreach ($showcaseIds as $showcaseId) {
             $childElem = $this->getElement($showcaseId);
             if ($childElem) {
-                $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], false, false, [], true);
+                $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], false, false, [], true, false);
             }
         }
 

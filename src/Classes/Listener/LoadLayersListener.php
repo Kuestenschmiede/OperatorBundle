@@ -154,7 +154,7 @@ class LoadLayersListener
         if ($childElements && count($childElements) > 1 && $type['showLinkedElements']) {
             $dataLayer['childs'] = $childElements;
         } else {
-            $dataLayer['childs'] = [$this->createElement($elem, $dataLayer, $type, $childElements, false, true)];
+            $dataLayer['childs'] = [$this->createElement($elem, $dataLayer, $type, $childElements, false, true, [], true)];
         }
 
         $area = $this->addArea($elem, $dataLayer);
@@ -266,16 +266,20 @@ class LoadLayersListener
                 continue;
             }
 
-            $processedElements = $this->processTypeElements($elements, $dataLayer, $typeData, $sameElements);
+            $processedElements = $this->processTypeElements($elements, $dataLayer, $typeData, $sameElements, $objDataLayer);
             
             if (!empty($processedElements)) {
-                $typeElements[$typeData['uuid']] = array_merge($dataLayer, [
+                $baseData = $dataLayer;
+                unset($baseData['childs']);
+                $typeElements[$typeData['uuid']] = array_merge($baseData, [
                     'pid' => $objDataLayer->id,
                     'id' => $typeData['uuid'],
                     'name' => $typeData['name'],
-                    'hideInStarboard' => $objDataLayer->skipTypes,
+                    'layername' => $typeData['name'],
                     'childs' => $processedElements,
-                    'zoomTo' => true,
+                    'zoomTo' => false,
+                    'data_hidelayer' => '1',
+                    'initial_opened' => false,
                 ]);
             }
         }
@@ -284,19 +288,20 @@ class LoadLayersListener
     }
 
 
-    private function processTypeElements(array $elements, array $dataLayer, array $type, array &$sameElements): array
+    private function processTypeElements(array $elements, array $dataLayer, array $type, array &$sameElements, $objDataLayer): array
     {
         $processedElements = [];
         $checkDuplicates = [];
+        $limit = $objDataLayer->be_optimize_checkboxes_limit ?: 10;
+        $hideInStarboard = count($elements) > $limit;
 
         foreach ($elements as $elem) {
             $sameElements[$elem['uuid']][] = $elem;
-            $childElements = [];
-            if ($type['showLinkedElements']) {
-                $childElements = $this->loadChildElements($elem, $type, $dataLayer);
-            }
-
             if ($this->shouldCreateElement($elem['uuid'], $type['uuid'], $checkDuplicates)) {
+                $childElements = [];
+                if ($type['showLinkedElements']) {
+                    $childElements = $this->loadChildElements($elem, $type, $dataLayer);
+                }
                 $processedElements[] = $this->createElement(
                     $elem, 
                     $dataLayer, 
@@ -477,14 +482,20 @@ class LoadLayersListener
             );
 
             if (!empty($validTypes)) {
+                $baseData = $dataLayer;
+                unset($baseData['childs']);
                 $singleDir = [
                     'pid' => $dataLayer['id'],
                     'id' => $directoryUuid,
                     'name' => $directoryName,
-                    'hideInStarboard' => empty($validTypes),
+                    'layername' => $directoryName,
                     'childs' => array_values($validTypes),
+                    'data_hidelayer' => '1',
+                    'initial_opened' => false,
+                    'hideInStarboard' => false,
+                    'zoomTo' => false,
                 ];
-                $processedDirectories[] = array_merge($dataLayer, $singleDir);
+                $processedDirectories[] = array_merge($baseData, $singleDir);
             }
         }
 
@@ -501,36 +512,49 @@ class LoadLayersListener
         $objDataLayer
     ): array {
         $validTypes = [];
+        $elementsByCategory = [];
+        
+        // Remove childs from dataLayer for merging to avoid memory issues
+        $baseData = $dataLayer;
+        unset($baseData['childs']);
 
         foreach ($elements as $elem) {
             if (in_array($elem['uuid'], $skipElements)) {
                 continue;
             }
+            $elementsByCategory[$elem['typeId']][] = $elem;
+        }
 
-            $typeKey = $directoryId . $elem['typeId'];
+        foreach ($elementsByCategory as $typeId => $categoryElements) {
+            $typeKey = $directoryId . $typeId;
+            $firstElem = $categoryElements[0];
+            
             if (!isset($typeElements[$typeKey])) {
-                $hideInStarboard = (bool)$objDataLayer->skipTypes;
                 $singleType = [
                     'pid' => $directoryId,
-                    'id' => $elem['typeId'],
-                    'name' => $elem['typeName'],
-                    'hideInStarboard' => $hideInStarboard,
+                    'id' => $typeKey,
+                    'name' => $firstElem['typeName'],
+                    'layername' => $firstElem['typeName'],
+                    'hideInStarboard' => false,
                     'childs' => [],
-                    'zoomTo' => true,
+                    'zoomTo' => false,
+                    'data_hidelayer' => '1',
+                    'initial_opened' => false,
                 ];
-                $typeElements[$typeKey] = array_merge($dataLayer, $singleType);
-                $validTypes[$typeKey] = array_merge($dataLayer, $singleType);
+                $typeElements[$typeKey] = array_merge($baseData, $singleType);
+                $validTypes[$typeKey] = &$typeElements[$typeKey];
             }
 
-            $type = $this->cache['types'][$elem['typeId']] ?? ['uuid' => $elem['typeId']];
-            $childElements = [];
-            if (isset($type['showLinkedElements']) && $type['showLinkedElements']) {
-                $childElements = $this->loadChildElements($elem, $type, $dataLayer);
+            foreach ($categoryElements as $elem) {
+                $type = $this->cache['types'][$elem['typeId']] ?? ['uuid' => $elem['typeId']];
+                $childElements = [];
+                if (isset($type['showLinkedElements']) && $type['showLinkedElements']) {
+                    $childElements = $this->loadChildElements($elem, $type, $dataLayer);
+                }
+                
+                $treeElement = $this->createElement($elem, $dataLayer, ['id' => $typeKey], $childElements, true, false, [], true);
+                $typeElements[$typeKey]['childs'][] = $treeElement;
             }
-
-            $treeElement = $this->createElement($elem, $dataLayer, ['uuid' => $elem['typeId']], $childElements, true, false, [], true);
-            $typeElements[$typeKey]['childs'][] = $treeElement;
-            $validTypes[$typeKey]['childs'][] = $treeElement;
         }
 
         return $validTypes;
@@ -550,19 +574,24 @@ class LoadLayersListener
         $tags = $this->getElementTags($objElement['uuid']);
         $tagUuids = array_merge(
             array_combine(array_keys($tags), array_fill(0, count($tags), true)),
-            [$parent['uuid'] => true]
+            [($parent['uuid'] ?? ($parent['id'] ?? '')) => true]
         );
+
+        $element = $this->buildBaseElement($objElement, $parent, $dataLayer, $layerStyle, $objLocstyle, $tags, $childElements, $hideInStarboard);
 
         $popup = $withPopup ? [
             'async' => true,
             'content' => 'showcase::' . $objElement['uuid'],
             'routing_link' => true,
+            'positionId' => $element['id'],
         ] : [];
 
-        $element = $this->buildBaseElement($objElement, $parent, $dataLayer, $layerStyle, $objLocstyle, $tags, $childElements, $hideInStarboard);
-
-        if (isset($dataLayer['popup_share']) && $dataLayer['popup_share']) {
-            $element['popup_share'] = $dataLayer['popup_share'];
+        if (!$hideInStarboard) {
+            $element['popup_share'] = $dataLayer['popup_share'] ?? null;
+            // Filter out empty share settings
+            if (!$element['popup_share']) {
+                unset($element['popup_share']);
+            }
         }
 
         if (($objElement['geox'] && $objElement['geoy']) || $objElement['geojson']) {
@@ -611,10 +640,11 @@ class LoadLayersListener
         bool $hideInStarboard = false
     ): array {
         $name = html_entity_decode($objElement['name']);
+        $elementId = $objElement['uuid'] . ($parent['uuid'] ?? ($parent['id'] ?? ''));
         $element = [
-            'pid' => $parent['uuid'],
-            'id' => $objElement['uuid'],
-            'key' => $objElement['uuid'] . $parent['uuid'],
+            'pid' => $parent['uuid'] ?? ($parent['id'] ?? null),
+            'id' => $elementId,
+            'key' => $elementId,
             'type' => 'GeoJSON',
             'tags' => $tags,
             'childs' => $childElements,
@@ -626,7 +656,11 @@ class LoadLayersListener
         if (!$hideInStarboard) {
             $element['layername'] = $name;
             $element['zIndex'] = 2000;
-            $element['zoomTo'] = true;
+            $element['zoomTo'] = false;
+            $element['data_hidelayer'] = '1';
+            $element['initial_opened'] = false;
+        } else {
+            $element['initial_opened'] = true;
         }
 
         return $element;
@@ -657,6 +691,10 @@ class LoadLayersListener
         } else {
             $this->addSimpleGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
         }
+
+        if (!$element['hideInStarboard']) {
+            $element['excludeFromSingleLayer'] = true;
+        }
     }
 
     private function addComplexGeometry(
@@ -686,11 +724,11 @@ class LoadLayersListener
         $data['properties'] = $properties;
         
         $element['content'] = [[
-            'id' => $objElement['uuid'],
+            'id' => $element['id'],
             'type' => 'GeoJSON',
             'locationStyle' => $layerStyle ? $dataLayer['locstyle'] : ($objLocstyle['locstyle'] ?? null),
             'data' => $data,
-            'position' => ['positionId' => $objElement['uuid']],
+            'position' => ['positionId' => $element['id']],
             'format' => 'GeoJSON',
         ]];
     }
@@ -713,11 +751,11 @@ class LoadLayersListener
         ];
 
         $element['content'] = [[
-            'id' => $objElement['uuid'],
+            'id' => $element['id'],
             'type' => 'GeoJSON',
             'locationStyle' => $layerStyle ? $dataLayer['locstyle'] : ($objLocstyle['locstyle'] ?? null),
             'data' => $data,
-            'position' => ['positionId' => $objElement['uuid']],
+            'position' => ['positionId' => $element['id']],
             'format' => 'GeoJSON',
         ]];
     }
@@ -799,7 +837,7 @@ class LoadLayersListener
         }
 
         $childElements = [];
-        $showcaseIds = StringUtil::deserialize($elem['showcaseIds'], true);
+        $showcaseIds = array_unique(StringUtil::deserialize($elem['showcaseIds'], true));
 
         foreach ($showcaseIds as $showcaseId) {
             $childElem = $this->getElement($showcaseId);

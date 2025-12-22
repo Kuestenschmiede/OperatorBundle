@@ -292,7 +292,7 @@ class LoadLayersListener
     {
         $processedElements = [];
         $checkDuplicates = [];
-        $limit = $objDataLayer->be_optimize_checkboxes_limit ?: 10;
+        $limit = $objDataLayer->be_optimize_checkboxes_limit ?: 3;
         $hideInStarboard = count($elements) > $limit;
 
         foreach ($elements as $elem) {
@@ -657,11 +657,10 @@ class LoadLayersListener
             $element['layername'] = $name;
             $element['zIndex'] = 2000;
             $element['zoomTo'] = false;
-            $element['data_hidelayer'] = '1';
-            $element['initial_opened'] = false;
-        } else {
-            $element['initial_opened'] = true;
         }
+
+        $element['data_hidelayer'] = '1';
+        $element['initial_opened'] = false;
 
         return $element;
     }

@@ -1011,7 +1011,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 //                    $objImage = FilesModel::findByUuid(StringUtil::binToUuid($tag['image']));
 //                    if ($objImage) {
                         $optionData[$tag['uuid']] = [
-                            'src' => $fileUtils->addUrlToPath($cdnUrl,$tag['imageCDN']),
+                            'src' => $fileUtils->addUrlToPathAndGetImage($cdnUrl,$tag['imageCDN']),
                             'alt' => $tag['name']
                         ];
 //                    } else {

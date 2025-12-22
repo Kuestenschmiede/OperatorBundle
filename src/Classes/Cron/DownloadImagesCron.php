@@ -59,7 +59,15 @@ class DownloadImagesCron
             $idx = 0;
             foreach ($images as $image) {
                 $galleryImage = $fileUtils->addUrlToPath($cdnUrl, $image, 600);
-                $imagePaths[] = $imagePaths[] = ['image' => $galleryImage, 'extendedParam' => '-small'];
+                $imagePaths[] = ['image' => $galleryImage, 'extendedParam' => '-small'];
+            }
+        }
+
+        $cdnTags = $db->prepare('SELECT imageCDN FROM tl_gutesio_data_tag')->execute()->fetchAllAssoc() ?: [];
+        foreach ($cdnTags as $tag) {
+            if ($tag['imageCDN']) {
+                $image = $fileUtils->addUrlToPath($cdnUrl, $tag['imageCDN'], 600, 300);
+                $imagePaths[] = ['image' => $image, 'extendedParam' => ''];
             }
         }
 

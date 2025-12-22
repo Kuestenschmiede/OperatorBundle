@@ -643,7 +643,7 @@ class OfferLoaderService
                 }
 
                 //$model = FilesModel::findByUuid($r['image']);
-                $file = $fileUtils->addUrlToPath($cdnUrl,$r['imageCDN']);
+                $file = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$r['imageCDN']);
                 foreach ($row['tagLinks'] as $addedIcons) {
                     if (($addedIcons['name'] == $r['name']) || ($addedIcons['image']['src'] == $file)) {
                         continue(2);
@@ -960,7 +960,7 @@ class OfferLoaderService
                 $imageFile = $tagRow['imageCDN'];
 
                 if ($imageFile) {
-                    $url = $fileUtils->addUrlToPath($cdnUrl,$imageFile);
+                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile);
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
 //                        'importantPart' => [

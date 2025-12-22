@@ -110,7 +110,7 @@ class LoadPopupListener
             }
 
 
-            $fileTag = $tag['imageCDN'] ? $fileUtils->addUrlToPath($cdnUrl,$tag['imageCDN'], 600, 300) : false;
+            $fileTag = $tag['imageCDN'] ? $fileUtils->addUrlToPathAndGetImage($cdnUrl,$tag['imageCDN'], 600, 300) : false;
             if ($fileTag) {
                 if ($link) {
                     $tags .= "<a href='" . $link . "'><div class='item " . $tag['name'] . "'>

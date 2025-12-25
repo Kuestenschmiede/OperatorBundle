@@ -16,7 +16,10 @@ use con4gis\MapsBundle\Classes\Services\LayerService;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapSettingsModel;
 use con4gis\MapsBundle\Resources\contao\models\C4gMapsModel;
 use Contao\Database;
+use Contao\FilesModel;
 use Contao\StringUtil;
+use Contao\System;
+use Contao\Validator;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataDirectoryModel;
 use gutesio\DataModelBundle\Resources\contao\models\GutesioDataTypeModel;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -52,6 +55,40 @@ class LoadLayersListener
         $currentTime = time();
         return " AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < $currentTime) " .
                "AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > $currentTime)";
+    }
+
+    private function resolvePath($value): string
+    {
+        if (!$value) {
+            return '';
+        }
+
+        $path = '';
+        if (is_string($value)) {
+            if (strpos($value, 'files/') === 0 || strpos($value, 'assets/') === 0 || strpos($value, 'bundles/') === 0) {
+                $path = $value;
+            } elseif (strlen($value) === 16) {
+                $objFile = FilesModel::findByUuid($value);
+                if ($objFile !== null && $objFile->path) {
+                    $path = $objFile->path;
+                }
+            } else {
+                try {
+                    if (Validator::isUuid($value) || Validator::isStringUuid($value)) {
+                        $objFile = FilesModel::findByUuid($value);
+                        if ($objFile !== null && $objFile->path) {
+                            $path = $objFile->path;
+                        }
+                    }
+                } catch (\Exception $e) {}
+            }
+        }
+
+        if ($path) {
+            return (strpos($path, '/') === 0) ? $path : '/' . $path;
+        }
+
+        return is_string($value) ? $value : '';
     }
 
     /**
@@ -92,9 +129,11 @@ class LoadLayersListener
         // Load element types and their styles
         $elementTypesStatement = $this->database->execute(
             "SELECT typeElem.elementId, typeElem.typeId, type.locstyle, type.loctype, type.showLinkedElements,
-                    type.uuid as type_uuid, type.name as type_name
+                    type.uuid as type_uuid, type.name as type_name,
+                    ls.name as style_name, ls.icon_src, ls.svgSrc
              FROM tl_gutesio_data_element_type AS typeElem
-             INNER JOIN tl_gutesio_data_type AS type ON typeElem.typeId = type.uuid" .
+             INNER JOIN tl_gutesio_data_type AS type ON typeElem.typeId = type.uuid
+             LEFT JOIN tl_c4g_map_locstyles AS ls ON type.locstyle = ls.id" .
              str_replace('elementId', 'typeElem.elementId', $idCondition) .
              " ORDER BY typeElem.rank ASC"
         );
@@ -102,11 +141,31 @@ class LoadLayersListener
         while ($elementType = $elementTypesStatement->fetchAssoc()) {
             $this->cache['elementTypes'][$elementType['elementId']][] = $elementType['typeId'];
             
+            $icon = $this->resolvePath($elementType['icon_src'] ?: $elementType['svgSrc']);
+            if (strpos($icon, '/') !== 0 && $elementType['style_name']) {
+                $styleName = $elementType['style_name'];
+                if (strpos($styleName, 'io_') === 0) {
+                    $styleName = substr($styleName, 3);
+                }
+                $styleName = str_replace(' ', '_', $styleName);
+                $projectDir = System::getContainer()->getParameter('kernel.project_dir');
+                $basePaths = glob($projectDir . '/files/con4gis_import_data/*/icons/Kategorie_Icons', GLOB_ONLYDIR);
+                $basePath = !empty($basePaths) ? str_replace($projectDir . '/', '', $basePaths[0]) . '/' : 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
+                foreach (['.svg', '.png', '.jpg'] as $ext) {
+                    if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                        $icon = '/' . $basePath . $styleName . $ext;
+                        break;
+                    }
+                }
+            }
+            
             // Pre-cache the first (highest rank) location style for each element
             if (!isset($this->cache['locStyles'][$elementType['elementId']])) {
                 $this->cache['locStyles'][$elementType['elementId']] = [
                     'locstyle' => $elementType['locstyle'],
-                    'loctype' => $elementType['loctype']
+                    'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
+                    'icon' => $icon,
+                    'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
                 ];
             }
 
@@ -115,8 +174,10 @@ class LoadLayersListener
                     'uuid' => $elementType['type_uuid'],
                     'name' => $elementType['type_name'],
                     'locstyle' => $elementType['locstyle'],
-                    'loctype' => $elementType['loctype'],
-                    'showLinkedElements' => $elementType['showLinkedElements']
+                    'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
+                    'showLinkedElements' => $elementType['showLinkedElements'],
+                    'icon' => $icon,
+                    'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
                 ];
             }
         }
@@ -233,7 +294,7 @@ class LoadLayersListener
 
     private function loadTypes($objDataLayer): array
     {
-        $configuredTypes = unserialize($objDataLayer->types);
+        $configuredTypes = StringUtil::deserialize($objDataLayer->types, true);
         if ($configuredTypes) {
             $types = $this->database->prepare(
                 "SELECT * FROM tl_gutesio_data_type WHERE uuid IN ('" . implode("','", $configuredTypes) . "')"
@@ -868,6 +929,10 @@ class LoadLayersListener
             if (isset($data['features'])) {
                 $featureProperties = $properties;
                 $featureProperties['zindex'] = -5;
+                if ($objLocstyle && isset($objLocstyle['icon']) && $objLocstyle['icon']) {
+                    $featureProperties['icon_src'] = $objLocstyle['icon'];
+                    $featureProperties['styletype'] = $objLocstyle['styletype'] ?: (strpos($objLocstyle['icon'], '.svg') !== false ? 'cust_icon_svg' : 'cust_icon');
+                }
                 foreach ($data['features'] as $key => $feature) {
                     $data['features'][$key]['properties'] = &$featureProperties;
                 }
@@ -900,6 +965,12 @@ class LoadLayersListener
     ): void {
         $locstyle = $layerStyle ? ($dataLayer['locstyle'] ?? null) : ($objLocstyle['locstyle'] ?? null);
 
+        $featureProperties = &$properties;
+        if ($objLocstyle && isset($objLocstyle['icon']) && $objLocstyle['icon']) {
+            $featureProperties['icon_src'] = $objLocstyle['icon'];
+            $featureProperties['styletype'] = $objLocstyle['styletype'] ?: (strpos($objLocstyle['icon'], '.svg') !== false ? 'cust_icon_svg' : 'cust_icon');
+        }
+
         $element['content'] = [[
             'data' => [
                 'type' => 'Feature',
@@ -907,7 +978,7 @@ class LoadLayersListener
                     'type' => 'Point',
                     'coordinates' => [(float)$objElement['geox'], (float)$objElement['geoy']]
                 ],
-                'properties' => &$properties
+                'properties' => $featureProperties
             ],
             'type' => $dataLayer['type'] ?? 'GeoJSON',
             'format' => $dataLayer['format'] ?? 'GeoJSON'
@@ -976,16 +1047,46 @@ class LoadLayersListener
     {
         $typeIds = $this->cache['elementTypes'][$elementId] ?? [];
         if (empty($typeIds)) {
-            return $this->database->prepare(
-                'SELECT type.* FROM tl_gutesio_data_type AS type 
+            $type = $this->database->prepare(
+                'SELECT type.*, ls.name as style_name, ls.icon_src, ls.svgSrc FROM tl_gutesio_data_type AS type 
                  INNER JOIN tl_gutesio_data_element_type AS typeElem 
                  ON typeElem.typeId = type.uuid
+                 LEFT JOIN tl_c4g_map_locstyles AS ls ON type.locstyle = ls.id
                  WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1'
             )->execute($elementId)->fetchAssoc() ?: null;
+            if ($type && isset($type['loctype']) && $type['loctype'] === 'POI') {
+                $type['loctype'] = 'Point';
+            }
+            if ($type) {
+                $icon = $this->resolvePath($type['icon_src'] ?: $type['svgSrc']);
+                if (strpos($icon, '/') !== 0 && ($type['style_name'] ?? '')) {
+                    $styleName = $type['style_name'];
+                    if (strpos($styleName, 'io_') === 0) {
+                        $styleName = substr($styleName, 3);
+                    }
+                    $styleName = str_replace(' ', '_', $styleName);
+                    $projectDir = System::getContainer()->getParameter('kernel.project_dir');
+                    $basePaths = glob($projectDir . '/files/con4gis_import_data/*/icons/Kategorie_Icons', GLOB_ONLYDIR);
+                    $basePath = !empty($basePaths) ? str_replace($projectDir . '/', '', $basePaths[0]) . '/' : 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
+                    foreach (['.svg', '.png', '.jpg'] as $ext) {
+                        if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                            $icon = '/' . $basePath . $styleName . $ext;
+                            break;
+                        }
+                    }
+                }
+                $type['icon'] = $icon;
+                $type['styletype'] = $icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '';
+            }
+            return $type;
         }
 
         $typeId = $typeIds[0];
-        return $this->cache['types'][$typeId] ?? null;
+        $type = $this->cache['types'][$typeId] ?? null;
+        if ($type && isset($type['loctype']) && $type['loctype'] === 'POI') {
+            $type['loctype'] = 'Point';
+        }
+        return $type;
     }
 
     private function loadChildElements(array &$elem, array &$type, array &$dataLayer): array

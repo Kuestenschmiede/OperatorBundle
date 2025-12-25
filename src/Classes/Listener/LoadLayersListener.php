@@ -169,13 +169,16 @@ class LoadLayersListener
         $this->preloadData($elementIds);
         $dataLayer['type'] = 'GeoJSON';
         $dataLayer['format'] = 'GeoJSON';
-        $type = $this->getElementType($elem['uuid']);
+        $type = $this->getElementType($elem['uuid']) ?: [];
         $childElements = $this->loadChildElements($elem, $type, $dataLayer);
 
-        if ($childElements && count($childElements) > 1 && $type['showLinkedElements']) {
+        if ($childElements && count($childElements) > 1 && ($type['showLinkedElements'] ?? false)) {
             $dataLayer['childs'] = $childElements;
         } else {
-            $dataLayer['childs'] = [$this->createElement($elem, $dataLayer, $type, $childElements, false, true, [], true, true)];
+            $createdElement = $this->createElement($elem, $dataLayer, $type, $childElements, false, true, [], true, true);
+            if ($createdElement) {
+                $dataLayer['childs'] = [$createdElement];
+            }
         }
 
         $area = $this->addArea($elem, $dataLayer);
@@ -368,7 +371,7 @@ class LoadLayersListener
             if ($showLinked) {
                 $childElements = $this->loadChildElements($elem, $type, $dataLayer);
             }
-            $processedElements[] = $this->createElement(
+            $createdElement = $this->createElement(
                 $elem, 
                 $dataLayer, 
                 $type, 
@@ -379,6 +382,9 @@ class LoadLayersListener
                 $hideInStarboard,
                 $initialOpened
             );
+            if ($createdElement) {
+                $processedElements[] = $createdElement;
+            }
             unset($elements[$key]);
             unset($childElements);
         }
@@ -652,7 +658,10 @@ class LoadLayersListener
                     $childElements = $this->loadChildElements($elem, $type, $dataLayer);
                 }
                 
-                $typeElements[$typeKey]['childs'][] = $this->createElement($elem, $dataLayer, $parentInfo, $childElements, true, false, [], $hideInStarboard, $initialOpened);
+                $createdElement = $this->createElement($elem, $dataLayer, $parentInfo, $childElements, true, false, [], $hideInStarboard, $initialOpened);
+                if ($createdElement) {
+                    $typeElements[$typeKey]['childs'][] = $createdElement;
+                }
                 unset($categoryElements[$cKey]);
                 unset($childElements);
             }
@@ -677,6 +686,10 @@ class LoadLayersListener
         bool $hideInStarboard = false,
         bool $forceInitialOpen = false
     ): array {
+        if (empty($objElement['uuid'])) {
+            return [];
+        }
+
         $objLocstyle = $this->getLocationStyle($objElement['uuid']);
         $tagUuids = $this->getElementTags($objElement['uuid']);
         $parentId = $parent['uuid'] ?? ($parent['id'] ?? '');
@@ -761,7 +774,9 @@ class LoadLayersListener
             'id' => $elementId,
             'name' => $name,
             'type' => $dataLayer['type'] ?? 'GeoJSON',
-            'format' => $dataLayer['format'] ?? 'GeoJSON'
+            'format' => $dataLayer['format'] ?? 'GeoJSON',
+            'childs' => $childElements ?: [],
+            'content' => []
         ];
 
         if ($parentId) {
@@ -775,10 +790,6 @@ class LoadLayersListener
 
         if ($hideInStarboard) {
             $element['hideInStarboard'] = true;
-        }
-
-        if ($childElements) {
-            $element['childs'] = $childElements;
         }
 
         if ($properties) {
@@ -846,6 +857,14 @@ class LoadLayersListener
             $data = json_decode($geojson, true);
             unset($geojson);
             
+            if (!$data) {
+                $data = ['type' => 'FeatureCollection', 'features' => []];
+            }
+
+            if (!isset($data['features']) && ($data['type'] ?? '') === 'FeatureCollection') {
+                $data['features'] = [];
+            }
+
             if (isset($data['features'])) {
                 $featureProperties = $properties;
                 $featureProperties['zindex'] = -5;
@@ -950,7 +969,7 @@ class LoadLayersListener
 
         return $this->database->prepare(
             'SELECT uuid, name, geox, geoy, showcaseIds FROM tl_gutesio_data_element WHERE alias = ?'
-        )->execute($alias)->fetchAssoc() ?: [];
+        )->execute($alias)->fetchAssoc() ?: null;
     }
 
     private function getElementType(string $elementId): ?array
@@ -962,16 +981,16 @@ class LoadLayersListener
                  INNER JOIN tl_gutesio_data_element_type AS typeElem 
                  ON typeElem.typeId = type.uuid
                  WHERE typeElem.elementId = ? ORDER BY typeElem.rank ASC LIMIT 1'
-            )->execute($elementId)->fetchAssoc() ?: [];
+            )->execute($elementId)->fetchAssoc() ?: null;
         }
 
         $typeId = $typeIds[0];
-        return $this->cache['types'][$typeId] ?? [];
+        return $this->cache['types'][$typeId] ?? null;
     }
 
     private function loadChildElements(array &$elem, array &$type, array &$dataLayer): array
     {
-        if (!$elem['showcaseIds'] || !$type['showLinkedElements']) {
+        if (empty($elem['showcaseIds']) || empty($type['showLinkedElements'])) {
             return [];
         }
 
@@ -981,7 +1000,10 @@ class LoadLayersListener
         foreach ($showcaseIds as $showcaseId) {
             $childElem = $this->getElement($showcaseId);
             if ($childElem) {
-                $childElements[] = $this->createElement($childElem, $dataLayer, $elem, [], false, false, [], true, false);
+                $createdElement = $this->createElement($childElem, $dataLayer, $elem, [], false, false, [], true, false);
+                if ($createdElement) {
+                    $childElements[] = $createdElement;
+                }
             }
         }
 

@@ -272,16 +272,46 @@ class LoadLayersListener
         $sameElements = [];
         $typeElements = $this->processTypes($types, $dataLayer, $skipElements, $sameElements, $objDataLayer);
         
+        $activeTypes = StringUtil::deserialize($objDataLayer->activeTypes, true);
+
         if ($objDataLayer->skipTypes) {
             $childs = [];
-            foreach ($typeElements as $typeElement) {
+            foreach ($typeElements as $typeId => $typeElement) {
+                $hide = !empty($activeTypes) && !in_array($typeId, $activeTypes);
+                $show = !empty($activeTypes) && in_array($typeId, $activeTypes);
                 foreach ($typeElement['childs'] as $child) {
                     $child['pid'] = $dataLayer['id'];
+                    if ($hide) {
+                        $child['data_hidelayer'] = '1';
+                        $child['hide'] = '1';
+                    } elseif ($show) {
+                        $child['data_hidelayer'] = '';
+                        $child['hide'] = '';
+                    }
                     $childs[] = $child;
                 }
             }
             $dataLayer['childs'] = $childs;
         } else {
+            if (!empty($activeTypes)) {
+                foreach ($typeElements as $typeId => &$typeElement) {
+                    if (!in_array($typeId, $activeTypes)) {
+                        $typeElement['data_hidelayer'] = '1';
+                        $typeElement['hide'] = '1';
+                        foreach ($typeElement['childs'] as &$child) {
+                            $child['data_hidelayer'] = '1';
+                            $child['hide'] = '1';
+                        }
+                    } else if (in_array($typeId, $activeTypes)) {
+                        $typeElement['data_hidelayer'] = '';
+                        $typeElement['hide'] = '';
+                        foreach ($typeElement['childs'] as &$child) {
+                            $child['data_hidelayer'] = '';
+                            $child['hide'] = '';
+                        }
+                    }
+                }
+            }
             $dataLayer['childs'] = array_values($typeElements);
         }
 
@@ -687,6 +717,7 @@ class LoadLayersListener
         $hideInStarboard = $objDataLayer->hideInStarboard ?: false;
         $initialOpened = $objDataLayer->initial_opened ? true : false;
         $showLinked = count($elements) < 50;
+        $activeTypes = StringUtil::deserialize($objDataLayer->activeTypes, true);
 
         foreach ($elementsByCategory as $typeId => &$categoryElements) {
             $typeKey = $directoryId . $typeId;
@@ -706,12 +737,23 @@ class LoadLayersListener
                     'initial_opened' => $objDataLayer->initial_opened,
                     'display' => true
                 ];
+                
+                if (!empty($activeTypes) && !in_array($typeId, $activeTypes)) {
+                    $typeElements[$typeKey]['data_hidelayer'] = '1';
+                    $typeElements[$typeKey]['hide'] = '1';
+                } else if (!empty($activeTypes) && in_array($typeId, $activeTypes)) {
+                    $typeElements[$typeKey]['data_hidelayer'] = '';
+                    $typeElements[$typeKey]['hide'] = '';
+                }
+
                 $validTypes[$typeKey] = &$typeElements[$typeKey];
             }
 
             $type = $this->cache['types'][$typeId] ?? ['uuid' => $typeId];
             $canShowLinked = $showLinked && isset($type['showLinkedElements']) && $type['showLinkedElements'];
             $parentInfo = ['id' => $typeKey];
+            $forceHide = ($typeElements[$typeKey]['hide'] ?? '0') === '1';
+            $forceShow = !empty($activeTypes) && in_array($typeId, $activeTypes);
 
             foreach ($categoryElements as $cKey => $elem) {
                 $childElements = [];
@@ -721,6 +763,13 @@ class LoadLayersListener
                 
                 $createdElement = $this->createElement($elem, $dataLayer, $parentInfo, $childElements, true, false, [], $hideInStarboard, $initialOpened);
                 if ($createdElement) {
+                    if ($forceHide) {
+                        $createdElement['data_hidelayer'] = '1';
+                        $createdElement['hide'] = '1';
+                    } elseif ($forceShow) {
+                        $createdElement['data_hidelayer'] = '';
+                        $createdElement['hide'] = '';
+                    }
                     $typeElements[$typeKey]['childs'][] = $createdElement;
                 }
                 unset($categoryElements[$cKey]);

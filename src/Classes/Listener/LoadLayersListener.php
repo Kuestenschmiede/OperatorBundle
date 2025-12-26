@@ -808,7 +808,7 @@ class LoadLayersListener
         if ($tagUuids || $parentId) {
             $cacheKey = substr(md5($parentId . ($tagUuids ? implode(',', $tagUuids) : '')), 0, 16);
             if (isset($this->cache['propertyCache'][$cacheKey])) {
-                $properties = &$this->cache['propertyCache'][$cacheKey];
+                $properties = $this->cache['propertyCache'][$cacheKey];
             } else {
                 if ($tagUuids) {
                     $properties = array_fill_keys($tagUuids, true);
@@ -819,7 +819,7 @@ class LoadLayersListener
                     $properties = [$parentId => true];
                 }
                 $this->cache['propertyCache'][$cacheKey] = $properties;
-                $properties = &$this->cache['propertyCache'][$cacheKey];
+                $properties = $this->cache['propertyCache'][$cacheKey];
             }
         }
         unset($tagUuids);

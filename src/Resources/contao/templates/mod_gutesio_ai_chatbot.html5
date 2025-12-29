@@ -1,0 +1,204 @@
+<div class="mod_gutesio_ai_chatbot block">
+    <div class="chatbot-container">
+        <div id="chatbot-messages" class="chatbot-messages" style="height: 450px; overflow-y: auto; border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; background: #fff; display: flex; flex-direction: column;">
+            <div class="message system-message" style="margin-bottom: 15px; padding: 10px 15px; background: #f0f0f0; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; border: 1px solid #e0e0e0;">
+                Moin! Wie kann ich Dir helfen?
+            </div>
+        </div>
+        <div id="chatbot-loading" style="display: none; padding: 10px; text-align: center;">
+            <div class="spinner" style="display: inline-block; width: 30px; height: 30px; border: 3px solid rgba(46, 161, 219, 0.3); border-radius: 50%; border-top-color: #2ea1db; animation: spin 1s ease-in-out infinite;"></div>
+            <style>
+                @keyframes spin { to { transform: rotate(360deg); } }
+            </style>
+        </div>
+        <div class="chatbot-input" style="display: flex; gap: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
+            <input type="text" id="chatbot-user-input" placeholder="Stell Deine Frage ..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
+            <button id="chatbot-send-btn" style="padding: 10px 20px; background: #2ea1db; color: #fff; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; transition: background 0.3s;">Senden</button>
+        </div>
+    </div>
+</div>
+
+<template id="chatbot-tile-tpl">
+    <div class="chatbot-tile c4g-list-element" style="border: 1px solid #eee; border-radius: 12px; overflow: hidden; margin: 15px 0; background: #fff; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s, box-shadow 0.2s;">
+        <a href="tileLink" class="tile-link" style="text-decoration: none; color: inherit; display: block;">
+            <div class="c4g-list-element__image-wrapper" style="height: 180px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <img src="tileImage" alt="tileName" class="c4g-list-element__image" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div class="c4g-list-element__inner" style="padding: 15px;">
+                <div class="c4g-list-element__types-wrapper" style="font-size: 0.85em; color: #2ea1db; margin-bottom: 5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">tileTypeName</div>
+                <div class="c4g-list-element__title-wrapper">
+                    <h4 class="c4g-list-element__title" style="margin: 0; font-size: 1.2em; color: #333; line-height: 1.3;">tileName</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+</template>
+
+<script>
+    let userPosition = null;
+
+    function linkify(text) {
+        const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        return text.replace(urlRegex, function(url) {
+            let href = url;
+            if (!href.match(/^https?:\/\//)) {
+                href = 'http://' + href;
+            }
+            return '<a href="' + href + '" target="_blank" rel="noopener noreferrer" style="color: #2ea1db; text-decoration: underline;">' + url + '</a>';
+        });
+    }
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((position) => {
+            userPosition = {
+                lat: position.coords.latitude,
+                lon: position.coords.longitude
+            };
+        }, (error) => {
+            console.warn('Geolocation error:', error);
+        }, {
+            maximumAge: 1800000,
+            timeout: 5000
+        });
+    }
+
+    document.getElementById('chatbot-user-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('chatbot-send-btn').click();
+        }
+    });
+
+    document.getElementById('chatbot-send-btn').addEventListener('click', function() {
+        const input = document.getElementById('chatbot-user-input');
+        const question = input.value;
+        if (!question) return;
+
+        const messagesContainer = document.getElementById('chatbot-messages');
+        const loadingSpinner = document.getElementById('chatbot-loading');
+        const sendBtn = document.getElementById('chatbot-send-btn');
+
+        const userMessage = document.createElement('div');
+        userMessage.className = 'message user-message';
+        userMessage.style.cssText = 'margin-bottom: 15px; padding: 10px 15px; background: #dcf8c6; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; border: 1px solid #c7eafc;';
+        userMessage.textContent = 'Du: ' + question;
+        messagesContainer.appendChild(userMessage);
+        input.value = '';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        // Show loading
+        loadingSpinner.style.display = 'block';
+        sendBtn.disabled = true;
+        sendBtn.style.opacity = '0.5';
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+        const formData = new URLSearchParams();
+        formData.append('action', 'ask_ai');
+        formData.append('question', question);
+        if (typeof REQUEST_TOKEN !== 'undefined') {
+            formData.append('REQUEST_TOKEN', REQUEST_TOKEN);
+        }
+        if (userPosition) {
+            formData.append('lat', userPosition.lat);
+            formData.append('lon', userPosition.lon);
+        }
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            redirect: 'manual'
+        })
+        .then(response => {
+            loadingSpinner.style.display = 'none';
+            sendBtn.disabled = false;
+            sendBtn.style.opacity = '1';
+            if (response.type === 'opaqueredirect') {
+                throw new Error('Der Server hat eine Weiterleitung (z.B. Login-Seite) gesendet. Bitte laden Sie die Seite neu.');
+            }
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.indexOf("application/json") !== -1) {
+                return response.text().then(text => {
+                    try {
+                        const data = JSON.parse(text.trim());
+                        if (!response.ok) {
+                            throw new Error(data.answer || 'Server error');
+                        }
+                        return data;
+                    } catch (e) {
+                        console.error('JSON parse error after JSON content-type check:', text);
+                        throw new Error('Der Server hat eine ungültige JSON-Struktur gesendet.');
+                    }
+                });
+            } else {
+                return response.text().then(text => {
+                    console.error('Non-JSON response:', text);
+                    if (text.indexOf('<!DOCTYPE') !== -1 || text.indexOf('<html') !== -1) {
+                        throw new Error('Der Server hat eine HTML-Seite anstatt einer JSON-Antwort gesendet. Möglicherweise ist eine Sitzung abgelaufen oder ein PHP-Fehler ist aufgetreten.');
+                    }
+                    throw new Error('Der Server hat keine gültige JSON-Antwort gesendet.');
+                });
+            }
+        })
+        .then(data => {
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'message ai-message';
+            aiMessage.style.cssText = 'margin-bottom: 15px; padding: 10px 15px; background: #f9f9f9; border: 1px solid #eee; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; box-shadow: 0 2px 5px rgba(0,0,0,0.02);';
+            
+            let text = data.answer;
+            const tiles = data.tiles || [];
+            
+            // Replace [TILE:UUID] with tile HTML
+            const tileTpl = document.getElementById('chatbot-tile-tpl');
+            
+            // Find all [TILE:UUID] tags
+            const tileRegex = /\[TILE:([a-f0-9-]+)\]/gi;
+            let match;
+            let lastIndex = 0;
+            let finalHtml = "";
+            
+            while ((match = tileRegex.exec(text)) !== null) {
+                // Add text before the tag
+                let partialText = text.substring(lastIndex, match.index).replace(/\n/g, '<br>');
+                finalHtml += linkify(partialText);
+                
+                const uuid = match[1];
+                const tileInfo = tiles.find(t => t.uuid === uuid);
+                
+                if (tileInfo) {
+                    let tileHtml = tileTpl.innerHTML;
+                    tileHtml = tileHtml.replace(/tileLink/g, tileInfo.link || '#');
+                    tileHtml = tileHtml.replace(/tileImage/g, tileInfo.image || '/bundles/gutesiodatamodel/img/no-image.png');
+                    tileHtml = tileHtml.replace(/tileName/g, tileInfo.name);
+                    tileHtml = tileHtml.replace(/tileTypeName/g, tileInfo.typeName || '');
+                    finalHtml += tileHtml;
+                }
+                
+                lastIndex = tileRegex.lastIndex;
+            }
+            
+            // Add remaining text
+            let remainingText = text.substring(lastIndex).replace(/\n/g, '<br>');
+            finalHtml += linkify(remainingText);
+            
+            aiMessage.innerHTML = '<strong style="color: #2ea1db; font-size: 0.9em; display: block; margin-bottom: 5px;"><?php echo $this->assistantName; ?>:</strong>' + finalHtml;
+            messagesContainer.appendChild(aiMessage);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        })
+        .catch(error => {
+            loadingSpinner.style.display = 'none';
+            sendBtn.disabled = false;
+            sendBtn.style.opacity = '1';
+            console.error('Error:', error);
+            const aiMessage = document.createElement('div');
+            aiMessage.className = 'message ai-message error';
+            aiMessage.style.cssText = 'margin-bottom: 15px; padding: 8px; background: #f8d7da; color: #721c24; border-radius: 5px;';
+            aiMessage.textContent = 'Fehler: ' + error.message;
+            messagesContainer.appendChild(aiMessage);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    });
+</script>

@@ -24,6 +24,9 @@ class CurlPostRequest
         $curl = curl_init($this->url);
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER ,true);
+        curl_setopt($curl, CURLOPT_ENCODING, ""); // Handle all encodings
+        curl_setopt($curl, CURLOPT_TIMEOUT, 90); // Timeout after 90 seconds
+        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 10); // Connection timeout after 10 seconds
         if ($this->postData) {
             curl_setopt($curl, CURLOPT_POSTFIELDS, $this->postData);
         }
@@ -37,9 +40,14 @@ class CurlPostRequest
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
         }
         $data = curl_exec($curl);
-        $this->response->setStatusCode(curl_getinfo($curl, CURLINFO_RESPONSE_CODE));
+        if ($data === false) {
+            $this->response->setStatusCode(0);
+            $this->response->setData('Curl error: ' . curl_error($curl));
+        } else {
+            $this->response->setStatusCode(curl_getinfo($curl, CURLINFO_RESPONSE_CODE));
+            $this->response->setData($data);
+        }
         curl_close($curl);
-        $this->response->setData($data);
 
         return $this->response;
     }

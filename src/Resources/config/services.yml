@@ -93,6 +93,15 @@ services:
                 renderer: forward,
                 template: mod_gutesio_cart_module }
 
+    gutesio\OperatorBundle\Controller\AiChatbotModuleController:
+      class: gutesio\OperatorBundle\Controller\AiChatbotModuleController
+      public: true
+      tags:
+          - { name: contao.frontend_module,
+              category: gutesio,
+              renderer: forward,
+              template: mod_gutesio_ai_chatbot }
+
     gutesio\OperatorBundle\Classes\Services\ShowcaseService:
       factory: ['gutesio\OperatorBundle\Classes\Services\ShowcaseService', 'getInstance']
       lazy: true
@@ -116,6 +125,10 @@ services:
     gutesio\OperatorBundle\Classes\Services\VisitCounterService:
       lazy: true
       public: true
+
+    gutesio\OperatorBundle\Classes\Services\AiChatbotService:
+      arguments:
+        - "@con4gis.area_service"
 
     gutesio\OperatorBundle\Classes\Services\ServerService: ~
 

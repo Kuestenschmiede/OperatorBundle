@@ -303,3 +303,5 @@ $GLOBALS['TL_LANG']['tl_module']['gutesio_banner_hide_event_endtime'] = [
     'Endzeit bei Veranstaltungen ausblenden',
     'Wenn aktiviert, zeigen Veranstaltungs‑Slides nur die Startzeit an (keine Endzeit).'
 ];
+
+$GLOBALS['TL_LANG']['tl_module']['ai_chatbot'] = ['KI Chatbot', 'Fügt der Seite einen KI Chatbot hinzu.'];

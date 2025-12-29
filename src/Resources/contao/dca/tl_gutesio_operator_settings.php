@@ -47,8 +47,9 @@ $GLOBALS['TL_DCA'][$strName] = [
         'default' => '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
-            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,cartPage;'.
-            '{pwa_legend},dailyEventPushConfig;'
+            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage;'.
+            '{pwa_legend},dailyEventPushConfig;'.
+            '{ai_legend},aiEnabled,aiAssistantName,aiApiEndpoint,aiApiKey,aiModel,aiMaxContextRecords;'
     ],
 
     'fields' => [
@@ -57,6 +58,12 @@ $GLOBALS['TL_DCA'][$strName] = [
         ],
         'tstamp' => [
             'sql' => 'int unsigned NOT NULL default 0'
+        ],
+        'aiAssistantName' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 50],
+            'sql'                     => "varchar(50) NOT NULL default 'KI'"
         ],
         'cdnUrl' =>[
             'exclude' => true,
@@ -165,6 +172,18 @@ $GLOBALS['TL_DCA'][$strName] = [
             'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
+        'realestateDetailPage' => [
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ],
+        'exhibitionDetailPage' => [
+            'exclude'                 => true,
+            'inputType'               => 'pageTree',
+            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ],
         'cartPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
@@ -232,6 +251,74 @@ $GLOBALS['TL_DCA'][$strName] = [
                 ],
             ],
             'sql'       => 'blob NULL',
+        ],
+        'aiEnabled' => [
+            'exclude'                 => true,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'sql'                     => "char(1) NOT NULL default ''"
+        ],
+        'aiApiEndpoint' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 255],
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ],
+        'aiApiKey' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 255, 'hideInput' => true],
+            'sql'                     => "varchar(255) NOT NULL default ''"
+        ],
+        'aiModel' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 50],
+            'sql'                     => "varchar(50) NOT NULL default ''"
+        ],
+        'aiMaxContextRecords' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['rgxp' => 'digit', 'mandatory' => false, 'tl_class' => 'w50'],
+            'sql'                     => "int(10) unsigned NOT NULL default 0"
+        ],
+        'aiSystemPrompt' => [
+            'exclude'                 => true,
+            'inputType'               => 'textarea',
+            'eval'                    => ['tl_class' => 'clr', 'rte' => 'ace|markdown'],
+            'sql'                     => "text NULL"
+        ],
+        'aiSyncConfig' => [
+            'exclude'                 => true,
+            'inputType'               => 'multiColumnWizard',
+            'eval'                    => [
+                'columnFields' => [
+                    'table' => [
+                        'label'     => &$GLOBALS['TL_LANG'][$strName]['aiSyncTable'],
+                        'exclude'   => true,
+                        'inputType' => 'select',
+                        'options'   => [
+                            'tl_gutesio_data_element',
+                            'tl_gutesio_data_child',
+                            'tl_gutesio_data_child_product',
+                            'tl_gutesio_data_child_event',
+                            'tl_gutesio_data_child_job',
+                            'tl_gutesio_data_child_voucher',
+                            'tl_gutesio_data_child_person',
+                            'tl_gutesio_data_child_arrangement',
+                            'tl_gutesio_data_child_service'
+                        ],
+                        'eval'      => ['style' => 'width: 250px;', 'includeBlankOption' => true, 'chosen' => true]
+                    ],
+                    'fields' => [
+                        'label'     => &$GLOBALS['TL_LANG'][$strName]['aiSyncFields'],
+                        'exclude'   => true,
+                        'inputType' => 'text',
+                        'eval'      => ['style' => 'width: 400px;']
+                    ]
+                ]
+            ],
+            'sql'                     => "blob NULL"
         ]
 
     ],

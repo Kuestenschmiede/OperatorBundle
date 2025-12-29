@@ -52,6 +52,9 @@ class GutesBlogGenerator
                 foreach ($pushConfiguration as $pushConfig) {
                     $sendMessage = false;
                     $types = $pushConfig['subscriptionTypes'];
+                    if (!is_array($types)) {
+                        $types = StringUtil::deserialize($types, true);
+                    }
                     foreach ($types as $type) {
                         /** @var PushSubscriptionType $objType */
                         $objType = $subTypeRepo->findOneBy(['id' => $type]);

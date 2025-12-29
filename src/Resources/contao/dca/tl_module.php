@@ -89,6 +89,8 @@ $GLOBALS['TL_DCA']['tl_module']['palettes']['banner_module'] .= '{security_legen
 $GLOBALS['TL_DCA']['tl_module']['palettes']['nearby_showcase_list_module'] = '{title_legend},name,headline,type;'.
     '{generic_legend},gutesio_data_mode,gutesio_data_redirect_page,gutesio_data_max_data,gutesio_check_position,gutesio_show_detail_link;';
 
+$GLOBALS['TL_DCA']['tl_module']['palettes']['ai_chatbot'] = '{title_legend},name,headline,type;{template_legend:hide},customTpl;';
+
 $GLOBALS['TL_DCA']['tl_module']['fields']['gutesio_data_mode'] = [
     'exclude'                 => true,
     'default'                 => "0",

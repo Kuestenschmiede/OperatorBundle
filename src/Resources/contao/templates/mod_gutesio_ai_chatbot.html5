@@ -1,7 +1,7 @@
 <div class="mod_gutesio_ai_chatbot block">
     <div class="chatbot-container">
-        <div id="chatbot-messages" class="chatbot-messages" style="height: 450px; overflow-y: auto; border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; background: #fff; display: flex; flex-direction: column;">
-            <div class="message system-message" style="margin-bottom: 15px; padding: 10px 15px; background: #f0f0f0; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; border: 1px solid #e0e0e0;">
+        <div id="chatbot-messages" class="chatbot-messages" style="height: 450px; overflow-y: auto; border: 1px solid #ccc; padding: 15px; margin-bottom: 10px; background: #fff; display: flex; flex-direction: column; overflow-wrap: anywhere;">
+            <div class="message system-message" style="margin-bottom: 15px; padding: 10px 15px; background: #f0f0f0; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; border: 1px solid #e0e0e0; color: #000; word-break: break-word;">
                 Moin! Wie kann ich Dir helfen?
             </div>
         </div>
@@ -13,7 +13,7 @@
         </div>
         <div class="chatbot-input" style="display: flex; gap: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
             <input type="text" id="chatbot-user-input" placeholder="Stell Deine Frage ..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
-            <button id="chatbot-send-btn" style="padding: 10px 20px; background: #2ea1db; color: #fff; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; transition: background 0.3s;">Senden</button>
+            <button id="chatbot-send-btn" style="padding: 10px 20px; background: #2ea1db; color: #000; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; transition: background 0.3s;">Senden</button>
         </div>
     </div>
 </div>
@@ -38,13 +38,15 @@
     let userPosition = null;
 
     function linkify(text) {
-        const urlRegex = /(((https?:\/\/)|(www\.))[^\s]+)/g;
+        const urlRegex = /(((https?:\/\/)|(www\.))[^\s\)\<\>]+)/g;
         return text.replace(urlRegex, function(url) {
-            let href = url;
+            let cleanUrl = url.replace(/[.,!?;:]+$/, '');
+            let punctuation = url.substring(cleanUrl.length);
+            let href = cleanUrl;
             if (!href.match(/^https?:\/\//)) {
                 href = 'http://' + href;
             }
-            return '<a href="' + href + '" target="_blank" rel="noopener noreferrer" style="color: #2ea1db; text-decoration: underline;">' + url + '</a>';
+            return '<a href="' + href + '" target="_blank" rel="noopener noreferrer" style="color: #2ea1db; text-decoration: underline;">' + cleanUrl + '</a>' + punctuation;
         });
     }
 
@@ -79,7 +81,7 @@
 
         const userMessage = document.createElement('div');
         userMessage.className = 'message user-message';
-        userMessage.style.cssText = 'margin-bottom: 15px; padding: 10px 15px; background: #dcf8c6; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; border: 1px solid #c7eafc;';
+        userMessage.style.cssText = 'margin-bottom: 15px; padding: 10px 15px; background: #dcf8c6; border-radius: 15px 15px 0 15px; align-self: flex-end; max-width: 80%; border: 1px solid #c7eafc; color: #000; word-break: break-word;';
         userMessage.textContent = 'Du: ' + question;
         messagesContainer.appendChild(userMessage);
         input.value = '';
@@ -146,7 +148,7 @@
         .then(data => {
             const aiMessage = document.createElement('div');
             aiMessage.className = 'message ai-message';
-            aiMessage.style.cssText = 'margin-bottom: 15px; padding: 10px 15px; background: #f9f9f9; border: 1px solid #eee; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; box-shadow: 0 2px 5px rgba(0,0,0,0.02);';
+            aiMessage.style.cssText = 'margin-bottom: 15px; padding: 10px 15px; background: #f9f9f9; border: 1px solid #eee; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; box-shadow: 0 2px 5px rgba(0,0,0,0.02); color: #000; word-break: break-word;';
             
             let text = data.answer;
             const tiles = data.tiles || [];
@@ -162,8 +164,8 @@
             
             while ((match = tileRegex.exec(text)) !== null) {
                 // Add text before the tag
-                let partialText = text.substring(lastIndex, match.index).replace(/\n/g, '<br>');
-                finalHtml += linkify(partialText);
+                let partialText = text.substring(lastIndex, match.index);
+                finalHtml += linkify(partialText).replace(/\n/g, '<br>');
                 
                 const uuid = match[1];
                 const tileInfo = tiles.find(t => t.uuid === uuid);
@@ -181,8 +183,8 @@
             }
             
             // Add remaining text
-            let remainingText = text.substring(lastIndex).replace(/\n/g, '<br>');
-            finalHtml += linkify(remainingText);
+            let remainingText = text.substring(lastIndex);
+            finalHtml += linkify(remainingText).replace(/\n/g, '<br>');
             
             aiMessage.innerHTML = '<strong style="color: #2ea1db; font-size: 0.9em; display: block; margin-bottom: 5px;"><?php echo $this->assistantName; ?>:</strong>' + finalHtml;
             messagesContainer.appendChild(aiMessage);

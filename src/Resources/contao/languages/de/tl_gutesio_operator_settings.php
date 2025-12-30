@@ -27,6 +27,7 @@ $GLOBALS['TL_LANG'][$strName]['aiApiEndpoint'] = ["KI API Endpunkt", "Geben Sie 
 $GLOBALS['TL_LANG'][$strName]['aiApiKey'] = ["KI API Schlüssel", "Geben Sie den API Schlüssel für die KI an."];
 $GLOBALS['TL_LANG'][$strName]['aiModel'] = ["KI Modell", "Geben Sie das zu verwendende KI Modell an (z.B. gpt-4o-mini)."];
 $GLOBALS['TL_LANG'][$strName]['aiMaxContextRecords'] = ["Maximale Anzahl an Kontext-Datensätzen", "Begrenzen Sie die Anzahl der Datensätze, die pro Anfrage als Kontext an die KI gesendet werden, um Kosten zu sparen (0 = unbegrenzt)."];
+$GLOBALS['TL_LANG'][$strName]['aiAdditionalKnowledge'] = ["Zusätzliches Wissen", "Geben Sie hier zusätzliches Wissen an, das der KI bei jeder Anfrage zur Verfügung stehen soll (z.B. Informationen über das Projekt, Links oder Kurzinhalte)."];
 $GLOBALS['TL_LANG'][$strName]['cdnUrl'] = ['URL zum CDN', 'Geben Sie die URL zum CDN an (zwingend erforderlich).'];
 $GLOBALS['TL_LANG'][$strName]['gutesIoUrl'] = ['URL für gutes.digital', 'Geben Sie hier die URL für die gutes.digital Kommunikation an (zwingend erforderlich).'];
 $GLOBALS['TL_LANG'][$strName]['gutesIoKey'] = ['API-Schlüssel für gutes.digital', 'Geben Sie hier Ihren Betreiberschlüssel an (zwingend erforderlich).'];

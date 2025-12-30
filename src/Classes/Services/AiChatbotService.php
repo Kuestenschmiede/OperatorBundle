@@ -37,41 +37,41 @@ class AiChatbotService
             [
                 'table' => 'tl_gutesio_data_child_product',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description, t2.price, t2.strikePrice, t2.color, t2.size, t2.brand, t2.allergenes, t2.ingredients'
+                'fields' => 't1.name, t1.description, t1.shortDescription, t2.price, t2.strikePrice, t2.brand'
             ],
             [
                 'table' => 'tl_gutesio_data_child_event',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description, t2.beginDate, t2.endDate, t2.beginTime, t2.endTime, t2.eventPrice'
+                'fields' => 't1.name, t1.description, t1.shortDescription, t2.beginDate, t2.endDate, t2.beginTime, t2.endTime, t2.eventPrice'
             ],
             [
                 'table' => 'tl_gutesio_data_child_job',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description, t2.applicationContactEMail, t2.applicationContactPhone, t2.workHours'
+                'fields' => 't1.name, t1.description, t1.shortDescription, t2.applicationContactEMail, t2.applicationContactPhone, t2.workHours'
             ],
             [
                 'table' => 'tl_gutesio_data_child_voucher',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description, t2.credit'
+                'fields' => 't1.name, t1.description, t1.shortDescription, t2.credit'
             ],
             [
                 'table' => 'tl_gutesio_data_child_person',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description, t2.dateOfBirth'
+                'fields' => 't1.name, t1.description, t1.shortDescription, t2.dateOfBirth'
             ],
             [
                 'table' => 'tl_gutesio_data_child_realestate',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description'
+                'fields' => 't1.name, t1.description, t1.shortDescription'
             ],
             [
                 'table' => 'tl_gutesio_data_child_pickup',
                 'baseTable' => 'tl_gutesio_data_child',
-                'fields' => 't1.name, t1.description'
+                'fields' => 't1.name, t1.description, t1.shortDescription'
             ],
             [
                 'table' => 'tl_gutesio_data_child',
-                'fields' => 'name, shortDescription, description',
+                'fields' => 'name, description, shortDescription',
                 'where' => "typeId IN ('arrangement', 'service')"
             ]
         ];
@@ -102,22 +102,30 @@ class AiChatbotService
             $userCoords = [floatval($lon), floatval($lat)]; // AreaService expects [lon, lat]
         }
 
-        $cacheKey = 'ai_context_' . ($settings->aiMaxContextRecords ?: 'default');
+        // We now use a hybrid approach:
+        // 1. A global base context (the latest records) - cached for performance
+        // 2. A dynamic search context based on the user question - generated on the fly
+        
+        $cacheKey = 'ai_context_base_' . ($settings->aiMaxContextRecords ?: 'default');
         $cache = \Contao\System::getContainer()->get('cache.app');
-        $cachedData = $cache->getItem($cacheKey);
+        $cachedBaseData = $cache->getItem($cacheKey);
 
-        $contextStart = microtime(true);
-        if ($cachedData->isHit()) {
-            $contextData = $cachedData->get();
+        if ($cachedBaseData->isHit()) {
+            $baseData = $cachedBaseData->get();
             $cacheHit = true;
         } else {
-            $contextData = $this->prepareContext($settings);
-            $cachedData->set($contextData);
-            $cachedData->expiresAfter(3600); // 1 hour cache
-            $cache->save($cachedData);
+            $baseData = $this->prepareContext($settings, "", 75); // Latest 75 records as base
+            $cachedBaseData->set($baseData);
+            $cachedBaseData->expiresAfter(3600); // 1 hour cache
+            $cache->save($cachedBaseData);
             $cacheHit = false;
         }
-        $contextEnd = microtime(true);
+
+        // Merge base and search data, ensuring uniqueness by UUID
+        // We increase the search limit to find more relevant records from the large database
+        $searchData = $this->prepareContext($settings, $userQuestion, 150); 
+        
+        $contextData = $this->mergeContextData($baseData, $searchData);
 
         $context = $contextData['context'];
         $tileData = $contextData['tileData'];
@@ -135,9 +143,9 @@ class AiChatbotService
                         $coords = $distanceData[$uuid];
                         $distance = $this->areaService->calculateDistance($userCoords, $coords);
                         if ($distance < 1000) {
-                            $line .= ", Entfernung: " . round($distance) . "m";
+                            $line .= ", Entf: " . round($distance) . "m";
                         } else {
-                            $line .= ", Entfernung: " . round($distance / 1000, 1) . "km";
+                            $line .= ", Entf: " . round($distance / 1000, 1) . "km";
                         }
                     }
                 }
@@ -147,27 +155,26 @@ class AiChatbotService
         }
 
         // Final safety length check
-        if (strlen($context) > 20000) {
-            $context = mb_substr($context, 0, 19997) . "...";
+        if (strlen($context) > 45000) {
+            $context = mb_substr($context, 0, 44997) . "...";
         }
 
         $apiStart = microtime(true);
         $assistantName = $settings->aiAssistantName ?: 'KI';
+        $additionalKnowledge = $settings->aiAdditionalKnowledge ?: '';
         $systemPrompt = "Du bist eine hilfreiche Assistentin namens " . $assistantName . ". Beantworte Fragen basierend auf den bereitgestellten Daten.
-Nenne immer konkrete Details wie Adressen, Telefonnummern, Preise, Kategorien, Tags oder Öffnungszeiten, wenn diese im Kontext vorhanden sind.
+" . ($additionalKnowledge ? "Zusätzliches Projektwissen:\n" . $additionalKnowledge . "\n\n" : "") . "
+Nenne wichtige Details wie Adressen, Telefonnummern, Preise oder Öffnungszeiten nur dann, wenn sie für die Beantwortung der Frage wirklich relevant sind. Halte dich bei den Detailbeschreibungen kurz, da der Benutzer weitere Informationen über die bereitgestellten Links findet.
 Nutze die Öffnungszeiten (opening_hours), um Fragen zur Verfügbarkeit heute oder an bestimmten Tagen zu beantworten.
 Wenn nach Objekten in der Nähe gefragt wird, nutze die Entfernungsangaben.
 Wichtig: Wenn du ein Schaufenster oder einen Inhalt (Event, Produkt, Job etc.) empfiehlst oder nennst, füge UNBEDINGT am Ende der jeweiligen Beschreibung den Tag [TILE:UUID] ein (ersetze UUID durch die tatsächliche ID in eckigen Klammern aus dem Kontext, z.B. [TILE:1234-abcd]). Dies ermöglicht es dem System, eine visuelle Kachel anzuzeigen.
-Gib zusätzlich am Ende der Antwort die bereitgestellten Links zu den Objekten aus, damit der User direkt dorthin klicken kann.
-Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die User duzen.
+Verlinkung:
+- Bevorzuge IMMER die internen Links (gekennzeichnet mit 'L:').
+- Gib externe Webseiten (gekennzeichnet mit 'website:') NUR aus, wenn der Benutzer explizit danach fragt.
+- Gib jeden Link in einer EIGENEN Zeile aus, damit sie sauber getrennt sind.
+- Füge KEINE Satzzeichen direkt am Ende einer URL an.
 
-Beispiele für Fragen, die du beantworten kannst:
-- Welche Hotels/Restaurants gibt es in meiner Nähe/in [Ort]?
-- Wie erreiche ich Firma [Name]? (Telefonnummer ausgeben)
-- Welche Veranstaltungen finden heute statt? Ist Veranstaltung [Name] familienfreundlich?
-- Welche Jobangebote oder Produkte gibt es? Was kostet [Produkt]?
-- Wie lange hat [Museum/Laden] heute geöffnet?
-- Gibt es [Museen/laden] in [Ort/Postleitzahl]?";
+Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die User duzen.";
 
         $answer = $this->callAiApi($settings, $systemPrompt, $context, $userQuestion);
         $apiEnd = microtime(true);
@@ -198,26 +205,41 @@ Beispiele für Fragen, die du beantworten kannst:
         ];
     }
 
-    private function prepareContext($settings): array
+    private function prepareContext($settings, string $userQuestion = "", int $limit = 0): array
     {
         $context = "";
         $tileData = [];
         $distanceData = [];
+        $records = []; // Store raw records to handle uniqueness during merge
         $syncConfig = $this->getTableConfig();
         
         $db = Database::getInstance();
-        $maxRecords = intval($settings->aiMaxContextRecords);
+        $maxRecords = $limit;
         if ($maxRecords <= 0) {
-            $maxRecords = 50; // Standard-Limit, um Überlastung zu vermeiden
+            $maxRecords = intval($settings->aiMaxContextRecords);
+            if ($maxRecords <= 0) {
+                $maxRecords = 150;
+            }
         }
+        
         $recordsCount = 0;
-        $maxContextLength = 15000; // Maximale Zeichenanzahl für den Kontext
+        $maxContextLength = 30000;
+
+        // Build search condition if user question is provided
+        $searchTerms = [];
+        if ($userQuestion !== "") {
+            $words = preg_split('/[\s,?.!]+/', mb_strtolower($userQuestion), -1, PREG_SPLIT_NO_EMPTY);
+            $stopWords = ['der', 'die', 'das', 'und', 'ein', 'eine', 'mit', 'für', 'von', 'aus', 'nach', 'ist', 'sind', 'was', 'wer', 'wie', 'wo', 'gibt', 'mich', 'mir', 'dir', 'dich', 'zeig', 'suche', 'finde', 'hallo', 'moin', 'bitte', 'danke'];
+            foreach ($words as $word) {
+                if (strlen($word) > 2 && !in_array($word, $stopWords)) {
+                    $searchTerms[] = $word;
+                }
+            }
+        }
 
         // Pre-fetch relations to avoid N+1 queries
-        $allUuids = [];
         $tableUuids = [];
         
-        // First pass: collect UUIDs for batch fetching
         foreach ($syncConfig as $config) {
             $table = $config['table'];
             $baseTable = $config['baseTable'] ?? null;
@@ -227,12 +249,25 @@ Beispiele für Fragen, die du beantworten kannst:
             if (isset($config['where'])) {
                 $sql .= " AND (" . $config['where'] . ")";
             }
+
+            if (!empty($searchTerms)) {
+                $searchConditions = [];
+                foreach ($searchTerms as $term) {
+                    $searchConditions[] = "(name LIKE '%" . $term . "%' OR description LIKE '%" . $term . "%' OR shortDescription LIKE '%" . $term . "%' OR fullTextContent LIKE '%" . $term . "%')";
+                }
+                $sql .= " AND (" . implode(" OR ", $searchConditions) . ")";
+            }
+
+            $sql .= " ORDER BY tstamp DESC";
             $sql .= " LIMIT " . ($maxRecords - $recordsCount);
             
-            $objUuids = $db->prepare($sql)->execute();
-            while ($objUuids->next()) {
-                $allUuids[] = $objUuids->uuid;
-                $tableUuids[$table][] = $objUuids->uuid;
+            try {
+                $objUuids = $db->prepare($sql)->execute();
+                while ($objUuids->next()) {
+                    $tableUuids[$table][] = $objUuids->uuid;
+                }
+            } catch (\Throwable $e) {
+                // Ignore errors for specific tables
             }
         }
         
@@ -242,12 +277,8 @@ Beispiele für Fragen, die du beantworten kannst:
             if ($maxRecords > 0 && $recordsCount >= $maxRecords) {
                 break;
             }
-            if (strlen($context) >= $maxContextLength) {
-                break;
-            }
 
             $table = $config['table'];
-
             if (!$db->tableExists($table)) {
                 continue;
             }
@@ -299,91 +330,124 @@ Beispiele für Fragen, die du beantworten kannst:
                 $query .= " AND (" . $config['where'] . ")";
             }
 
+            if (!empty($searchTerms)) {
+                $queryTableAlias = $baseTable ? 't1' : '`'.$table.'`';
+                $searchConditions = [];
+                foreach ($searchTerms as $term) {
+                    $searchConditions[] = "(" . $queryTableAlias . ".name LIKE '%" . $term . "%' OR " . $queryTableAlias . ".description LIKE '%" . $term . "%' OR " . $queryTableAlias . ".shortDescription LIKE '%" . $term . "%' OR " . $queryTableAlias . ".fullTextContent LIKE '%" . $term . "%')";
+                }
+                $query .= " AND (" . implode(" OR ", $searchConditions) . ")";
+            }
+
+            $queryTableAlias = $baseTable ? 't1' : '`'.$table.'`';
+            $query .= " ORDER BY " . $queryTableAlias . ".`tstamp` DESC";
+
             if ($maxRecords > 0) {
                 $query .= " LIMIT " . ($maxRecords - $recordsCount);
             }
-            $objRows = $db->prepare($query)->execute();
             
-            while ($objRows->next()) {
-                $rowContext = [];
-                $rowContext[] = "[" . $objRows->uuid . "]";
-                foreach ($fields as $field) {
-                    $columnName = $field;
-                    if (strpos($field, '.') !== false) {
-                        $parts = explode('.', $field);
-                        $columnName = end($parts);
+            try {
+                $objRows = $db->prepare($query)->execute();
+                while ($objRows->next()) {
+                    $rowContext = [];
+                    $rowContext[] = "[" . $objRows->uuid . "]";
+                    foreach ($fields as $field) {
+                        $columnName = $field;
+                        if (strpos($field, '.') !== false) {
+                            $parts = explode('.', $field);
+                            $columnName = end($parts);
+                        }
+                        $val = $objRows->$columnName;
+                        if (in_array($columnName, ['beginDate', 'endDate', 'dateOfBirth']) && $val && is_numeric($val)) {
+                            $val = date('d.m.Y', (int)$val);
+                        } elseif (in_array($columnName, ['beginTime', 'endTime', 'startTime']) && $val && is_numeric($val)) {
+                            $val = date('H:i', (int)$val);
+                        }
+                        if ($columnName === 'opening_hours' && $val) {
+                            $val = str_replace("\\", "", (string)$val);
+                        }
+                        if (in_array($columnName, ['description', 'shortDescription']) && strlen((string)$val) > 250) {
+                            $val = mb_substr((string)$val, 0, 247) . "...";
+                        }
+                        if ($val !== null && $val !== '') {
+                            $rowContext[] = $columnName . ": " . $val;
+                        }
                     }
-                    $val = $objRows->$columnName;
-                    // Format dates/times if necessary
-                    if (in_array($columnName, ['beginDate', 'endDate', 'dateOfBirth']) && $val && is_numeric($val)) {
-                        $val = date('d.m.Y', (int)$val);
-                    } elseif (in_array($columnName, ['beginTime', 'endTime', 'startTime']) && $val && is_numeric($val)) {
-                        $val = date('H:i', (int)$val);
+
+                    $relations = $batchRelations[$objRows->uuid] ?? ['categories' => '', 'tags' => ''];
+                    if ($relations['categories']) {
+                        $rowContext[] = "Kat: " . $relations['categories'];
+                    }
+                    if ($relations['tags']) {
+                        $rowContext[] = "Tags: " . $relations['tags'];
                     }
 
-                    if ($columnName === 'opening_hours' && $val) {
-                        $val = str_replace("\\", "", (string)$val);
+                    if ($table === 'tl_gutesio_data_element' && $objRows->geox && $objRows->geoy) {
+                        $distanceData[$objRows->uuid] = [$objRows->geox, $objRows->geoy];
                     }
-
-                    // Limit length of descriptions
-                    if (in_array($columnName, ['description', 'shortDescription']) && strlen((string)$val) > 300) {
-                        $val = mb_substr((string)$val, 0, 297) . "...";
+                    
+                    $link = $this->generateLink($table, $objRows, $settings);
+                    if ($link) {
+                        $rowContext[] = "L: " . $link;
                     }
+                    
+                    $rowStr = implode(", ", $rowContext);
+                    $records[$objRows->uuid] = [
+                        'context' => $rowStr,
+                        'tile' => [
+                            'uuid' => $objRows->uuid,
+                            'name' => $objRows->name,
+                            'image' => $this->formatImageUrl($objRows->imageCDN, $settings),
+                            'link' => $link,
+                            'type' => ($table === 'tl_gutesio_data_element' ? 'element' : 'child'),
+                            'typeName' => $relations['categories']
+                        ],
+                        'distance' => ($distanceData[$objRows->uuid] ?? null)
+                    ];
 
-                    if ($val !== null && $val !== '') {
-                        $rowContext[] = $columnName . ": " . $val;
-                    }
+                    $recordsCount++;
                 }
-
-                $relations = $batchRelations[$objRows->uuid] ?? ['categories' => '', 'tags' => ''];
-                if ($relations['categories']) {
-                    $rowContext[] = "Kategorien: " . $relations['categories'];
-                }
-                if ($relations['tags']) {
-                    $rowContext[] = "Tags: " . $relations['tags'];
-                }
-
-                if ($table === 'tl_gutesio_data_element' && $objRows->geox && $objRows->geoy) {
-                    $distanceData[$objRows->uuid] = [$objRows->geox, $objRows->geoy];
-                }
-                
-                $link = $this->generateLink($table, $objRows, $settings);
-                if ($link) {
-                    $rowContext[] = "Link: " . $link;
-                }
-                
-                $context .= implode(", ", $rowContext) . "\n";
-
-                // Store data for tile rendering
-                $image = $objRows->imageCDN;
-                if ($image && strpos($image, 'http') !== 0 && strpos($image, '/') !== 0) {
-                    // Prepend CDN URL if it's just a path/filename and not already absolute
-                    $cdnUrl = $settings->cdnUrl;
-                    if ($cdnUrl) {
-                        $image = rtrim($cdnUrl, '/') . '/' . ltrim($image, '/');
-                    }
-                }
-
-                $tileData[$objRows->uuid] = [
-                    'uuid' => $objRows->uuid,
-                    'name' => $objRows->name,
-                    'image' => $image,
-                    'link' => $link,
-                    'type' => ($table === 'tl_gutesio_data_element' ? 'element' : 'child'),
-                    'typeName' => $relations['categories']
-                ];
-
-                $recordsCount++;
-                if ($maxRecords > 0 && $recordsCount >= $maxRecords) {
-                    break;
-                }
-                if (strlen($context) >= $maxContextLength) {
-                    break;
-                }
+            } catch (\Throwable $e) {
+                // Ignore errors for specific tables
             }
         }
 
-        return ['context' => $context, 'tileData' => $tileData, 'distanceData' => $distanceData];
+        return ['records' => $records];
+    }
+
+    private function mergeContextData(array $baseData, array $searchData): array
+    {
+        // Merge records, search results take precedence or just fill up
+        $allRecords = $searchData['records'] + $baseData['records'];
+        
+        $context = "";
+        $tileData = [];
+        $distanceData = [];
+        
+        foreach ($allRecords as $uuid => $data) {
+            $context .= $data['context'] . "\n";
+            $tileData[$uuid] = $data['tile'];
+            if ($data['distance']) {
+                $distanceData[$uuid] = $data['distance'];
+            }
+        }
+        
+        return [
+            'context' => $context,
+            'tileData' => $tileData,
+            'distanceData' => $distanceData
+        ];
+    }
+
+    private function formatImageUrl($image, $settings): string
+    {
+        if ($image && strpos($image, 'http') !== 0 && strpos($image, '/') !== 0) {
+            $cdnUrl = $settings->cdnUrl;
+            if ($cdnUrl) {
+                $image = rtrim($cdnUrl, '/') . '/' . ltrim($image, '/');
+            }
+        }
+        return (string)$image;
     }
 
     private function batchGetRelations(array $tableUuids): array

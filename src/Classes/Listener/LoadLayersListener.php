@@ -188,7 +188,7 @@ class LoadLayersListener
         if (!isset($this->cache['elements'][$uuid])) {
             $strPublishedElem = $withPublishedCondition ? str_replace('{{table}}', 'elem', $this->publishedCondition) : "";
             $result = $this->database->prepare(
-                "SELECT uuid, name, geox, geoy, showcaseIds FROM tl_gutesio_data_element WHERE uuid = ?" . $strPublishedElem
+                "SELECT uuid, name, geox, geoy, showcaseIds, geojson FROM tl_gutesio_data_element WHERE uuid = ?" . $strPublishedElem
             )->execute($uuid)->fetchAssoc();
             
             if (!$result) {
@@ -351,7 +351,7 @@ class LoadLayersListener
 
         // Batch load all elements for all types at once
         $typeUuids = array_map(function($type) { return $type->uuid; }, $types);
-        $query = 'SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, typeElem.typeId FROM tl_gutesio_data_element AS elem
+        $query = 'SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, elem.geojson, typeElem.typeId FROM tl_gutesio_data_element AS elem
                  INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
                  WHERE typeElem.typeId IN (\'' . implode("','", $typeUuids) . '\')' . $strPublishedElem . ' ORDER BY elem.name ASC';
         
@@ -375,7 +375,7 @@ class LoadLayersListener
         // Batch load showcase elements if needed
         if (!empty($showcaseIdsToLoad)) {
             $showcaseResult = $this->database->execute(
-                "SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, typeElem.typeId 
+                "SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, elem.geojson, typeElem.typeId 
                  FROM tl_gutesio_data_element AS elem
                  LEFT JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
                  WHERE elem.uuid IN ('" . implode("','", array_unique($showcaseIdsToLoad)) . "')
@@ -932,7 +932,7 @@ class LoadLayersListener
         bool $layerStyle, 
         array &$dataLayer
     ): void {
-        if ($objLocstyle && in_array($objLocstyle['loctype'], ['Editor', 'LineString', 'Polygon'])) {
+        if (($objElement['geojson'] ?? null) || ($objLocstyle && in_array($objLocstyle['loctype'], ['Editor', 'LineString', 'Polygon']))) {
             $this->addComplexGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
         } else {
             $this->addSimpleGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
@@ -983,9 +983,14 @@ class LoadLayersListener
                     $featureProperties['styletype'] = $objLocstyle['styletype'] ?: (strpos($objLocstyle['icon'], '.svg') !== false ? 'cust_icon_svg' : 'cust_icon');
                 }
                 foreach ($data['features'] as $key => $feature) {
-                    $data['features'][$key]['properties'] = &$featureProperties;
+                    $fProps = $featureProperties;
+                    if (isset($feature['properties']) && is_array($feature['properties'])) {
+                        foreach ($feature['properties'] as $propKey => $propVal) {
+                            $fProps[$propKey] = $propVal;
+                        }
+                    }
+                    $data['features'][$key]['properties'] = $fProps;
                 }
-                unset($featureProperties);
             }
             
             $data['properties'] = &$properties;
@@ -1088,7 +1093,7 @@ class LoadLayersListener
         }
 
         return $this->database->prepare(
-            'SELECT uuid, name, geox, geoy, showcaseIds FROM tl_gutesio_data_element WHERE alias = ?'
+            'SELECT uuid, name, geox, geoy, showcaseIds, geojson FROM tl_gutesio_data_element WHERE alias = ?'
         )->execute($alias)->fetchAssoc() ?: null;
     }
 

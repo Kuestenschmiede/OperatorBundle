@@ -247,6 +247,25 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
           $mapData['center']['lon'] = $elem['geox'];
           $mapData['center']['lat'] = $elem['geoy'];
         }
+
+        if ($elem && ($elem['geojson'] ?? null)) {
+            $mapData['layers'][] = [
+                'id' => 'current_element_geojson',
+                'type' => 'GeoJSON',
+                'format' => 'GeoJSON',
+                'data' => json_decode($elem['geojson'], true),
+                'active' => true,
+                'display' => true,
+                'content' => [
+                    [
+                        'type' => 'GeoJSON',
+                        'format' => 'GeoJSON',
+                        'data' => json_decode($elem['geojson'], true)
+                    ]
+                ]
+            ];
+        }
+
         return new JsonResponse($mapData);
     }
 

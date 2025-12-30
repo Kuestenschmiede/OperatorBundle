@@ -65,7 +65,7 @@ class AiChatbotService
                 'fields' => 't1.name, t1.description, t1.shortDescription'
             ],
             [
-                'table' => 'tl_gutesio_data_child_pickup',
+                'table' => 'tl_gutesio_data_child_exhibition',
                 'baseTable' => 'tl_gutesio_data_child',
                 'fields' => 't1.name, t1.description, t1.shortDescription'
             ],
@@ -532,7 +532,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
                 case 'realestate':
                     $pageId = $settings->realestateDetailPage;
                     break;
-                case 'pickup':
+                case 'exhibition':
                     $pageId = $settings->exhibitionDetailPage;
                     break;
             }

@@ -61,3 +61,10 @@ $GLOBALS['TL_LANG']['FMD']['nearby_showcase_list_module'] = [
     '',
 ];
 
+$GLOBALS['TL_LANG']['FMD']['ai_chatbot'] = [
+    'AI Chatbot',
+    '',
+];
+
+
+

@@ -128,7 +128,7 @@ class LoadLayersListener
             // Load element types and their styles
             $elementTypesStatement = $this->database->execute(
                 "SELECT typeElem.elementId, typeElem.typeId, type.locstyle, type.loctype, type.showLinkedElements,
-                        type.uuid as type_uuid, type.name as type_name,
+                        type.uuid as type_uuid, type.name as type_name, type.editorConfig,
                         ls.name as style_name, ls.icon_src, ls.svgSrc
                  FROM tl_gutesio_data_element_type AS typeElem
                  INNER JOIN tl_gutesio_data_type AS type ON typeElem.typeId = type.uuid
@@ -163,6 +163,7 @@ class LoadLayersListener
                     $this->cache['locStyles'][$elementType['elementId']] = [
                         'locstyle' => $elementType['locstyle'],
                         'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
+                        'editorConfig' => $elementType['editorConfig'],
                         'icon' => $icon,
                         'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
                     ];
@@ -175,6 +176,7 @@ class LoadLayersListener
                         'locstyle' => $elementType['locstyle'],
                         'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
                         'showLinkedElements' => $elementType['showLinkedElements'],
+                        'editorConfig' => $elementType['editorConfig'],
                         'icon' => $icon,
                         'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
                     ];
@@ -236,6 +238,12 @@ class LoadLayersListener
         $this->preloadData($elementIds);
         $dataLayer['type'] = 'GeoJSON';
         $dataLayer['format'] = 'GeoJSON';
+        $dataLayer['loctype'] = 'GeoJSON';
+        $dataLayer['async_content'] = false;
+        $dataLayer['excludeFromSingleLayer'] = true;
+        $dataLayer['cluster_locations'] = false;
+        $dataLayer['active'] = true;
+        $dataLayer['zIndex'] = 1000;
         $type = $this->getElementType($elem['uuid']) ?: [];
         $childElements = $this->loadChildElements($elem, $type, $dataLayer);
 
@@ -271,8 +279,7 @@ class LoadLayersListener
             return;
         }
 
-        $dataLayer['type'] = 'GeoJSON';
-        $dataLayer['format'] = 'GeoJSON';
+        $dataLayer['async_content'] = false;
         $types = $this->loadTypes($objDataLayer);
         $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
         $sameElements = [];
@@ -325,6 +332,8 @@ class LoadLayersListener
         $dataLayer['data_hidelayer'] = $objDataLayer->data_hidelayer;
         $dataLayer['hide'] = $objDataLayer->data_hidelayer;
         $dataLayer['display'] = true;
+        $dataLayer['active'] = true;
+        $dataLayer['zIndex'] = 1000;
         $event->setLayerData($dataLayer);
     }
 
@@ -465,19 +474,26 @@ class LoadLayersListener
 
             $processedElements = $this->processTypeElements($elements, $dataLayer, $typeData, $sameElements, $objDataLayer);
             
+            $isEditor = ($typeData['loctype'] === 'Editor' || $typeData['loctype'] === 'LineString' || $typeData['loctype'] === 'Polygon');
             if (!empty($processedElements)) {
                 $typeElements[$typeData['uuid']] = [
                     'pid' => $objDataLayer->id,
                     'id' => $typeData['uuid'],
                     'name' => $typeData['name'],
                     'layername' => $typeData['name'],
-                    'type' => $dataLayer['type'],
-                    'format' => $dataLayer['format'],
+                    'type' => $isEditor ? 'GeoJSON' : $dataLayer['type'],
+                    'format' => $isEditor ? 'GeoJSON' : $dataLayer['format'],
+                    'loctype' => $isEditor ? 'GeoJSON' : ($typeData['loctype'] ?? ''),
+                    'excludeFromSingleLayer' => $isEditor ? true : false,
+                    'async_content' => false,
                     'childs' => $processedElements,
                     'data_hidelayer' => $objDataLayer->data_hidelayer,
                     'hide' => $objDataLayer->data_hidelayer,
                     'initial_opened' => $objDataLayer->initial_opened,
-                    'display' => true
+                    'display' => true,
+                    'active' => true,
+                    'zIndex' => 1000,
+                    'cluster_locations' => $isEditor ? false : ($objDataLayer->cluster_locations ? true : false)
                 ];
             }
         }
@@ -507,7 +523,7 @@ class LoadLayersListener
                 true, 
                 false, 
                 [], 
-                $hideInStarboard,
+                $hideInStarboard, 
                 $initialOpened
             );
             if ($createdElement) {
@@ -544,8 +560,7 @@ class LoadLayersListener
             return;
         }
 
-        $dataLayer['type'] = 'GeoJSON';
-        $dataLayer['format'] = 'GeoJSON';
+        $dataLayer['async_content'] = false;
         $this->processShareSettings($dataLayer, $objDataLayer);
         
         $directories = $this->loadDirectories($objDataLayer);
@@ -556,6 +571,9 @@ class LoadLayersListener
         $dataLayer['data_hidelayer'] = $objDataLayer->data_hidelayer;
         $dataLayer['hide'] = $objDataLayer->data_hidelayer;
         $dataLayer['display'] = true;
+        $dataLayer['active'] = true;
+        $dataLayer['zIndex'] = 1000;
+        $dataLayer['cluster_locations'] = false;
         $event->setLayerData($dataLayer);
     }
 
@@ -682,7 +700,10 @@ class LoadLayersListener
                     'data_hidelayer' => $objDataLayer->data_hidelayer,
                     'hide' => $objDataLayer->data_hidelayer,
                     'initial_opened' => $objDataLayer->initial_opened,
-                    'display' => true
+                    'display' => true,
+                    'active' => true,
+                    'zIndex' => 1000,
+                    'cluster_locations' => false
                 ];
             }
         }
@@ -714,18 +735,27 @@ class LoadLayersListener
                 continue;
             }
 
+            $type = $this->cache['types'][$typeId] ?? ['uuid' => $typeId];
+            $isEditor = (isset($type['loctype']) && ($type['loctype'] === 'Editor' || $type['loctype'] === 'LineString' || $type['loctype'] === 'Polygon'));
+            
             $typeEntry = [
                 'pid' => $directoryId,
                 'id' => $typeKey,
                 'name' => $typeName,
                 'layername' => $typeName,
-                'type' => $dataLayer['type'],
-                'format' => $dataLayer['format'],
+                'type' => $isEditor ? 'GeoJSON' : $dataLayer['type'],
+                'format' => $isEditor ? 'GeoJSON' : $dataLayer['format'],
+                'loctype' => $isEditor ? 'GeoJSON' : ($type['loctype'] ?? ''),
+                'excludeFromSingleLayer' => $isEditor ? true : false,
+                'async_content' => false,
                 'childs' => [],
                 'data_hidelayer' => $objDataLayer->data_hidelayer,
                 'hide' => $objDataLayer->data_hidelayer,
                 'initial_opened' => $objDataLayer->initial_opened,
-                'display' => true
+                'display' => true,
+                'active' => true,
+                'zIndex' => 1000,
+                'cluster_locations' => $isEditor ? false : ($objDataLayer->cluster_locations ? true : false)
             ];
             
             if (!empty($activeTypes) && !in_array($typeId, $activeTypes)) {
@@ -735,8 +765,6 @@ class LoadLayersListener
                 $typeEntry['data_hidelayer'] = '';
                 $typeEntry['hide'] = '';
             }
-
-            $type = $this->cache['types'][$typeId] ?? ['uuid' => $typeId];
             $showLinked = count($elementUuids) < 50;
             $canShowLinked = $showLinked && isset($type['showLinkedElements']) && $type['showLinkedElements'];
             $parentInfo = ['id' => $typeKey];
@@ -837,8 +865,8 @@ class LoadLayersListener
             }
         }
 
-        if (($objElement['geox'] && $objElement['geoy']) || ($objLocstyle && in_array($objLocstyle['loctype'], ['Editor', 'LineString', 'Polygon']))) {
-            $this->addGeometryData($element, $objElement, $objLocstyle, $properties, $layerStyle, $dataLayer);
+        if (($objElement['geox'] && $objElement['geoy']) || ($objElement['geojson'] ?? null) || ($objLocstyle && in_array($objLocstyle['loctype'], ['Editor', 'LineString', 'Polygon']))) {
+            $this->addGeometryData($element, $objElement, $objLocstyle, $properties, $layerStyle, $dataLayer, $parent);
         }
         unset($properties);
 
@@ -878,10 +906,14 @@ class LoadLayersListener
         $element = [
             'id' => $elementId,
             'name' => $name,
-            'type' => $dataLayer['type'] ?? 'GeoJSON',
-            'format' => $dataLayer['format'] ?? 'GeoJSON',
+            'type' => ($objElement['geojson'] ?? null) ? 'GeoJSON' : ($dataLayer['type'] ?? 'GeoJSON'),
+            'format' => ($objElement['geojson'] ?? null) ? 'GeoJSON' : ($dataLayer['format'] ?? 'GeoJSON'),
             'childs' => $childElements ?: [],
-            'content' => []
+            'content' => [],
+            'zIndex' => 1000,
+            'active' => true,
+            'cluster_locations' => ($objElement['geojson'] ?? null) ? false : true,
+            'cluster' => ($objElement['geojson'] ?? null) ? false : true
         ];
 
         if ($parentId) {
@@ -901,7 +933,7 @@ class LoadLayersListener
             $element['tags'] = &$properties;
         }
 
-        if ($objLocstyle && isset($objLocstyle['loctype']) && $objLocstyle['loctype'] !== 'Point') {
+        if ($objLocstyle && isset($objLocstyle['loctype']) && $objLocstyle['loctype'] !== 'Point' && $objLocstyle['loctype'] !== 'POI') {
             $element['loctype'] = $objLocstyle['loctype'];
         }
 
@@ -925,16 +957,19 @@ class LoadLayersListener
         ?array &$objLocstyle, 
         array &$properties, 
         bool $layerStyle, 
-        array &$dataLayer
+        array &$dataLayer,
+        array &$parent
     ): void {
         if (($objElement['geojson'] ?? null) || ($objLocstyle && in_array($objLocstyle['loctype'], ['Editor', 'LineString', 'Polygon']))) {
-            $this->addComplexGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
+            $this->addComplexGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle, $parent);
         } else {
             $this->addSimpleGeometry($element, $objElement, $properties, $layerStyle, $dataLayer, $objLocstyle);
         }
 
-        if (!($element['hideInStarboard'] ?? false)) {
+        if ($objElement['geojson'] ?? null) {
             $element['excludeFromSingleLayer'] = false;
+            $element['cluster'] = false;
+            $element['cluster_locations'] = false;
         }
     }
 
@@ -944,7 +979,8 @@ class LoadLayersListener
         array &$properties, 
         bool $layerStyle, 
         array &$dataLayer, 
-        ?array &$objLocstyle
+        ?array &$objLocstyle,
+        array &$parent
     ): void {
         $geojson = $objElement['geojson'] ?? null;
         if (!$geojson && $objElement['uuid']) {
@@ -955,33 +991,76 @@ class LoadLayersListener
 
         if ($geojson) {
             $element['excludeFromSingleLayer'] = false;
+            $element['loctype'] = 'GeoJSON';
+            $element['cluster'] = false;
+            $element['cluster_locations'] = false;
             
             $cacheKey = md5($geojson);
             if (isset($this->cache['geometryCache'][$cacheKey])) {
                 $data = $this->cache['geometryCache'][$cacheKey];
             } else {
-                if (strpos($geojson, 'FeatureCollection') === false) {
-                    $geojson = '{"type": "FeatureCollection", "features": ' . $geojson . '}';
-                }
-                    
                 $data = json_decode($geojson, true);
                 if (!$data) {
                     $data = ['type' => 'FeatureCollection', 'features' => []];
-                }
-
-                if (!isset($data['features']) && ($data['type'] ?? '') === 'FeatureCollection') {
-                    $data['features'] = [];
+                } elseif (isset($data[0]['type'])) {
+                    $data = [
+                        'type' => 'FeatureCollection',
+                        'features' => $data
+                    ];
+                } elseif (isset($data['type']) && $data['type'] === 'Feature') {
+                    $data = [
+                        'type' => 'FeatureCollection',
+                        'features' => [$data]
+                    ];
+                } elseif (isset($data['type']) && in_array($data['type'], ['Point', 'MultiPoint', 'LineString', 'MultiLineString', 'Polygon', 'MultiPolygon', 'GeometryCollection'])) {
+                    $data = [
+                        'type' => 'FeatureCollection',
+                        'features' => [
+                            [
+                                'type' => 'Feature',
+                                'geometry' => $data,
+                                'properties' => []
+                            ]
+                        ]
+                    ];
+                } elseif (!isset($data['type']) || $data['type'] !== 'FeatureCollection') {
+                    $data = [
+                        'type' => 'FeatureCollection',
+                        'features' => $data['features'] ?? []
+                    ];
                 }
                 $this->cache['geometryCache'][$cacheKey] = $data;
             }
             unset($geojson);
 
             $locstyle = $layerStyle ? ($dataLayer['locstyle'] ?? null) : ($objLocstyle['locstyle'] ?? null);
+            $loctype = $parent['loctype'] ?? ($objLocstyle['loctype'] ?? '');
+            $editorConfig = $parent['editorConfig'] ?? ($objLocstyle['editorConfig'] ?? null);
+            $styleIdLine = null;
+            $styleIdPoint = null;
+
+            if (($loctype === 'Editor' || $loctype === 'Point') && $editorConfig) {
+                $dbRes = $this->database->prepare("SELECT types FROM tl_c4g_editor_configuration WHERE id = ?")
+                    ->execute($editorConfig)->fetchAssoc();
+                if ($dbRes && $dbRes['types']) {
+                    $configTypes = \Contao\StringUtil::deserialize($dbRes['types'], true);
+                    foreach ($configTypes as $configType) {
+                        if (!$styleIdLine && $configType['type'] === 'linestring') {
+                            $styleIdLine = $configType['locstyle'];
+                        }
+                        if (!$styleIdPoint && $configType['type'] === 'point') {
+                            $styleIdPoint = $configType['locstyle'];
+                        }
+                    }
+                }
+            }
+
             $features = [];
             if (isset($data['features']) && is_array($data['features'])) {
                 foreach ($data['features'] as $feature) {
                     $fProps = $properties;
-                    $fProps['zindex'] = 100;
+                    $fProps['zIndex'] = 1000;
+                    $fProps['zindex'] = 1000;
                     
                     // If the feature already has styling properties, prioritize them
                     if (isset($feature['properties']) && is_array($feature['properties'])) {
@@ -990,25 +1069,40 @@ class LoadLayersListener
                         }
                     }
                     
-                    // Map styleId or locationStyle to locstyle if not present
-                    if (!isset($fProps['locstyle']) || $fProps['locstyle'] === '0') {
-                        if (isset($fProps['styleId']) && $fProps['styleId'] !== '0') {
-                            $fProps['locstyle'] = $fProps['styleId'];
-                        } elseif (isset($fProps['locationStyle']) && $fProps['locationStyle'] !== '0') {
-                            $fProps['locstyle'] = $fProps['locationStyle'];
+                    $fGeometryType = $feature['geometry']['type'] ?? '';
+                    $isLine = $fGeometryType === 'LineString' || $fGeometryType === 'MultiLineString';
+                    $isPoint = $fGeometryType === 'Point' || $fGeometryType === 'MultiPoint';
+
+                    // Enforce styles from Category/EditorConfig because IDs in GeoJSON might be wrong (quell-instanz)
+                    if ($isLine && $styleIdLine) {
+                        $fProps['locstyle'] = $styleIdLine;
+                    } elseif ($isPoint && $styleIdPoint) {
+                        $fProps['locstyle'] = $styleIdPoint;
+                    } elseif (!isset($fProps['locstyle']) || $fProps['locstyle'] === '0' || $fProps['locstyle'] === $locstyle) {
+                        if ($locstyle) {
+                            $fProps['locstyle'] = $locstyle;
                         }
                     }
 
-                    if ((!isset($fProps['locstyle']) || $fProps['locstyle'] === '0') && $locstyle) {
-                        $fProps['locstyle'] = $locstyle;
-                    }
-
                     // Only apply element icon style if the feature doesn't have a style or is a point
-                    $isPoint = ($feature['geometry']['type'] ?? '') === 'Point';
                     if ($objLocstyle && isset($objLocstyle['icon']) && $objLocstyle['icon']) {
-                        if ((!isset($fProps['locstyle']) || $fProps['locstyle'] === '0') || $isPoint) {
+                        if ((!isset($fProps['locstyle']) || $fProps['locstyle'] === '0' || $fProps['locstyle'] === $locstyle) || $isPoint) {
                             $fProps['icon_src'] = $objLocstyle['icon'];
                             $fProps['styletype'] = $objLocstyle['styletype'] ?: (strpos($objLocstyle['icon'], '.svg') !== false ? 'cust_icon_svg' : 'cust_icon');
+                        }
+                    }
+
+                    if ($isLine) {
+                        if ($loctype === 'Editor' || $loctype === 'LineString' || $loctype === 'Polygon' || $loctype === 'Point' || $loctype === 'POI') {
+                            if (($fProps['locstyle'] === $locstyle || !isset($fProps['locstyle']) || $fProps['locstyle'] === '0')) {
+                                if ($styleIdLine) {
+                                    $fProps['locstyle'] = $styleIdLine;
+                                } else {
+                                    $fProps['locstyle'] = 'none';
+                                    unset($fProps['icon_src']);
+                                    unset($fProps['styletype']);
+                                }
+                            }
                         }
                     }
                     
@@ -1023,8 +1117,15 @@ class LoadLayersListener
                     'type' => $data['type'] ?? 'FeatureCollection',
                     'features' => $features
                 ],
-                'type' => $dataLayer['type'] ?? 'GeoJSON',
-                'format' => $dataLayer['format'] ?? 'GeoJSON'
+                'type' => 'GeoJSON',
+                'format' => 'GeoJSON',
+                'active' => true,
+                'display' => true,
+                'noFilter' => true,
+                'noRealFilter' => true,
+                'alwaysVisible' => true,
+                'zIndex' => 1000,
+                'cluster' => false
             ]];
 
             if ($locstyle && (!isset($dataLayer['locstyle']) || $locstyle !== $dataLayer['locstyle'])) {
@@ -1059,8 +1160,13 @@ class LoadLayersListener
                 ],
                 'properties' => $featureProperties
             ],
-            'type' => $dataLayer['type'] ?? 'GeoJSON',
-            'format' => $dataLayer['format'] ?? 'GeoJSON'
+            'type' => 'GeoJSON',
+            'format' => 'GeoJSON',
+            'loctype' => 'GeoJSON',
+            'active' => true,
+            'display' => true,
+            'alwaysVisible' => true,
+            'zIndex' => 1000
         ]];
         
         if ($locstyle && (!isset($dataLayer['locstyle']) || $locstyle !== $dataLayer['locstyle'])) {

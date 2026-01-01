@@ -294,12 +294,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         }
         MapsResourceLoader::loadResources([], $mapData);
 
-        if ($elem && $elem['geox'] && $elem['geoy']) {
+        $detailData = $this->getDetailData($request, $elem['uuid'] ?? 0);
+
+        if ($detailData && ($detailData['geojson'] ?? null)) {
+            // ...
+        } elseif ($elem && $elem['geox'] && $elem['geoy']) {
             $mapData['center']['lon'] = $elem['geox'];
             $mapData['center']['lat'] = $elem['geoy'];
         }
-
-        $detailData = $this->getDetailData($request, $elem['uuid'] ?? 0);
 
         if ($detailData && ($detailData['geojson'] ?? null)) {
             $mapData['geopicker'] = ['enable' => false];
@@ -369,10 +371,33 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             }
 
             $geoJson = json_decode($detailData['geojson'], true);
-            if (!isset($geoJson['type']) || $geoJson['type'] !== 'FeatureCollection') {
+            if (!$geoJson) {
+                $geoJson = ['type' => 'FeatureCollection', 'features' => []];
+            } elseif (isset($geoJson[0]['type'])) {
                 $geoJson = [
                     'type' => 'FeatureCollection',
-                    'features' => $geoJson['features'] ?? [$geoJson]
+                    'features' => $geoJson
+                ];
+            } elseif (isset($geoJson['type']) && $geoJson['type'] === 'Feature') {
+                $geoJson = [
+                    'type' => 'FeatureCollection',
+                    'features' => [$geoJson]
+                ];
+            } elseif (isset($geoJson['type']) && in_array($geoJson['type'], ['Point', 'MultiPoint', 'LineString', 'MultiLineString', 'Polygon', 'MultiPolygon', 'GeometryCollection'])) {
+                $geoJson = [
+                    'type' => 'FeatureCollection',
+                    'features' => [
+                        [
+                            'type' => 'Feature',
+                            'geometry' => $geoJson,
+                            'properties' => []
+                        ]
+                    ]
+                ];
+            } elseif (!isset($geoJson['type']) || $geoJson['type'] !== 'FeatureCollection') {
+                $geoJson = [
+                    'type' => 'FeatureCollection',
+                    'features' => $geoJson['features'] ?? []
                 ];
             }
 
@@ -388,31 +413,34 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                         }
                         $feature['id'] = 'route_' . $uuid . '_' . $key;
                     }
-                    if (isset($feature['properties']['styleId']) && !isset($feature['properties']['locstyle'])) {
-                        $feature['properties']['locstyle'] = $feature['properties']['styleId'];
-                    } elseif (isset($feature['properties']['locationStyle']) && !isset($feature['properties']['locstyle'])) {
-                        $feature['properties']['locstyle'] = $feature['properties']['locationStyle'];
-                    }
-
+                    
                     $fType = $feature['geometry']['type'] ?? '';
-                    $targetStyle = $locationStyle;
-                    if ($fType === 'LineString' || $fType === 'MultiLineString') {
-                        $targetStyle = $styleIdLine ?: $locationStyle;
-                    } elseif ($fType === 'Point' || $fType === 'MultiPoint') {
-                        $targetStyle = $styleIdPoint ?: $locationStyle;
+                    $isLine = $fType === 'LineString' || $fType === 'MultiLineString';
+                    $isPoint = $fType === 'Point' || $fType === 'MultiPoint';
+
+                    // Enforce styles from Category/EditorConfig because IDs in GeoJSON might be wrong (quell-instanz)
+                    if ($isLine && $styleIdLine) {
+                        $feature['properties']['locstyle'] = $styleIdLine;
+                    } elseif ($isPoint && $styleIdPoint) {
+                        $feature['properties']['locstyle'] = $styleIdPoint;
+                    } elseif (!isset($feature['properties']['locstyle']) || $feature['properties']['locstyle'] === '0' || $feature['properties']['locstyle'] === $locationStyle) {
+                        if ($locationStyle) {
+                            $feature['properties']['locstyle'] = $locationStyle;
+                        }
                     }
 
-                    // Prioritize local styles from type configuration if available
-                    if ($targetStyle && $targetStyle !== "0") {
-                        $feature['properties']['locstyle'] = $targetStyle;
-                        if ($fType === 'LineString' || $fType === 'MultiLineString') {
-                            if ($locationType === 'Point' || $locationType === 'POI') {
+                    if ($isLine) {
+                        if ($locationType === 'Point' || $locationType === 'POI' || $locationType === 'Editor' || $locationType === 'LineString' || $locationType === 'Polygon') {
+                            if (($feature['properties']['locstyle'] === $locationStyle || !isset($feature['properties']['locstyle']) || $feature['properties']['locstyle'] === '0') && !$styleIdLine) {
                                 $feature['properties']['locstyle'] = 'none';
+                                unset($feature['properties']['icon_src']);
+                                unset($feature['properties']['styletype']);
                             }
                         }
                     }
 
-                    $feature['properties']['zindex'] = 100;
+                    $feature['properties']['zIndex'] = 1000;
+                    $feature['properties']['zindex'] = 1000;
 
                     if ($feature['properties']['locstyle'] ?? null) {
                         if ($feature['properties']['locstyle'] !== 'none') {
@@ -439,7 +467,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 'noFilter' => true,
                 'noRealFilter' => true,
                 'alwaysVisible' => true,
-                'zIndex' => 100
+                'zIndex' => 1000
             ];
 
             if ($locationStyle && $locationStyle !== "0") {
@@ -455,25 +483,19 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                 'id' => 'current_geojson',
                 'type' => 'GeoJSON',
                 'format' => 'GeoJSON',
+                'loctype' => 'GeoJSON',
                 'active' => true,
                 'display' => true,
-                'hide' => false,
-                'noFilter' => true,
-                'noRealFilter' => true,
-                'alwaysVisible' => true,
                 'excludeFromSingleLayer' => true,
-                'hideInStarboard' => false,
-                'showInStarboard' => true,
-                'zIndex' => 100,
-                'zoom' => [0, 28],
-                'locstyle' => $locationStyle,
+                'async_content' => false,
+                'hideInStarboard' => true,
+                'zIndex' => 1000,
                 'content' => [
                     $layerContent
                 ]
             ];
             $mapData['calc_extent'] = 'LOCATIONS';
-            $mapData['min_gap'] = 100;
-            $mapData['displayAllLocations'] = false;
+            $mapData['min_gap'] = 50;
         }
 
         return new JsonResponse($mapData);

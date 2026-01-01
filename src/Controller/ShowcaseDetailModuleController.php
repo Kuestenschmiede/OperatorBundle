@@ -201,21 +201,70 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     {
         $framework->initialize();
         $settings = GutesioOperatorSettingsModel::findSettings();
-        $mapData = MapDataConfigurator::prepareMapData(
-            ContentModel::findById($settings->detail_map),
-            Database::getInstance(),
-            ["profile" => $settings->detail_profile],
-            false
-        );
+        if ($settings && $settings->detail_module) {
+            $model = ModuleModel::findByPk($settings->detail_module);
+            if ($model instanceof ModuleModel) {
+                $this->model = $model;
+                if (isset($mapData['mapId'])) {
+                    $mapData['mapId'] = $model->id;
+                }
+            }
+        }
+
+        $mapData = [];
+        if ($settings && $settings->detail_map && $settings->detail_profile) {
+            $mapData = MapDataConfigurator::prepareMapData(
+                ContentModel::findById($settings->detail_map),
+                Database::getInstance(),
+                ["profile" => $settings->detail_profile],
+                true
+            );
+        }
+
+        if (!$mapData) {
+            return new JsonResponse([
+                'id' => 0,
+                'router' => ['enable' => false],
+                'editor' => ['enable' => false],
+                'geosearch' => ['enable' => false],
+                'baselayers' => [],
+                'layers' => [],
+                'api' => [
+                    'baselayer' => 'con4gis/baseLayerService',
+                    'layer' => 'con4gis/layerService',
+                    'layercontent' => 'con4gis/layerContentService',
+                    'editor' => 'con4gis/editorService',
+                    'locstyle' => 'con4gis/locationStyleService/',
+                    'infowindow' => 'con4gis/infoWindowService',
+                    'geosearch' => 'con4gis/searchService',
+                    'geosearch_reverse' => 'con4gis/reverseSearchService',
+                    'routing' => 'con4gis/routingService',
+                    'geopicker' => 'con4gis/geopickerService/',
+                    'filter' => 'con4gis/filterService/'
+                ]
+            ]);
+        }
+
+        $this->setAlias($request);
 
         $mapData['geopicker']['input_geo_x'] = "#geox";
         $mapData['geopicker']['input_geo_y'] = "#geoy";
+        $mapData['detourRoute'] = [
+            'initial' => 0,
+            'min' => 0,
+            'max' => 100
+        ];
+        $mapData['detourArea'] = [
+            'initial' => 0,
+            'min' => 0,
+            'max' => 100
+        ];
         $mapData['addIdToDiv'] = false;
 
         $strPublishedElem = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
         $strPublishedElem = str_replace('{{table}}', 'elem', $strPublishedElem);
         $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
-        $alias = $request->getSession()->get('gutesio_element_alias', '');
+        $alias = $this->alias ?: $request->getSession()->get('gutesio_element_alias', '');
 
         if (!$alias) {
             $alias = $_SERVER['HTTP_REFERER'];
@@ -243,27 +292,188 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         } else {
             $elem = Database::getInstance()->prepare($strQueryElem)->execute($alias)->fetchAssoc();
         }
+        MapsResourceLoader::loadResources([], $mapData);
+
         if ($elem && $elem['geox'] && $elem['geoy']) {
-          $mapData['center']['lon'] = $elem['geox'];
-          $mapData['center']['lat'] = $elem['geoy'];
+            $mapData['center']['lon'] = $elem['geox'];
+            $mapData['center']['lat'] = $elem['geoy'];
         }
 
-        if ($elem && ($elem['geojson'] ?? null)) {
-            $mapData['layers'][] = [
-                'id' => 'current_element_geojson',
+        $detailData = $this->getDetailData($request, $elem['uuid'] ?? 0);
+
+        if ($detailData && ($detailData['geojson'] ?? null)) {
+            $mapData['geopicker'] = ['enable' => false];
+            $mapData['router'] = ['enable' => false];
+            $mapData['editor'] = ['enable' => false];
+            $locationStyle = 0;
+            $locationType = 'Point';
+            $styleIdLine = null;
+            $styleIdPoint = null;
+            if (!empty($detailData['rawTypes'])) {
+                $typeId = $detailData['rawTypes'][0]['value'];
+                $stm = Database::getInstance()->prepare("SELECT locstyle, loctype, editorConfig FROM tl_gutesio_data_type WHERE id = ? OR uuid = ?");
+                $typeRow = $stm->execute($typeId, $typeId)->fetchAssoc();
+                if ($typeRow) {
+                    $locationStyle = $typeRow['locstyle'] ?? 0;
+                    $locationType = $typeRow['loctype'] ?? 'Point';
+                    $editorConfigId = $typeRow['editorConfig'] ?? null;
+                    if ($editorConfigId) {
+                        $stm = Database::getInstance()->prepare("SELECT types FROM tl_c4g_editor_configuration WHERE id = ?");
+                        $configRow = $stm->execute($editorConfigId)->fetchAssoc();
+                        if ($configRow && $configRow['types']) {
+                            $configTypes = StringUtil::deserialize($configRow['types'], true);
+                            foreach ($configTypes as $configType) {
+                                if (!$styleIdLine && $configType['type'] === 'linestring') {
+                                    $styleIdLine = $configType['locstyle'];
+                                    break;
+                                }
+                                if (!$styleIdPoint && $configType['type'] === 'point') {
+                                    $styleIdPoint = $configType['locstyle'];
+                                    break;
+                                }
+                            }
+
+                            $locationStyle = $styleIdLine ?: $styleIdPoint;
+                        }
+                    }
+                }
+            }
+
+            if (!$locationStyle) {
+                $stm = Database::getInstance()->prepare("SELECT typeId FROM tl_gutesio_data_element_type WHERE elementId = ? ORDER BY tl_gutesio_data_element_type.rank ASC LIMIT 1");
+                $typeRow = $stm->execute($detailData['uuid'])->fetchAssoc();
+                if ($typeRow) {
+                    $stm = Database::getInstance()->prepare("SELECT locstyle, loctype, editorConfig FROM tl_gutesio_data_type WHERE uuid = ?");
+                    $styleRow = $stm->execute($typeRow['typeId'])->fetchAssoc();
+                    if ($styleRow) {
+                        $locationStyle = $styleRow['locstyle'] ?? 0;
+                        $locationType = $styleRow['loctype'] ?? 'Point';
+                        $editorConfigId = $styleRow['editorConfig'] ?? null;
+                        if ($editorConfigId) {
+                            $stm = Database::getInstance()->prepare("SELECT types FROM tl_c4g_editor_configuration WHERE id = ?");
+                            $configRow = $stm->execute($editorConfigId)->fetchAssoc();
+                            if ($configRow && $configRow['types']) {
+                                $configTypes = StringUtil::deserialize($configRow['types'], true);
+                                foreach ($configTypes as $configType) {
+                                    if (!$styleIdLine && $configType['type'] === 'linestring') {
+                                        $styleIdLine = $configType['locstyle'];
+                                    }
+                                    if (!$styleIdPoint && $configType['type'] === 'point') {
+                                        $styleIdPoint = $configType['locstyle'];
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            $geoJson = json_decode($detailData['geojson'], true);
+            if (!isset($geoJson['type']) || $geoJson['type'] !== 'FeatureCollection') {
+                $geoJson = [
+                    'type' => 'FeatureCollection',
+                    'features' => $geoJson['features'] ?? [$geoJson]
+                ];
+            }
+
+            if (isset($geoJson['features'])) {
+                foreach ($geoJson['features'] as $key => &$feature) {
+                    if (!isset($feature['properties'])) {
+                        $feature['properties'] = [];
+                    }
+                    if (!isset($feature['id'])) {
+                        $uuid = ($elem['uuid'] ?? '0');
+                        if (!C4GUtils::isValidGUID($uuid)) {
+                            $uuid = StringUtil::binToUuid($uuid);
+                        }
+                        $feature['id'] = 'route_' . $uuid . '_' . $key;
+                    }
+                    if (isset($feature['properties']['styleId']) && !isset($feature['properties']['locstyle'])) {
+                        $feature['properties']['locstyle'] = $feature['properties']['styleId'];
+                    } elseif (isset($feature['properties']['locationStyle']) && !isset($feature['properties']['locstyle'])) {
+                        $feature['properties']['locstyle'] = $feature['properties']['locationStyle'];
+                    }
+
+                    $fType = $feature['geometry']['type'] ?? '';
+                    $targetStyle = $locationStyle;
+                    if ($fType === 'LineString' || $fType === 'MultiLineString') {
+                        $targetStyle = $styleIdLine ?: $locationStyle;
+                    } elseif ($fType === 'Point' || $fType === 'MultiPoint') {
+                        $targetStyle = $styleIdPoint ?: $locationStyle;
+                    }
+
+                    // Prioritize local styles from type configuration if available
+                    if ($targetStyle && $targetStyle !== "0") {
+                        $feature['properties']['locstyle'] = $targetStyle;
+                        if ($fType === 'LineString' || $fType === 'MultiLineString') {
+                            if ($locationType === 'Point' || $locationType === 'POI') {
+                                $feature['properties']['locstyle'] = 'none';
+                            }
+                        }
+                    }
+
+                    $feature['properties']['zindex'] = 100;
+
+                    if ($feature['properties']['locstyle'] ?? null) {
+                        if ($feature['properties']['locstyle'] !== 'none') {
+                            if (!$locationStyle) {
+                                $locationStyle = $feature['properties']['locstyle'];
+                            }
+                            if (!$styleIdLine && ($feature['geometry']['type'] === 'LineString' || $feature['geometry']['type'] === 'MultiLineString')) {
+                                $styleIdLine = $feature['properties']['locstyle'];
+                            }
+                            if (!$styleIdPoint && ($feature['geometry']['type'] === 'Point' || $feature['geometry']['type'] === 'MultiPoint')) {
+                                $styleIdPoint = $feature['properties']['locstyle'];
+                            }
+                        }
+                    }
+                }
+            }
+
+            $layerContent = [
                 'type' => 'GeoJSON',
                 'format' => 'GeoJSON',
-                'data' => json_decode($elem['geojson'], true),
+                'data' => $geoJson,
                 'active' => true,
                 'display' => true,
+                'noFilter' => true,
+                'noRealFilter' => true,
+                'alwaysVisible' => true,
+                'zIndex' => 100
+            ];
+
+            if ($locationStyle && $locationStyle !== "0") {
+                $layerContent['locationStyle'] = $locationStyle;
+            } else {
+                $locationStyle = $styleIdLine ?: $styleIdPoint;
+                if ($locationStyle && $locationStyle !== "0") {
+                    $layerContent['locationStyle'] = $locationStyle;
+                }
+            }
+
+            $mapData['layers'][] = [
+                'id' => 'current_geojson',
+                'type' => 'GeoJSON',
+                'format' => 'GeoJSON',
+                'active' => true,
+                'display' => true,
+                'hide' => false,
+                'noFilter' => true,
+                'noRealFilter' => true,
+                'alwaysVisible' => true,
+                'excludeFromSingleLayer' => true,
+                'hideInStarboard' => false,
+                'showInStarboard' => true,
+                'zIndex' => 100,
+                'zoom' => [0, 28],
+                'locstyle' => $locationStyle,
                 'content' => [
-                    [
-                        'type' => 'GeoJSON',
-                        'format' => 'GeoJSON',
-                        'data' => json_decode($elem['geojson'], true)
-                    ]
+                    $layerContent
                 ]
             ];
+            $mapData['calc_extent'] = 'LOCATIONS';
+            $mapData['min_gap'] = 100;
+            $mapData['displayAllLocations'] = false;
         }
 
         return new JsonResponse($mapData);
@@ -273,8 +483,10 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
     {
         $typeIds = [];
         $this->framework->initialize();
-        if ($this->model->gutesio_data_mode == '1') {
-            $typeIds = unserialize($this->model->gutesio_data_type);
+        if (isset($this->model)) {
+            if ($this->model->gutesio_data_mode == '1') {
+                $typeIds = unserialize($this->model->gutesio_data_type);
+            }
         }
         if ($elementUuid) {
             $detailData = $this->showcaseService->loadByUuid($elementUuid) ?: [];
@@ -298,7 +510,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         }
         $detailData['opening_hours'] = str_replace("\\", "", $detailData['opening_hours']);
         $strTypes = "";
-        $types = $detailData['types'];
+        $types = $detailData['rawTypes'] ?? $detailData['types'];
         if ($types && is_array($types)) {
             foreach ($types as $key => $type) {
                 $strTypes .= $type['label'];
@@ -308,6 +520,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             }
         }
         $detailData['displayType'] = $strTypes;
+        $detailData['rawTypes'] = $types;
         if (key_exists('relatedShowcaseLogos', $detailData) && is_array($detailData['relatedShowcaseLogos'])) {
             $relatedShowcases = $detailData['relatedShowcases'];
             foreach ($detailData['relatedShowcaseLogos'] as $key => $relatedShowcaseLogo) {

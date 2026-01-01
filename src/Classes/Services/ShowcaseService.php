@@ -593,6 +593,7 @@ class ShowcaseService
         }
 
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
+        $returnData['rawTypes'] = $returnData['types'];
         $tags = $returnData['tags'];
         foreach ($tags as $key => $tag) {
             $technicalKey = $tag['technicalKey'];
@@ -632,6 +633,7 @@ class ShowcaseService
         }
 
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
+        $returnData['rawTypes'] = $returnData['types'];
         $typeString = '';
         foreach ($returnData['types'] as $key => $type) {
             $typeString .= $type['label'];

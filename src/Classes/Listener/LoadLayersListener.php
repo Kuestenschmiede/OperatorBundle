@@ -37,7 +37,8 @@ class LoadLayersListener
         'elements' => [],
         'elementTypes' => [],
         'osmAreas' => [],
-        'propertyCache' => []
+        'propertyCache' => [],
+        'geometryCache' => []
     ];
 
     /** @var string SQL condition for published elements */
@@ -108,77 +109,82 @@ class LoadLayersListener
             return;
         }
 
-        $idCondition = " WHERE elementId IN ('" . implode("','", $elementIds) . "')";
+        // Chunking the element IDs to prevent too large SQL queries
+        $chunks = array_chunk($elementIds, 500);
 
-        // Load tag-element assignments
-        $tagElementsStatement = $this->database->execute(
-            "SELECT tagId, elementId FROM tl_gutesio_data_tag_element" . $idCondition
-        );
-        while ($row = $tagElementsStatement->fetchAssoc()) {
-            if (isset($this->cache['tags'][$row['tagId']])) {
-                $this->cache['elementTags'][$row['elementId']][] = $row['tagId'];
+        foreach ($chunks as $chunk) {
+            $idCondition = " WHERE elementId IN ('" . implode("','", $chunk) . "')";
+
+            // Load tag-element assignments
+            $tagElementsStatement = $this->database->execute(
+                "SELECT tagId, elementId FROM tl_gutesio_data_tag_element" . $idCondition
+            );
+            while ($row = $tagElementsStatement->fetchAssoc()) {
+                if (isset($this->cache['tags'][$row['tagId']])) {
+                    $this->cache['elementTags'][$row['elementId']][] = $row['tagId'];
+                }
+            }
+
+            // Load element types and their styles
+            $elementTypesStatement = $this->database->execute(
+                "SELECT typeElem.elementId, typeElem.typeId, type.locstyle, type.loctype, type.showLinkedElements,
+                        type.uuid as type_uuid, type.name as type_name,
+                        ls.name as style_name, ls.icon_src, ls.svgSrc
+                 FROM tl_gutesio_data_element_type AS typeElem
+                 INNER JOIN tl_gutesio_data_type AS type ON typeElem.typeId = type.uuid
+                 LEFT JOIN tl_c4g_map_locstyles AS ls ON type.locstyle = ls.id" .
+                 str_replace('elementId', 'typeElem.elementId', $idCondition) .
+                 " ORDER BY typeElem.rank ASC"
+            );
+            
+            while ($elementType = $elementTypesStatement->fetchAssoc()) {
+                $this->cache['elementTypes'][$elementType['elementId']][] = $elementType['typeId'];
+                
+                $icon = $this->resolvePath($elementType['icon_src'] ?: $elementType['svgSrc']);
+                if (strpos($icon, '/') !== 0 && $elementType['style_name']) {
+                    $styleName = $elementType['style_name'];
+                    if (strpos($styleName, 'io_') === 0) {
+                        $styleName = substr($styleName, 3);
+                    }
+                    $styleName = str_replace(' ', '_', $styleName);
+                    $projectDir = System::getContainer()->getParameter('kernel.project_dir');
+                    $basePaths = glob($projectDir . '/files/con4gis_import_data/*/icons/Kategorie_Icons', GLOB_ONLYDIR);
+                    $basePath = !empty($basePaths) ? str_replace($projectDir . '/', '', $basePaths[0]) . '/' : 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
+                    foreach (['.svg', '.png', '.jpg'] as $ext) {
+                        if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                            $icon = '/' . $basePath . $styleName . $ext;
+                            break;
+                        }
+                    }
+                }
+                
+                // Pre-cache the first (highest rank) location style for each element
+                if (!isset($this->cache['locStyles'][$elementType['elementId']])) {
+                    $this->cache['locStyles'][$elementType['elementId']] = [
+                        'locstyle' => $elementType['locstyle'],
+                        'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
+                        'icon' => $icon,
+                        'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
+                    ];
+                }
+
+                if (!isset($this->cache['types'][$elementType['typeId']])) {
+                    $this->cache['types'][$elementType['typeId']] = [
+                        'uuid' => $elementType['type_uuid'],
+                        'name' => $elementType['type_name'],
+                        'locstyle' => $elementType['locstyle'],
+                        'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
+                        'showLinkedElements' => $elementType['showLinkedElements'],
+                        'icon' => $icon,
+                        'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
+                    ];
+                }
             }
         }
 
         if (isset($this->cache['elementTags'])) {
             foreach ($this->cache['elementTags'] as &$tags) {
                 sort($tags);
-            }
-        }
-
-        // Load element types and their styles
-        $elementTypesStatement = $this->database->execute(
-            "SELECT typeElem.elementId, typeElem.typeId, type.locstyle, type.loctype, type.showLinkedElements,
-                    type.uuid as type_uuid, type.name as type_name,
-                    ls.name as style_name, ls.icon_src, ls.svgSrc
-             FROM tl_gutesio_data_element_type AS typeElem
-             INNER JOIN tl_gutesio_data_type AS type ON typeElem.typeId = type.uuid
-             LEFT JOIN tl_c4g_map_locstyles AS ls ON type.locstyle = ls.id" .
-             str_replace('elementId', 'typeElem.elementId', $idCondition) .
-             " ORDER BY typeElem.rank ASC"
-        );
-        
-        while ($elementType = $elementTypesStatement->fetchAssoc()) {
-            $this->cache['elementTypes'][$elementType['elementId']][] = $elementType['typeId'];
-            
-            $icon = $this->resolvePath($elementType['icon_src'] ?: $elementType['svgSrc']);
-            if (strpos($icon, '/') !== 0 && $elementType['style_name']) {
-                $styleName = $elementType['style_name'];
-                if (strpos($styleName, 'io_') === 0) {
-                    $styleName = substr($styleName, 3);
-                }
-                $styleName = str_replace(' ', '_', $styleName);
-                $projectDir = System::getContainer()->getParameter('kernel.project_dir');
-                $basePaths = glob($projectDir . '/files/con4gis_import_data/*/icons/Kategorie_Icons', GLOB_ONLYDIR);
-                $basePath = !empty($basePaths) ? str_replace($projectDir . '/', '', $basePaths[0]) . '/' : 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
-                foreach (['.svg', '.png', '.jpg'] as $ext) {
-                    if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
-                        $icon = '/' . $basePath . $styleName . $ext;
-                        break;
-                    }
-                }
-            }
-            
-            // Pre-cache the first (highest rank) location style for each element
-            if (!isset($this->cache['locStyles'][$elementType['elementId']])) {
-                $this->cache['locStyles'][$elementType['elementId']] = [
-                    'locstyle' => $elementType['locstyle'],
-                    'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
-                    'icon' => $icon,
-                    'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
-                ];
-            }
-
-            if (!isset($this->cache['types'][$elementType['typeId']])) {
-                $this->cache['types'][$elementType['typeId']] = [
-                    'uuid' => $elementType['type_uuid'],
-                    'name' => $elementType['type_name'],
-                    'locstyle' => $elementType['locstyle'],
-                    'loctype' => ($elementType['loctype'] === 'POI' ? 'Point' : $elementType['loctype']),
-                    'showLinkedElements' => $elementType['showLinkedElements'],
-                    'icon' => $icon,
-                    'styletype' => ($icon ? (strpos($icon, '.svg') !== false ? 'cust_icon_svg' : 'cust_icon') : '')
-                ];
             }
         }
     }
@@ -344,24 +350,60 @@ class LoadLayersListener
         }, $types);
     }
 
-    private function processTypes(array $types, array $dataLayer, array $skipElements, array &$sameElements, $objDataLayer): array
+    private function batchLoadElements(array $typeUuids): array
     {
-        $typeElements = [];
-        $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
-
-        // Batch load all elements for all types at once
-        $typeUuids = array_map(function($type) { return $type->uuid; }, $types);
-        $query = 'SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, elem.geojson, typeElem.typeId FROM tl_gutesio_data_element AS elem
-                 INNER JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
-                 WHERE typeElem.typeId IN (\'' . implode("','", $typeUuids) . '\')' . $strPublishedElem . ' ORDER BY elem.name ASC';
-        
-        $statement = $this->database->execute($query);
-        $showcaseIdsToLoad = [];
         $elementsByType = [];
+        $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
         
-        while ($elem = $statement->fetchAssoc()) {
-            $this->cache['elements'][$elem['uuid']] = $elem;
-            $elementsByType[$elem['typeId']][] = $elem['uuid'];
+        // 1. Load all relations (element <-> type)
+        $relations = $this->database->execute(
+            "SELECT elementId, typeId FROM tl_gutesio_data_element_type 
+             WHERE typeId IN ('" . implode("','", $typeUuids) . "')"
+        )->fetchAllAssoc();
+        
+        $elementUuids = [];
+        $relMap = [];
+        foreach ($relations as $rel) {
+            $elementUuids[] = $rel['elementId'];
+            $relMap[$rel['elementId']][] = $rel['typeId'];
+        }
+        $elementUuids = array_unique($elementUuids);
+        
+        if (empty($elementUuids)) {
+            return [];
+        }
+        
+        // 2. Load element data (once per UUID), sorted by name for consistency
+        // Using chunks to avoid too long query strings if there are thousands of elements
+        $chunks = array_chunk($elementUuids, 500);
+        $allElements = [];
+        foreach ($chunks as $chunk) {
+            $query = "SELECT uuid, name, geox, geoy, showcaseIds, geojson FROM tl_gutesio_data_element AS elem 
+                      WHERE uuid IN ('" . implode("','", $chunk) . "')" . $strPublishedElem . " 
+                      ORDER BY name ASC";
+            $statement = $this->database->execute($query);
+            while ($row = $statement->fetchAssoc()) {
+                $allElements[] = $row;
+            }
+        }
+        
+        // Sort the entire result set by name again because chunks might overlap in naming
+        usort($allElements, function($a, $b) {
+            return strcasecmp($a['name'], $b['name']);
+        });
+
+        $showcaseIdsToLoad = [];
+        foreach ($allElements as $elem) {
+            $uuid = $elem['uuid'];
+            $this->cache['elements'][$uuid] = $elem;
+            
+            // Assign to types based on relations
+            if (isset($relMap[$uuid])) {
+                foreach ($relMap[$uuid] as $typeId) {
+                    $elementsByType[$typeId][] = $uuid;
+                }
+            }
+            
             if ($elem['showcaseIds']) {
                 $ids = StringUtil::deserialize($elem['showcaseIds'], true);
                 foreach ($ids as $id) {
@@ -372,32 +414,37 @@ class LoadLayersListener
             }
         }
         
-        // Batch load showcase elements if needed
+        // 3. Batch load showcase elements if needed
         if (!empty($showcaseIdsToLoad)) {
-            $showcaseResult = $this->database->execute(
-                "SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, elem.geojson, typeElem.typeId 
-                 FROM tl_gutesio_data_element AS elem
-                 LEFT JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
-                 WHERE elem.uuid IN ('" . implode("','", array_unique($showcaseIdsToLoad)) . "')
-                 ORDER BY typeElem.rank ASC"
-            )->fetchAllAssoc();
-            foreach ($showcaseResult as $showcaseElem) {
-                if (!isset($this->cache['elements'][$showcaseElem['uuid']])) {
-                    $this->cache['elements'][$showcaseElem['uuid']] = $showcaseElem;
+            $showcaseIdsToLoad = array_unique($showcaseIdsToLoad);
+            $chunks = array_chunk($showcaseIdsToLoad, 500);
+            foreach ($chunks as $chunk) {
+                $showcaseResult = $this->database->execute(
+                    "SELECT uuid, name, geox, geoy, showcaseIds, geojson FROM tl_gutesio_data_element 
+                     WHERE uuid IN ('" . implode("','", $chunk) . "')"
+                )->fetchAllAssoc();
+                foreach ($showcaseResult as $showcaseElem) {
+                    if (!isset($this->cache['elements'][$showcaseElem['uuid']])) {
+                        $this->cache['elements'][$showcaseElem['uuid']] = $showcaseElem;
+                    }
                 }
             }
-            unset($showcaseResult);
         }
 
         $this->preloadData(array_keys($this->cache['elements']));
         
-        $allElements = $this->cache['elements'];
-        $this->cache['elements'] = [];
+        return $elementsByType;
+    }
 
+    private function processTypes(array $types, array $dataLayer, array $skipElements, array &$sameElements, $objDataLayer): array
+    {
+        $typeElements = [];
+        $typeUuids = array_map(function($type) { return $type->uuid; }, $types);
+        $elementsByType = $this->batchLoadElements($typeUuids);
+        
         foreach ($types as $type) {
             $typeData = ($type->row)();
             $elementUuids = $elementsByType[$typeData['uuid']] ?? [];
-            unset($elementsByType[$typeData['uuid']]);
             
             if ($skipElements) {
                 $elementUuids = array_filter($elementUuids, function($uuid) use ($skipElements) {
@@ -411,19 +458,12 @@ class LoadLayersListener
 
             $elements = [];
             foreach ($elementUuids as $uuid) {
-                if (isset($allElements[$uuid])) {
-                    $elements[] = $allElements[$uuid];
-                    unset($allElements[$uuid]);
+                if (isset($this->cache['elements'][$uuid])) {
+                    $elements[] = $this->cache['elements'][$uuid];
                 }
             }
-            unset($elementUuids);
 
             $processedElements = $this->processTypeElements($elements, $dataLayer, $typeData, $sameElements, $objDataLayer);
-            unset($elements);
-            
-            // Remove elements from allElements that are no longer needed
-            // If an element belongs to multiple types, we can't easily remove it here
-            // but we can try to clear allElements once we are done if we know it's not needed anymore.
             
             if (!empty($processedElements)) {
                 $typeElements[$typeData['uuid']] = [
@@ -439,12 +479,9 @@ class LoadLayersListener
                     'initial_opened' => $objDataLayer->initial_opened,
                     'display' => true
                 ];
-                unset($processedElements);
             }
         }
 
-        unset($elementsByType);
-        unset($allElements);
         return $typeElements;
     }
 
@@ -583,98 +620,62 @@ class LoadLayersListener
     private function processDirectories(array $directories, array $dataLayer, $objDataLayer): array
     {
         $processedDirectories = [];
-        $typeElements = [];
         $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
 
-        // Batch load all elements for all directories at once
+        // 1. Get all types for all directories
         $directoryUuids = array_filter(array_map(function($dir) { return $dir['uuid'] ?? null; }, $directories));
         if (empty($directoryUuids)) {
             return [];
         }
 
-        $query = 'SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, type.uuid AS typeId, type.name AS typeName, dirType.directoryId AS directoryId 
-                 FROM tl_gutesio_data_type AS type
-                 INNER JOIN tl_gutesio_data_directory_type AS dirType ON dirType.typeId = type.uuid
-                 INNER JOIN tl_gutesio_data_element_type AS elemType ON dirType.typeId = elemType.typeId
-                 INNER JOIN tl_gutesio_data_element AS elem ON elemType.elementId = elem.uuid
-                 WHERE dirType.directoryId IN (\'' . implode("','", $directoryUuids) . '\')
-                 ORDER BY type.name ASC';
-        
-        $statement = $this->database->execute($query);
-        $showcaseIdsToLoad = [];
-        $elementsByDirectory = [];
-        
-        while ($elem = $statement->fetchAssoc()) {
-            $this->cache['elements'][$elem['uuid']] = $elem;
-            $elementsByDirectory[$elem['directoryId']][] = $elem['uuid'];
-            if ($elem['showcaseIds']) {
-                $ids = StringUtil::deserialize($elem['showcaseIds'], true);
-                foreach ($ids as $id) {
-                    if (!isset($this->cache['elements'][$id])) {
-                        $showcaseIdsToLoad[] = $id;
-                    }
-                }
-            }
+        $dirTypesResult = $this->database->execute(
+            "SELECT dirType.directoryId, type.uuid AS typeId, type.name AS typeName 
+             FROM tl_gutesio_data_directory_type AS dirType
+             INNER JOIN tl_gutesio_data_type AS type ON dirType.typeId = type.uuid
+             WHERE dirType.directoryId IN ('" . implode("','", $directoryUuids) . "')
+             ORDER BY type.name ASC"
+        )->fetchAllAssoc();
+
+        $typesByDirectory = [];
+        $allTypeUuids = [];
+        foreach ($dirTypesResult as $row) {
+            $typesByDirectory[$row['directoryId']][] = [
+                'id' => $row['typeId'],
+                'name' => $row['typeName']
+            ];
+            $allTypeUuids[] = $row['typeId'];
         }
-        
-        // Batch load showcase elements if needed
-        if (!empty($showcaseIdsToLoad)) {
-            $showcaseResult = $this->database->execute(
-                "SELECT elem.uuid, elem.name, elem.geox, elem.geoy, elem.showcaseIds, typeElem.typeId 
-                 FROM tl_gutesio_data_element AS elem
-                 LEFT JOIN tl_gutesio_data_element_type AS typeElem ON typeElem.elementId = elem.uuid
-                 WHERE elem.uuid IN ('" . implode("','", array_unique($showcaseIdsToLoad)) . "')
-                 ORDER BY typeElem.rank ASC"
-            )->fetchAllAssoc();
-            foreach ($showcaseResult as $showcaseElem) {
-                if (!isset($this->cache['elements'][$showcaseElem['uuid']])) {
-                    $this->cache['elements'][$showcaseElem['uuid']] = $showcaseElem;
-                }
-            }
-            unset($showcaseResult);
+        $allTypeUuids = array_unique($allTypeUuids);
+
+        if (empty($allTypeUuids)) {
+            return [];
         }
 
-        $this->preloadData(array_keys($this->cache['elements']));
-        
-        $allElements = $this->cache['elements'];
-        $this->cache['elements'] = [];
+        // 2. Batch load all elements and relations
+        $elementsByType = $this->batchLoadElements($allTypeUuids);
 
+        // 3. Process directories
         foreach ($directories as $directory) {
             $directoryUuid = $directory['uuid'] ?? null;
-            $directoryName = $directory['name'] ?? '';
-
-            if (!$directoryUuid) {
+            if (!$directoryUuid || !isset($typesByDirectory[$directoryUuid])) {
                 continue;
             }
 
-            $elementUuids = $elementsByDirectory[$directoryUuid] ?? [];
-            unset($elementsByDirectory[$directoryUuid]);
-            
-            $elements = [];
-            foreach ($elementUuids as $uuid) {
-                if (isset($allElements[$uuid])) {
-                    $elements[] = $allElements[$uuid];
-                    unset($allElements[$uuid]);
-                }
-            }
-            unset($elementUuids);
-
-            $validTypes = $this->processDirectoryElements(
-                $elements,
+            $validTypes = $this->processDirectoryCategories(
+                $typesByDirectory[$directoryUuid],
+                $elementsByType,
                 $dataLayer,
                 $skipElements,
-                $typeElements,
                 $directoryUuid,
                 $objDataLayer
             );
-            unset($elements);
 
             if (!empty($validTypes)) {
                 $processedDirectories[] = [
                     'pid' => $dataLayer['id'],
                     'id' => $directoryUuid,
-                    'name' => $directoryName,
-                    'layername' => $directoryName,
+                    'name' => $directory['name'],
+                    'layername' => $directory['name'],
                     'type' => $dataLayer['type'],
                     'format' => $dataLayer['format'],
                     'childs' => array_values($validTypes),
@@ -684,78 +685,74 @@ class LoadLayersListener
                     'display' => true
                 ];
             }
-            unset($elements);
         }
 
-        unset($elementsByDirectory);
-        unset($typeElements);
-        unset($allElements);
+        $this->cache['elements'] = [];
         return $processedDirectories;
     }
 
-
-    private function processDirectoryElements(
-        array &$elements, 
-        array &$dataLayer, 
-        array &$skipElements, 
-        array &$typeElements, 
-        string $directoryId, 
+    private function processDirectoryCategories(
+        array $categories,
+        array &$elementsByType,
+        array &$dataLayer,
+        ?array &$skipElements,
+        string $directoryId,
         $objDataLayer
     ): array {
         $validTypes = [];
-        $elementsByCategory = [];
-        
-        foreach ($elements as $key => $elem) {
-            if ($skipElements && in_array($elem['uuid'], $skipElements)) {
-                unset($elements[$key]);
-                continue;
-            }
-            $elementsByCategory[$elem['typeId']][] = $elem;
-            unset($elements[$key]);
-        }
-
         $hideInStarboard = $objDataLayer->hideInStarboard ?: false;
         $initialOpened = $objDataLayer->initial_opened ? true : false;
-        $showLinked = count($elements) < 50;
         $activeTypes = StringUtil::deserialize($objDataLayer->activeTypes, true);
 
-        foreach ($elementsByCategory as $typeId => &$categoryElements) {
+        foreach ($categories as $category) {
+            $typeId = $category['id'];
+            $typeName = $category['name'];
             $typeKey = $directoryId . $typeId;
-            $firstElem = $categoryElements[0];
             
-            if (!isset($typeElements[$typeKey])) {
-                $typeElements[$typeKey] = [
-                    'pid' => $directoryId,
-                    'id' => $typeKey,
-                    'name' => $firstElem['typeName'],
-                    'layername' => $firstElem['typeName'],
-                    'type' => $dataLayer['type'],
-                    'format' => $dataLayer['format'],
-                    'childs' => [],
-                    'data_hidelayer' => $objDataLayer->data_hidelayer,
-                    'hide' => $objDataLayer->data_hidelayer,
-                    'initial_opened' => $objDataLayer->initial_opened,
-                    'display' => true
-                ];
-                
-                if (!empty($activeTypes) && !in_array($typeId, $activeTypes)) {
-                    $typeElements[$typeKey]['data_hidelayer'] = '1';
-                    $typeElements[$typeKey]['hide'] = '1';
-                } else if (!empty($activeTypes) && in_array($typeId, $activeTypes)) {
-                    $typeElements[$typeKey]['data_hidelayer'] = '';
-                    $typeElements[$typeKey]['hide'] = '';
-                }
+            $elementUuids = $elementsByType[$typeId] ?? [];
+            if (empty($elementUuids)) {
+                continue;
+            }
 
-                $validTypes[$typeKey] = &$typeElements[$typeKey];
+            $typeEntry = [
+                'pid' => $directoryId,
+                'id' => $typeKey,
+                'name' => $typeName,
+                'layername' => $typeName,
+                'type' => $dataLayer['type'],
+                'format' => $dataLayer['format'],
+                'childs' => [],
+                'data_hidelayer' => $objDataLayer->data_hidelayer,
+                'hide' => $objDataLayer->data_hidelayer,
+                'initial_opened' => $objDataLayer->initial_opened,
+                'display' => true
+            ];
+            
+            if (!empty($activeTypes) && !in_array($typeId, $activeTypes)) {
+                $typeEntry['data_hidelayer'] = '1';
+                $typeEntry['hide'] = '1';
+            } else if (!empty($activeTypes) && in_array($typeId, $activeTypes)) {
+                $typeEntry['data_hidelayer'] = '';
+                $typeEntry['hide'] = '';
             }
 
             $type = $this->cache['types'][$typeId] ?? ['uuid' => $typeId];
+            $showLinked = count($elementUuids) < 50;
             $canShowLinked = $showLinked && isset($type['showLinkedElements']) && $type['showLinkedElements'];
             $parentInfo = ['id' => $typeKey];
-            $forceHide = ($typeElements[$typeKey]['hide'] ?? '0') === '1';
+            $forceHide = ($typeEntry['hide'] ?? '0') === '1';
             $forceShow = !empty($activeTypes) && in_array($typeId, $activeTypes);
 
-            foreach ($categoryElements as $cKey => $elem) {
+            foreach ($elementUuids as $uuid) {
+                if ($skipElements && in_array($uuid, $skipElements)) {
+                    continue;
+                }
+
+                $elem = $this->cache['elements'][$uuid] ?? null;
+                if (!$elem) {
+                    continue;
+                }
+
                 $childElements = [];
                 if ($canShowLinked) {
                     $childElements = $this->loadChildElements($elem, $type, $dataLayer);
@@ -770,17 +767,15 @@ class LoadLayersListener
                         $createdElement['data_hidelayer'] = '';
                         $createdElement['hide'] = '';
                     }
-                    $typeElements[$typeKey]['childs'][] = $createdElement;
+                    $typeEntry['childs'][] = $createdElement;
                 }
-                unset($categoryElements[$cKey]);
-                unset($childElements);
             }
-            unset($parentInfo);
-            unset($categoryElements);
-            unset($type);
+
+            if (!empty($typeEntry['childs'])) {
+                $validTypes[$typeKey] = $typeEntry;
+            }
         }
 
-        unset($elementsByCategory);
         return $validTypes;
     }
 
@@ -939,7 +934,7 @@ class LoadLayersListener
         }
 
         if (!($element['hideInStarboard'] ?? false)) {
-            $element['excludeFromSingleLayer'] = true;
+            $element['excludeFromSingleLayer'] = false;
         }
     }
 
@@ -959,45 +954,75 @@ class LoadLayersListener
         }
 
         if ($geojson) {
-            $element['excludeFromSingleLayer'] = '1';
-            if (strpos($geojson, 'FeatureCollection') === false) {
-                 $geojson = '{"type": "FeatureCollection", "features": ' . $geojson . '}';
-            }
-                
-            $data = json_decode($geojson, true);
-            unset($geojson);
+            $element['excludeFromSingleLayer'] = false;
             
-            if (!$data) {
-                $data = ['type' => 'FeatureCollection', 'features' => []];
-            }
-
-            if (!isset($data['features']) && ($data['type'] ?? '') === 'FeatureCollection') {
-                $data['features'] = [];
-            }
-
-            if (isset($data['features'])) {
-                $featureProperties = $properties;
-                $featureProperties['zindex'] = -5;
-                if ($objLocstyle && isset($objLocstyle['icon']) && $objLocstyle['icon']) {
-                    $featureProperties['icon_src'] = $objLocstyle['icon'];
-                    $featureProperties['styletype'] = $objLocstyle['styletype'] ?: (strpos($objLocstyle['icon'], '.svg') !== false ? 'cust_icon_svg' : 'cust_icon');
+            $cacheKey = md5($geojson);
+            if (isset($this->cache['geometryCache'][$cacheKey])) {
+                $data = $this->cache['geometryCache'][$cacheKey];
+            } else {
+                if (strpos($geojson, 'FeatureCollection') === false) {
+                    $geojson = '{"type": "FeatureCollection", "features": ' . $geojson . '}';
                 }
-                foreach ($data['features'] as $key => $feature) {
-                    $fProps = $featureProperties;
+                    
+                $data = json_decode($geojson, true);
+                if (!$data) {
+                    $data = ['type' => 'FeatureCollection', 'features' => []];
+                }
+
+                if (!isset($data['features']) && ($data['type'] ?? '') === 'FeatureCollection') {
+                    $data['features'] = [];
+                }
+                $this->cache['geometryCache'][$cacheKey] = $data;
+            }
+            unset($geojson);
+
+            $locstyle = $layerStyle ? ($dataLayer['locstyle'] ?? null) : ($objLocstyle['locstyle'] ?? null);
+            $features = [];
+            if (isset($data['features']) && is_array($data['features'])) {
+                foreach ($data['features'] as $feature) {
+                    $fProps = $properties;
+                    $fProps['zindex'] = 100;
+                    
+                    // If the feature already has styling properties, prioritize them
                     if (isset($feature['properties']) && is_array($feature['properties'])) {
                         foreach ($feature['properties'] as $propKey => $propVal) {
                             $fProps[$propKey] = $propVal;
                         }
                     }
-                    $data['features'][$key]['properties'] = $fProps;
+                    
+                    // Map styleId or locationStyle to locstyle if not present
+                    if (!isset($fProps['locstyle']) || $fProps['locstyle'] === '0') {
+                        if (isset($fProps['styleId']) && $fProps['styleId'] !== '0') {
+                            $fProps['locstyle'] = $fProps['styleId'];
+                        } elseif (isset($fProps['locationStyle']) && $fProps['locationStyle'] !== '0') {
+                            $fProps['locstyle'] = $fProps['locationStyle'];
+                        }
+                    }
+
+                    if ((!isset($fProps['locstyle']) || $fProps['locstyle'] === '0') && $locstyle) {
+                        $fProps['locstyle'] = $locstyle;
+                    }
+
+                    // Only apply element icon style if the feature doesn't have a style or is a point
+                    $isPoint = ($feature['geometry']['type'] ?? '') === 'Point';
+                    if ($objLocstyle && isset($objLocstyle['icon']) && $objLocstyle['icon']) {
+                        if ((!isset($fProps['locstyle']) || $fProps['locstyle'] === '0') || $isPoint) {
+                            $fProps['icon_src'] = $objLocstyle['icon'];
+                            $fProps['styletype'] = $objLocstyle['styletype'] ?: (strpos($objLocstyle['icon'], '.svg') !== false ? 'cust_icon_svg' : 'cust_icon');
+                        }
+                    }
+                    
+                    $newFeature = $feature;
+                    $newFeature['properties'] = $fProps;
+                    $features[] = $newFeature;
                 }
             }
             
-            $data['properties'] = &$properties;
-            
-            $locstyle = $layerStyle ? ($dataLayer['locstyle'] ?? null) : ($objLocstyle['locstyle'] ?? null);
             $element['content'] = [[
-                'data' => &$data,
+                'data' => [
+                    'type' => $data['type'] ?? 'FeatureCollection',
+                    'features' => $features
+                ],
                 'type' => $dataLayer['type'] ?? 'GeoJSON',
                 'format' => $dataLayer['format'] ?? 'GeoJSON'
             ]];

@@ -2,11 +2,10 @@
 /**
  * con4gis - the gis-kit
  *
- * @version   php 7
  * @package   east_frisia
- * @author    contributors (see "authors.txt")
+ * @author    contributors (see "authors.md")
  * @license   GNU/LGPL http://opensource.org/licenses/lgpl-3.0.html
- * @copyright Küstenschmiede GmbH Software & Design 2011 - 2018
+ * @copyright (c) 2011-2026, by Küstenschmiede GmbH Software & Design
  * @link      https://www.kuestenschmiede.de
  */
 

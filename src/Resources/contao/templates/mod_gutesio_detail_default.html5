@@ -505,9 +505,69 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                 <div class="c4g-card">
                                     <div class="c4g-card-body">
                                         <div class="c4g-card-label"><i class="fas fa-exclamation-circle"></i> <span
-                                                    class="c4g-card-labeltext">Wichtige Hinweise</span></div>
+                                                    class="c4g-card-labeltext"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['importantnotes_title'] ?></span></div>
                                         <div class="c4g-card-text">
                                             <?= $data->importantNotes ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if (isset($data->safetyInstructions) && !empty($data->safetyInstructions)): ?>
+                <section class="detail-view__section section__safety-instructions">
+                    <div class="c4g-container">
+                        <div class="c4g-row detaildata-section-safety-instructions">
+                            <div class="col-12">
+                                <div class="c4g-card">
+                                    <div class="c4g-card-body">
+                                        <div class="c4g-card-label"><i class="fas fa-shield-alt"></i> <span
+                                                    class="c4g-card-labeltext"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['safetyinstructions_title'] ?></span></div>
+                                        <div class="c4g-card-text">
+                                            <?= $data->safetyInstructions ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if (isset($data->tips) && !empty($data->tips)): ?>
+                <section class="detail-view__section section__tips">
+                    <div class="c4g-container">
+                        <div class="c4g-row detaildata-section-tips">
+                            <div class="col-12">
+                                <div class="c4g-card">
+                                    <div class="c4g-card-body">
+                                        <div class="c4g-card-label"><i class="fas fa-lightbulb"></i> <span
+                                                    class="c4g-card-labeltext"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['tips_title'] ?></span></div>
+                                        <div class="c4g-card-text">
+                                            <?= $data->tips ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            <?php endif; ?>
+
+            <?php if (isset($data->additionalInformation) && !empty($data->additionalInformation)): ?>
+                <section class="detail-view__section section__additional-information">
+                    <div class="c4g-container">
+                        <div class="c4g-row detaildata-section-additional-information">
+                            <div class="col-12">
+                                <div class="c4g-card">
+                                    <div class="c4g-card-body">
+                                        <div class="c4g-card-label"><i class="fas fa-info-circle"></i> <span
+                                                    class="c4g-card-labeltext"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['additionalinformation_title'] ?></span></div>
+                                        <div class="c4g-card-text">
+                                            <?= $data->additionalInformation ?>
                                         </div>
                                     </div>
                                 </div>

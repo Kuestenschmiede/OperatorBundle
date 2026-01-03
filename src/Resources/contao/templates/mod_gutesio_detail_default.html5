@@ -1421,6 +1421,9 @@ if ($imprintData) {
             <div class="detail-view__additionalImprint-inner">
                 <h4 class="additionalImprint-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['imprintAdditionalInfos'] ?></h4>
                 <span class="detail-view_additionalImprint-source" style="display: block; text-align: center; font-style: italic;"><?php echo $data->source ?></span>
+                <?php if (isset($data->aiOptimized) && ($data->aiOptimized === '1')): ?>
+                    <span class="detail-view_additionalImprint-ai" style="display: block; text-align: center; font-style: italic;"><?php echo $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['aiOptimized'] ?></span>
+                <?php endif; ?>
             </div>
         </div>
     </div>

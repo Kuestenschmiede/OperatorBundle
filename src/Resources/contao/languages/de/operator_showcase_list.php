@@ -46,6 +46,7 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['phonehours_title'] = "Telefon
 $GLOBALS['TL_LANG'][$strName]['details']['label']['routedesc_title'] = "Anreisebeschreibung:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['surroundings'] = "Umgebungsbeschreibung:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['admissionPrices'] = "Eintrittspreise:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['aiOptimized'] = "Dieser Eintrag wurde AI optimiert.";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['technicalEquipment'] = "Technische Ausrüstung (Events):";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['maxPersons'] = "Maximale Personen (Events):";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCredits'] = "Bildnachweise";

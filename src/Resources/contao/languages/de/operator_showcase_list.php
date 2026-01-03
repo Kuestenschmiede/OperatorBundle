@@ -64,6 +64,15 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['beginDateJob'] = "Möglicher 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['equipment'] = "Ausstattung:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['numberOfRooms'] = "Anzahl Räume:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['numberOfBeds'] = "Anzahl Betten:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['duration'] = "Dauer:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['length'] = "Länge:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['elevationMin'] = "Höhenprofil Minimum:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['elevationMax'] = "Höhenprofil Maximum:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['totalAscent'] = "Gesamte Steigung:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['totalDescent'] = "Gesamtes Gefälle:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['roundTrip'] = "Rundtour:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['roundTrip_yes'] = "Ja";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['roundTrip_no'] = "Nein";
 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['releasedAt'] = "Veröffentlicht vor:";
 

@@ -835,6 +835,55 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($data->duration) && !empty($data->duration)): ?>
+                            <div class="detail-field-text duration">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['duration'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->duration ?> s</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->length) && !empty($data->length)): ?>
+                            <div class="detail-field-text length">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['length'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->length ?> m</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->elevationMin) && !empty($data->elevationMin)): ?>
+                            <div class="detail-field-text elevationMin">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['elevationMin'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->elevationMin ?> m</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->elevationMax) && !empty($data->elevationMax)): ?>
+                            <div class="detail-field-text elevationMax">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['elevationMax'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->elevationMax ?> m</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->totalAscent) && !empty($data->totalAscent)): ?>
+                            <div class="detail-field-text totalAscent">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['totalAscent'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->totalAscent ?> m</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->totalDescent) && !empty($data->totalDescent)): ?>
+                            <div class="detail-field-text totalDescent">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['totalDescent'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->totalDescent ?> m</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->roundTrip)): ?>
+                            <div class="detail-field-text roundTrip">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['roundTrip'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->roundTrip ? $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['roundTrip_yes'] : $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['roundTrip_no'] ?></span>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if ((isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)) || (isset($data->applicationContactEMail) && !empty($data->applicationContactEMail)) || (isset($data->applicationContactPhone) && !empty($data->applicationContactPhone))): ?>
                                 <div class="applicationGroup">
                                     <?php if (isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)): ?>

@@ -51,6 +51,8 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['technicalEquipment'] = "Techn
 $GLOBALS['TL_LANG'][$strName]['details']['label']['maxPersons'] = "Maximale Personen (Events):";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCredits'] = "Bildnachweise";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imageCreditsOffer'] = "Bildnachweise";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['rating_title'] = "Bewertung";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['rating_submit'] = "Bewertung abgeben";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['imprintAdditionalInfos'] = "Quellenangaben";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['onlineReservationButton'] = "Jetzt buchen";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['eMailReservationButton'] = "Per E-Mail reservieren";
@@ -74,6 +76,9 @@ $GLOBALS['TL_LANG'][$strName]['details']['label']['totalDescent'] = "Gesamtes Ge
 $GLOBALS['TL_LANG'][$strName]['details']['label']['roundTrip'] = "Rundtour:";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['roundTrip_yes'] = "Ja";
 $GLOBALS['TL_LANG'][$strName]['details']['label']['roundTrip_no'] = "Nein";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['panoramaValue'] = "Panorama / Aussicht:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['fitnessValue'] = "Kondition:";
+$GLOBALS['TL_LANG'][$strName]['details']['label']['difficultyValue'] = "Schwierigkeitsgrad:";
 
 $GLOBALS['TL_LANG'][$strName]['details']['label']['releasedAt'] = "Veröffentlicht vor:";
 

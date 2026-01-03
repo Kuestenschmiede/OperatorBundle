@@ -884,6 +884,27 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                             </div>
                         <?php endif; ?>
 
+                        <?php if (isset($data->panoramaValue) && !empty($data->panoramaValue)): ?>
+                            <div class="detail-field-text panoramaValue">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['panoramaValue'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->panoramaValue ?> / 100</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->fitnessValue) && !empty($data->fitnessValue)): ?>
+                            <div class="detail-field-text fitnessValue">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['fitnessValue'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->fitnessValue ?> / 100</span>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (isset($data->difficultyValue) && !empty($data->difficultyValue)): ?>
+                            <div class="detail-field-text difficultyValue">
+                                <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['difficultyValue'] ?></div>
+                                <span class="detail-field-text__text"><?= $data->difficultyValue ?> / 100</span>
+                            </div>
+                        <?php endif; ?>
+
                         <?php if ((isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)) || (isset($data->applicationContactEMail) && !empty($data->applicationContactEMail)) || (isset($data->applicationContactPhone) && !empty($data->applicationContactPhone))): ?>
                                 <div class="applicationGroup">
                                     <?php if (isset($data->applicationContactUrl) && !empty($data->applicationContactUrl)): ?>
@@ -1409,6 +1430,46 @@ if ($imprintData) {
                     </div>
 
                 <?php endif; ?>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+
+<?php if (isset($data->avgRating) && $data->avgRating > 0): ?>
+    <div id="ratingSection" class="detail-view__rating-container">
+        <div class="detail-view__rating-row">
+            <div class="detail-view__rating-col">
+                <div class="detail-view__rating-inner">
+                    <h4 class="rating-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_title'] ?></h4>
+                    <div class="rating-stars" style="text-align: center; font-size: 1.5em; color: #f5b301;">
+                        <?php
+                        $stars = round($data->avgRating / 20);
+                        for ($i = 1; $i <= 5; $i++) {
+                            echo ($i <= $stars) ? '&#9733;' : '&#9734;';
+                        }
+                        ?>
+                    </div>
+                    <?php if (isset($data->countRating)): ?>
+                        <div class="rating-count" style="text-align: center; font-style: italic; font-size: 0.9em;">
+                            (<?= $data->countRating ?> <?= ($data->countRating == 1) ? 'Bewertung' : 'Bewertungen' ?>)
+                        </div>
+                    <?php endif; ?>
+                    <?php
+                    $setting = \Contao\Database::getInstance()->prepare("SELECT ratingPage FROM tl_gutesio_data_setting WHERE domain = ?")
+                        ->execute(\Contao\Environment::get('host'))->fetchAssoc();
+                    if ($setting && $setting['ratingPage']):
+                        $ratingPage = \Contao\PageModel::findByPk($setting['ratingPage']);
+                        if ($ratingPage):
+                            $ratingUrl = $ratingPage->getFrontendUrl(($this->childId ? '/childId/' : '/elementId/') . ($this->childId ?: $data->uuid));
+                            ?>
+                            <div class="rating-link" style="text-align: center; margin-top: 10px;">
+                                <a href="<?= $ratingUrl ?>" class="btn btn--secondary btn--sm"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_submit'] ?></a>
+                            </div>
+                        <?php
+                        endif;
+                    endif;
+                    ?>
+                </div>
             </div>
         </div>
     </div>

@@ -46,7 +46,7 @@ $GLOBALS['TL_DCA'][$strName] = [
         'default' => '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
-            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage;'.
+            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage,ratingPage;'.
             '{pwa_legend},dailyEventPushConfig;'.
             '{ai_legend},aiEnabled,aiAssistantName,aiApiEndpoint,aiApiKey,aiModel,aiMaxContextRecords,aiAdditionalKnowledge;'
     ],
@@ -188,6 +188,12 @@ $GLOBALS['TL_DCA'][$strName] = [
             'inputType'               => 'pageTree',
             'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
+        ],
+        'ratingPage' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['mandatory' => false, 'tl_class' => 'clr'],
+            'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'taxRegular' => [
             'exclude'                 => true,

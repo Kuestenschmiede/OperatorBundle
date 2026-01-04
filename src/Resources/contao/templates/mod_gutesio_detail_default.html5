@@ -664,7 +664,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                         <?php if (!empty($onlyTypes)): ?>
                             <div class="detail-field-text displayType detail-view__display-type">
                                 <div class="detail-field-text__label">Kategorien:</div>
-                                <span class="detail-field-text__text"><?= implode(', ', $onlyTypes) ?></span>
+                                <span class="detail-field-text__text"><?= implode(', ', array_unique($onlyTypes)) ?></span>
                             </div>
                         <?php else: ?>
                             <?php if (isset($data->displayType) && !empty($data->displayType)): ?>
@@ -838,14 +838,34 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                         <?php if (isset($data->duration) && !empty($data->duration)): ?>
                             <div class="detail-field-text duration">
                                 <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['duration'] ?></div>
-                                <span class="detail-field-text__text"><?= $data->duration ?> s</span>
+                                <span class="detail-field-text__text">
+                                    <?php
+                                    $duration = $data->duration;
+                                    if ($duration >= 3600) {
+                                        echo round($duration / 3600, 2) . ' h';
+                                    } elseif ($duration >= 60) {
+                                        echo round($duration / 60, 2) . ' min';
+                                    } else {
+                                        echo $duration . ' s';
+                                    }
+                                    ?>
+                                </span>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->length) && !empty($data->length)): ?>
                             <div class="detail-field-text length">
                                 <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['length'] ?></div>
-                                <span class="detail-field-text__text"><?= $data->length ?> m</span>
+                                <span class="detail-field-text__text">
+                                    <?php
+                                    $length = $data->length;
+                                    if ($length >= 1000) {
+                                        echo round($length / 1000, 2) . ' km';
+                                    } else {
+                                        echo $length . ' m';
+                                    }
+                                    ?>
+                                </span>
                             </div>
                         <?php endif; ?>
 
@@ -887,21 +907,48 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                         <?php if (isset($data->panoramaValue) && !empty($data->panoramaValue)): ?>
                             <div class="detail-field-text panoramaValue">
                                 <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['panoramaValue'] ?></div>
-                                <span class="detail-field-text__text"><?= $data->panoramaValue ?> / 100</span>
+                                <span class="detail-field-text__text">
+                                    <div class="rating-stars" style="display: inline-block; font-size: 1.2em; color: #f5b301;">
+                                        <?php
+                                        $stars = round($data->panoramaValue / 20);
+                                        for ($i = 1; $i <= 5; $i++) {
+                                            echo ($i <= $stars) ? '&#9733;' : '&#9734;';
+                                        }
+                                        ?>
+                                    </div>
+                                </span>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->fitnessValue) && !empty($data->fitnessValue)): ?>
                             <div class="detail-field-text fitnessValue">
                                 <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['fitnessValue'] ?></div>
-                                <span class="detail-field-text__text"><?= $data->fitnessValue ?> / 100</span>
+                                <span class="detail-field-text__text">
+                                    <div class="rating-stars" style="display: inline-block; font-size: 1.2em; color: #f5b301;">
+                                        <?php
+                                        $stars = round($data->fitnessValue / 20);
+                                        for ($i = 1; $i <= 5; $i++) {
+                                            echo ($i <= $stars) ? '&#9733;' : '&#9734;';
+                                        }
+                                        ?>
+                                    </div>
+                                </span>
                             </div>
                         <?php endif; ?>
 
                         <?php if (isset($data->difficultyValue) && !empty($data->difficultyValue)): ?>
                             <div class="detail-field-text difficultyValue">
                                 <div class="detail-field-text__label"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['difficultyValue'] ?></div>
-                                <span class="detail-field-text__text"><?= $data->difficultyValue ?> / 100</span>
+                                <span class="detail-field-text__text">
+                                    <div class="rating-stars" style="display: inline-block; font-size: 1.2em; color: #f5b301;">
+                                        <?php
+                                        $stars = round($data->difficultyValue / 20);
+                                        for ($i = 1; $i <= 5; $i++) {
+                                            echo ($i <= $stars) ? '&#9733;' : '&#9734;';
+                                        }
+                                        ?>
+                                    </div>
+                                </span>
                             </div>
                         <?php endif; ?>
 
@@ -1440,7 +1487,7 @@ if ($imprintData) {
         <div class="detail-view__rating-row">
             <div class="detail-view__rating-col">
                 <div class="detail-view__rating-inner">
-                    <h4 class="rating-title mt-4 mb-4"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_title'] ?></h4>
+                    <h4 class="rating-title mt-4 mb-4" style="display: block; text-align: center; font-style: italic;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_title'] ?></h4>
                     <div class="rating-stars" style="text-align: center; font-size: 1.5em; color: #f5b301;">
                         <?php
                         $stars = round($data->avgRating / 20);
@@ -1455,18 +1502,17 @@ if ($imprintData) {
                         </div>
                     <?php endif; ?>
                     <?php
-                    $setting = \Contao\Database::getInstance()->prepare("SELECT ratingPage FROM tl_gutesio_data_setting WHERE domain = ?")
-                        ->execute(\Contao\Environment::get('host'))->fetchAssoc();
+                    $setting = \Contao\Database::getInstance()->prepare("SELECT ratingPage FROM tl_gutesio_operator_settings LIMIT 1")
+                        ->execute()->fetchAssoc();
                     if ($setting && $setting['ratingPage']):
-                        $ratingPage = \Contao\PageModel::findByPk($setting['ratingPage']);
-                        if ($ratingPage):
-                            $ratingUrl = $ratingPage->getFrontendUrl(($this->childId ? '/childId/' : '/elementId/') . ($this->childId ?: $data->uuid));
-                            ?>
-                            <div class="rating-link" style="text-align: center; margin-top: 10px;">
-                                <a href="<?= $ratingUrl ?>" class="btn btn--secondary btn--sm"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_submit'] ?></a>
-                            </div>
-                        <?php
-                        endif;
+                        $ratingUrl = $setting['ratingPage'];
+                        $connector = str_contains($ratingUrl, '?') ? '&' : '?';
+                        $ratingUrl .= $connector . ($this->childId ? 'childId=' : 'elementId=') . ($this->childId ?: $data->uuid);
+                        ?>
+                        <div class="rating-link" style="text-align: center; margin-top: 10px;">
+                            <a href="<?= $ratingUrl ?>" class="btn btn--secondary btn--sm" target="_blank"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_submit'] ?></a>
+                        </div>
+                    <?php
                     endif;
                     ?>
                 </div>

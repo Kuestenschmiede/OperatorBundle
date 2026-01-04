@@ -1482,29 +1482,34 @@ if ($imprintData) {
     </div>
 <?php endif; ?>
 
-<?php if (isset($data->avgRating) && $data->avgRating > 0): ?>
+<?php
+$setting = \Contao\Database::getInstance()->prepare("SELECT ratingPage FROM tl_gutesio_operator_settings LIMIT 1")
+    ->execute()->fetchAssoc();
+$hasRatingPage = ($setting && $setting['ratingPage']);
+?>
+<?php if ((isset($data->avgRating) && $data->avgRating > 0) || $hasRatingPage): ?>
     <div id="ratingSection" class="detail-view__rating-container">
         <div class="detail-view__rating-row">
             <div class="detail-view__rating-col">
                 <div class="detail-view__rating-inner">
                     <h4 class="rating-title mt-4 mb-4" style="display: block; text-align: center; font-style: italic;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_title'] ?></h4>
-                    <div class="rating-stars" style="text-align: center; font-size: 1.5em; color: #f5b301;">
-                        <?php
-                        $stars = round($data->avgRating / 20);
-                        for ($i = 1; $i <= 5; $i++) {
-                            echo ($i <= $stars) ? '&#9733;' : '&#9734;';
-                        }
-                        ?>
-                    </div>
-                    <?php if (isset($data->countRating)): ?>
-                        <div class="rating-count" style="text-align: center; font-style: italic; font-size: 0.9em;">
-                            (<?= $data->countRating ?> <?= ($data->countRating == 1) ? 'Bewertung' : 'Bewertungen' ?>)
+                    <?php if (isset($data->avgRating) && $data->avgRating > 0): ?>
+                        <div class="rating-stars" style="text-align: center; font-size: 1.5em; color: #f5b301;">
+                            <?php
+                            $stars = round($data->avgRating / 20);
+                            for ($i = 1; $i <= 5; $i++) {
+                                echo ($i <= $stars) ? '&#9733;' : '&#9734;';
+                            }
+                            ?>
                         </div>
+                        <?php if (isset($data->countRating)): ?>
+                            <div class="rating-count" style="text-align: center; font-style: italic; font-size: 0.9em;">
+                                (<?= $data->countRating ?> <?= ($data->countRating == 1) ? 'Bewertung' : 'Bewertungen' ?>)
+                            </div>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <?php
-                    $setting = \Contao\Database::getInstance()->prepare("SELECT ratingPage FROM tl_gutesio_operator_settings LIMIT 1")
-                        ->execute()->fetchAssoc();
-                    if ($setting && $setting['ratingPage']):
+                    if ($hasRatingPage):
                         $ratingUrl = $setting['ratingPage'];
                         $connector = str_contains($ratingUrl, '?') ? '&' : '?';
                         $ratingUrl .= $connector . ($this->childId ? 'childId=' : 'elementId=') . ($this->childId ?: $data->uuid);

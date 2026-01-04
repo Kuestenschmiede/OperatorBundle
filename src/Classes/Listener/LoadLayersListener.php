@@ -261,7 +261,8 @@ class LoadLayersListener
             $dataLayer['childs'][] = $area;
         }
 
-        $event->setLayerData($dataLayer);
+        $dataLayer['hasChilds'] = !empty($dataLayer['childs']);
+        $event->setLayerData($this->ensureUtf8Recursive($dataLayer));
     }
 
     public function onLoadLayersLoadPart(
@@ -280,6 +281,8 @@ class LoadLayersListener
         }
 
         $dataLayer['async_content'] = false;
+        $dataLayer['type'] = 'GeoJSON';
+        $dataLayer['format'] = 'GeoJSON';
         $types = $this->loadTypes($objDataLayer);
         $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
         $sameElements = [];
@@ -328,13 +331,14 @@ class LoadLayersListener
             $dataLayer['childs'] = array_values($typeElements);
         }
 
+        $dataLayer['hasChilds'] = !empty($dataLayer['childs']);
         $dataLayer['initial_opened'] = $objDataLayer->initial_opened;
         $dataLayer['data_hidelayer'] = $objDataLayer->data_hidelayer;
         $dataLayer['hide'] = $objDataLayer->data_hidelayer;
         $dataLayer['display'] = true;
         $dataLayer['active'] = true;
         $dataLayer['zIndex'] = 1000;
-        $event->setLayerData($dataLayer);
+        $event->setLayerData($this->ensureUtf8Recursive($dataLayer));
     }
 
     private function loadTypes($objDataLayer): array
@@ -476,17 +480,22 @@ class LoadLayersListener
             
             $isEditor = ($typeData['loctype'] === 'Editor' || $typeData['loctype'] === 'LineString' || $typeData['loctype'] === 'Polygon');
             if (!empty($processedElements)) {
+                $name = $typeData['name'];
+                if (strpos($name, '&') !== false) {
+                    $name = StringUtil::decodeEntities($name);
+                }
                 $typeElements[$typeData['uuid']] = [
                     'pid' => $objDataLayer->id,
                     'id' => $typeData['uuid'],
-                    'name' => $typeData['name'],
-                    'layername' => $typeData['name'],
-                    'type' => $isEditor ? 'GeoJSON' : $dataLayer['type'],
-                    'format' => $isEditor ? 'GeoJSON' : $dataLayer['format'],
+                    'name' => $name,
+                    'layername' => $name,
+                    'type' => $isEditor ? 'GeoJSON' : ($dataLayer['type'] ?? ''),
+                    'format' => $isEditor ? 'GeoJSON' : ($dataLayer['format'] ?? ''),
                     'loctype' => $isEditor ? 'GeoJSON' : ($typeData['loctype'] ?? ''),
                     'excludeFromSingleLayer' => $isEditor ? true : false,
                     'async_content' => false,
                     'childs' => $processedElements,
+                    'hasChilds' => !empty($processedElements),
                     'data_hidelayer' => $objDataLayer->data_hidelayer,
                     'hide' => $objDataLayer->data_hidelayer,
                     'initial_opened' => $objDataLayer->initial_opened,
@@ -561,12 +570,15 @@ class LoadLayersListener
         }
 
         $dataLayer['async_content'] = false;
+        $dataLayer['type'] = 'GeoJSON';
+        $dataLayer['format'] = 'GeoJSON';
         $this->processShareSettings($dataLayer, $objDataLayer);
         
         $directories = $this->loadDirectories($objDataLayer);
         $processedDirectories = $this->processDirectories($directories, $dataLayer, $objDataLayer);
         
         $dataLayer['childs'] = $processedDirectories;
+        $dataLayer['hasChilds'] = !empty($processedDirectories);
         $dataLayer['initial_opened'] = $objDataLayer->initial_opened;
         $dataLayer['data_hidelayer'] = $objDataLayer->data_hidelayer;
         $dataLayer['hide'] = $objDataLayer->data_hidelayer;
@@ -574,7 +586,7 @@ class LoadLayersListener
         $dataLayer['active'] = true;
         $dataLayer['zIndex'] = 1000;
         $dataLayer['cluster_locations'] = false;
-        $event->setLayerData($dataLayer);
+        $event->setLayerData($this->ensureUtf8Recursive($dataLayer));
     }
 
     private function processShareSettings(array &$dataLayer, $objDataLayer): void
@@ -586,12 +598,16 @@ class LoadLayersListener
         $shareMethods = StringUtil::deserialize($objDataLayer->popup_share_type, true);
         $shareDest = $objDataLayer->popup_share_destination;
         $shareBaseUrl = $this->getShareBaseUrl($shareDest, $objDataLayer);
+        $additionalMessage = $objDataLayer->popup_share_message ?: '';
+        if (strpos($additionalMessage, '&') !== false) {
+            $additionalMessage = StringUtil::decodeEntities($additionalMessage);
+        }
 
         $dataLayer['popup_share'] = [
             'methods' => $shareMethods,
             'baseUrl' => $shareBaseUrl,
             'destType' => $shareDest,
-            'additionalMessage' => $objDataLayer->popup_share_message
+            'additionalMessage' => $additionalMessage
         ];
     }
 
@@ -605,7 +621,11 @@ class LoadLayersListener
             case "con4gis_routing_external":
             case "osm":
             case "osm_routing":
-                return $objDataLayer->popup_share_external_link;
+                $url = $objDataLayer->popup_share_external_link ?: '';
+                if (strpos($url, '&') !== false) {
+                    $url = StringUtil::decodeEntities($url);
+                }
+                return $url;
             case "google_map":
             case "google_map_routing":
                 return "https://www.google.com/maps/dir/";
@@ -689,14 +709,19 @@ class LoadLayersListener
             );
 
             if (!empty($validTypes)) {
+                $name = $directory['name'];
+                if (strpos($name, '&') !== false) {
+                    $name = StringUtil::decodeEntities($name);
+                }
                 $processedDirectories[] = [
                     'pid' => $dataLayer['id'],
                     'id' => $directoryUuid,
-                    'name' => $directory['name'],
-                    'layername' => $directory['name'],
-                    'type' => $dataLayer['type'],
-                    'format' => $dataLayer['format'],
+                    'name' => $name,
+                    'layername' => $name,
+                    'type' => $dataLayer['type'] ?? '',
+                    'format' => $dataLayer['format'] ?? '',
                     'childs' => array_values($validTypes),
+                    'hasChilds' => !empty($validTypes),
                     'data_hidelayer' => $objDataLayer->data_hidelayer,
                     'hide' => $objDataLayer->data_hidelayer,
                     'initial_opened' => $objDataLayer->initial_opened,
@@ -728,6 +753,9 @@ class LoadLayersListener
         foreach ($categories as $category) {
             $typeId = $category['id'];
             $typeName = $category['name'];
+            if (strpos($typeName, '&') !== false) {
+                $typeName = StringUtil::decodeEntities($typeName);
+            }
             $typeKey = $directoryId . $typeId;
             
             $elementUuids = $elementsByType[$typeId] ?? [];
@@ -743,12 +771,13 @@ class LoadLayersListener
                 'id' => $typeKey,
                 'name' => $typeName,
                 'layername' => $typeName,
-                'type' => $isEditor ? 'GeoJSON' : $dataLayer['type'],
-                'format' => $isEditor ? 'GeoJSON' : $dataLayer['format'],
+                'type' => $isEditor ? 'GeoJSON' : ($dataLayer['type'] ?? ''),
+                'format' => $isEditor ? 'GeoJSON' : ($dataLayer['format'] ?? ''),
                 'loctype' => $isEditor ? 'GeoJSON' : ($type['loctype'] ?? ''),
                 'excludeFromSingleLayer' => $isEditor ? true : false,
                 'async_content' => false,
                 'childs' => [],
+                'hasChilds' => false,
                 'data_hidelayer' => $objDataLayer->data_hidelayer,
                 'hide' => $objDataLayer->data_hidelayer,
                 'initial_opened' => $objDataLayer->initial_opened,
@@ -800,6 +829,7 @@ class LoadLayersListener
             }
 
             if (!empty($typeEntry['childs'])) {
+                $typeEntry['hasChilds'] = true;
                 $validTypes[$typeKey] = $typeEntry;
             }
         }
@@ -901,7 +931,7 @@ class LoadLayersListener
         $elementId = substr(md5($objElement['uuid'] . $parentId), 0, 16);
         $name = $objElement['name'];
         if (strpos($name, '&') !== false) {
-            $name = html_entity_decode($name);
+            $name = StringUtil::decodeEntities($name);
         }
         $element = [
             'id' => $elementId,
@@ -909,6 +939,7 @@ class LoadLayersListener
             'type' => ($objElement['geojson'] ?? null) ? 'GeoJSON' : ($dataLayer['type'] ?? 'GeoJSON'),
             'format' => ($objElement['geojson'] ?? null) ? 'GeoJSON' : ($dataLayer['format'] ?? 'GeoJSON'),
             'childs' => $childElements ?: [],
+            'hasChilds' => !empty($childElements),
             'content' => [],
             'zIndex' => 1000,
             'active' => true,
@@ -1358,6 +1389,9 @@ class LoadLayersListener
             $this->cache['osmAreas'][$cacheKey] = $osmData;
         }
 
+        // Ensure all strings in osmData are valid UTF-8 to prevent JsonResponse from failing
+        $osmData = $this->ensureUtf8Recursive($osmData);
+
         return [
             "content" => [[
                 "data" => $osmData,
@@ -1373,5 +1407,48 @@ class LoadLayersListener
             "locstyle" => $locstyle ?: $layer['locstyle'],
             "excludeFromSingleLayer" => true
         ];
+    }
+
+    /**
+     * Recursively ensure all strings in an array/object are valid UTF-8
+     */
+    private function ensureUtf8Recursive($data)
+    {
+        if (is_string($data)) {
+            if (!mb_check_encoding($data, 'UTF-8')) {
+                $data = mb_convert_encoding($data, 'UTF-8', 'UTF-8');
+            }
+            return $data;
+        }
+
+        if (is_array($data)) {
+            foreach ($data as $key => $value) {
+                if ($key === 'type' || $key === 'format') {
+                    if ($value === 'urlData' && isset($data['format'])) {
+                        $data[$key] = $data['format'];
+                        $value = $data['format'];
+                    } elseif (in_array($value, ['gutesElem', 'gutesPart', 'gutes', 'urlData'])) {
+                        $data[$key] = 'GeoJSON';
+                        $value = 'GeoJSON';
+                    }
+                }
+                $data[$key] = $this->ensureUtf8Recursive($value);
+            }
+        } elseif (is_object($data)) {
+            foreach ($data as $key => $value) {
+                if ($key === 'type' || $key === 'format') {
+                    if ($value === 'urlData' && isset($data->format)) {
+                        $data->$key = $data->format;
+                        $value = $data->format;
+                    } elseif (in_array($value, ['gutesElem', 'gutesPart', 'gutes', 'urlData'])) {
+                        $data->$key = 'GeoJSON';
+                        $value = 'GeoJSON';
+                    }
+                }
+                $data->$key = $this->ensureUtf8Recursive($value);
+            }
+        }
+
+        return $data;
     }
 }

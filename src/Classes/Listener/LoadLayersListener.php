@@ -520,6 +520,9 @@ class LoadLayersListener
         $showLinked = $type['showLinkedElements'] && count($elements) < 50;
 
         foreach ($elements as $key => $elem) {
+            if (!$this->shouldCreateElement($elem['uuid'], $sameElements)) {
+                continue;
+            }
             $childElements = [];
             if ($showLinked) {
                 $childElements = $this->loadChildElements($elem, $type, $dataLayer);
@@ -537,6 +540,7 @@ class LoadLayersListener
             );
             if ($createdElement) {
                 $processedElements[] = $createdElement;
+                $sameElements[$elem['uuid']][] = $type['uuid'];
             }
             unset($elements[$key]);
             unset($childElements);
@@ -545,13 +549,9 @@ class LoadLayersListener
         return $processedElements;
     }
 
-    private function shouldCreateElement(string $elemUuid, string $typeUuid, array $checkDuplicates): bool
+    private function shouldCreateElement(string $elemUuid, array $checkDuplicates): bool
     {
-        if (!isset($checkDuplicates[$elemUuid])) {
-            return true;
-        }
-        
-        return !in_array($typeUuid, $checkDuplicates[$elemUuid]);
+        return !isset($checkDuplicates[$elemUuid]);
     }
 
     public function onLoadLayersLoadDirectories(
@@ -575,7 +575,8 @@ class LoadLayersListener
         $this->processShareSettings($dataLayer, $objDataLayer);
         
         $directories = $this->loadDirectories($objDataLayer);
-        $processedDirectories = $this->processDirectories($directories, $dataLayer, $objDataLayer);
+        $sameElements = [];
+        $processedDirectories = $this->processDirectories($directories, $dataLayer, $objDataLayer, $sameElements);
         
         $dataLayer['childs'] = $processedDirectories;
         $dataLayer['hasChilds'] = !empty($processedDirectories);
@@ -655,7 +656,7 @@ class LoadLayersListener
         return $result ? $result->fetchAll() : [];
     }
 
-    private function processDirectories(array $directories, array $dataLayer, $objDataLayer): array
+    private function processDirectories(array $directories, array $dataLayer, $objDataLayer, array &$sameElements): array
     {
         $processedDirectories = [];
         $skipElements = StringUtil::deserialize($objDataLayer->skipElements, true);
@@ -705,7 +706,8 @@ class LoadLayersListener
                 $dataLayer,
                 $skipElements,
                 $directoryUuid,
-                $objDataLayer
+                $objDataLayer,
+                $sameElements
             );
 
             if (!empty($validTypes)) {
@@ -743,7 +745,8 @@ class LoadLayersListener
         array &$dataLayer,
         ?array &$skipElements,
         string $directoryId,
-        $objDataLayer
+        $objDataLayer,
+        array &$sameElements
     ): array {
         $validTypes = [];
         $hideInStarboard = $objDataLayer->hideInStarboard ?: false;
@@ -805,6 +808,10 @@ class LoadLayersListener
                     continue;
                 }
 
+                if (!$this->shouldCreateElement($uuid, $sameElements)) {
+                    continue;
+                }
+
                 $elem = $this->cache['elements'][$uuid] ?? null;
                 if (!$elem) {
                     continue;
@@ -825,6 +832,7 @@ class LoadLayersListener
                         $createdElement['hide'] = '';
                     }
                     $typeEntry['childs'][] = $createdElement;
+                    $sameElements[$uuid][] = $typeId;
                 }
             }
 

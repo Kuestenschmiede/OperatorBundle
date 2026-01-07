@@ -272,16 +272,10 @@ class OfferLoaderService
         }
 
         // Abschließend nur die gewünschte Seite liefern – ohne Typen systematisch auszuschließen
-        if ($sortFilter === 'random') {
-            // Im random‑Pfad enthalten die Buckets bereits den angewendeten globalen Offset.
-            // Daher hier NICHT erneut mit $offset slicen – maximal auf $limit begrenzen.
-            if (count($offerData) > $this->limit) {
-                $offerData = array_slice($offerData, 0, $this->limit);
-            }
-        } else {
-            if (count($offerData) > $this->limit || $offset > 0) {
-                $offerData = array_slice($offerData, $offset, $this->limit);
-            }
+        // Die Buckets enthalten bereits den angewendeten globalen Offset.
+        // Daher hier NICHT erneut mit $offset slicen – maximal auf $limit begrenzen.
+        if (count($offerData) > $this->limit) {
+            $offerData = array_slice($offerData, 0, $this->limit);
         }
 
         // data cleaning

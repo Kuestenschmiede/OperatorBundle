@@ -27,7 +27,7 @@ class AiChatbotService
         $this->areaService = $areaService;
     }
 
-    private function getTableConfig(): array
+    public function getTableConfig(): array
     {
         $config = [
             [
@@ -176,7 +176,11 @@ Verlinkung:
 
 Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die User duzen.";
 
-        $answer = $this->callAiApi($settings, $systemPrompt, $context, $userQuestion);
+        if ($settings->aiAssistantId) {
+            $answer = $this->callAssistantApi($settings, $systemPrompt, $userQuestion);
+        } else {
+            $answer = $this->callAiApi($settings, $systemPrompt, $context, $userQuestion);
+        }
         $apiEnd = microtime(true);
         
         // Performance logging
@@ -702,6 +706,86 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
         } catch (\Exception $e) {
             C4gLogModel::addLogEntry("operator", "AI API Exception: " . $e->getMessage() . "\n" . $e->getTraceAsString());
             return "Ausnahme bei der Anfrage an die KI: " . $e->getMessage();
+        }
+    }
+
+    private function callAssistantApi($settings, $systemPrompt, $userQuestion): string
+    {
+        $apiKey = trim($settings->aiApiKey);
+        $assistantId = trim($settings->aiAssistantId);
+
+        if (!$apiKey || !$assistantId) {
+            return "Assistant-Konfiguration unvollständig.";
+        }
+
+        try {
+            // 1. Create a thread
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, "https://api.openai.com/v1/threads");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+                'messages' => [
+                    ['role' => 'user', 'content' => $userQuestion]
+                ]
+            ]));
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $apiKey,
+                'OpenAI-Beta: assistants=v2'
+            ]);
+            $result = curl_exec($ch);
+            $threadData = json_decode($result, true);
+            $threadId = $threadData['id'] ?? null;
+            if (!$threadId) return "Fehler beim Erstellen des Threads.";
+
+            // 2. Create a run
+            curl_setopt($ch, CURLOPT_URL, "https://api.openai.com/v1/threads/$threadId/runs");
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
+                'assistant_id' => $assistantId,
+                'instructions' => $systemPrompt
+            ]));
+            $result = curl_exec($ch);
+            $runData = json_decode($result, true);
+            $runId = $runData['id'] ?? null;
+            if (!$runId) return "Fehler beim Erstellen des Runs.";
+
+            // 3. Wait for completion
+            $status = 'queued';
+            $maxWait = 30; // 30 seconds max
+            $startTime = time();
+            while (in_array($status, ['queued', 'in_progress', 'requires_action']) && (time() - $startTime) < $maxWait) {
+                sleep(1);
+                curl_setopt($ch, CURLOPT_URL, "https://api.openai.com/v1/threads/$threadId/runs/$runId");
+                curl_setopt($ch, CURLOPT_POST, 0);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                    'Authorization: Bearer ' . $apiKey,
+                    'OpenAI-Beta: assistants=v2'
+                ]);
+                $result = curl_exec($ch);
+                $runData = json_decode($result, true);
+                $status = $runData['status'] ?? 'failed';
+            }
+
+            if ($status !== 'completed') {
+                return "KI-Anfrage dauerte zu lange oder ist fehlgeschlagen (Status: $status).";
+            }
+
+            // 4. Get messages
+            curl_setopt($ch, CURLOPT_URL, "https://api.openai.com/v1/threads/$threadId/messages");
+            $result = curl_exec($ch);
+            curl_close($ch);
+            $messagesData = json_decode($result, true);
+            
+            if (isset($messagesData['data'][0]['content'][0]['text']['value'])) {
+                return $messagesData['data'][0]['content'][0]['text']['value'];
+            }
+
+            return "Keine Antwort vom Assistant erhalten.";
+
+        } catch (\Exception $e) {
+            C4gLogModel::addLogEntry("operator", "Assistant API Exception: " . $e->getMessage());
+            return "Fehler bei Assistant-Anfrage: " . $e->getMessage();
         }
     }
 }

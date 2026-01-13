@@ -305,6 +305,11 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
         // Parse the answer for [TILE:UUID] tags and collect data for those tiles
         $foundTiles = [];
         $foundUuids = [];
+        
+        // Normalize answer to ensure we find tags even if AI slightly misformats them
+        $answer = str_ireplace('[TILE : ', '[TILE:', $answer);
+        $answer = str_ireplace('[ TILE:', '[TILE:', $answer);
+        
         preg_match_all('/\[TILE:([a-f0-9-]+)\]/i', $answer, $matches);
         if (!empty($matches[1])) {
             foreach ($matches[1] as $uuid) {
@@ -316,41 +321,53 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
         }
 
         // Fallback: If no tiles found but we had context, maybe the AI forgot the tag. 
-        // We auto-append the most relevant tile if the user asked for directions or if only one tile is in context
+        // We auto-append relevant tiles if they are mentioned in the answer or if the user asked for directions
         if (empty($foundTiles) && !empty($tileData)) {
-            $relevantUuid = null;
+            $relevantUuuids = [];
             if ($wantsRouting) {
                 // Find the one we added routing for
                 foreach (explode("\n", $context) as $line) {
-                    if (strpos($line, 'Wegbeschreibung zu Fuß:') !== false) {
+                    if (strpos($line, 'Wegbeschreibung zu Fuß:') !== false || strpos($line, '>>> GEWÜNSCHTE ROUTE:') !== false) {
                         preg_match('/\[([a-f0-9-]+)\]/', $line, $uuidMatch);
                         if (isset($uuidMatch[1])) {
-                            $relevantUuid = $uuidMatch[1];
-                            break;
+                            $relevantUuuids[] = $uuidMatch[1];
                         }
                     }
                 }
             }
             
-            if (!$relevantUuid) {
-                // Try to find a UUID from the context that is mentioned in the answer (e.g. by name)
-                foreach ($tileData as $uuid => $tile) {
-                    if (mb_stripos($answer, $tile['name']) !== false) {
-                        $relevantUuid = $uuid;
-                        break;
+            // Try to find UUIDs from the context that are mentioned in the answer (e.g. by name)
+            foreach ($tileData as $uuid => $tile) {
+                // We check for the name and potentially parts of the name if it's long
+                $name = $tile['name'];
+                $mentioned = mb_stripos($answer, $name) !== false;
+                
+                if (!$mentioned && mb_strlen($name) > 10) {
+                    // Try without common suffixes or prefixes if it's a long name
+                    $shortName = str_ireplace(['Restaurant ', 'Ristorante ', 'Hotel ', 'Café ', 'Cafe '], '', $name);
+                    if (mb_strlen($shortName) > 3) {
+                        $mentioned = mb_stripos($answer, $shortName) !== false;
+                    }
+                }
+
+                if ($mentioned) {
+                    if (!in_array($uuid, $relevantUuuids)) {
+                        $relevantUuuids[] = $uuid;
                     }
                 }
             }
             
-            if (!$relevantUuid && count($tileData) === 1) {
-                $relevantUuid = array_key_first($tileData);
+            if (empty($relevantUuuids) && count($tileData) === 1) {
+                $relevantUuuids[] = array_key_first($tileData);
             }
             
-            if ($relevantUuid && isset($tileData[$relevantUuid])) {
-                $foundTiles[] = $tileData[$relevantUuid];
-                // Also append the tag to the answer if it's missing to make it more obvious
-                if (strpos($answer, "[TILE:" . $relevantUuid . "]") === false) {
-                    $answer .= "\n\n[TILE:" . $relevantUuid . "]";
+            foreach ($relevantUuuids as $relevantUuid) {
+                if (isset($tileData[$relevantUuid])) {
+                    $foundTiles[] = $tileData[$relevantUuid];
+                    // Also append the tag to the answer if it's missing to make it more obvious
+                    if (strpos($answer, "[TILE:" . $relevantUuid . "]") === false) {
+                        $answer .= "\n\n[TILE:" . $relevantUuid . "]";
+                    }
                 }
             }
         }
@@ -1014,11 +1031,11 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
                 }
                 
                 C4gLogModel::addLogEntry("operator", "AI API Error: HTTP " . $statusCode . " - URL: " . $endpoint . " - Content: " . $responseData);
-                return $errorMsg . "." . $hint . " Bitte prüfen Sie das System-Log.";
+                return "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.";
             }
         } catch (\Exception $e) {
             C4gLogModel::addLogEntry("operator", "AI API Exception: " . $e->getMessage() . "\n" . $e->getTraceAsString());
-            return "Ausnahme bei der Anfrage an die KI: " . $e->getMessage();
+            return "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.";
         }
     }
 
@@ -1064,7 +1081,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
                 $threadId = $threadData['id'] ?? null;
                 if (!$threadId) {
                     C4gLogModel::addLogEntry("operator", "Assistant API Error (Thread Creation): " . $result);
-                    return ['answer' => "Fehler beim Erstellen des Threads.", 'threadId' => null];
+                    return ['answer' => "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.", 'threadId' => null];
                 }
             }
 
@@ -1082,7 +1099,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
             // adding a message with the dynamic context can help the Assistant 'see' the latest data.
             $contextMessage = [
                 'role' => 'user',
-                'content' => "DYNAMISCHER KONTEXT (Wissensdatenbank-Auszug):\n" . $context . "\n\nNutze diesen Kontext für die Beantwortung der nächsten Frage."
+                'content' => "DYNAMISCHER KONTEXT (Wissensdatenbank-Auszug):\n" . $context . "\n\nNutze diesen Kontext für die Beantwortung der nächsten Frage. Falls du ein Schaufenster oder Angebot nennst, füge UNBEDINGT am Ende der Beschreibung den tag [TILE:UUID] ein (ersetze UUID durch die tatsächliche ID in eckigen Klammern aus dem Kontext, z.B. [TILE:1234-abcd])."
             ];
             
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($contextMessage));
@@ -1097,7 +1114,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
                     $errorMsg = $msgData['error']['message'];
                 }
                 C4gLogModel::addLogEntry("operator", "Assistant API Error (Message Creation): " . $errorMsg . " (Thread ID: $threadId)");
-                return ['answer' => "Fehler beim Senden der Nachricht an den Assistant: " . $errorMsg . ". Bitte Chat zurücksetzen.", 'threadId' => $threadId];
+                return ['answer' => "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.", 'threadId' => $threadId];
             }
 
             // 3. Create a run
@@ -1108,7 +1125,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode([
                 'assistant_id' => $assistantId,
                 'instructions' => $instructions,
-                'additional_instructions' => "Nutze zwingend die Informationen aus dem 'dynamischen Kontext' für Entfernungen und Wegbeschreibungen."
+                'additional_instructions' => "Nutze zwingend die Informationen aus dem 'dynamischen Kontext' für Entfernungen und Wegbeschreibungen. Falls du ein Schaufenster oder Angebot aus dem Kontext nennst, füge UNBEDINGT am Ende der Beschreibung den tag [TILE:UUID] ein."
             ]));
             $result = curl_exec($ch);
             $runData = json_decode($result, true);
@@ -1119,7 +1136,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
                     $errorMsg = $runData['error']['message'];
                 }
                 C4gLogModel::addLogEntry("operator", "Assistant API Error (Run Creation): " . $errorMsg);
-                return ['answer' => "Fehler beim Erstellen des Runs: " . $errorMsg, 'threadId' => $threadId];
+                return ['answer' => "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.", 'threadId' => $threadId];
             }
 
             // 4. Wait for completion
@@ -1155,7 +1172,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
                     $errorMsg = json_encode($runData['last_error']);
                 }
                 C4gLogModel::addLogEntry("operator", "Assistant Run Failed: " . $errorMsg);
-                return ['answer' => "KI-Anfrage fehlgeschlagen: " . $errorMsg, 'threadId' => $threadId];
+                return ['answer' => "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.", 'threadId' => $threadId];
             }
             if ($status === 'completed') {
                 C4gLogModel::addLogEntry("operator", "Assistant Run Completed in " . (time() - $startTime) . "s (Polls: $pollCount)");
@@ -1190,7 +1207,7 @@ Antworte freundlich, kurz und präzise in der Sprache des Benutzers. Bitte die U
 
         } catch (\Exception $e) {
             C4gLogModel::addLogEntry("operator", "Assistant API Exception: " . $e->getMessage());
-            return ['answer' => "Fehler bei Assistant-Anfrage: " . $e->getMessage(), 'threadId' => $threadId];
+            return ['answer' => "KI-Anfrage fehlgeschlagen. Bitte versuche es später noch einmal.", 'threadId' => $threadId];
         }
     }
 }

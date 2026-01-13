@@ -39,6 +39,15 @@ class AiChatbotModuleController extends AbstractFrontendModuleController
         // Contao 5 doesn't use REQUEST_TOKEN by default for all POSTs, but some configurations might.
         // Also, aggressive output buffering to catch any unexpected output from anywhere.
         $action = $request->get('action');
+
+        if ($action === 'reset_history') {
+            $session = $request->getSession();
+            $session->set('ai_chatbot_history', []);
+            $session->set('ai_chatbot_thread_id', null);
+            $response = new JsonResponse(['status' => 'ok']);
+            $response->send();
+            exit;
+        }
         
         if ($action === 'ask_ai') {
             // Aggressive output buffering to catch any unexpected output from anywhere
@@ -51,11 +60,29 @@ class AiChatbotModuleController extends AbstractFrontendModuleController
                 $question = $request->get('question');
                 $lat = $request->get('lat');
                 $lon = $request->get('lon');
-                
-                $result = $this->aiChatbotService->getResponse($question, $lat, $lon);
+
+                $session = $request->getSession();
+                $history = $session->get('ai_chatbot_history', []);
+                $threadId = $session->get('ai_chatbot_thread_id');
+
+                $result = $this->aiChatbotService->getResponse($question, $lat, $lon, $history, $threadId);
                 $answer = $result['answer'];
                 $tiles = $result['tiles'] ?? [];
                 
+                if (isset($result['threadId']) && $result['threadId']) {
+                    $session->set('ai_chatbot_thread_id', $result['threadId']);
+                }
+
+                // Update history
+                $history[] = ['role' => 'user', 'content' => $question];
+                $history[] = ['role' => 'assistant', 'content' => $answer];
+
+                // Keep only the last 10 messages (5 rounds) to avoid too large session/context
+                if (count($history) > 10) {
+                    $history = array_slice($history, -10);
+                }
+                $session->set('ai_chatbot_history', $history);
+
                 // Ensure answer is a string and handle nulls
                 $answer = (string)$answer;
                 

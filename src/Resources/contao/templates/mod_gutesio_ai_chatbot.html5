@@ -11,9 +11,18 @@
                 @keyframes spin { to { transform: rotate(360deg); } }
             </style>
         </div>
-        <div class="chatbot-input" style="display: flex; gap: 10px; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
-            <input type="text" id="chatbot-user-input" placeholder="Stell Deine Frage ..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
-            <button id="chatbot-send-btn" style="padding: 10px 20px; background: #2ea1db; color: #000; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; transition: background 0.3s;">Senden</button>
+        <div class="chatbot-input" style="display: flex; flex-direction: column; gap: 5px; padding: 10px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px;">
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="chatbot-user-input" placeholder="Stell Deine Frage ..." style="flex-grow: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none;">
+                <button id="chatbot-send-btn" style="padding: 10px 20px; background: #2ea1db; color: #000; border: none; border-radius: 20px; cursor: pointer; font-weight: bold; transition: background 0.3s;">Senden</button>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+                <button id="chatbot-reset-btn" style="background: none; border: none; color: #888; font-size: 0.8em; cursor: pointer; text-decoration: underline; padding: 0 5px;">Chat zurücksetzen</button>
+            </div>
+        </div>
+        <div id="chatbot-location-status" style="font-size: 0.8em; color: #888; margin-top: 5px; padding: 0 10px;">
+            <span class="status-icon" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #ccc; margin-right: 5px;"></span>
+            Standort wird ermittelt...
         </div>
     </div>
 </div>
@@ -56,18 +65,61 @@
                 lat: position.coords.latitude,
                 lon: position.coords.longitude
             };
+            const statusDiv = document.getElementById('chatbot-location-status');
+            if (statusDiv) {
+                statusDiv.innerHTML = '<span class="status-icon" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #28a745; margin-right: 5px;"></span> Standort freigegeben';
+            }
         }, (error) => {
             console.warn('Geolocation error:', error);
+            const statusDiv = document.getElementById('chatbot-location-status');
+            if (statusDiv) {
+                let msg = 'Standort nicht verfügbar';
+                if (error.code === 1) msg = 'Standortzugriff verweigert';
+                statusDiv.innerHTML = '<span class="status-icon" style="display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #dc3545; margin-right: 5px;"></span> ' + msg;
+            }
         }, {
-            maximumAge: 1800000,
-            timeout: 5000
+            maximumAge: 600000,
+            timeout: 10000,
+            enableHighAccuracy: false
         });
+    } else {
+        const statusDiv = document.getElementById('chatbot-location-status');
+        if (statusDiv) {
+            statusDiv.style.display = 'none';
+        }
     }
 
     document.getElementById('chatbot-user-input').addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
             document.getElementById('chatbot-send-btn').click();
         }
+    });
+
+    document.getElementById('chatbot-reset-btn').addEventListener('click', function() {
+        if (!confirm('Möchtest Du den Chatverlauf wirklich zurücksetzen?')) return;
+        
+        const formData = new URLSearchParams();
+        formData.append('action', 'reset_history');
+        if (typeof REQUEST_TOKEN !== 'undefined') {
+            formData.append('REQUEST_TOKEN', REQUEST_TOKEN);
+        }
+
+        fetch(window.location.href, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type' : 'application/x-www-form-urlencoded'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') {
+                const messagesContainer = document.getElementById('chatbot-messages');
+                messagesContainer.innerHTML = '<div class="message system-message" style="margin-bottom: 15px; padding: 10px 15px; background: #f0f0f0; border-radius: 15px 15px 15px 0; align-self: flex-start; max-width: 80%; border: 1px solid #e0e0e0; color: #000; word-break: break-word;">Moin! Wie kann ich Dir helfen?</div>';
+            }
+        })
+        .catch(error => console.error('Error resetting history:', error));
     });
 
     document.getElementById('chatbot-send-btn').addEventListener('click', function() {

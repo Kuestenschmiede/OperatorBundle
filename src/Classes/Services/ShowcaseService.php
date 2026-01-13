@@ -296,7 +296,7 @@ class ShowcaseService
                     //}
                 }
                 $returnData = $this->converter->convertDbResult($returnData, ['loadTagsComplete' => true]);
-                if (count($returnData) > 1 && !($returnData[0])) {
+                if (count($returnData) > 1 && (!isset($returnData[0]) || !$returnData[0])) {
                     $returnData = [$returnData];
                 }
             } else {
@@ -333,10 +333,8 @@ class ShowcaseService
                         "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND `uuid` IN $idString"
                     )->fetchAllAssoc();
                 $returnData = $this->converter->convertDbResult($showcases, ['loadTagsComplete' => true]);
-                if (count($elementIds) === 1) {
+                if (count($returnData) > 0 && (!isset($returnData[0]) || !is_array($returnData[0]))) {
                     $returnData = [$returnData];
-                } else {
-                    //ToDo if there are more than one showcase linked
                 }
             } else {
                 $returnData = [];

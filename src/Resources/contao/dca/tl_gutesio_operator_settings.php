@@ -48,7 +48,7 @@ $GLOBALS['TL_DCA'][$strName] = [
             '{page_legend},showcaseDetailPage,productDetailPage,'.
             'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage,ratingPage;'.
             '{pwa_legend},dailyEventPushConfig;'.
-            '{ai_legend},aiEnabled,aiAssistantName,aiAssistantId,aiVectorStoreId,aiApiEndpoint,aiApiKey,aiModel,aiMaxContextRecords,aiAdditionalKnowledge;'
+            '{ai_legend},aiEnabled,aiAssistantName,aiAssistantId,aiVectorStoreId,aiApiEndpoint,aiApiKey,aiModel,aiMaxContextRecords,aiAdditionalKnowledge,aiRoutingProfile;'
     ],
 
     'fields' => [
@@ -304,6 +304,12 @@ $GLOBALS['TL_DCA'][$strName] = [
             'inputType'               => 'textarea',
             'eval'                    => ['tl_class' => 'clr', 'rte' => 'ace|markdown'],
             'sql'                     => "text NULL"
+        ],
+        'aiRoutingProfile' => [
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['rgxp' => 'digit', 'mandatory' => false, 'tl_class' => 'w50'],
+            'sql'                     => "int(10) unsigned NOT NULL default 0"
         ],
         'aiSystemPrompt' => [
             'exclude'                 => true,

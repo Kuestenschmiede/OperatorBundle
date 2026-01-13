@@ -20,6 +20,7 @@ class AiKnowledgeService
     public function exportAllData(): array
     {
         $db = Database::getInstance();
+        $settings = GutesioOperatorSettingsModel::findSettings();
         $config = $this->aiChatbotService->getTableConfig();
         $allData = [];
 
@@ -81,6 +82,26 @@ class AiKnowledgeService
                                         $item[$column] = $val;
                                     }
                                 }
+                            }
+                        }
+                    }
+
+                    // Add Link
+                    if ($settings) {
+                        $link = $this->aiChatbotService->generateLink($table, $objRows, $settings);
+                        if ($link) {
+                            $item['link'] = $link;
+                        }
+                    }
+
+                    // Link to showcase for child data
+                    if (strpos($table, 'tl_gutesio_data_child') === 0) {
+                        $showcaseSql = "SELECT e.name, e.uuid, e.alias FROM tl_gutesio_data_element e JOIN tl_gutesio_data_child_connection c ON e.uuid = c.elementId WHERE c.childId = ?";
+                        $objShowcase = $db->prepare($showcaseSql)->execute($objRows->uuid);
+                        if ($objShowcase->next()) {
+                            $item['showcaseName'] = $objShowcase->name;
+                            if ($settings) {
+                                $item['showcaseLink'] = $this->aiChatbotService->generateLink('tl_gutesio_data_element', $objShowcase, $settings);
                             }
                         }
                     }

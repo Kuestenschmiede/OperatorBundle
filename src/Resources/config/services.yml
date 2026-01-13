@@ -129,6 +129,7 @@ services:
     gutesio\OperatorBundle\Classes\Services\AiChatbotService:
       arguments:
         - "@con4gis.area_service"
+        - "@con4gis.route_service"
 
     gutesio\OperatorBundle\Classes\Services\AiKnowledgeService:
       autowire: true

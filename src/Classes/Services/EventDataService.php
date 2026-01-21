@@ -91,24 +91,52 @@ class EventDataService
         $sql = $res['sql'];
 
         if ($filterData['date']) {
-            $fromDate = (new \DateTime())->setTimestamp($filterData['date']['from']);
-            $fromDate->setTime(0, 0);
-            $fromTstamp = $fromDate->getTimestamp();
-            $untilDate = (new \DateTime())->setTimestamp($filterData['date']['until']);
-            $untilDate->setTime(23, 59);
-            $untilTstamp = $untilDate->getTimestamp();
-
-            if ($hideEventsWithoutDate) {
-                $sql .= " AND e.expertTimes = 0 AND ((e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
-            } else {
-                $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+            $fromTstamp = null;
+            if (!empty($filterData['date']['from'])) {
+                $fromDate = (new \DateTime())->setTimestamp($filterData['date']['from']);
+                $fromDate->setTime(0, 0);
+                $fromTstamp = $fromDate->getTimestamp();
             }
 
-            $parameters[] = $fromTstamp;
-            $parameters[] = $untilTstamp;
-            $parameters[] = $fromTstamp;
-            $parameters[] = $untilTstamp;
-            $sortDay = $fromTstamp;
+            $untilTstamp = null;
+            if (!empty($filterData['date']['until'])) {
+                $untilDate = (new \DateTime())->setTimestamp($filterData['date']['until']);
+                $untilDate->setTime(23, 59);
+                $untilTstamp = $untilDate->getTimestamp();
+            }
+
+            if ($fromTstamp !== null && $untilTstamp !== null) {
+                if ($hideEventsWithoutDate) {
+                    $sql .= " AND e.expertTimes = 0 AND ((e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+                } else {
+                    $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR (e.beginDate >= ? AND e.beginDate <= ?) OR (e.beginDate <= ? AND e.endDate >= ?))";
+                }
+
+                $parameters[] = $fromTstamp;
+                $parameters[] = $untilTstamp;
+                $parameters[] = $fromTstamp;
+                $parameters[] = $untilTstamp;
+                $sortDay = $fromTstamp;
+            } elseif ($fromTstamp !== null) {
+                if ($hideEventsWithoutDate) {
+                    $sql .= " AND e.expertTimes = 0 AND (e.beginDate >= ? OR e.endDate >= ?)";
+                } else {
+                    $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR e.beginDate >= ? OR e.endDate >= ?)";
+                }
+
+                $parameters[] = $fromTstamp;
+                $parameters[] = $fromTstamp;
+                $sortDay = $fromTstamp;
+            } elseif ($untilTstamp !== null) {
+                if ($hideEventsWithoutDate) {
+                    $sql .= " AND e.expertTimes = 0 AND (e.beginDate <= ?)";
+                } else {
+                    $sql .= " AND e.expertTimes = 0 AND (e.beginDate IS NULL OR e.beginDate <= ?)";
+                }
+
+                $parameters[] = $untilTstamp;
+                $sortDay = time();
+            }
         } else {
             // use today midnight as parameter to get all events from today
             $today = new \DateTime();

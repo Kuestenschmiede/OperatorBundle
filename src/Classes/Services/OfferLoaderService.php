@@ -155,7 +155,7 @@ class OfferLoaderService
         $eventFilterData = [
             'tags' => $tagFilter ? $tagIds : [],
             'categories' => $categoryFilter ? $categoryIds : [],
-            'date' => $dateFilter ? ['from' => $filterData['filterFrom'], 'until' => $filterData['filterUntil']] : [],
+            'date' => $dateFilter ? ['from' => ($filterData['filterFrom'] ?? null), 'until' => ($filterData['filterUntil'] ?? null)] : [],
             'sort' => $sortFilter ? $filterData['sorting'] : 'date',
             'location' => $filterData['location'],
             'childs' => $childs

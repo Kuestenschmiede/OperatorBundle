@@ -59,8 +59,9 @@ class AfterImportListener
             $importType = $event->getImportType();
             $createRobots = false;
             if ($importType == 'gutesio') {
+                $importData = $this->getLatestImportData();
                 $repair = new LocstyleRepairService();
-                $repair->repair();
+                $repair->repair($importData);
 
                 $contentUpdate = new ChildFullTextContentUpdater();
                 $contentUpdate->update();
@@ -134,5 +135,71 @@ class AfterImportListener
         $logger->pushHandler($groupHandler);
 
         return $logger;
+    }
+
+    /**
+     * Tries to find and load the latest import JSON data.
+     */
+    private function getLatestImportData(): ?array
+    {
+        try {
+            $db = Database::getInstance();
+            $latestImport = $db->prepare("
+                SELECT importUuid, importTables, type 
+                FROM tl_c4g_import_data 
+                WHERE type = 'gutesio' 
+                ORDER BY tstamp DESC 
+                LIMIT 1
+            ")->execute()->fetchAssoc();
+
+            if (!$latestImport || !$latestImport['importUuid']) {
+                return null;
+            }
+
+            $uuid = $latestImport['importUuid'];
+            $shortUuid = substr($uuid, 0, -5);
+            $rootDir = System::getContainer()->getParameter('kernel.project_dir');
+            
+            // Try to find the JSON file in the typical import data folder
+            $importDir = $rootDir . '/files/con4gis_import_data/' . $shortUuid;
+            if (is_dir($importDir)) {
+                $files = glob($importDir . '/data/*.json');
+                if (!empty($files)) {
+                    $jsonFile = $files[0];
+                    $content = file_get_contents($jsonFile);
+                    if ($content) {
+                        $data = json_decode($content, true);
+                        if (is_array($data)) {
+                            C4gLogModel::addLogEntry('operator', "Locstyle Repair: Import-JSON für UUID $uuid geladen.");
+                            return $data;
+                        }
+                    }
+                }
+            }
+            
+            // Fallback: search in io-data cache
+            $ioDataDir = $rootDir . '/files/con4gis_import_data/io-data';
+            if (is_dir($ioDataDir)) {
+                $files = glob($ioDataDir . '/*/data/*.json');
+                if (!empty($files)) {
+                    // Sort by file time to get the newest
+                    usort($files, function($a, $b) {
+                        return filemtime($b) - filemtime($a);
+                    });
+                    $content = file_get_contents($files[0]);
+                    if ($content) {
+                        $data = json_decode($content, true);
+                        if (is_array($data)) {
+                            C4gLogModel::addLogEntry('operator', "Locstyle Repair: Import-JSON aus Cache geladen (" . basename($files[0]) . ").");
+                            return $data;
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            C4gLogModel::addLogEntry('operator', 'Error loading latest import data for repair: ' . $e->getMessage());
+        }
+
+        return null;
     }
 }

@@ -146,14 +146,31 @@ class LoadLayersListener
                     if (strpos($styleName, 'io_') === 0) {
                         $styleName = substr($styleName, 3);
                     }
+                    $originalStyleName = $styleName;
                     $styleName = str_replace(' ', '_', $styleName);
+                    $styleName = str_replace('-', '_', $styleName);
                     $projectDir = System::getContainer()->getParameter('kernel.project_dir');
                     $basePaths = glob($projectDir . '/files/con4gis_import_data/*/icons/Kategorie_Icons', GLOB_ONLYDIR);
-                    $basePath = !empty($basePaths) ? str_replace($projectDir . '/', '', $basePaths[0]) . '/' : 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
-                    foreach (['.svg', '.png', '.jpg'] as $ext) {
-                        if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
-                            $icon = '/' . $basePath . $styleName . $ext;
-                            break;
+                    foreach ($basePaths as $path) {
+                        $basePath = str_replace($projectDir . '/', '', $path) . '/';
+                        foreach (['.svg', '.png', '.jpg'] as $ext) {
+                            if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                                $icon = '/' . $basePath . $styleName . $ext;
+                                break 2;
+                            }
+                            if (file_exists($projectDir . '/' . $basePath . $originalStyleName . $ext)) {
+                                $icon = '/' . $basePath . $originalStyleName . $ext;
+                                break 2;
+                            }
+                        }
+                    }
+                    if (strpos($icon, '/') !== 0) {
+                        $basePath = 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
+                        foreach (['.svg', '.png', '.jpg'] as $ext) {
+                            if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                                $icon = '/' . $basePath . $styleName . $ext;
+                                break;
+                            }
                         }
                     }
                 }
@@ -1288,14 +1305,31 @@ class LoadLayersListener
                     if (strpos($styleName, 'io_') === 0) {
                         $styleName = substr($styleName, 3);
                     }
+                    $originalStyleName = $styleName;
                     $styleName = str_replace(' ', '_', $styleName);
+                    $styleName = str_replace('-', '_', $styleName);
                     $projectDir = System::getContainer()->getParameter('kernel.project_dir');
                     $basePaths = glob($projectDir . '/files/con4gis_import_data/*/icons/Kategorie_Icons', GLOB_ONLYDIR);
-                    $basePath = !empty($basePaths) ? str_replace($projectDir . '/', '', $basePaths[0]) . '/' : 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
-                    foreach (['.svg', '.png', '.jpg'] as $ext) {
-                        if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
-                            $icon = '/' . $basePath . $styleName . $ext;
-                            break;
+                    foreach ($basePaths as $path) {
+                        $basePath = str_replace($projectDir . '/', '', $path) . '/';
+                        foreach (['.svg', '.png', '.jpg'] as $ext) {
+                            if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                                $icon = '/' . $basePath . $styleName . $ext;
+                                break 2;
+                            }
+                            if (file_exists($projectDir . '/' . $basePath . $originalStyleName . $ext)) {
+                                $icon = '/' . $basePath . $originalStyleName . $ext;
+                                break 2;
+                            }
+                        }
+                    }
+                    if (strpos($icon, '/') !== 0) {
+                        $basePath = 'files/con4gis_import_data/60/icons/Kategorie_Icons/';
+                        foreach (['.svg', '.png', '.jpg'] as $ext) {
+                            if (file_exists($projectDir . '/' . $basePath . $styleName . $ext)) {
+                                $icon = '/' . $basePath . $styleName . $ext;
+                                break;
+                            }
                         }
                     }
                 }

@@ -16,7 +16,6 @@ use con4gis\MapsBundle\Classes\Caches\C4GMapsAutomator;
 use Contao\System;
 use gutesio\DataModelBundle\Classes\Cache\ImageCache;
 use gutesio\DataModelBundle\Classes\ChildFullTextContentUpdater;
-use gutesio\DataModelBundle\Classes\LocstyleRepairService;
 use Monolog\Handler\GroupHandler;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -59,9 +58,6 @@ class AfterImportListener
             $importType = $event->getImportType();
             $createRobots = false;
             if ($importType == 'gutesio') {
-                $repair = new LocstyleRepairService();
-                $repair->repair();
-
                 $contentUpdate = new ChildFullTextContentUpdater();
                 $contentUpdate->update();
 

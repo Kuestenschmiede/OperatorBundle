@@ -1079,10 +1079,10 @@ class LoadLayersListener
                             ]
                         ]
                     ];
-                } elseif (!isset($data['type']) || $data['type'] !== 'FeatureCollection') {
+                } elseif (!is_array($data) || !isset($data['type']) || $data['type'] !== 'FeatureCollection') {
                     $data = [
                         'type' => 'FeatureCollection',
-                        'features' => $data['features'] ?? []
+                        'features' => is_array($data) ? ($data['features'] ?? []) : []
                     ];
                 }
                 $this->cache['geometryCache'][$cacheKey] = $data;
@@ -1101,11 +1101,13 @@ class LoadLayersListener
                 if ($dbRes && $dbRes['types']) {
                     $configTypes = \Contao\StringUtil::deserialize($dbRes['types'], true);
                     foreach ($configTypes as $configType) {
-                        if (!$styleIdLine && $configType['type'] === 'linestring') {
-                            $styleIdLine = $configType['locstyle'];
-                        }
-                        if (!$styleIdPoint && $configType['type'] === 'point') {
-                            $styleIdPoint = $configType['locstyle'];
+                        if (is_array($configType)) {
+                            if (!$styleIdLine && isset($configType['type']) && $configType['type'] === 'linestring') {
+                                $styleIdLine = $configType['locstyle'] ?? null;
+                            }
+                            if (!$styleIdPoint && isset($configType['type']) && $configType['type'] === 'point') {
+                                $styleIdPoint = $configType['locstyle'] ?? null;
+                            }
                         }
                     }
                 }

@@ -135,7 +135,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
             $requestUserAgent = $request->headers->get("User-Agent");
             // Only render additional SEO content for selected crawlers (whitelist)
-            if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao)/i', $requestUserAgent)) {
+            if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao|Screaming Frog|Lighthouse|HeadlessChrome)/i', $requestUserAgent)) {
                 // Lightweight with fragment cache: build simple anchor list for ALL showcases directly from DB
                 // Avoid heavy data loading and image processing to keep performance stable
                 try {
@@ -1031,6 +1031,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $database = Database::getInstance();
         $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
         $links = [];
+        $baseUrl = C4GUtils::replaceInsertTags("{{env::url}}") . '/';
         if ($result) {
             foreach ($result as $row) {
                 $alias = is_array($row) && key_exists('alias', $row) ? $row['alias'] : false;
@@ -1044,8 +1045,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 } else {
                     $href = $this->pageUrl . '/' . $alias;
                 }
+
+                // Ensure absolute URL for crawlers
+                if (!preg_match('~^https?://~', $href)) {
+                    $href = $baseUrl . ltrim($href, '/');
+                }
+
                 $links[] = [
-                    'link' => "<a href=\"$href\">".$name."</a>"
+                    'link' => "<a href=\"$href\">" . htmlspecialchars((string)$name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>"
                 ];
             }
         }

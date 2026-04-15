@@ -122,7 +122,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $conf->setLanguage($objPage->language);
         $requestUserAgent = $request->headers->get("User-Agent");
         // Render lightweight crawler-only content for selected bots to improve discoverability
-        if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao)/i', $requestUserAgent)) {
+        if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao|Screaming Frog|Lighthouse|HeadlessChrome)/i', $requestUserAgent)) {
             if ($this->model->gutesio_data_render_searchHtml) {
                 // Try fragment cache to avoid regenerating the same link dump repeatedly
                 try {
@@ -1067,7 +1067,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $childTypes = $model ? StringUtil::deserialize($model->gutesio_child_type, true) : [];
 
+        $baseUrl = C4GUtils::replaceInsertTags("{{env::url}}") . '/';
         foreach ($result as $row) {
+            $url = '';
             switch ($row['type']) {
                 case 'product':
                     if (!count($childTypes) || in_array($row['type'], $childTypes)) {
@@ -1120,6 +1122,12 @@ class OfferListModuleController extends AbstractFrontendModuleController
             } else {
                 $href = $url . '/' . $alias;
             }
+
+            // Ensure absolute URL for crawlers
+            if (!preg_match('~^https?://~', $href)) {
+                $href = $baseUrl . ltrim($href, '/');
+            }
+
             $links[] = [
                 'link' => "<a href=\"$href\">" . htmlspecialchars((string)($row['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>"
             ];

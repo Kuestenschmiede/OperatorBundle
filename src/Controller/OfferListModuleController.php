@@ -134,14 +134,25 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
                 $html = null;
                 $cacheKey = null;
-                if ($cache) {
+                $seoData = [];
+                $isBot = false;
+                if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao|Screaming Frog|Lighthouse|HeadlessChrome)/i', $requestUserAgent)) {
+                    $isBot = true;
                     $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
                     $childTypeCfg = (string)($this->model->gutesio_child_type ?? '');
                     $cacheKey = 'seo_links_offers_' . (string)$this->model->id . '_' . md5($pageUrl . '|' . $lang . '|' . $childTypeCfg);
                     try {
-                        $item = $cache->getItem($cacheKey);
-                        if ($item->isHit()) {
-                            $html = (string)$item->get();
+                        if ($cache) {
+                            $item = $cache->getItem($cacheKey);
+                            if ($item->isHit()) {
+                                $cached = $item->get();
+                                if (is_array($cached)) {
+                                    $html = (string)($cached['html'] ?? '');
+                                    $seoData = (array)($cached['seoData'] ?? []);
+                                } else {
+                                    $html = (string)$cached;
+                                }
+                            }
                         }
                     } catch (\Throwable $t) {
                         // ignore cache read errors
@@ -149,14 +160,16 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
 
                 if ($html === null) {
+                    $res = $this->getSearchLinks($model);
                     $sc = new SearchConfiguration();
-                    $sc->addData($this->getSearchLinks($model), ['link']);
+                    $sc->addData($res['links'], ['link']);
                     $html = $sc->getHTML();
+                    $seoData = $res['seoData'];
 
                     if ($cache && $cacheKey) {
                         try {
                             $item = $cache->getItem($cacheKey);
-                            $item->set($html);
+                            $item->set(['html' => $html, 'seoData' => $seoData]);
                             if (method_exists($item, 'expiresAfter')) {
                                 $item->expiresAfter(43200); // 12h
                             }
@@ -168,6 +181,28 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
 
                 $template->searchHTML = $html;
+
+                // Add ItemList Schema directly in controller for crawlers
+                if ($seoData && $isBot) {
+                    $itemListElement = [];
+                    foreach ($seoData as $v) {
+                        $itemListElement[] = [
+                            "@type" => "ListItem",
+                            "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                            "url" => $v['childLink'] ?? '',
+                            "image" => $v['image']['src'] ?? ''
+                        ];
+                    }
+
+                    $schema = [
+                        "@context" => "https://schema.org",
+                        "@type" => "ItemList",
+                        "url" => $this->pageUrl . ltrim($request->getRequestUri(), '/'),
+                        "numberOfItems" => (string)count($seoData),
+                        "itemListElement" => $itemListElement
+                    ];
+                    $template->itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                }
             }
         }
 
@@ -179,6 +214,10 @@ class OfferListModuleController extends AbstractFrontendModuleController
             C4gLogModel::addLogEntry("operator", $error);
         }
         $template->configuration = $strConf;
+
+        $template->searchHTML = $template->searchHTML ?? '';
+        $template->itemListSchema = $template->itemListSchema ?? '';
+        $template->seoData = $seoData ?? [];
 
         return $template->getResponse();
     }
@@ -1057,13 +1096,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
         ];
     }
 
-    protected function getSearchLinks($model)
+    protected function getSearchLinks($model): array
     {
         $database = Database::getInstance();
-        $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type FROM tl_gutesio_data_child c ' .
+        $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type, c.imageCDN as image FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'where c.published = 1')->execute()->fetchAllAssoc();
         $links = [];
+        $seoData = [];
 
         $childTypes = $model ? StringUtil::deserialize($model->gutesio_child_type, true) : [];
 
@@ -1131,8 +1171,14 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $links[] = [
                 'link' => "<a href=\"$href\">" . htmlspecialchars((string)($row['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>"
             ];
+
+            $seoData[] = [
+                'name' => (string)($row['name'] ?? ''),
+                'childLink' => $href,
+                'image' => ['src' => (string)($row['image'] ?? '')]
+            ];
         }
-        return $links;
+        return ['links' => $links, 'seoData' => $seoData];
     }
 
     /**

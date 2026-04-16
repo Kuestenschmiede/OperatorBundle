@@ -1,23 +1,42 @@
 <?php
-$data = is_array($this->itemListElement) && key_exists(0, $this->itemListElement) ? $this->itemListElement[0] : '';
-$count = is_array($this->itemListElement) && key_exists(1, $this->itemListElement) ? $this->itemListElement[1] : 0;
+$itemListSchema = $this->itemListSchema ?? '';
+if (empty($itemListSchema)) {
+    $seoDataArr = $this->seoData ?? [];
+    if (empty($seoDataArr)) {
+        $json = json_decode($this->configuration, true);
+        // Showcase list uses 'tiles' as the tile list ID
+        $seoDataArr = $json["components"]["tiles"]["data"] ?? [];
+    }
+    $count = count($seoDataArr);
+    $itemListElement = [];
+    foreach ($seoDataArr as $v) {
+        $itemListElement[] = [
+            "@type" => "ListItem",
+            "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            "url" => $v['childLink'] ?? ($v['elementLink'] ?? ''),
+            "image" => $v['image']['src'] ?? ''
+        ];
+    }
+    if ($count) {
+        $schema = [
+            "@context" => "https://schema.org",
+            "@type" => "ItemList",
+            "url" => "{{env::url}}/{{env::request}}",
+            "numberOfItems" => (string)$count,
+            "itemListElement" => $itemListElement
+        ];
+        $itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+}
 ?>
 
-<?php if ($count): ?>
+<?php if ($itemListSchema): ?>
 <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "url": "{{env::url}}/{{env::request}}",
-        "numberOfItems": "<?= $count ?>",
-        "itemListElement": [
-            <?php echo $data ?>
-        ]
-    }
+<?php echo $itemListSchema; ?>
 </script>
 <?php endif; ?>
 
-<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
+<div id="<?php echo $this->entrypoint; ?>" class="projects-tile-list-module">
     <script>
       window.frameworkData = window.frameworkData || [];
       window.frameworkData.push(<?php echo $this->configuration; ?>);

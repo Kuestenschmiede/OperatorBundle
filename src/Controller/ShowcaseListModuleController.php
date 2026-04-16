@@ -131,11 +131,14 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 
-        if ($this->model->gutesio_data_render_searchHtml) {
-
+            if ($this->model->gutesio_data_render_searchHtml) {
             $requestUserAgent = $request->headers->get("User-Agent");
-            // Only render additional SEO content for selected crawlers (whitelist)
+            $isBot = false;
             if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao|Screaming Frog|Lighthouse|HeadlessChrome)/i', $requestUserAgent)) {
+                $isBot = true;
+            }
+
+            if ($isBot) {
                 // Lightweight with fragment cache: build simple anchor list for ALL showcases directly from DB
                 // Avoid heavy data loading and image processing to keep performance stable
                 try {
@@ -147,29 +150,38 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
                 $html = null;
                 $cacheKey = null;
-                if ($cache) {
-                    // Build a stable key based on module, language and page URL
-                    $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
-                    $cacheKey = 'seo_links_showcase_' . (string)$this->model->id . '_' . md5($this->pageUrl . '|' . $lang);
-                    try {
+                $seoData = [];
+                // Build a stable key based on module, language and page URL
+                $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
+                $cacheKey = 'seo_links_showcase_' . (string)$this->model->id . '_' . md5($this->pageUrl . '|' . $lang);
+                try {
+                    if ($cache) {
                         $item = $cache->getItem($cacheKey);
                         if ($item->isHit()) {
-                            $html = (string)$item->get();
+                            $cached = $item->get();
+                            if (is_array($cached)) {
+                                $html = (string)($cached['html'] ?? '');
+                                $seoData = (array)($cached['seoData'] ?? []);
+                            } else {
+                                $html = (string)$cached;
+                            }
                         }
-                    } catch (\Throwable $t) {
-                        // ignore cache read errors
                     }
+                } catch (\Throwable $t) {
+                    // ignore cache read errors
                 }
 
                 if ($html === null) {
+                    $res = $this->getSearchLinks();
                     $sc = new SearchConfiguration();
-                    $sc->addData($this->getSearchLinks(), ['link']);
+                    $sc->addData($res['links'], ['link']);
                     $html = $sc->getHTML();
+                    $seoData = $res['seoData'];
 
                     if ($cache && $cacheKey) {
                         try {
                             $item = $cache->getItem($cacheKey);
-                            $item->set($html);
+                            $item->set(['html' => $html, 'seoData' => $seoData]);
                             // Cache for 12 hours
                             if (method_exists($item, 'expiresAfter')) {
                                 $item->expiresAfter(43200);
@@ -182,12 +194,37 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 }
 
                 $template->searchHTML = $html;
-                // Intentionally skip itemListElement meta generation for crawlers to prevent heavy processing
+
+                // Add ItemList Schema directly in controller for crawlers
+                if ($seoData) {
+                    $itemListElement = [];
+                    foreach ($seoData as $v) {
+                        $itemListElement[] = [
+                            "@type" => "ListItem",
+                            "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                            "url" => $v['childLink'] ?? '',
+                            "image" => $v['image']['src'] ?? ''
+                        ];
+                    }
+
+                    $schema = [
+                        "@context" => "https://schema.org",
+                        "@type" => "ItemList",
+                        "url" => $this->pageUrl . ltrim($request->getRequestUri(), '/'),
+                        "numberOfItems" => (string)count($seoData),
+                        "itemListElement" => $itemListElement
+                    ];
+                    $template->itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                }
             }
         }
 
+            $template->searchHTML = $template->searchHTML ?? '';
+            $template->itemListSchema = $template->itemListSchema ?? '';
+            $template->seoData = $seoData ?? [];
 
-        return $template->getResponse();
+
+            return $template->getResponse();
     }
 
     protected function getTileList(): TileList
@@ -1029,13 +1066,15 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
     protected function getSearchLinks($result = false): array
     {
         $database = Database::getInstance();
-        $result = $result ?: $database->prepare('SELECT alias, name FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
+        $result = $result ?: $database->prepare('SELECT alias, name, imageCDN FROM tl_gutesio_data_element')->execute()->fetchAllAssoc();
         $links = [];
+        $seoData = [];
         $baseUrl = C4GUtils::replaceInsertTags("{{env::url}}") . '/';
         if ($result) {
             foreach ($result as $row) {
                 $alias = is_array($row) && key_exists('alias', $row) ? $row['alias'] : false;
                 $name  = is_array($row) && key_exists('name', $row) ? $row['name'] : false;
+                $image = is_array($row) && key_exists('imageCDN', $row) ? $row['imageCDN'] : '';
                 if (!$alias || !$name) {
                     continue;
                 }
@@ -1054,9 +1093,19 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $links[] = [
                     'link' => "<a href=\"$href\">" . htmlspecialchars((string)$name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>"
                 ];
+
+                $seoData[] = [
+                    'name' => (string)$name,
+                    'childLink' => $href,
+                    'image' => [
+                        'src' => (string)$image,
+                        'width' => 841,
+                        'height' => 594
+                    ]
+                ];
             }
         }
-        return $links;
+        return ['links' => $links, 'seoData' => $seoData];
     }
 
     protected function getMetaData($elements = []) {

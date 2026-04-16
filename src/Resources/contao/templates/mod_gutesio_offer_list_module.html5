@@ -1,31 +1,42 @@
 <?php
-$json = json_decode($this->configuration, true);
-$data = $json["components"]["full-text-tiles"]["data"];
-$last_key = end(array_keys($data));
+$itemListSchema = $this->itemListSchema ?? '';
+if (empty($itemListSchema)) {
+    $seoDataArr = $this->seoData ?? [];
+    if (empty($seoDataArr)) {
+        $json = json_decode($this->configuration, true);
+        // The offer list uses 'full-text-tiles' as the tile list ID
+        $seoDataArr = $json["components"]["full-text-tiles"]["data"] ?? [];
+    }
+    $count = count($seoDataArr);
+    $itemListElement = [];
+    foreach ($seoDataArr as $v) {
+        $itemListElement[] = [
+            "@type" => "ListItem",
+            "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            "url" => $v['childLink'] ?? ($v['elementLink'] ?? ''),
+            "image" => $v['image']['src'] ?? ''
+        ];
+    }
+    if ($count) {
+        $schema = [
+            "@context" => "https://schema.org",
+            "@type" => "ItemList",
+            "url" => "{{env::url}}/{{env::request}}",
+            "numberOfItems" => (string)$count,
+            "itemListElement" => $itemListElement
+        ];
+        $itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+}
 ?>
 
-
-
+<?php if ($itemListSchema): ?>
 <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "ItemList",
-        "url": "{{env::url}}/{{env::request}}",
-        "numberOfItems": "<?= count($data) ?>",
-        "itemListElement": [
-            <?php foreach ($data as $k => $v): ?>
-                {
-                    "@type": "ListItem",
-                    "name": "<?= htmlspecialchars(strip_tags($v['name'])) ?>",
-                    "url": "<?= key_exists('childLink', $v) ? $v['childLink'] : '' ?>",
-                    "image": "<?= $v['image']['src'] ?>"
-                }<?php if ($k != $last_key) echo "," ?>
-            <?php endforeach; ?>
-        ]
-    }
+<?php echo $itemListSchema; ?>
 </script>
+<?php endif; ?>
 
-<div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
+<div id="<?php echo $this->entrypoint; ?>" class="projects-tile-list-module">
     <script>
         window.frameworkData = window.frameworkData || [];
         window.frameworkData.push(<?php echo $this->configuration; ?>);

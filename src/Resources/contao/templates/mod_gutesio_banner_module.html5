@@ -39,6 +39,45 @@ if ($__overlayOpacity !== '') {
 // Kiosk-/Chromium-Modus und optionaler Sound-Button
 $kioskMode = !empty($this->bannerKioskMode);
 $showSoundButton = !empty($this->bannerShowSoundButton);
+
+// Helper to get image dimensions (including SVGs)
+$getImageDimensions = function($url) {
+    if (!$url) return null;
+    $path = $url;
+    if (strpos($url, 'http') === 0) {
+        // For external/CDN URLs we might need a different approach, 
+        // but for now we try to get it if possible or return null
+        // Since we don't want to block rendering with external requests, 
+        // we only do this for local paths or skip it.
+        return null; 
+    }
+    // Remove query string
+    $path = explode('?', $path)[0];
+    $fullPath = TL_ROOT . '/' . ltrim($path, '/');
+    if (!file_exists($fullPath)) return null;
+
+    $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));
+    if ($extension === 'svg') {
+        try {
+            $svg = simplexml_load_file($fullPath);
+            if ($svg) {
+                $attributes = $svg->attributes();
+                if (isset($attributes->width) && isset($attributes->height)) {
+                    return [(int)$attributes->width, (int)$attributes->height];
+                } elseif (isset($attributes->viewBox)) {
+                    $viewBox = explode(' ', (string)$attributes->viewBox);
+                    if (count($viewBox) === 4) {
+                        return [(int)$viewBox[2], (int)$viewBox[3]];
+                    }
+                }
+            }
+        } catch (\Throwable $e) {}
+    } else {
+        $size = @getimagesize($fullPath);
+        if ($size) return [$size[0], $size[1]];
+    }
+    return null;
+};
 ?>
 
 <link rel="stylesheet" href="bundles/gutesiooperator/dist/css/tiny-slider.css" />
@@ -437,10 +476,17 @@ $showSoundButton = !empty($this->bannerShowSoundButton);
                     <?php echo '<a href="' . $href . '" aria-label="' . htmlspecialchars($title ?: $alt, ENT_QUOTES, 'UTF-8') . '"' . $__linkAttrs . '>'; ?>
                   <?php endif; ?>
                   <?php if ($src): ?>
+                    <?php 
+                    $imgAttrs = '';
+                    $dims = $getImageDimensions($src);
+                    if ($dims) {
+                        $imgAttrs .= ' width="' . $dims[0] . '" height="' . $dims[1] . '"';
+                    }
+                    ?>
                     <?php if ($lazyMode === '1' || $lazyMode === '2'): ?>
-                      <img class="banner__image-item" data-src="<?php echo $src; ?>" alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>" loading="lazy" decoding="async">
+                      <img class="banner__image-item" data-src="<?php echo $src; ?>" alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>" loading="lazy" decoding="async"<?php echo $imgAttrs; ?>>
                     <?php else: ?>
-                      <img class="banner__image-item" src="<?php echo $src; ?>" alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>">
+                      <img class="banner__image-item" src="<?php echo $src; ?>" alt="<?php echo htmlspecialchars($alt, ENT_QUOTES, 'UTF-8'); ?>"<?php echo $imgAttrs; ?>>
                     <?php endif; ?>
                   <?php endif; ?>
                   <?php if ($href && empty($this->bannerMediaBgPortrait)): ?></a><?php endif; ?>
@@ -460,12 +506,19 @@ $showSoundButton = !empty($this->bannerShowSoundButton);
                         <?php endif; ?>
                         <?php // Suppress footer logo for element slides, keep it for others ?>
                         <?php if ($logo && !$isElement): ?>
-                        <div class="banner__footer-logo"><img src="<?php echo $logo; ?>" alt=""></div>
+                        <?php 
+                        $logoAttrs = ' loading="lazy"';
+                        $lDims = $getImageDimensions($logo);
+                        if ($lDims) {
+                            $logoAttrs .= ' width="' . $lDims[0] . '" height="' . $lDims[1] . '"';
+                        }
+                        ?>
+                        <div class="banner__footer-logo"><img src="<?php echo $logo; ?>" alt=""<?php echo $logoAttrs; ?>></div>
                         <?php endif; ?>
                     </div>
                     <?php if (!empty($qrcode)): ?>
                     <div class="banner__footer-qrcode">
-                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code">
+                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code" width="150" height="150" loading="lazy">
                     </div>
                     <?php endif; ?>
                 </div>

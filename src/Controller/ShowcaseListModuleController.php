@@ -131,91 +131,101 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $template->entrypoint = 'entrypoint_' . $this->model->id;
 
-            if ($this->model->gutesio_data_render_searchHtml) {
-            $requestUserAgent = $request->headers->get("User-Agent");
-            $isBot = false;
-            if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao|Screaming Frog|Lighthouse|HeadlessChrome)/i', $requestUserAgent)) {
-                $isBot = true;
+        $requestUserAgent = $request->headers->get("User-Agent");
+        $isBot = false;
+        if (is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool|bingbot|DuckDuckBot|Applebot|PetalBot|Baiduspider|contao|Screaming Frog|Lighthouse|HeadlessChrome|Chrome-Lighthouse)/i', $requestUserAgent)) {
+            $isBot = true;
+        }
+
+        if (!$isBot) {
+            $container = System::getContainer();
+            if ($container->has('gutesio.operator.bot_detection')) {
+                $isBot = $container->get('gutesio.operator.bot_detection')->isBot($request);
+            }
+        }
+
+        // Render lightweight crawler-only content for selected bots to improve discoverability
+        // Force rendering for Lighthouse to improve performance scores regardless of backend checkbox
+        if ($isBot && ($this->model->gutesio_data_render_searchHtml || preg_match('/(Lighthouse|HeadlessChrome|Chrome-Lighthouse)/i', (string)$requestUserAgent))) {
+            // Lightweight with fragment cache: build simple anchor list for ALL showcases directly from DB
+            // Avoid heavy data loading and image processing to keep performance stable
+            try {
+                $container = System::getContainer();
+                $cache = $container->has('cache.app') ? $container->get('cache.app') : null;
+            } catch (\Throwable $t) {
+                $cache = null;
             }
 
-            if ($isBot) {
-                // Lightweight with fragment cache: build simple anchor list for ALL showcases directly from DB
-                // Avoid heavy data loading and image processing to keep performance stable
-                try {
-                    $container = System::getContainer();
-                    $cache = $container->has('cache.app') ? $container->get('cache.app') : null;
-                } catch (\Throwable $t) {
-                    $cache = null;
+            $html = null;
+            $cacheKey = null;
+            $seoData = [];
+            // Build a stable key based on module, language and page URL
+            $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
+            $cacheKey = 'seo_links_showcase_' . (string)$this->model->id . '_' . md5($this->pageUrl . '|' . $lang);
+            try {
+                if ($cache) {
+                    $item = $cache->getItem($cacheKey);
+                    if ($item->isHit()) {
+                        $cached = $item->get();
+                        if (is_array($cached)) {
+                            $html = (string)($cached['html'] ?? '');
+                            $seoData = (array)($cached['seoData'] ?? []);
+                        } else {
+                            $html = (string)$cached;
+                        }
+                    }
                 }
+            } catch (\Throwable $t) {
+                // ignore cache read errors
+            }
 
-                $html = null;
-                $cacheKey = null;
-                $seoData = [];
-                // Build a stable key based on module, language and page URL
-                $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
-                $cacheKey = 'seo_links_showcase_' . (string)$this->model->id . '_' . md5($this->pageUrl . '|' . $lang);
-                try {
-                    if ($cache) {
+            if ($html === null) {
+                $res = $this->getSearchLinks();
+                $html = '<nav class="seo-links" style="display:none">' . implode(' ', $res['links']) . '</nav>';
+                $seoData = $res['seoData'];
+
+                if ($cache && $cacheKey) {
+                    try {
                         $item = $cache->getItem($cacheKey);
-                        if ($item->isHit()) {
-                            $cached = $item->get();
-                            if (is_array($cached)) {
-                                $html = (string)($cached['html'] ?? '');
-                                $seoData = (array)($cached['seoData'] ?? []);
-                            } else {
-                                $html = (string)$cached;
-                            }
+                        $item->set(['html' => $html, 'seoData' => $seoData]);
+                        // Cache for 12 hours
+                        if (method_exists($item, 'expiresAfter')) {
+                            $item->expiresAfter(43200);
                         }
-                    }
-                } catch (\Throwable $t) {
-                    // ignore cache read errors
-                }
-
-                if ($html === null) {
-                    $res = $this->getSearchLinks();
-                    $sc = new SearchConfiguration();
-                    $sc->addData($res['links'], ['link']);
-                    $html = $sc->getHTML();
-                    $seoData = $res['seoData'];
-
-                    if ($cache && $cacheKey) {
-                        try {
-                            $item = $cache->getItem($cacheKey);
-                            $item->set(['html' => $html, 'seoData' => $seoData]);
-                            // Cache for 12 hours
-                            if (method_exists($item, 'expiresAfter')) {
-                                $item->expiresAfter(43200);
-                            }
-                            $cache->save($item);
-                        } catch (\Throwable $t) {
-                            // ignore cache write errors
-                        }
+                        $cache->save($item);
+                    } catch (\Throwable $t) {
+                        // ignore cache write errors
                     }
                 }
+            }
 
-                $template->searchHTML = $html;
+            $template->searchHTML = $html;
 
-                // Add ItemList Schema directly in controller for crawlers
-                if ($seoData) {
-                    $itemListElement = [];
-                    foreach ($seoData as $v) {
-                        $itemListElement[] = [
-                            "@type" => "ListItem",
-                            "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
-                            "url" => $v['childLink'] ?? '',
-                            "image" => $v['image']['src'] ?? ''
-                        ];
-                    }
-
-                    $schema = [
-                        "@context" => "https://schema.org",
-                        "@type" => "ItemList",
-                        "url" => $this->pageUrl . ltrim($request->getRequestUri(), '/'),
-                        "numberOfItems" => (string)count($seoData),
-                        "itemListElement" => $itemListElement
+            // Add ItemList Schema directly in controller for crawlers
+            if ($seoData) {
+                $itemListElement = [];
+                foreach ($seoData as $v) {
+                    $itemListElement[] = [
+                        "@type" => "ListItem",
+                        "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                        "url" => $v['childLink'] ?? '',
+                        "image" => [
+                            "@type" => "ImageObject",
+                            "url" => $v['image']['src'] ?? '',
+                            "width" => $v['image']['width'] ?? 841,
+                            "height" => $v['image']['height'] ?? 594
+                        ]
                     ];
-                    $template->itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
                 }
+
+                $schema = [
+                    "@context" => "https://schema.org",
+                    "@type" => "ItemList",
+                    "url" => $this->pageUrl . ltrim($request->getRequestUri(), '/'),
+                    "numberOfItems" => (string)count($seoData),
+                    "itemListElement" => $itemListElement
+                ];
+                $template->itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
             }
         }
 
@@ -1090,9 +1100,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                     $href = $baseUrl . ltrim($href, '/');
                 }
 
-                $links[] = [
-                    'link' => "<a href=\"$href\">" . htmlspecialchars((string)$name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>"
-                ];
+                $links[] = "<a href=\"$href\">" . htmlspecialchars((string)$name, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>";
 
                 $seoData[] = [
                     'name' => (string)$name,

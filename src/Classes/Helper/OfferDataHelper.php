@@ -141,12 +141,12 @@ class OfferDataHelper
         return "";
     }
 
-    public function getImageLink($offerData)
+    public function getImageLink($offerData, $width = 0, $height = 0)
     {
         $this->initUtils();
         $this->getSettings();
 
-        return $this->fileUtils->addUrlToPathAndGetImage($this->settings->cdnUrl, $offerData['imageCDN']);
+        return $this->fileUtils->addUrlToPathAndGetImage($this->settings->cdnUrl, $offerData['imageCDN'], '', $width, $height, 172800, false, true);
     }
 
     public function loadOfferTagRelations($offerData)
@@ -191,10 +191,10 @@ class OfferDataHelper
             $tagLinks[] = [
                 'name' => $currentTag['name'],
                 'image' => [
-                    'src' => $currentTag['imageCDN'] ? $this->getImageLink($currentTag) : "",
+                    'src' => $currentTag['imageCDN'] ? $this->getImageLink($currentTag, 100, 100) : "",
                     'alt' => $currentTag['name'],
-                    'width' => 841,
-                    'height' => 594
+                    'width' => 100,
+                    'height' => 100
                 ],
                 'linkHref' => $relation['tagFieldValue'],
                 'class' => $relation['tagFieldKey']

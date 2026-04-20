@@ -998,6 +998,7 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                 <div class="detail-field-wrapper__tags">
                                     <?php $coronaTag = false; $wheelchairTag = false; $familyFriendlyTag = false; ?>
                                     <?php foreach ($data->tags as $k => $v): ?>
+                                        <?php if (property_exists($v, 'image') && property_exists($v->image, 'src') && !empty($v->image->src)): ?>
                                         <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
                                         <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
@@ -1010,13 +1011,13 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                                     <?php else: ?>
                                                     <div class="detail-field-image">
                                                         <?php endif; ?>
-                                                        <img class="img-fluid"
-                                                             src="<?= $v->image->src ?>"
-                                                             alt="<?= $v->image->name ?>"
-                                                             data-toggle="tooltip"
-                                                             width="100" height="100"
-                                                             data-content="<?= $v->name ?>"
-                                                             title="<?= $v->name ?>">
+                                                             <img class="img-fluid"
+                                                                 src="<?= $v->image->src ?>"
+                                                                 alt="<?= $v->image->name ?>"
+                                                                 data-toggle="tooltip"
+                                                                 width="100" height="100"
+                                                                 data-content="<?= $v->name ?>"
+                                                                 title="<?= $v->name ?>">
                                                         <?php if (!property_exists($v,"linkHref") || (strlen($v->linkHref) <= 4)): ?>
                                                     </div>
                                                     <?php else: ?>
@@ -1026,7 +1027,8 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                                                             class="detail-field-text__text"><?= $v->name ?></span></div>
                                             </div>
                                         <?php endif; ?>
-                                    <?php endforeach; ?>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
                                 </div>
 
                                 <div class="detail-field-wrapper__tag-fields">

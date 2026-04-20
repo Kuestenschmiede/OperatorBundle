@@ -954,21 +954,17 @@ class OfferLoaderService
                 $imageFile = $tagRow['imageCDN'];
 
                 if ($imageFile) {
-                    $url = $fileUtils->addUrlToPathAndGetImage($cdnUrl,$imageFile);
+                    $url = $fileUtils->addUrlToPath($cdnUrl, $imageFile, 100, 100);
                     $rows[$key]['tags'][$tagKey]['image'] = [
                         'alt' => $tagRow['name'],
-//                        'importantPart' => [
-//                            'x' => $imageModel->importantPartX,
-//                            'y' => $imageModel->importantPartY,
-//                            'width' => $imageModel->importantPartWidth,
-//                            'height' => $imageModel->importantPartHeight,
-//                        ],
                         'name' => $tagRow['name'],
                         'path' => $url,
                         'src' => $url,
+                        'width' => 100,
+                        'height' => 100,
                     ];
                 } else {
-                    unset($rows[$key]['tags'][$tagKey]['image']);
+                    $rows[$key]['tags'][$tagKey]['image'] = [];
                 }
 
                 if (key_exists('fixedIconUrl', $tagRow) && $tagRow['fixedIconUrl']) {

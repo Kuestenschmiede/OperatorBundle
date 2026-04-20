@@ -595,12 +595,14 @@ class ShowcaseService
         $tags = $returnData['tags'];
         foreach ($tags as $key => $tag) {
             $technicalKey = $tag['technicalKey'];
-            $fields = TagDetailFieldGenerator::getFieldsForTag($technicalKey);
-            $fieldConfs = [];
-            foreach ($fields as $field) {
-                $fieldConfs[] = $field->getConfiguration();
+            if ($technicalKey) {
+                $fields = TagDetailFieldGenerator::getFieldsForTag($technicalKey);
+                $fieldConfs = [];
+                foreach ($fields as $field) {
+                    $fieldConfs[] = $field->getConfiguration();
+                }
+                $tags[$key]['fields'] = $fieldConfs;
             }
-            $tags[$key]['fields'] = $fieldConfs;
         }
         if ($tags !== null) {
             $returnData['tags'] = $tags;

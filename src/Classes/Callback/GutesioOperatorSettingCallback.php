@@ -21,17 +21,14 @@ class GutesioOperatorSettingCallback extends Backend
     {
         $result = Database::getInstance()->prepare('SELECT id FROM tl_gutesio_operator_settings')->execute();
 
-        if (Input::get('key')) return;
+        if (Input::get('key') || Input::get('act') || Input::get('id')) return;
 
-        if(!$result->numRows && !Input::get('act'))
+        if(!$result->numRows)
         {
             $this->redirect($this->addToUrl('act=create'));
-        } else if (!Input::get('id') && !Input::get('act')) {
-            $GLOBALS['TL_DCA']['tl_gutesio_operator_settings']['config']['notCreatable'] = true;
+        } else if ($result->numRows === 1) {
             $this->redirect($this->addToUrl('act=edit&id='.$result->id));
         }
-
-        return $result;
     }
 
     public function deleteMainServerUrl()

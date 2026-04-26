@@ -1236,7 +1236,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$rootId) {
                 continue;
             }
-            $url = Controller::replaceInsertTags("{{link_url::" . $page . "}}");
+            $url = C4GUtils::replaceInsertTags("{{link_url::" . $page . "}}");
             $alias = strtolower(str_replace(['{', '}'], '', $row['uuid']));
             if (C4GUtils::endsWith($url, '.html')) {
                 $url = str_replace('.html', '/' . $alias . '.html', $url);

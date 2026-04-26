@@ -13,6 +13,8 @@
 
 $strName = "tl_gutesio_operator_settings";
 
+$GLOBALS['TL_LANG'][$strName]['domain_legend'] = "Domain-Einstellungen";
+$GLOBALS['TL_LANG'][$strName]['domaintitle'] = ["Domain Titel", "Geben Sie hier einen Namen für diese Einstellung an (z.B. den Domainnamen)."];
 $GLOBALS['TL_LANG'][$strName]['key_legend'] = "Grundeinstellungen";
 $GLOBALS['TL_LANG'][$strName]['map_legend'] = "Karteneinstellungen";
 $GLOBALS['TL_LANG'][$strName]['page_legend'] = "Seiteneinstellungen";

@@ -23,10 +23,10 @@ $GLOBALS['TL_DCA'][$strName] = [
         'label' => &$GLOBALS['TL_LANG']['MOD'][$strName][0],
         'dataContainer' => DC_Table::class,
         'enableVersioning' => false,
-        'notDeletable' => true,
-        'notCopyable' => true,
+        'notDeletable' => false,
+        'notCopyable' => false,
         'onload_callback' => [
-            [$cbClass, 'redirectToDetails'],
+            //[$cbClass, 'redirectToDetails'],
             [$cbClass, 'deleteMainServerUrl']
         ],
         'sql' => [
@@ -37,13 +37,52 @@ $GLOBALS['TL_DCA'][$strName] = [
     ],
 
     'list' => [
+        'sorting' => [
+            'mode' => 1,
+            'fields' => ['domaintitle'],
+            'flag' => 1,
+            'panelLayout' => 'filter;search,limit'
+        ],
         'label' => [
-            'fields' => ['']
+            'fields' => ['domaintitle'],
+            'format' => '%s'
+        ],
+        'global_operations' => [
+            'all' => [
+                'label' => &$GLOBALS['TL_LANG']['MSC']['all'],
+                'href' => 'act=select',
+                'class' => 'header_edit_all',
+                'attributes' => 'onclick="Backend.getScrollOffset()" accesskey="e"'
+            ]
+        ],
+        'operations' => [
+            'edit' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_gutesio_operator_settings']['edit'],
+                'href' => 'act=edit',
+                'icon' => 'edit.svg'
+            ],
+            'copy' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_gutesio_operator_settings']['copy'],
+                'href' => 'act=copy',
+                'icon' => 'copy.svg'
+            ],
+            'delete' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_gutesio_operator_settings']['delete'],
+                'href' => 'act=delete',
+                'icon' => 'delete.svg',
+                'attributes' => 'onclick="if(!confirm(\'' . ($GLOBALS['TL_LANG']['MSC']['deleteConfirm'] ?? '') . '\'))return false;Backend.getScrollOffset()"'
+            ],
+            'show' => [
+                'label' => &$GLOBALS['TL_LANG']['tl_gutesio_operator_settings']['show'],
+                'href' => 'act=show',
+                'icon' => 'show.svg'
+            ]
         ]
-    ], //prevent cto5 error
+    ],
 
     'palettes' => [
-        'default' => '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
+        'default' => '{domain_legend},domaintitle;'.
+            '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
             '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;'.
             '{page_legend},showcaseDetailPage,productDetailPage,'.
             'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage,ratingPage;'.
@@ -57,6 +96,13 @@ $GLOBALS['TL_DCA'][$strName] = [
         ],
         'tstamp' => [
             'sql' => 'int unsigned NOT NULL default 0'
+        ],
+        'domaintitle' => [
+            'exclude'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'eval'                    => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'aiAssistantName' => [
             'exclude'                 => true,

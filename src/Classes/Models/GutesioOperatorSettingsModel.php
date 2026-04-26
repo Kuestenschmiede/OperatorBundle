@@ -17,11 +17,21 @@ class GutesioOperatorSettingsModel extends Model
 
     public static function findSettings()
     {
+        global $objPage;
+
+        if ($objPage !== null) {
+            $rootPage = \Contao\PageModel::findByPk($objPage->rootId);
+            if ($rootPage !== null && $rootPage->rootTitle !== '') {
+                $objSettings = static::findOneBy('domaintitle', $rootPage->rootTitle);
+                if ($objSettings !== null) {
+                    return $objSettings;
+                }
+            }
+        }
+
         $collSettings = static::findAll();
         if ($collSettings) {
-            foreach ($collSettings as $objSettings) {
-                return $objSettings;
-            }
+            return $collSettings->current();
         }
 
         return null;

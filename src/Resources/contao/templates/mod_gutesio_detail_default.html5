@@ -10,8 +10,8 @@ $this->block('detailpage_default'); ?>
 <?php $this->endblock(); //detailpage_showcase_meta ?>
 
 <?php
-$data = json_decode(json_encode($this->detailData));
-$alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
+$data = (object) $this->detailData;
+$alias = property_exists($data,'alias') ? $data->alias : ($data->uuid ?? '');
 ?>
 
 <script>window.detailData = <?php echo json_encode($data); ?></script>
@@ -650,13 +650,21 @@ $alias = property_exists($data,'alias') ? $data->alias : $data->uuid;
                         $onlyTypes = [];
                         if (isset($data->types) && is_array($data->types)) {
                             foreach ($data->types as $type) {
-                                $onlyTypes[] = $type->label;
+                                if (is_object($type)) {
+                                    $onlyTypes[] = $type->label;
+                                } elseif (is_array($type)) {
+                                    $onlyTypes[] = $type['label'] ?? '';
+                                }
                             }
                         }
 
                         if (isset($data->rawTypes) && !empty($data->rawTypes)) {
                             foreach ($data->rawTypes as $rawType) {
-                                $onlyTypes[] = $rawType->label;
+                                if (is_object($rawType)) {
+                                    $onlyTypes[] = $rawType->label;
+                                } elseif (is_array($rawType)) {
+                                    $onlyTypes[] = $rawType['label'] ?? '';
+                                }
                             }
                         }
                         ?>
@@ -1485,9 +1493,13 @@ if ($imprintData) {
 <?php endif; ?>
 
 <?php
-$setting = \Contao\Database::getInstance()->prepare("SELECT ratingPage FROM tl_gutesio_operator_settings LIMIT 1")
-    ->execute()->fetchAssoc();
-$hasRatingPage = ($setting && $setting['ratingPage']);
+try {
+    $setting = \Contao\Database::getInstance()->prepare("SELECT * FROM tl_gutesio_operator_settings LIMIT 1")
+        ->execute()->fetchAssoc();
+} catch (\Exception $e) {
+    $setting = null;
+}
+$hasRatingPage = ($setting && isset($setting['ratingPage']) && $setting['ratingPage']);
 ?>
 <?php if ((isset($data->avgRating) && $data->avgRating > 0) || $hasRatingPage): ?>
     <div id="ratingSection" class="detail-view__rating-container">

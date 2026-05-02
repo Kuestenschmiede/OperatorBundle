@@ -36,6 +36,12 @@ class SitemapListener
     private function isOfferTypeinModule($category, $type) : bool
     {
         if ($category && $type) {
+            static $moduleCache = [];
+            $cacheKey = $category . '_' . $type;
+            if (isset($moduleCache[$cacheKey])) {
+                return $moduleCache[$cacheKey];
+            }
+
             $db = Database::getInstance();
 
             $moduleResult = $db->prepare("SELECT id FROM tl_module " .
@@ -49,18 +55,17 @@ class SitemapListener
                 foreach ($moduleResult as $module) {
                     if ($module['id']) {
                         $result = $db->prepare("SELECT id FROM tl_content " .
-                            "WHERE `type` = 'module' AND `module` = ? AND NOT `invisible` = '1'")->execute($module['id'])->fetchAllAssoc();
+                            "WHERE `type` = 'module' AND `module` = ? AND NOT `invisible` = '1' LIMIT 1")->execute($module['id'])->fetchAllAssoc();
                         if ($result) {
                             //ToDo check visible parent (article)
                             //Todo check tl_layout modules
                             //ToDo check tags (3)
-                            return true;
+                            return $moduleCache[$cacheKey] = true;
                         }
-                    } else {
-                        return false;
                     }
                 }
             }
+            return $moduleCache[$cacheKey] = false;
         }
 
         return false;
@@ -69,11 +74,27 @@ class SitemapListener
     private function getOfferUrls(array $pageIds) : array
     {
         $db = Database::getInstance();
+        // Limit total number of offers in sitemap to prevent timeout/memory issues
+        // 10000+ entries might be too much for a single request if not optimized
         $result = $db->prepare('SELECT c.uuid as uuid, t.type as type, t.uuid as category, c.alias as alias FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
-            'WHERE c.published = 1')->execute()->fetchAllAssoc();
+            'WHERE c.published = 1 LIMIT 10000')->execute()->fetchAllAssoc();
 
         $urls = [];
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        if (!$objSettings) {
+            return [];
+        }
+
+        $detailPages = [
+            'product' => $objSettings->productDetailPage,
+            'event' => $objSettings->eventDetailPage,
+            'job' => $objSettings->jobDetailPage,
+            'arrangement' => $objSettings->arrangementDetailPage,
+            'service' => $objSettings->serviceDetailPage,
+            'person' => $objSettings->personDetailPage,
+            'voucher' => $objSettings->voucherDetailPage
+        ];
 
         foreach ($pageIds as $pageId) {
             foreach ($result as $row) {
@@ -81,43 +102,21 @@ class SitemapListener
                     continue;
                 }
 
-                switch ($row['type']) {
-                    case 'product':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->productDetailPage;
-                        break;
-                    case 'event':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->eventDetailPage;
-                        break;
-                    case 'job':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->jobDetailPage;
-                        break;
-                    case 'arrangement':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->arrangementDetailPage;
-                        break;
-                    case 'service':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->serviceDetailPage;
-                        break;
-                    case 'person':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->personDetailPage;
-                        break;
-                    case 'voucher':
-                        $objSettings = GutesioOperatorSettingsModel::findSettings();
-                        $page = $objSettings->voucherDetailPage;
-                        break;
-                    default:
-                        continue 2;
+                $type = $row['type'];
+                if (!isset($detailPages[$type]) || !$detailPages[$type]) {
+                    continue;
                 }
-                $parents = PageModel::findParentsById($page);
+                $pageIdOnSettings = $detailPages[$type];
+
+                $parents = PageModel::findParentsById($pageIdOnSettings);
                 if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$pageId) {
                     continue;
                 }
-                $page = PageModel::findByPk($page);
+
+                $page = PageModel::findByPk($pageIdOnSettings);
+                if (!$page) {
+                    continue;
+                }
                 $url = $page->getAbsoluteUrl();
                 if (array_key_exists('alias', $row) && $row['alias']) {
                     $alias = $row['alias'];

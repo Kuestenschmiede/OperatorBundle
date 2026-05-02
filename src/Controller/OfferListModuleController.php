@@ -134,8 +134,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
         }
 
         // Render lightweight crawler-only content for selected bots to improve discoverability
-        // Force rendering for Lighthouse to improve performance scores regardless of backend checkbox
-        if ($isBot && ($this->model->gutesio_data_render_searchHtml || preg_match('/(Lighthouse|HeadlessChrome|Chrome-Lighthouse)/i', $requestUserAgent))) {
+        // Force rendering for Googlebot and Lighthouse to improve discoverability and performance scores regardless of backend checkbox
+        $isGoogleBot = is_string($requestUserAgent) && preg_match('/(Googlebot|GoogleOther|Google-InspectionTool)/i', $requestUserAgent);
+        if ($isBot && ($this->model->gutesio_data_render_searchHtml || $isGoogleBot || preg_match('/(Lighthouse|HeadlessChrome|Chrome-Lighthouse)/i', $requestUserAgent))) {
             // Try fragment cache to avoid regenerating the same link dump repeatedly
             try {
                 $container = System::getContainer();
@@ -663,7 +664,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $typeField->setName("types");
             $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label']);
             $typeField->setClassName("form-view__type-filter");
-            $typeField->setPlaceholder("Kategorie auswählen");
+            $typeField->setPlaceholder("Kategorie");
             $typeField->setOptions($types);
             $typeField->setMultiple(true);
             $typeField->setCache(true); //ToDo module switch
@@ -1115,47 +1116,42 @@ class OfferListModuleController extends AbstractFrontendModuleController
         if (count($childTypes)) {
             $where .= ' AND t.type IN (\'' . implode('\',\'', $childTypes) . '\')';
         }
+
+        // Limit results to prevent memory issues with 10000+ entries.
+        // Bots usually don't process more than a few thousand links per page anyway.
         $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type, c.imageCDN as image, c.alias as alias FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
-            $where)->execute()->fetchAllAssoc();
+            $where . ' LIMIT 5000')->execute()->fetchAllAssoc();
+
         $links = [];
         $seoData = [];
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        if (!$objSettings) {
+            return ['links' => [], 'seoData' => []];
+        }
+
+        $detailPages = [
+            'product' => $objSettings->productDetailPage,
+            'event' => $objSettings->eventDetailPage,
+            'job' => $objSettings->jobDetailPage,
+            'arrangement' => $objSettings->arrangementDetailPage,
+            'service' => $objSettings->serviceDetailPage,
+            'person' => $objSettings->personDetailPage,
+            'voucher' => $objSettings->voucherDetailPage
+        ];
 
         $baseUrl = C4GUtils::replaceInsertTags("{{env::url}}") . '/';
         foreach ($result as $row) {
-            $url = '';
-            switch ($row['type']) {
-                case 'product':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->productDetailPage . "}}");
-                    break;
-                case 'event':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->eventDetailPage . "}}");
-                    break;
-                case 'job':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->jobDetailPage . "}}");
-                    break;
-                case 'arrangement':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->arrangementDetailPage . "}}");
-                    break;
-                case 'service':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->serviceDetailPage . "}}");
-                    break;
-                case 'person':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->personDetailPage . "}}");
-                    break;
-                case 'voucher':
-                    $objSettings = GutesioOperatorSettingsModel::findSettings();
-                    $url = C4GUtils::replaceInsertTags("{{link_url::" . $objSettings->voucherDetailPage . "}}");
-                    break;
-                default:
-                    continue 2;
+            $type = $row['type'];
+            if (!isset($detailPages[$type]) || !$detailPages[$type]) {
+                continue;
             }
+
+            $url = C4GUtils::replaceInsertTags("{{link_url::" . $detailPages[$type] . "}}");
+            if (!$url || $url === '{{link_url::}}') {
+                continue;
+            }
+
             $alias = ($row['alias'] ?: strtolower(str_replace(['{', '}'], '', $row['uuid'])));
             if (C4GUtils::endsWith($url, '.html')) {
                 $href = str_replace('.html', '/' . $alias . '.html', $url);

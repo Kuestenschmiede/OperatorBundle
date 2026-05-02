@@ -918,7 +918,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $typeField->setName("types");
                 $typeField->setLabel($this->languageRefsFrontend['filter']['typefilter']['label'] ?: '');
                 $typeField->setClassName("form-view__type-filter");
-                $typeField->setPlaceholder("Kategorie auswählen");
+                $typeField->setPlaceholder("Kategorie");
                 $typeField->setOptions($this->getTypeOptions($selectedTypes ?: $types, $blockedTypes));
                 $typeField->setMultiple(true);
                 $typeField->setCache(true); //ToDo module switch

@@ -10,8 +10,8 @@ $this->block('detailpage_default'); ?>
 <?php $this->endblock(); //detailpage_showcase_meta ?>
 
 <?php
-$data = (object) $this->detailData;
-$alias = property_exists($data,'alias') ? $data->alias : ($data->uuid ?? '');
+$data = (object) ($this->detailData ?? []);
+$alias = (is_object($data) && property_exists($data,'alias')) ? $data->alias : ($data->uuid ?? '');
 ?>
 
 <script>window.detailData = <?php echo json_encode($data); ?></script>
@@ -130,10 +130,10 @@ $alias = property_exists($data,'alias') ? $data->alias : ($data->uuid ?? '');
                 <div class="c4g-container">
                     <?php if ($data->tags): ?>
                         <?php foreach ($data->tags as $k => $v): ?>
-                            <?php if (property_exists($v,"linkHref") && (strlen($v->linkHref) > 4) && ($v->technicalKey == "tag_online_reservation")): ?>
+                            <?php if (((is_object($v) && property_exists($v,"linkHref")) || (is_array($v) && isset($v['linkHref']))) && (strlen(is_object($v) ? $v->linkHref : $v['linkHref']) > 4) && ((is_object($v) ? $v->technicalKey : $v['technicalKey']) == "tag_online_reservation")): ?>
                                 <div class="bookingGroup">
                                     <div class="bookingButton">
-                                        <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
+                                        <a href="<?= is_object($v) ? $v->linkHref : $v['linkHref'] ?>" target="_blank" rel="noopener" title="<?= is_object($v) ? $v->name : $v['name'] ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
                                     </div>
                                     <?php if (isset($data->reservationContactEMail) && !empty($data->reservationContactEMail)): ?>
                                         <div class="bookingButton entry-content email" itemprop="email">
@@ -985,10 +985,10 @@ $alias = property_exists($data,'alias') ? $data->alias : ($data->uuid ?? '');
                         <?php if ($data->tags): ?>
                             <div class="detail-field-wrapper">
                                 <?php foreach ($data->tags as $k => $v): ?>
-                                    <?php if (property_exists($v,"linkHref") && (strlen($v->linkHref) > 4) && ($v->technicalKey == "tag_online_reservation")): ?>
+                                    <?php if (((is_object($v) && property_exists($v,"linkHref")) || (is_array($v) && isset($v['linkHref']))) && (strlen(is_object($v) ? $v->linkHref : $v['linkHref']) > 4) && ((is_object($v) ? $v->technicalKey : $v['technicalKey']) == "tag_online_reservation")): ?>
                                         <div class="bookingGroup">
                                             <div class="bookingButton">
-                                                <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener" title="<?= $v->name ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
+                                                <a href="<?= is_object($v) ? $v->linkHref : $v['linkHref'] ?>" target="_blank" rel="noopener" title="<?= is_object($v) ? $v->name : $v['name'] ?>"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['onlineReservationButton'] ?></a>
                                             </div>
                                             <?php if (isset($data->reservationContactEMail) && !empty($data->reservationContactEMail)): ?>
                                                 <div class="bookingButton entry-content email" itemprop="email">
@@ -1006,33 +1006,40 @@ $alias = property_exists($data,'alias') ? $data->alias : ($data->uuid ?? '');
                                 <div class="detail-field-wrapper__tags">
                                     <?php $coronaTag = false; $wheelchairTag = false; $familyFriendlyTag = false; ?>
                                     <?php foreach ($data->tags as $k => $v): ?>
-                                        <?php if (property_exists($v, 'image') && property_exists($v->image, 'src') && !empty($v->image->src)): ?>
-                                        <?php if ($v->technicalKey == "tag_corona") {$coronaTag = true;}; ?>
-                                        <?php if ($v->technicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
-                                        <?php if ($v->technicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
-                                        <?php if (!(($v->technicalKey == "tag_online_reservation") && property_exists($v,"linkHref") && (strlen($v->linkHref) > 4))): ?>
-                                            <div class="tag-entry <?= $v->technicalKey ?><?php if (property_exists($v,"linkHref")): ?> tag-entry__linked<?php endif; ?>">
-                                            <?php if (property_exists($v,"linkHref") && (strlen($v->linkHref) > 4)): ?>
-                                                <a href="<?= $v->linkHref ?>" target="_blank" rel="noopener"
-                                                   title="<?= $v->name ?>"
-                                                   class="detail-field-image<?php if ($v->linkHref): ?> detail-field-image__link-item<?php endif; ?>">
+                                        <?php
+                                        $vIsObj = is_object($v);
+                                        $vImage = $vIsObj ? ($v->image ?? null) : ($v['image'] ?? null);
+                                        $vTechnicalKey = $vIsObj ? ($v->technicalKey ?? '') : ($v['technicalKey'] ?? '');
+                                        $vLinkHref = $vIsObj ? ($v->linkHref ?? '') : ($v['linkHref'] ?? '');
+                                        $vName = $vIsObj ? ($v->name ?? '') : ($v['name'] ?? '');
+                                        ?>
+                                        <?php if ($vImage && (is_object($vImage) ? property_exists($vImage, 'src') : isset($vImage['src'])) && !empty(is_object($vImage) ? $vImage->src : $vImage['src'])): ?>
+                                        <?php if ($vTechnicalKey == "tag_corona") {$coronaTag = true;}; ?>
+                                        <?php if ($vTechnicalKey == "tag_wheelchair") {$wheelchairTag = true;}; ?>
+                                        <?php if ($vTechnicalKey == "tag_familyFriendly") {$familyFriendlyTag = true;}; ?>
+                                        <?php if (!(($vTechnicalKey == "tag_online_reservation") && (strlen($vLinkHref) > 4))): ?>
+                                            <div class="tag-entry <?= $vTechnicalKey ?><?php if ($vLinkHref): ?> tag-entry__linked<?php endif; ?>">
+                                            <?php if (strlen($vLinkHref) > 4): ?>
+                                                <a href="<?= $vLinkHref ?>" target="_blank" rel="noopener"
+                                                   title="<?= $vName ?>"
+                                                   class="detail-field-image<?php if ($vLinkHref): ?> detail-field-image__link-item<?php endif; ?>">
                                                     <?php else: ?>
                                                     <div class="detail-field-image">
                                                         <?php endif; ?>
                                                              <img class="img-fluid"
-                                                                 src="<?= $v->image->src ?>"
-                                                                 alt="<?= $v->image->name ?>"
+                                                                 src="<?= is_object($vImage) ? $vImage->src : $vImage['src'] ?>"
+                                                                 alt="<?= is_object($vImage) ? $vImage->name : $vImage['name'] ?>"
                                                                  data-toggle="tooltip"
                                                                  width="100" height="100"
-                                                                 data-content="<?= $v->name ?>"
-                                                                 title="<?= $v->name ?>">
-                                                        <?php if (!property_exists($v,"linkHref") || (strlen($v->linkHref) <= 4)): ?>
+                                                                 data-content="<?= $vName ?>"
+                                                                 title="<?= $vName ?>">
+                                                        <?php if (strlen($vLinkHref) <= 4): ?>
                                                     </div>
                                                     <?php else: ?>
                                                 </a>
                                             <?php endif; ?>
                                                 <div class="detail-field-text"><span
-                                                            class="detail-field-text__text"><?= $v->name ?></span></div>
+                                                            class="detail-field-text__text"><?= $vName ?></span></div>
                                             </div>
                                         <?php endif; ?>
                                     <?php endif; ?>

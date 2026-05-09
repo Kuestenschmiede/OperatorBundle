@@ -90,7 +90,17 @@ $alias = (is_object($data) && property_exists($data,'alias')) ? $data->alias : (
             <div id="anchor-menu">
                 <div class="anchor-menu__inner">
                     <ul class="anchor-menu__list">
-                        <?php if (property_exists($data, 'imageGallery_0') && $data->imageGallery_0): ?>
+                        <?php
+                        $hasGallery = false;
+                        if (property_exists($data, 'imageGallery_0') && $data->imageGallery_0) {
+                            $firstGalleryItem = $data->imageGallery_0;
+                            if (is_object($firstGalleryItem)) {
+                                if (isset($firstGalleryItem->src) && $firstGalleryItem->src) $hasGallery = true;
+                            } elseif (is_array($firstGalleryItem)) {
+                                if (isset($firstGalleryItem['src']) && $firstGalleryItem['src']) $hasGallery = true;
+                            }
+                        }
+                        if ($hasGallery): ?>
                             <li>
                                 <a href="{{env::request}}#section-id-gallery">Bildergalerie</a>
                             </li>
@@ -162,38 +172,28 @@ $alias = (is_object($data) && property_exists($data,'alias')) ? $data->alias : (
                         </div>
                         <div id="section-id-gallery" class="detail-view__image-gallery">
                             <div class="detail-view__image-gallery-inner">
-                                <?php if (property_exists($data, 'imageGallery_0') && $data->imageGallery_0): ?>
-                                    <a data-fancybox="gallery_imageGallery"
-                                       href="<?= $data->imageGallery_0->path ?>"
-                                       class="imageGallery-item first"><img
-                                                class="img-fluid"
-                                                src="<?= $data->imageGallery_0->src ?>"
-                                                alt="<?= $data->imageGallery_0->alt ?>"
-                                                width="<?= $data->imageGallery_0->width ?>"
-                                                height="<?= $data->imageGallery_0->height ?>"></a>
-                                <?php endif; ?>
-
-                                <?php if (property_exists($data, 'imageGallery_1') && $data->imageGallery_1): ?>
-                                    <a data-fancybox="gallery_imageGallery"
-                                       href="<?= $data->imageGallery_1->path ?>"
-                                       class="imageGallery-item"><img
-                                                class="img-fluid"
-                                                src="<?= $data->imageGallery_1->src ?>"
-                                                alt="<?= $data->imageGallery_1->alt ?>"
-                                                width="<?= $data->imageGallery_1->width ?>"
-                                                height="<?= $data->imageGallery_1->height ?>"></a>
-                                <?php endif; ?>
-
-                                <?php if (property_exists($data, 'imageGallery_2') && $data->imageGallery_2): ?>
-                                    <a data-fancybox="gallery_imageGallery"
-                                       href="<?= $data->imageGallery_2->path ?>"
-                                       class="imageGallery-item"><img
-                                                class="img-fluid"
-                                                src="<?= $data->imageGallery_2->src ?>"
-                                                alt="<?= $data->imageGallery_2->alt ?>"
-                                                width="<?= $data->imageGallery_2->width ?>"
-                                                height="<?= $data->imageGallery_2->height ?>"></a>
-                                <?php endif; ?>
+                                <?php for ($i = 0; $i < 20; $i++):
+                                    $prop = 'imageGallery_' . $i;
+                                    if (property_exists($data, $prop) && $data->$prop):
+                                        $galleryItem = $data->$prop;
+                                        $isObj = is_object($galleryItem);
+                                        $src = $isObj ? ($galleryItem->src ?? '') : ($galleryItem['src'] ?? '');
+                                        $path = $isObj ? ($galleryItem->path ?? '') : ($galleryItem['path'] ?? '');
+                                        $alt = $isObj ? ($galleryItem->alt ?? '') : ($galleryItem['alt'] ?? '');
+                                        $width = $isObj ? ($galleryItem->width ?? '') : ($galleryItem['width'] ?? '');
+                                        $height = $isObj ? ($galleryItem->height ?? '') : ($galleryItem['height'] ?? '');
+                                        if ($src): ?>
+                                            <a data-fancybox="gallery_imageGallery"
+                                               href="<?= $path ?>"
+                                               class="imageGallery-item<?= ($i === 0) ? ' first' : '' ?>"><img
+                                                        class="img-fluid"
+                                                        src="<?= $src ?>"
+                                                        alt="<?= $alt ?>"
+                                                        width="<?= $width ?>"
+                                                        height="<?= $height ?>"></a>
+                                        <?php endif;
+                                    endif;
+                                endfor; ?>
                             </div>
                         </div>
                     </div>
@@ -1508,13 +1508,13 @@ try {
 }
 $hasRatingPage = ($setting && isset($setting['ratingPage']) && $setting['ratingPage']);
 ?>
-<?php if ((isset($data->avgRating) && $data->avgRating > 0) || $hasRatingPage): ?>
+<?php if ((isset($data->avgRating) && $data->avgRating >= 20) || $hasRatingPage): ?>
     <div id="ratingSection" class="detail-view__rating-container">
         <div class="detail-view__rating-row">
             <div class="detail-view__rating-col">
                 <div class="detail-view__rating-inner">
                     <h4 class="rating-title mt-4 mb-4" style="display: block; text-align: center; font-style: italic;"><?= $GLOBALS['TL_LANG']['operator_showcase_list']['details']['label']['rating_title'] ?></h4>
-                    <?php if (isset($data->avgRating) && $data->avgRating > 0): ?>
+                    <?php if (isset($data->avgRating) && $data->avgRating >= 40): ?>
                         <div class="rating-stars" style="text-align: center; font-size: 1.5em; color: #f5b301;">
                             <?php
                             $stars = round($data->avgRating / 20);

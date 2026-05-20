@@ -113,12 +113,17 @@ class LoadLayersListener
         $chunks = array_chunk($elementIds, 500);
 
         foreach ($chunks as $chunk) {
-            $idCondition = " WHERE elementId IN ('" . implode("','", $chunk) . "')";
+            $chunk = array_filter(array_map('strval', $chunk));
+            if (empty($chunk)) {
+                continue;
+            }
+            $placeholders = implode(',', array_fill(0, count($chunk), '?'));
+            $idCondition = " WHERE elementId IN ($placeholders)";
 
             // Load tag-element assignments
-            $tagElementsStatement = $this->database->execute(
+            $tagElementsStatement = $this->database->prepare(
                 "SELECT tagId, elementId FROM tl_gutesio_data_tag_element" . $idCondition
-            );
+            )->execute(...$chunk);
             while ($row = $tagElementsStatement->fetchAssoc()) {
                 if (isset($this->cache['tags'][$row['tagId']])) {
                     $this->cache['elementTags'][$row['elementId']][] = $row['tagId'];
@@ -362,9 +367,14 @@ class LoadLayersListener
     {
         $configuredTypes = StringUtil::deserialize($objDataLayer->types, true);
         if ($configuredTypes) {
+            $configuredTypes = array_filter(array_map('strval', $configuredTypes));
+            if (empty($configuredTypes)) {
+                return [];
+            }
+            $placeholders = implode(',', array_fill(0, count($configuredTypes), '?'));
             $types = $this->database->prepare(
-                "SELECT * FROM tl_gutesio_data_type WHERE uuid IN ('" . implode("','", $configuredTypes) . "')"
-            )->execute()->fetchAllAssoc();
+                "SELECT * FROM tl_gutesio_data_type WHERE uuid IN ($placeholders)"
+            )->execute(...$configuredTypes)->fetchAllAssoc();
             
             return array_map(function($row) {
                 return (object) ['uuid' => $row['uuid'], 'name' => $row['name'], 'row' => function() use ($row) { return $row; }];
@@ -386,10 +396,15 @@ class LoadLayersListener
         $strPublishedElem = str_replace('{{table}}', 'elem', $this->publishedCondition);
         
         // 1. Load all relations (element <-> type)
-        $relations = $this->database->execute(
+        $typeUuids = array_filter(array_map('strval', $typeUuids));
+        if (empty($typeUuids)) {
+            return [];
+        }
+        $placeholders = implode(',', array_fill(0, count($typeUuids), '?'));
+        $relations = $this->database->prepare(
             "SELECT elementId, typeId FROM tl_gutesio_data_element_type 
-             WHERE typeId IN ('" . implode("','", $typeUuids) . "')"
-        )->fetchAllAssoc();
+             WHERE typeId IN ($placeholders)"
+        )->execute(...$typeUuids)->fetchAllAssoc();
         
         $elementUuids = [];
         $relMap = [];
@@ -408,10 +423,15 @@ class LoadLayersListener
         $chunks = array_chunk($elementUuids, 500);
         $allElements = [];
         foreach ($chunks as $chunk) {
+            $chunk = array_filter(array_map('strval', $chunk));
+            if (empty($chunk)) {
+                continue;
+            }
+            $placeholders = implode(',', array_fill(0, count($chunk), '?'));
             $query = "SELECT uuid, name, geox, geoy, showcaseIds, geojson FROM tl_gutesio_data_element AS elem 
-                      WHERE uuid IN ('" . implode("','", $chunk) . "')" . $strPublishedElem . " 
+                      WHERE uuid IN ($placeholders)" . $strPublishedElem . " 
                       ORDER BY name ASC";
-            $statement = $this->database->execute($query);
+            $statement = $this->database->prepare($query)->execute(...$chunk);
             while ($row = $statement->fetchAssoc()) {
                 $allElements[] = $row;
             }
@@ -449,10 +469,15 @@ class LoadLayersListener
             $showcaseIdsToLoad = array_unique($showcaseIdsToLoad);
             $chunks = array_chunk($showcaseIdsToLoad, 500);
             foreach ($chunks as $chunk) {
-                $showcaseResult = $this->database->execute(
+                $chunk = array_filter(array_map('strval', $chunk));
+                if (empty($chunk)) {
+                    continue;
+                }
+                $placeholders = implode(',', array_fill(0, count($chunk), '?'));
+                $showcaseResult = $this->database->prepare(
                     "SELECT uuid, name, geox, geoy, showcaseIds, geojson FROM tl_gutesio_data_element 
-                     WHERE uuid IN ('" . implode("','", $chunk) . "')"
-                )->fetchAllAssoc();
+                     WHERE uuid IN ($placeholders)"
+                )->execute(...$chunk)->fetchAllAssoc();
                 foreach ($showcaseResult as $showcaseElem) {
                     if (!isset($this->cache['elements'][$showcaseElem['uuid']])) {
                         $this->cache['elements'][$showcaseElem['uuid']] = $showcaseElem;
@@ -684,13 +709,18 @@ class LoadLayersListener
             return [];
         }
 
-        $dirTypesResult = $this->database->execute(
+        $directoryUuids = array_filter(array_map('strval', $directoryUuids));
+        if (empty($directoryUuids)) {
+            return [];
+        }
+        $placeholders = implode(',', array_fill(0, count($directoryUuids), '?'));
+        $dirTypesResult = $this->database->prepare(
             "SELECT dirType.directoryId, type.uuid AS typeId, type.name AS typeName 
              FROM tl_gutesio_data_directory_type AS dirType
              INNER JOIN tl_gutesio_data_type AS type ON dirType.typeId = type.uuid
-             WHERE dirType.directoryId IN ('" . implode("','", $directoryUuids) . "')
+             WHERE dirType.directoryId IN ($placeholders)
              ORDER BY type.name ASC"
-        )->fetchAllAssoc();
+        )->execute(...$directoryUuids)->fetchAllAssoc();
 
         $typesByDirectory = [];
         $allTypeUuids = [];

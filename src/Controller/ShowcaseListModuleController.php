@@ -1007,11 +1007,12 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 . " WHERE uuid ".C4GUtils::buildInString($types)." ORDER BY name ASC";
             $typeResult = Database::getInstance()->prepare($sql)->execute(...$types)->fetchAllAssoc();
         } else if (is_array($blockedTypes) && count($blockedTypes) > 0) {
-            $typeStr = implode(',',$blockedTypes);
+            $blockedTypes = \con4gis\ForumBundle\Classes\C4GForumHelper::deserializeIds($blockedTypes);
+            $placeholders = implode(',', array_fill(0, count($blockedTypes), '?'));
             $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
                 . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"
-                . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' AND tl_gutesio_data_type.uuid NOT IN ('".$typeStr."') ORDER BY name ASC";
-            $typeResult = Database::getInstance()->prepare($sql)->execute()->fetchAllAssoc();
+                . " WHERE tl_gutesio_data_element.releaseType NOT LIKE 'external' AND tl_gutesio_data_type.uuid NOT IN ($placeholders) ORDER BY name ASC";
+            $typeResult = Database::getInstance()->prepare($sql)->execute(...$blockedTypes)->fetchAllAssoc();
         } else {
             $sql = "SELECT DISTINCT tl_gutesio_data_type.uuid AS uuid, tl_gutesio_data_type.name AS name FROM tl_gutesio_data_type JOIN tl_gutesio_data_element_type ON tl_gutesio_data_type.uuid = tl_gutesio_data_element_type.typeId"
                 . " JOIN tl_gutesio_data_element ON tl_gutesio_data_element_type.elementId = tl_gutesio_data_element.uuid"

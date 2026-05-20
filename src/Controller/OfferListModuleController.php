@@ -570,15 +570,17 @@ class OfferListModuleController extends AbstractFrontendModuleController
     {
         $database = Database::getInstance();
         if ((is_array($selectedOfferTypes) && count($selectedOfferTypes) > 0) && !(is_array($selectedTypes) && count($selectedTypes) > 0)) {
-            $typeStr = implode("','", $selectedOfferTypes);
+            $selectedOfferTypes = array_filter(array_map('strval', $selectedOfferTypes));
+            $placeholders = implode(',', array_fill(0, count($selectedOfferTypes), '?'));
             $sql = "SELECT DISTINCT tl_gutesio_data_child_type.uuid AS uuid, tl_gutesio_data_child_type.name AS name, tl_gutesio_data_child_type.type AS type FROM tl_gutesio_data_child_type"
-                . " WHERE type IN ('" . $typeStr . "') ORDER BY name ASC";
-            $arrTypes = $database->prepare($sql)->execute()->fetchAllAssoc();
+                . " WHERE type IN ($placeholders) ORDER BY name ASC";
+            $arrTypes = $database->prepare($sql)->execute(...$selectedOfferTypes)->fetchAllAssoc();
         } else if (is_array($selectedTypes) && count($selectedTypes) > 0) {
-            $typeStr = implode("','", $selectedTypes);
+            $selectedTypes = array_filter(array_map('strval', $selectedTypes));
+            $placeholders = implode(',', array_fill(0, count($selectedTypes), '?'));
             $sql = "SELECT DISTINCT tl_gutesio_data_child_type.uuid AS uuid, tl_gutesio_data_child_type.name AS name FROM tl_gutesio_data_child_type"
-                . " WHERE uuid IN ('" . $typeStr . "') ORDER BY name ASC";
-            $arrTypes = $database->prepare($sql)->execute()->fetchAllAssoc();
+                . " WHERE uuid IN ($placeholders) ORDER BY name ASC";
+            $arrTypes = $database->prepare($sql)->execute(...$selectedTypes)->fetchAllAssoc();
         } else {
             $arrTypes = GutesioDataChildTypeModel::findAll();
             $arrTypes = $arrTypes ? $arrTypes->fetchAll() : [];

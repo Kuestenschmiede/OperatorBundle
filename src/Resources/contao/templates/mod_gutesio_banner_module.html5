@@ -418,7 +418,7 @@ $getImageDimensions = function($url) {
                   <?php // Wenn Footer bei Videos ausgeblendet wird, QR als Overlay einblenden ?>
                   <?php if (!empty($this->bannerHideFooterOnVideos) && !empty($qrcode)): ?>
                     <div class="banner__qrcode-overlay">
-                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code">
+                        <img src="<?php echo $qrcode; ?>" alt="QR-Code">
                     </div>
                   <?php endif; ?>
                   <?php if (!empty($this->bannerShowEventOverlay) && $isEvent): ?>
@@ -452,7 +452,7 @@ $getImageDimensions = function($url) {
                   <?php // Wenn Footer bei Videos ausgeblendet wird, QR als Overlay einblenden ?>
                   <?php if (!empty($this->bannerHideFooterOnVideos) && !empty($qrcode)): ?>
                     <div class="banner__qrcode-overlay">
-                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code">
+                        <img src="<?php echo $qrcode; ?>" alt="QR-Code">
                     </div>
                   <?php endif; ?>
                   <?php if (!empty($this->bannerShowEventOverlay) && $isEvent): ?>
@@ -518,7 +518,7 @@ $getImageDimensions = function($url) {
                     </div>
                     <?php if (!empty($qrcode)): ?>
                     <div class="banner__footer-qrcode">
-                        <img src="data:image/png;base64,<?php echo $qrcode; ?>" alt="QR-Code" width="150" height="150" loading="lazy">
+                        <img src="<?php echo $qrcode; ?>" alt="QR-Code" width="150" height="150" loading="lazy">
                     </div>
                     <?php endif; ?>
                 </div>
@@ -849,7 +849,7 @@ $getImageDimensions = function($url) {
       if (hasQr) {
           var qr = createEl('div', 'banner__footer-qrcode');
           var qri = createEl('img');
-          qri.src = 'data:image/png;base64,' + slide.qrcode;
+          qri.src = slide.qrcode;
           qri.alt = 'QR-Code';
           qr.appendChild(qri);
           pre.appendChild(qr);
@@ -927,6 +927,12 @@ $getImageDimensions = function($url) {
       }
       imgWrap.appendChild(vid);
       if (href){ imgWrap.appendChild(createEl('a', 'banner__cover-link', { href: href, 'aria-label': title || alt })); }
+      if (hideFooter && slide.qrcode) {
+        var qrOverlay = createEl('div', 'banner__qrcode-overlay');
+        var qrImg = createEl('img', null, { src: slide.qrcode, alt: 'QR-Code' });
+        qrOverlay.appendChild(qrImg);
+        item.appendChild(qrOverlay);
+      }
     } else {
       var mediaParent = imgWrap;
       var linkEl = null;

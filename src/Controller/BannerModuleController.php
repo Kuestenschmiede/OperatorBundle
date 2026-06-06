@@ -12,6 +12,7 @@ namespace gutesio\OperatorBundle\Controller;
 use BaconQrCode\Renderer\Color\Rgb;
 use BaconQrCode\Renderer\Eye\SquareEye;
 use BaconQrCode\Renderer\Image\ImagickImageBackEnd;
+use BaconQrCode\Renderer\Image\SvgImageBackEnd;
 use BaconQrCode\Renderer\ImageRenderer;
 use BaconQrCode\Renderer\Module\SquareModule;
 use BaconQrCode\Renderer\RendererStyle\EyeFill;
@@ -222,7 +223,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                                     'href'  => $href,
                                 ];
                                 if ($qrForImages && $href) {
-                                    $imageSlide['qrcode'] = base64_encode($this->generateQrCode($href));
+                                    $imageSlide['qrcode'] = $this->formatQrCode($this->generateQrCode($href));
                                 }
                                 $arrReturn[] = $imageSlide;
                             }
@@ -379,6 +380,12 @@ class BannerModuleController extends AbstractFrontendModuleController
 
         return $response;
     }
+    private function formatQrCode(string $data): string
+    {
+        $mime = (strpos($data, '<svg') !== false) ? 'image/svg+xml' : 'image/png';
+        return 'data:' . $mime . ';base64,' . base64_encode($data);
+    }
+
     /**
      * get the slides for the element and its children
      * @param array $element
@@ -506,7 +513,7 @@ class BannerModuleController extends AbstractFrontendModuleController
             })(($element['displaySlogan'] ?? '')) ?: $safeShortDescription,
             'href' => $detailRoute,
             //'contact' => $value['name'],
-            'qrcode' => base64_encode($this->generateQrCode($detailRoute))
+            'qrcode' => $this->formatQrCode($this->generateQrCode($detailRoute))
         ];
         if ($logoSrc) {
             $singleEle['logo'] = [
@@ -638,7 +645,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                 'slogan' => $safeShort,
                 'href' => $detailRoute,
                 'contact' => $safeContact,
-                'qrcode' => base64_encode($this->generateQrCode($detailRoute))
+                'qrcode' => $this->formatQrCode($this->generateQrCode($detailRoute))
             ];
             if ($logoSrc) {
                 $singleEle['logo'] = [
@@ -670,7 +677,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                         'href' => $detailRoute,
                         'contact' => $safeContact,
                         // QR-Code für Videos hinzufügen (Detailseite)
-                        'qrcode' => base64_encode($this->generateQrCode($detailRoute)),
+                        'qrcode' => $this->formatQrCode($this->generateQrCode($detailRoute)),
                     ];
                     if ($logoSrc) {
                         $videoSlide['logo'] = [ 'src' => $logoSrc, 'alt' => $element['name'] ];
@@ -705,7 +712,7 @@ class BannerModuleController extends AbstractFrontendModuleController
                             'href' => $detailRoute,
                             'contact' => $safeContact,
                             // QR-Code für Videos hinzufügen (Detailseite)
-                            'qrcode' => base64_encode($this->generateQrCode($detailRoute)),
+                            'qrcode' => $this->formatQrCode($this->generateQrCode($detailRoute)),
                         ];
                         if ($logoSrc) {
                             $ytSlide['logo'] = [ 'src' => $logoSrc, 'alt' => $element['name'] ];
@@ -792,69 +799,70 @@ class BannerModuleController extends AbstractFrontendModuleController
         }
     }
     /**
-     * Build a QR code PNG (binary string) for the given link using the module's theme color
-     * as the foreground color. Falls back to the classic blue if the color is not available.
+     * Build a QR code (binary PNG string or SVG XML string) for the given link
+     * using the module's theme color as the foreground color.
+     *
+     * In case Imagick fails (e.g. on nonconforming MVG primitives), it falls
+     * back to SvgImageBackEnd which is more reliable.
      */
     private function generateQrCode (String $link) {
+        $eye = SquareEye::instance();
+        $squareModule = SquareModule::instance();
+
+        // Resolve theme accent color from module, accept values with or without '#'
+        $hex = '';
+        if ($this->model) {
+            $hex = trim((string)($this->model->gutesio_banner_theme_color ?? ''));
+        }
+        if ($hex === '' || $hex[0] !== '#') {
+            $hex = ($hex !== '') ? ('#'.$hex) : '';
+        }
+        // Default blue if invalid/missing
+        if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $hex)) {
+            $hex = '#2ea1db';
+        }
+        // Normalize to 6-digit
+        if (strlen($hex) === 4) {
+            $hex = sprintf('#%1$s%1$s%2$s%2$s%3$s%3$s', $hex[1], $hex[2], $hex[3]);
+        }
+        $r = hexdec(substr($hex, 1, 2));
+        $g = hexdec(substr($hex, 3, 2));
+        $b = hexdec(substr($hex, 5, 2));
+
+        // Create a slightly darker variant for the gradient to keep visual depth
+        $darken = function(int $c, float $f): int { $v = (int) floor($c * $f); return max(0, min(255, $v)); };
+        $dr = $darken($r, 0.55);
+        $dg = $darken($g, 0.55);
+        $db = $darken($b, 0.55);
+
+        $eyeFill = new EyeFill(new Rgb($r, $g, $b), new Rgb($r, $g, $b));
+        // Foreground gradient uses darker tone to enrich modules; background stays white for scan contrast
+        $gradient = new Gradient(new Rgb($dr, $dg, $db), new Rgb($dr, $dg, $db), GradientType::HORIZONTAL());
+        $style = new RendererStyle(
+            400, // size
+            2,   // margin (quiet zone)
+            $squareModule,
+            $eye,
+            Fill::withForegroundGradient(new Rgb(255, 255, 255), $gradient, $eyeFill, $eyeFill, $eyeFill)
+        );
+
         try {
-            $eye = SquareEye::instance();
-            $squareModule = SquareModule::instance();
-
-            // Resolve theme accent color from module, accept values with or without '#'
-            $hex = '';
-            if ($this->model) {
-                $hex = trim((string)($this->model->gutesio_banner_theme_color ?? ''));
+            if (class_exists(\Imagick::class)) {
+                $renderer = new ImageRenderer($style, new ImagickImageBackEnd('png'));
+                $writer = new Writer($renderer);
+                return $writer->writeString($link);
             }
-            if ($hex === '' || $hex[0] !== '#') {
-                $hex = ($hex !== '') ? ('#'.$hex) : '';
-            }
-            // Default blue if invalid/missing
-            if (!preg_match('/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/', $hex)) {
-                $hex = '#2ea1db';
-            }
-            // Normalize to 6-digit
-            if (strlen($hex) === 4) {
-                $hex = sprintf('#%1$s%1$s%2$s%2$s%3$s%3$s', $hex[1], $hex[2], $hex[3]);
-            }
-            $r = hexdec(substr($hex, 1, 2));
-            $g = hexdec(substr($hex, 3, 2));
-            $b = hexdec(substr($hex, 5, 2));
+        } catch (\Throwable $e) {
+            // fall through to SVG fallback
+        }
 
-            // Create a slightly darker variant for the gradient to keep visual depth
-            $darken = function(int $c, float $f): int { $v = (int) floor($c * $f); return max(0, min(255, $v)); };
-            $dr = $darken($r, 0.55);
-            $dg = $darken($g, 0.55);
-            $db = $darken($b, 0.55);
-
-            $eyeFill = new EyeFill(new Rgb($r, $g, $b), new Rgb($r, $g, $b));
-            // Foreground gradient uses darker tone to enrich modules; background stays white for scan contrast
-            $gradient = new Gradient(new Rgb($dr, $dg, $db), new Rgb($dr, $dg, $db), GradientType::HORIZONTAL());
-
-            $renderer = new ImageRenderer(
-                new RendererStyle(
-                    400, // size
-                    2,   // margin (quiet zone)
-                    $squareModule,
-                    $eye,
-                    Fill::withForegroundGradient(new Rgb(255, 255, 255), $gradient, $eyeFill, $eyeFill, $eyeFill)
-                ),
-                new ImagickImageBackEnd('png')
-            );
-
+        // Fallback: render with SVG backend if Imagick is missing or fails
+        try {
+            $renderer = new ImageRenderer($style, new SvgImageBackEnd());
             $writer = new Writer($renderer);
             return $writer->writeString($link);
         } catch (\Throwable $e) {
-            // Fallback: render with safe default colors if anything goes wrong
-            $eye = SquareEye::instance();
-            $squareModule = SquareModule::instance();
-            $eyeFill = new EyeFill(new Rgb(0, 0, 0), new Rgb(0, 0, 0));
-            $gradient = new Gradient(new Rgb(0, 0, 0), new Rgb(0, 0, 0), GradientType::HORIZONTAL());
-            $renderer = new ImageRenderer(
-                new RendererStyle(400, 2, $squareModule, $eye, Fill::withForegroundGradient(new Rgb(255,255,255), $gradient, $eyeFill, $eyeFill, $eyeFill)),
-                new ImagickImageBackEnd('png')
-            );
-            $writer = new Writer($renderer);
-            return $writer->writeString($link);
+            return '';
         }
     }
 }

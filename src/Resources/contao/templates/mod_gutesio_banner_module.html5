@@ -53,7 +53,8 @@ $getImageDimensions = function($url) {
     }
     // Remove query string
     $path = explode('?', $path)[0];
-    $fullPath = TL_ROOT . '/' . ltrim($path, '/');
+    $projectDir = $this->projectDir ?? \Contao\System::getContainer()->getParameter('kernel.project_dir');
+    $fullPath = $projectDir . '/' . ltrim($path, '/');
     if (!file_exists($fullPath)) return null;
 
     $extension = strtolower(pathinfo($fullPath, PATHINFO_EXTENSION));

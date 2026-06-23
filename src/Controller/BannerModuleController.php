@@ -376,6 +376,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         } catch (\Throwable $t) {
             $template->bannerVideoTimeout = 180;
         }
+        $template->projectDir = \Contao\System::getContainer()->getParameter('kernel.project_dir');
         $response = $template->getResponse();
 
         return $response;

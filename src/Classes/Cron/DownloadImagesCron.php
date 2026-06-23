@@ -10,16 +10,21 @@
 namespace gutesio\OperatorBundle\Classes\Cron;
 
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Contao\StringUtil;
-use Contao\System;
-use con4gis\CoreBundle\Classes\Callback\C4GImportDataCallback;
 use gutesio\DataModelBundle\Classes\FileUtils;
 
 class DownloadImagesCron
 {
+    public function __construct(
+        private ContaoFramework $framework
+    ) {
+    }
+
     public function onHourly()
     {
+        $this->framework->initialize();
         $db = Database::getInstance();
         $c4gOperatorSettings = $db->prepare('SELECT * FROM tl_gutesio_operator_settings')->execute()->fetchAssoc();
         $cdnUrl = $c4gOperatorSettings['cdnUrl'];

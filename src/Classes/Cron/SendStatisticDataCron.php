@@ -3,11 +3,17 @@
 namespace gutesio\OperatorBundle\Classes\Cron;
 
 use con4gis\CoreBundle\Resources\contao\models\C4gLogModel;
+use Contao\CoreBundle\Framework\ContaoFramework;
 use Contao\Database;
 use Symfony\Component\HttpClient\HttpClient;
 
 class SendStatisticDataCron
 {
+    public function __construct(
+        private ContaoFramework $framework
+    ) {
+    }
+
     private $offerStatisticIds = [];
 
     private $showcaseStatisticIds = [];
@@ -16,6 +22,7 @@ class SendStatisticDataCron
 
     public function onHourly()
     {
+        $this->framework->initialize();
         $objSettings = \con4gis\CoreBundle\Resources\contao\models\C4gSettingsModel::findSettings();
         if (!isset($objSettings->disableImports)) {
             $statisticUrl = rtrim($objSettings->con4gisIoUrl, '/') . '/saveStats.php';

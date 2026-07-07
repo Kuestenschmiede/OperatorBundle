@@ -26,8 +26,8 @@ $GLOBALS['TL_DCA'][$strName] = [
         'notDeletable' => false,
         'notCopyable' => false,
         'onload_callback' => [
-            //[$cbClass, 'redirectToDetails'],
-            [$cbClass, 'deleteMainServerUrl']
+            //[$cbClass,'redirectToDetails'],
+            [$cbClass,'deleteMainServerUrl']
         ],
         'sql' => [
             'keys' => [
@@ -81,13 +81,8 @@ $GLOBALS['TL_DCA'][$strName] = [
     ],
 
     'palettes' => [
-        'default' => '{domain_legend},domaintitle;'.
-            '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;'.
-            '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;'.
-            '{page_legend},showcaseDetailPage,productDetailPage,'.
-            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage,ratingPage;'.
-            '{pwa_legend},dailyEventPushConfig;'.
-            '{ai_legend},aiEnabled,aiAssistantName,aiAssistantId,aiVectorStoreId,aiApiEndpoint,aiApiKey,aiModel,aiMaxContextRecords,aiAdditionalKnowledge,aiRoutingProfile;'
+        'default' => '{domain_legend},domaintitle;' . '{key_legend},cdnUrl,gutesIoUrl,gutesIoKey;' . '{map_legend},detail_profile,detail_map,popupFields,popupFieldsReduced;' . '{page_legend},showcaseDetailPage,productDetailPage,'.
+            'jobDetailPage,eventDetailPage,arrangementDetailPage,serviceDetailPage,personDetailPage,voucherDetailPage,realestateDetailPage,exhibitionDetailPage,cartPage,ratingPage;' . '{pwa_legend},dailyEventPushConfig;' . '{ai_legend},aiEnabled,aiAssistantName,aiAssistantId,aiVectorStoreId,aiApiEndpoint,aiApiKey,aiModel,aiMaxContextRecords,aiAdditionalKnowledge,aiRoutingProfile'
     ],
 
     'fields' => [
@@ -101,54 +96,54 @@ $GLOBALS['TL_DCA'][$strName] = [
             'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'maxlength' => 255, 'tl_class' => 'w50'],
+            'eval'                    => ['mandatory' => true,'maxlength' => 255,'tl_class' => 'w50'],
             'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'aiAssistantName' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 50],
+            'eval'                    => ['tl_class' => 'w50','maxlength' => 50],
             'sql'                     => "varchar(50) NOT NULL default 'KI'"
         ],
         'aiAssistantId' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 100],
+            'eval'                    => ['tl_class' => 'w50','maxlength' => 100],
             'sql'                     => "varchar(100) NOT NULL default ''"
         ],
         'aiVectorStoreId' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 100],
+            'eval'                    => ['tl_class' => 'w50','maxlength' => 100],
             'sql'                     => "varchar(100) NOT NULL default ''"
         ],
         'cdnUrl' =>[
             'exclude' => true,
             'inputType' => 'text',
-            'eval' => ['mandatory' => true, 'maxlength' => 100, 'doNotSaveEmpty' => true],
+            'eval' => ['mandatory' => true,'maxlength' => 100,'doNotSaveEmpty' => true],
             'sql' => "varchar(255) NOT NULL default ''"
         ],
         'gutesIoUrl' =>[
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'maxlength' => 100, 'doNotSaveEmpty' => true],
-            'load_callback'           => [[$cbClass, 'loadIoUrl']],
-            'save_callback'           => [[$cbClass, 'saveIoUrl']]
+            'eval'                    => ['mandatory' => true,'maxlength' => 100,'doNotSaveEmpty' => true],
+            'load_callback'           => [[$cbClass,'loadIoUrl']],
+            'save_callback'           => [[$cbClass,'saveIoUrl']]
         ],
         'gutesIoKey' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'maxlength' => 34, 'doNotSaveEmpty' => true],
-            'load_callback'           => [[$cbClass, 'loadIoKey']],
-            'save_callback'           => [[$cbClass, 'saveIoKey']]
+            'eval'                    => ['mandatory' => true,'maxlength' => 34,'doNotSaveEmpty' => true],
+            'load_callback'           => [[$cbClass,'loadIoKey']],
+            'save_callback'           => [[$cbClass,'saveIoKey']]
         ],
         'detail_profile' => [
             'exclude'                 => true,
             'inputType'               => 'select',
             'foreignKey'              => 'tl_c4g_map_profiles.name',
-            'eval'                    => ['tl_class'=>'clr', 'includeBlankOption'=>true,  'chosen'=>true, 'blankOptionLabel'=>"-",
-                'submitOnChange' => true, 'alwaysSave' => true],
-            'relation'                => ['type'=>'belongsTo', 'load'=>'eager'],
+            'eval'                    => ['tl_class'=>'clr','includeBlankOption'=>true,  'chosen'=>true,'blankOptionLabel'=>"-",
+                'submitOnChange' => true,'alwaysSave' => true],
+            'relation'                => ['type'=>'belongsTo','load'=>'eager'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
         ],
         'popupFields' => [
@@ -176,95 +171,95 @@ $GLOBALS['TL_DCA'][$strName] = [
         'detail_map' => [
             'exclude'                 => true,
             'inputType'               => 'select',
-            'eval'                    => ['tl_class'=>'clr', 'includeBlankOption'=>true,  'chosen'=>true, 'blankOptionLabel'=>"-",
-                'submitOnChange' => true, 'alwaysSave' => true],
-            'options_callback' => [GutesioModuleCallback::class, "getMapContentElements"],
+            'eval'                    => ['tl_class'=>'clr','includeBlankOption'=>true,  'chosen'=>true,'blankOptionLabel'=>"-",
+                'submitOnChange' => true,'alwaysSave' => true],
+            'options_callback' => [GutesioModuleCallback::class,"getMapContentElements"],
             'sql'                     => "int(10) unsigned NOT NULL default '0'",
         ],
         'showcaseDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'productDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'jobDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'eventDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'arrangementDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'serviceDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'personDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'voucherDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'realestateDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'exhibitionDetailPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'cartPage' => [
             'exclude'                 => true,
             'inputType'               => 'pageTree',
-            'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '0'"
         ],
         'ratingPage' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => false, 'tl_class' => 'clr'],
+            'eval'                    => ['mandatory' => false,'tl_class' => 'clr'],
             'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'taxRegular' => [
             'exclude'                 => true,
             'default'                 => '19',
             'inputType'               => 'text',
-            'eval'                    => ['fieldType' => 'digit', 'mandatory' => true, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'digit','mandatory' => true,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '19'"
         ],
         'taxReduced' => [
             'exclude'                 => true,
             'default'                 => '7',
             'inputType'               => 'text',
-            'eval'                    => ['fieldType' => 'digit', 'mandatory' => true, 'tl_class' => 'clr'],
+            'eval'                    => ['fieldType' => 'digit','mandatory' => true,'tl_class' => 'clr'],
             'sql'                     => "int(10) unsigned NOT NULL default '7'"
         ],
         'mainServerUrl' => [
@@ -286,22 +281,22 @@ $GLOBALS['TL_DCA'][$strName] = [
                         'label'     => &$GLOBALS['TL_LANG'][$strName]['pushMessage'],
                         'exclude'   => true,
                         'inputType' => 'text',
-                        'eval'      => [ 'style' => 'width: 150px;' ],
+                        'eval'      => [ 'style' => 'width: 150px' ],
                     ],
                     'subscriptionTypes' => [
                         'label'     => &$GLOBALS['TL_LANG'][$strName]['subscriptionTypes'],
                         'exclude'   => true,
                         'inputType' => 'select',
-                        'eval'      => [ 'multiple' => true, 'chosen' => true, 'style'=> 'width: 250px;' ],
+                        'eval'      => [ 'multiple' => true,'chosen' => true,'style'=> 'width: 250px' ],
                         'foreignKey'              => 'tl_c4g_push_subscription_type.name',
-                        'relation'                => ['type'=>'belongsTo', 'load'=>'eager'],
-//                        'options_callback' => [GutesioModuleCallback::class, "getSubscriptionTypes"],
+                        'relation'                => ['type'=>'belongsTo','load'=>'eager'],
+//                        'options_callback' => [GutesioModuleCallback::class,"getSubscriptionTypes"],
                     ],
                     'pushRedirectPage' => [
                         'label'     => &$GLOBALS['TL_LANG'][$strName]['pushRedirectPage'],
                         'exclude'                 => true,
                         'inputType'               => 'pageTree',
-                        'eval'                    => ['fieldType' => 'radio', 'mandatory' => false, 'tl_class' => 'clr'],
+                        'eval'                    => ['fieldType' => 'radio','mandatory' => false,'tl_class' => 'clr'],
                         'sql'                     => "int(10) unsigned NOT NULL default '0'"
                     ],
                     'sendForAllEventTypes' => [
@@ -318,49 +313,49 @@ $GLOBALS['TL_DCA'][$strName] = [
         'aiEnabled' => [
             'exclude'                 => true,
             'inputType'               => 'checkbox',
-            'eval'                    => ['tl_class' => 'w50', 'submitOnChange' => true],
+            'eval'                    => ['tl_class' => 'w50','submitOnChange' => true],
             'sql'                     => "char(1) NOT NULL default ''"
         ],
         'aiApiEndpoint' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 255],
+            'eval'                    => ['tl_class' => 'w50','maxlength' => 255],
             'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'aiApiKey' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 255, 'hideInput' => true],
+            'eval'                    => ['tl_class' => 'w50','maxlength' => 255,'hideInput' => true],
             'sql'                     => "varchar(255) NOT NULL default ''"
         ],
         'aiModel' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['tl_class' => 'w50', 'maxlength' => 50],
+            'eval'                    => ['tl_class' => 'w50','maxlength' => 50],
             'sql'                     => "varchar(50) NOT NULL default ''"
         ],
         'aiMaxContextRecords' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['rgxp' => 'digit', 'mandatory' => false, 'tl_class' => 'w50'],
+            'eval'                    => ['rgxp' => 'digit','mandatory' => false,'tl_class' => 'w50'],
             'sql'                     => "int(10) unsigned NOT NULL default 0"
         ],
         'aiAdditionalKnowledge' => [
             'exclude'                 => true,
             'inputType'               => 'textarea',
-            'eval'                    => ['tl_class' => 'clr', 'rte' => 'ace|markdown'],
+            'eval'                    => ['tl_class' => 'clr','rte' => 'ace|markdown'],
             'sql'                     => "text NULL"
         ],
         'aiRoutingProfile' => [
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['rgxp' => 'digit', 'mandatory' => false, 'tl_class' => 'w50'],
+            'eval'                    => ['rgxp' => 'digit','mandatory' => false,'tl_class' => 'w50'],
             'sql'                     => "int(10) unsigned NOT NULL default 0"
         ],
         'aiSystemPrompt' => [
             'exclude'                 => true,
             'inputType'               => 'textarea',
-            'eval'                    => ['tl_class' => 'clr', 'rte' => 'ace|markdown'],
+            'eval'                    => ['tl_class' => 'clr','rte' => 'ace|markdown'],
             'sql'                     => "text NULL"
         ],
         'aiSyncConfig' => [
@@ -383,13 +378,13 @@ $GLOBALS['TL_DCA'][$strName] = [
                             'tl_gutesio_data_child_arrangement',
                             'tl_gutesio_data_child_service'
                         ],
-                        'eval'      => ['style' => 'width: 250px;', 'includeBlankOption' => true, 'chosen' => true]
+                        'eval'      => ['style' => 'width: 250px','includeBlankOption' => true,'chosen' => true]
                     ],
                     'fields' => [
                         'label'     => &$GLOBALS['TL_LANG'][$strName]['aiSyncFields'],
                         'exclude'   => true,
                         'inputType' => 'text',
-                        'eval'      => ['style' => 'width: 400px;']
+                        'eval'      => ['style' => 'width: 400px']
                     ]
                 ]
             ],

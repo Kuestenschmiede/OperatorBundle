@@ -148,6 +148,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $html = null;
             $cacheKey = null;
             $seoData = [];
+            $objSettings = GutesioOperatorSettingsModel::findSettings();
 
             $lang = isset($objPage) && is_object($objPage) && property_exists($objPage, 'language') ? (string)$objPage->language : '';
             $childTypeCfg = (string)($this->model->gutesio_child_type ?? '');
@@ -193,9 +194,10 @@ class OfferListModuleController extends AbstractFrontendModuleController
             // Add ItemList Schema directly in controller for crawlers
             if ($seoData) {
                 $itemListElement = [];
+                $position = 1;
                 foreach ($seoData as $v) {
-                    $itemListElement[] = [
-                        "@type" => "ListItem",
+                    $itemData = [
+                        "@type" => "Thing",
                         "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
                         "url" => $v['childLink'] ?? '',
                         "image" => [
@@ -204,6 +206,82 @@ class OfferListModuleController extends AbstractFrontendModuleController
                             "width" => $v['image']['width'] ?? 841,
                             "height" => $v['image']['height'] ?? 594
                         ]
+                    ];
+
+                    if (!empty($v['description'])) {
+                        $itemData["description"] = htmlspecialchars(strip_tags($v['description']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                    }
+
+                    if (!empty($v['countRating']) && $v['countRating'] > 0) {
+                        $itemData["aggregateRating"] = [
+                            "@type" => "AggregateRating",
+                            "ratingValue" => (float)$v['avgRating'],
+                            "reviewCount" => (int)$v['countRating']
+                        ];
+                    }
+
+                    // Type specific data
+                    $type = $v['type'] ?? '';
+                    if ($type === 'product' || $type === 'voucher') {
+                        $itemData["@type"] = "Product";
+                        $price = $v['productPrice'] ?? $v['voucherPrice'] ?? 0;
+                        if ($price > 0) {
+                            $itemData["offers"] = [
+                                "@type" => "Offer",
+                                "price" => (float)$price,
+                                "priceCurrency" => "EUR",
+                                "availability" => "https://schema.org/InStock"
+                            ];
+                        }
+                    } elseif ($type === 'event') {
+                        $itemData["@type"] = "Event";
+                        if (!empty($v['beginDate'])) {
+                            $startTs = (int)$v['beginDate'];
+                            if (!empty($v['beginTime'])) {
+                                if ($v['beginTime'] < 86400) {
+                                    $startTs += (int)$v['beginTime'];
+                                } else {
+                                    $startTs = (int)$v['beginTime'];
+                                }
+                            }
+                            $itemData["startDate"] = date('c', $startTs);
+                        }
+                        if (!empty($v['endDate'])) {
+                            $endTs = (int)$v['endDate'];
+                            if (!empty($v['endTime'])) {
+                                if ($v['endTime'] < 86400) {
+                                    $endTs += (int)$v['endTime'];
+                                } else {
+                                    $endTs = (int)$v['endTime'];
+                                }
+                            }
+                            $itemData["endDate"] = date('c', $endTs);
+                        }
+                        if (!empty($v['eventPrice']) && $v['eventPrice'] > 0) {
+                             $itemData["offers"] = [
+                                "@type" => "Offer",
+                                "price" => (float)$v['eventPrice'],
+                                "priceCurrency" => "EUR",
+                                "availability" => "https://schema.org/InStock"
+                            ];
+                        }
+                    } elseif ($type === 'job') {
+                        $itemData["@type"] = "JobPosting";
+                        if (!empty($v['jobBeginDate'])) {
+                            $itemData["datePosted"] = date('c', (int)$v['jobBeginDate']);
+                        } else {
+                            $itemData["datePosted"] = date('c', time());
+                        }
+                        $itemData["hiringOrganization"] = [
+                            "@type" => "Organization",
+                            "name" => $objSettings->domaintitle ?: "Operator"
+                        ];
+                    }
+
+                    $itemListElement[] = [
+                        "@type" => "ListItem",
+                        "position" => $position++,
+                        "item" => $itemData
                     ];
                 }
 
@@ -1121,8 +1199,16 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         // Limit results to prevent memory issues with 10000+ entries.
         // Bots usually don't process more than a few thousand links per page anyway.
-        $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type, c.imageCDN as image, c.alias as alias FROM tl_gutesio_data_child c ' .
+        $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type, c.imageCDN as image, c.alias as alias, c.shortDescription as shortDescription, ' .
+            'c.avgRating as avgRating, c.countRating as countRating, ' .
+            'p.price as productPrice, e.beginDate as beginDate, e.beginTime as beginTime, e.endDate as endDate, e.endTime as endTime, e.eventPrice as eventPrice, v.credit as voucherPrice, ' .
+            'j.beginDate as jobBeginDate ' .
+            'FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
+            'LEFT JOIN tl_gutesio_data_child_product p ON c.uuid = p.childId ' .
+            'LEFT JOIN tl_gutesio_data_child_event e ON c.uuid = e.childId ' .
+            'LEFT JOIN tl_gutesio_data_child_voucher v ON c.uuid = v.childId ' .
+            'LEFT JOIN tl_gutesio_data_child_job j ON c.uuid = j.childId ' .
             $where . ' LIMIT 5000')->execute()->fetchAllAssoc();
 
         $links = [];
@@ -1166,10 +1252,26 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $href = $baseUrl . ltrim($href, '/');
             }
 
-            $links[] = "<a href=\"$href\">" . htmlspecialchars((string)($row['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "</a>";
+            $linkText = htmlspecialchars((string)($row['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            if (!empty($row['shortDescription'])) {
+                $linkText .= ' - ' . htmlspecialchars(strip_tags($row['shortDescription']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+            }
+            $links[] = "<a href=\"$href\">$linkText</a>";
 
             $seoData[] = [
                 'name' => (string)($row['name'] ?? ''),
+                'type' => (string)($row['type'] ?? ''),
+                'description' => (string)($row['shortDescription'] ?? ''),
+                'avgRating' => $row['avgRating'],
+                'countRating' => $row['countRating'],
+                'productPrice' => $row['productPrice'],
+                'eventPrice' => $row['eventPrice'],
+                'voucherPrice' => $row['voucherPrice'],
+                'jobBeginDate' => $row['jobBeginDate'],
+                'beginDate' => $row['beginDate'],
+                'beginTime' => $row['beginTime'],
+                'endDate' => $row['endDate'],
+                'endTime' => $row['endTime'],
                 'childLink' => $href,
                 'image' => [
                     'src' => (string)($row['image'] ?? ''),

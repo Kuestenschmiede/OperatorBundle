@@ -6,9 +6,9 @@ use con4gis\CoreBundle\Classes\C4GVersionProvider;
 
 if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-        ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
-        ->addField(['syncDataAutomaticly', 'updateSearchIndex', 'deleteSearchIndex'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
-        ->applyToPalette('default', 'tl_c4g_settings');
+        ->addLegend('operator_legend','expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
+        ->addField(['syncDataAutomaticly','updateSearchIndex','deleteSearchIndex'],'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->applyToPalette('default','tl_c4g_settings');
 
 
     $GLOBALS['TL_DCA']['tl_c4g_settings']['fields']['syncDataAutomaticly'] = array

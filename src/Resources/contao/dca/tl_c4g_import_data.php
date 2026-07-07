@@ -6,7 +6,7 @@ use Contao\CoreBundle\DataContainer\PaletteManipulator;
 
 if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-        ->applyToPalette('default', 'tl_c4g_import_data');
+        ->applyToPalette('default','tl_c4g_import_data');
 
 
     $GLOBALS['TL_DCA']['tl_c4g_import_data']['fields']['type'] = array

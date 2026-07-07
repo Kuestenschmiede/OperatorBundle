@@ -10,8 +10,8 @@ $str = 'tl_news_archive';
 // only add field if operator is installed
 if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-        ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
-        ->addField(['generateGutesBlog', 'gutesBlogTitle', 'gutesBlogTeaser'/*, 'gutesBlogImage'*/], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->addLegend('operator_legend','expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
+        ->addField(['generateGutesBlog','gutesBlogTitle','gutesBlogTeaser'/*,'gutesBlogImage'*/],'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
         ->applyToPalette('default', $str);
 
     // Add the multiple checkbox options
@@ -27,14 +27,14 @@ if (C4GVersionProvider::isInstalled('gutesio/operator')) {
 //            'thismonth',
         ),
         'reference'               => &$GLOBALS['TL_LANG'][$str]['references'],
-        'eval'                    => array('multiple'=>true, 'tl_class'=>'clr'),
+        'eval'                    => array('multiple'=>true,'tl_class'=>'clr'),
         'sql'                     => "blob NULL"
     );
 
     $GLOBALS['TL_DCA'][$str]['fields']['gutesBlogTitle'] = array
     (
         'inputType'               => 'text',
-        'eval'                    => ['maxlength'=>42, 'preserve_tags'=>true, 'style'=>'width: calc(100% - 50px); max-height: 480px'],
+        'eval'                    => ['maxlength'=>42,'preserve_tags'=>true,'style'=>'width: calc(100% - 50px); max-height: 480px'],
         'sql'                     => "text NULL",
         'exclude'                 => true
     );
@@ -42,7 +42,7 @@ if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     $GLOBALS['TL_DCA'][$str]['fields']['gutesBlogTeaser'] = array
     (
         'inputType'               => 'textarea',
-        'eval'                    => ['maxlength'=>420, 'preserve_tags'=>true, 'style'=>'width: calc(100% - 50px); max-height: 480px'],
+        'eval'                    => ['maxlength'=>420,'preserve_tags'=>true,'style'=>'width: calc(100% - 50px); max-height: 480px'],
         'sql'                     => "text NULL",
         'exclude'                 => true
     );
@@ -52,8 +52,8 @@ if (C4GVersionProvider::isInstalled('gutesio/operator')) {
 //        'label'             => &$GLOBALS['TL_LANG'][$strName]['gutesBlogImage'],
 //        'default'           => '',
 //        'inputType'         => 'fileTree',
-//        'save_callback'     => [[PwaConfigurationCallback::class, 'convertBinToUuid']],
-//        'eval'              => ['fieldType'=>'radio', 'files'=>true, 'extensions'=> PwaConfigurationCallback::getAllowedImageExtensions(), 'tl_class'=>'clr', 'mandatory'=>false],
+//        'save_callback'     => [[PwaConfigurationCallback::class,'convertBinToUuid']],
+//        'eval'              => ['fieldType'=>'radio','files'=>true,'extensions'=> PwaConfigurationCallback::getAllowedImageExtensions(),'tl_class'=>'clr','mandatory'=>false],
 //        'exclude'           => true
 //    );
 

@@ -11,9 +11,9 @@ $str = 'tl_c4g_push_subscription_type';
 
 if (C4GVersionProvider::isInstalled('con4gis/pwa')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-        ->addLegend('operator_legend', 'data_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
-        ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
-        ->addField([/*'notifyUpcomingEvents', */'gutesioEventTypes'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->addLegend('operator_legend','data_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
+        ->addLegend('operator_legend','expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
+        ->addField([/*'notifyUpcomingEvents', */'gutesioEventTypes'],'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
         ->applyToPalette('default', $str);
 
 //    $GLOBALS['TL_DCA'][$str]['fields']['notifyUpcomingEvents'] = array
@@ -32,8 +32,8 @@ if (C4GVersionProvider::isInstalled('con4gis/pwa')) {
         'inputType'               => 'select',
         'exclude'                 => true,
         'default'                 => [],
-        'options_callback'        => [GutesioModuleCallback::class, 'getGutesioEventTypes'],
-        'eval'                    => array('chosen'=>true,'mandatory'=>false,'multiple'=>true, 'tl_class'=>'long clr','alwaysSave'=> true),
+        'options_callback'        => [GutesioModuleCallback::class,'getGutesioEventTypes'],
+        'eval'                    => array('chosen'=>true,'mandatory'=>false,'multiple'=>true,'tl_class'=>'long clr','alwaysSave'=> true),
         'sql'                     => "blob NULL"
     );
 }

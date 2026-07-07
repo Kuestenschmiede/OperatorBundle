@@ -21,9 +21,9 @@ $GLOBALS['c4g_locationtypes'][] = 'gutesElem';
 $GLOBALS['c4g_locationtypes'][] = 'gutesPart';
 
 
-$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutes'] = "{general_legend},name,location_type,directories,types,activeTypes,skipTypes,skipElements;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard,enablePopup;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
-$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesElem'] = "{general_legend},name,location_type;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,locstyle,areaLocstyle,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard,enablePopup;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
-$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesPart'] = "{general_legend},name,location_type,types,activeTypes,skipTypes,skipElements;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard,enablePopup;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit;";
+$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutes'] = "{general_legend},name,location_type,directories,types,activeTypes,skipTypes,skipElements;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard,enablePopup;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit";
+$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesElem'] = "{general_legend},name,location_type;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,locstyle,areaLocstyle,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard,enablePopup;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit";
+$GLOBALS['TL_DCA']['tl_c4g_maps']['palettes']['gutesPart'] = "{general_legend},name,location_type,types,activeTypes,skipTypes,skipElements;{location_legend},aliasSite,initial_opened,tDontShowIfEmpty,data_layername,data_hidelayer,hide_when_in_tab,exemptFromFilter,exemptFromRealFilter,hideInStarboard,enablePopup;{protection_legend:hide},protect_element;{expert_legend:hide},excludeFromSingleLayer,be_optimize_checkboxes_limit";
 
 $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['aliasSite'] =
     [
@@ -36,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['directories'] =
     [
         'exclude' => true,
         'inputType' => 'select',
-        'options_callback' => [$cbClass, 'getConfiguredDirectories'],
+        'options_callback' => [$cbClass,'getConfiguredDirectories'],
         'eval' => [
             'multiple' => true,
             'tl_class' => 'clr',
@@ -48,7 +48,7 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['types'] =
     [
         'exclude' => true,
         'inputType' => 'select',
-        'options_callback' => [$cbClass, 'getConfiguredTypes'],
+        'options_callback' => [$cbClass,'getConfiguredTypes'],
         'eval' => [
             'multiple' => true,
             'tl_class' => 'clr',
@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['activeTypes'] =
     [
         'exclude' => true,
         'inputType' => 'select',
-        'options_callback' => [$cbClass, 'getConfiguredTypes'],
+        'options_callback' => [$cbClass,'getConfiguredTypes'],
         'eval' => [
             'multiple' => true,
             'tl_class' => 'clr',
@@ -80,7 +80,7 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['skipElements'] = [
     'default' => '',
     'exclude' => true,
     'inputType' => 'select',
-    'options_callback' => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class, 'loadShowcaseOptions'],
+    'options_callback' => [\gutesio\OperatorBundle\Classes\Callback\GutesioModuleCallback::class,'loadShowcaseOptions'],
     'eval' => [
         'mandatory' => false,
         'multiple' => true,
@@ -96,6 +96,6 @@ $GLOBALS['TL_DCA']['tl_c4g_maps']['fields']['areaLocstyle'] =
         'exclude'                 => true,
         'inputType'               => 'select',
         'options_callback'        => [$cbClass,'getLocStyles'],
-        'eval'                    => ['tl_class'=>'clr', 'chosen' => true],
+        'eval'                    => ['tl_class'=>'clr','chosen' => true],
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
     ];

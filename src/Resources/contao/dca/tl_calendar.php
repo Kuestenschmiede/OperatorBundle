@@ -8,8 +8,8 @@ $str = 'tl_calendar';
 // only add field if operator is installed
 if (C4GVersionProvider::isInstalled('gutesio/operator')) {
     Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-        ->addLegend('operator_legend', 'expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
-        ->addField(['pushUpcomingEvents','subscriptionTypes'], 'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+        ->addLegend('operator_legend','expert_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_BEFORE, true)
+        ->addField(['pushUpcomingEvents','subscriptionTypes'],'operator_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
         ->applyToPalette('default', $str);
 
 
@@ -26,8 +26,8 @@ if (C4GVersionProvider::isInstalled('gutesio/operator')) {
         'label' => &$GLOBALS['TL_LANG'][$str]['subscriptionTypes'],
         'default' => [],
         'inputType' => 'select',
-        'options_callback' => [PushNotificationCallback::class, 'getSubscriptionTypes'],
-        'eval' => array('mandatory' => false, 'tl_class' => 'clr', 'includeBlankOption' => true, 'multiple' => true, 'chosen' => true),
+        'options_callback' => [PushNotificationCallback::class,'getSubscriptionTypes'],
+        'eval' => array('mandatory' => false,'tl_class' => 'clr','includeBlankOption' => true,'multiple' => true,'chosen' => true),
         'sql' => "blob NULL",
         'exclude' => true
     ];

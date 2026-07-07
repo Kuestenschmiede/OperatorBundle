@@ -60,7 +60,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'back' => [
                 'href'                => 'key=back',
                 'class'               => 'header_back',
-                'button_callback'     => ['\con4gis\CoreBundle\Classes\Helper\DcaHelper', 'back'],
+                'button_callback'     => ['\con4gis\CoreBundle\Classes\Helper\DcaHelper','back'],
                 'icon'                => 'back.svg',
                 'label'               => &$GLOBALS['TL_LANG']['MSC']['backBT'],
             ],
@@ -98,7 +98,7 @@ $GLOBALS['TL_DCA'][$strName] = array
                 'href' => "",
                 'icon' => "",
                 'attributes' => "",
-                'button_callback' => [\gutesio\OperatorBundle\Classes\Callback\GutesioShowcaseExportCallback::class, "getExportButton"],
+                'button_callback' => [\gutesio\OperatorBundle\Classes\Callback\GutesioShowcaseExportCallback::class,"getExportButton"],
                 'route' => "create_showcase_export"
             ]
         )
@@ -107,7 +107,7 @@ $GLOBALS['TL_DCA'][$strName] = array
     //Palettes
     'palettes' => array
     (
-        'default'   =>  '{data_legend},name,types;'
+        'default'   =>  '{data_legend},name,types'
     ),
 
     //Fields
@@ -123,7 +123,7 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'             => &$GLOBALS['TL_LANG'][$strName]['name'],
             'default'           => '',
             'inputType'         => 'text',
-            'eval'              => ['mandatory' => true, 'tl_class' => 'long'],
+            'eval'              => ['mandatory' => true,'tl_class' => 'long'],
             'exclude'           => true,
             'sql'               => "varchar(255) default ''"
         ],
@@ -132,8 +132,8 @@ $GLOBALS['TL_DCA'][$strName] = array
             'label'             => &$GLOBALS['TL_LANG'][$strName]['updateViaCache'],
             'default'           => [],
             'inputType'         => 'select',
-            'options_callback'  => [\gutesio\OperatorBundle\Classes\Callback\GutesioShowcaseExportCallback::class, 'getTypeOptions'],
-            'eval'              => ['mandatory' => true, 'tl_class' => 'long', 'includeBlankOption' => false, 'multiple' => true, 'chosen' => true],
+            'options_callback'  => [\gutesio\OperatorBundle\Classes\Callback\GutesioShowcaseExportCallback::class,'getTypeOptions'],
+            'eval'              => ['mandatory' => true,'tl_class' => 'long','includeBlankOption' => false,'multiple' => true,'chosen' => true],
             'exclude'           => true,
             'sql'               => "blob NULL"
         ],

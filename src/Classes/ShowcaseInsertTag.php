@@ -34,6 +34,7 @@ class ShowcaseInsertTag
      */
     public function replaceShowcaseTags(string $insertTag)
     {
+        $insertTag = str_replace(['{{', '}}'], '', $insertTag);
         $arrTags = explode('::', $insertTag);
         if (
             (count($arrTags) === 2 && ($arrTags[0] === self::TAG) && (in_array($arrTags[1], self::TAG_PAYLOAD)) ) ||
@@ -41,7 +42,7 @@ class ShowcaseInsertTag
         ) {
             // get alias
             if (count($arrTags) === 3) {
-                $alias = $arrTags[1];
+                $alias = $arrTags[1] ?: $this->getAlias();
                 $field = $arrTags[2];
 
                 if ($field == 'count') {
@@ -63,9 +64,40 @@ class ShowcaseInsertTag
             $fileUtils = new FileUtils();
 
             if ($alias) {
-               $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ?')
-                ->execute($alias);
+               $uuidAlias = $alias;
+               if ($uuidAlias && $uuidAlias[0] !== '{') {
+                   $uuidAlias = '{' . strtoupper($uuidAlias) . '}';
+               } else {
+                   $uuidAlias = strtoupper($uuidAlias);
+               }
+
+               $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ? OR `uuid` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                ->execute($alias, $uuidAlias);
                 $arrShowcase = $objShowcase->fetchAssoc();
+                
+                if (!$arrShowcase) {
+                    $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                        ->execute(rawurlencode($alias));
+                    $arrShowcase = $objShowcase->fetchAssoc();
+                }
+
+                if (!$arrShowcase) {
+                    $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                        ->execute(urldecode($alias));
+                    $arrShowcase = $objShowcase->fetchAssoc();
+                }
+
+                if (!$arrShowcase) {
+                    $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                        ->execute(strtolower($alias));
+                    $arrShowcase = $objShowcase->fetchAssoc();
+                }
+
+                if (!$arrShowcase) {
+                    $objShowcase = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_element WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                        ->execute(strtolower(rawurlencode($alias)));
+                    $arrShowcase = $objShowcase->fetchAssoc();
+                }
 
                 if (empty($arrShowcase)) {
                     $arrShowcase = Database::getInstance()->prepare(
@@ -73,7 +105,7 @@ class ShowcaseInsertTag
                         'JOIN tl_gutesio_data_child_connection ON ' .
                         'tl_gutesio_data_child_connection.elementId = tl_gutesio_data_element.uuid ' .
                         'WHERE tl_gutesio_data_child_connection.childId = ?'
-                    )->execute('{' . $alias . '}')->fetchAssoc();
+                    )->execute($uuidAlias)->fetchAssoc();
                 }
             }
 
@@ -133,8 +165,51 @@ class ShowcaseInsertTag
                             //replace url dummy
                             $url = ((empty($_SERVER['HTTPS'])) ? 'http://' : 'https://') . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                             $metaDescription = str_replace('IO_SHOWCASE_URL', $url, $metaDescription);
+                            $metaDescription = str_replace('IO_SHOWCASE_LOCATION_URL', $url, $metaDescription);
 
-                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
+                            // Clean up remaining dummies to ensure valid JSON
+                            $metaDescription = str_replace([
+                                ',"addContext":"https://schema.org"',
+                                '"addContext":"https://schema.org",',
+                                '"addContext":"https://schema.org"',
+                                ',"image":"IO_OFFER_IMAGE"',
+                                '"image":"IO_OFFER_IMAGE",',
+                                '"image":"IO_OFFER_IMAGE"',
+                                ',"url":"IO_OFFER_URL"',
+                                '"url":"IO_OFFER_URL",',
+                                '"url":"IO_OFFER_URL"',
+                                ',"image":"IO_SHOWCASE_IMAGE"',
+                                '"image":"IO_SHOWCASE_IMAGE",',
+                                '"image":"IO_SHOWCASE_IMAGE"',
+                                ',"url":"IO_SHOWCASE_URL"',
+                                '"url":"IO_SHOWCASE_URL",',
+                                '"url":"IO_SHOWCASE_URL"',
+                                ',"location":"IO_SHOWCASE_LOCATION_URL"',
+                                '"location":"IO_SHOWCASE_LOCATION_URL",',
+                                '"location":"IO_SHOWCASE_LOCATION_URL"',
+                                ',"logo":"IO_SHOWCASE_LOGO"',
+                                '"logo":"IO_SHOWCASE_LOGO",',
+                                '"logo":"IO_SHOWCASE_LOGO"',
+                                ',"photo":"IO_SHOWCASE_PHOTO"',
+                                '"photo":"IO_SHOWCASE_PHOTO",',
+                                '"photo":"IO_SHOWCASE_PHOTO"',
+                                ',"photo":"IO_OFFER_PHOTO"',
+                                '"photo":"IO_OFFER_PHOTO",',
+                                '"photo":"IO_OFFER_PHOTO"'
+                            ], '', $metaDescription);
+
+                            $metaDescription = str_replace([
+                                'IO_OFFER_IMAGE',
+                                'IO_OFFER_URL',
+                                'IO_OFFER_PHOTO',
+                                'IO_SHOWCASE_IMAGE',
+                                'IO_SHOWCASE_LOCATION_URL',
+                                'IO_SHOWCASE_LOGO',
+                                'IO_SHOWCASE_PHOTO',
+                                'IO_SHOWCASE_URL'
+                            ], '', $metaDescription);
+
+                            return html_entity_decode($metaDescription, ENT_NOQUOTES, 'UTF-8');
                         }
 
                         break;
@@ -166,10 +241,19 @@ class ShowcaseInsertTag
         if (($pos = strpos($currentUrl, '?')) !== false) {
             $currentUrl = substr($currentUrl, 0, $pos);
         }
-        $indexOfLastSlash = strrpos($currentUrl, '/', -1);
-        // pos +1 because we want to strip the /
-        $alias = substr($currentUrl, $indexOfLastSlash + 1);
 
-        return $alias;
+        $currentUrl = trim($currentUrl, '/');
+        if ($currentUrl === '') {
+            return '';
+        }
+
+        $parts = explode('/', $currentUrl);
+        $alias = end($parts);
+
+        if (str_ends_with($alias, '.html')) {
+            $alias = substr($alias, 0, -5);
+        }
+
+        return urldecode($alias);
     }
 }

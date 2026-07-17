@@ -181,6 +181,11 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
             }
             if ($data) {
                 $objPage->pageTitle = $data['name'];
+                if (!empty($data['shortDescription'])) {
+                    $objPage->description = strip_tags(html_entity_decode($data['shortDescription']));
+                } elseif (!empty($data['description'])) {
+                    $objPage->description = substr(strip_tags(html_entity_decode($data['description'])), 0, 160);
+                }
                 $conf = new FrontendConfiguration('entrypoint_' . $model->id);
                 $components = $this->getDetailComponents($data, $request);
                 if ($data['type'] === "event" && !$model->gutesio_without_tiles) {

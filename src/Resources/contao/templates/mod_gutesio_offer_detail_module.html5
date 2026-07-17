@@ -1,7 +1,7 @@
 <?php $this->extend('mod_gutesio_detail_default'); ?>
-
+ 
 <?php $this->block('detailpage_showcase_meta'); ?>
-<?php $this->endblock(); //detailpage_showcase_meta?>
+<?php $this->endblock(); ?>
 
 <?php $this->block('detailpage_headerimage'); ?>
 <?php $this->endblock(); //detailpage_headerimage ?>

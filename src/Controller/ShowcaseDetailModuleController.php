@@ -126,6 +126,9 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $detailData = $this->getDetailData($request, $elementUuid);
             $request->getSession()->set('gutesio_element_alias', $detailData['alias']);
             $objPage->pageTitle = $detailData['name'];
+            if (!empty($detailData['description'])) {
+                $objPage->description = substr(strip_tags(html_entity_decode($detailData['description'])), 0, 160);
+            }
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
                 $childData = $model->gutesio_without_tiles ? [] : $this->getChildTileData($request, $elementUuid ?: $detailData['uuid'], $model->gutesio_data_max_data);

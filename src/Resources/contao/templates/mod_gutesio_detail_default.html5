@@ -1,17 +1,13 @@
-<?php use con4gis\CoreBundle\Classes\C4GUtils;
+<?php use con4gis\CoreBundle\Classes\C4GUtils; ?>
 
-$this->block('detailpage_default'); ?>
-
-<?php $this->block('detailpage_offer_meta'); ?>
-    {{offer::meta}}
-<?php $this->endblock();//detailpage_offer_meta ?>
-<?php $this->block('detailpage_showcase_meta'); ?>
-	{{showcase::meta}}
-<?php $this->endblock(); //detailpage_showcase_meta ?>
+<?php $this->block('detailpage_default'); ?>
 
 <?php
 $data = (object) ($this->detailData ?? []);
-$alias = (is_object($data) && property_exists($data,'alias')) ? $data->alias : ($data->uuid ?? '');
+$alias = (is_object($data) && property_exists($data,'alias') && $data->alias) ? $data->alias : ($data->uuid ?? '');
+if (!$alias) {
+    $alias = \gutesio\OperatorBundle\Classes\OfferInsertTag::getAliasStatic();
+}
 ?>
 
 <script>window.detailData = <?php echo json_encode($data); ?></script>
@@ -1185,11 +1181,12 @@ $alias = (is_object($data) && property_exists($data,'alias')) ? $data->alias : (
 
                                 <?php // Output email
                                 $outputEmail = '';
-                                if (property_exists($data, 'email') && $data->email && !empty($data->email))
+                                if (property_exists($data, 'email') && $data->email && !empty($data->email)) {
                                     $outputEmail = $data->email;
-
-                                if (property_exists($data, 'contactEmail') && $data->contactEmail && !empty($data->contactEmail))
+                                }
+                                if (property_exists($data, 'contactEmail') && $data->contactEmail && !empty($data->contactEmail)) {
                                     $outputEmail = $data->contactEmail;
+                                }
                                 ?>
 
                                 <?php if (isset($outputEmail) && !empty($outputEmail)): ?>
@@ -1340,13 +1337,43 @@ unset($newArr["components"]["detail"]);
 $newConfiguration = json_encode($newArr);
 ?>
 
-    <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-list-module">
+    <div id=<?php echo "\"$this->entrypoint\""; ?> class="projects-tile-detail-module">
         <script>
             window.frameworkData = window.frameworkData || [];
             window.frameworkData.push(<?php echo $newConfiguration; ?>);
         </script>
 
         <div style="display: none">
+            <?php $this->block('detailpage_offer_meta'); ?>
+                <?php 
+                    $currUuid = $data->uuid ?? $alias;
+                    $currUuid = str_replace(['{', '}'], '', $currUuid);
+                    $tag = "{{offer::$currUuid::meta}}";
+                    $res = C4GUtils::replaceInsertTags($tag);
+                    if ((!$res || $res === $tag) && isset($this->detailData['elementId']) && $this->detailData['elementId']) {
+                        $elId = str_replace(['{', '}'], '', $this->detailData['elementId']);
+                        $res = C4GUtils::replaceInsertTags("{{showcase::$elId::meta}}");
+                    }
+                    if ($res !== $tag) {
+                        echo $res;
+                    }
+                ?>
+            <?php $this->endblock(); ?>
+            <?php $this->block('detailpage_showcase_meta'); ?>
+                <?php 
+                    $currUuid = $data->uuid ?? $alias;
+                    $currUuid = str_replace(['{', '}'], '', $currUuid);
+                    $tag = "{{showcase::$currUuid::meta}}";
+                    $res = C4GUtils::replaceInsertTags($tag);
+                    if ($res === $tag) {
+                         // try without UUID if it was showcase::meta originally
+                         $res = C4GUtils::replaceInsertTags("{{showcase::meta}}");
+                    }
+                    if ($res !== "{{showcase::meta}}" && $res !== $tag) {
+                        echo $res;
+                    }
+                ?>
+            <?php $this->endblock(); ?>
             <?php echo $this->searchHTML; ?>
         </div>
 

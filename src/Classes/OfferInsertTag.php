@@ -30,6 +30,7 @@ class OfferInsertTag
      */
     public function replaceShowcaseTags(string $insertTag)
     {
+        $insertTag = str_replace(['{{', '}}'], '', $insertTag);
         $arrTags = explode('::', $insertTag);
         $fileUtils = new FileUtils();
 
@@ -39,7 +40,7 @@ class OfferInsertTag
         ) {
             // get alias
             if (count($arrTags) === 3) {
-                $alias = $arrTags[1];
+                $alias = $arrTags[1] ?: $this->getAlias();
                 $field = $arrTags[2];
             } else {
                 $alias = $this->getAlias();
@@ -49,10 +50,39 @@ class OfferInsertTag
             $objSettings = GutesioOperatorSettingsModel::findSettings();
             $cdnUrl = $objSettings->cdnUrl;
 
-            $uuidAlias = '{' . strtoupper($alias) . '}';
-            $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ? OR `alias` = ? ')
+            $uuidAlias = $alias;
+            if ($uuidAlias && $uuidAlias[0] !== '{') {
+                $uuidAlias = '{' . strtoupper($uuidAlias) . '}';
+            } else {
+                $uuidAlias = strtoupper($uuidAlias);
+            }
+            $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `uuid` = ? OR `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
                 ->execute($uuidAlias, $alias);
             $arrOffer = $objOffer->fetchAllAssoc();
+            if (!$arrOffer) {
+                // Try encoded alias
+                $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                    ->execute(rawurlencode($alias));
+                $arrOffer = $objOffer->fetchAllAssoc();
+            }
+            if (!$arrOffer) {
+                // Try decoded alias (just in case)
+                $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                    ->execute(urldecode($alias));
+                $arrOffer = $objOffer->fetchAllAssoc();
+            }
+            if (!$arrOffer) {
+                // Try case-insensitive alias search if not found
+                $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                    ->execute(strtolower($alias));
+                $arrOffer = $objOffer->fetchAllAssoc();
+            }
+            if (!$arrOffer) {
+                // Try case-insensitive and encoded
+                $objOffer = Database::getInstance()->prepare('SELECT * FROM tl_gutesio_data_child WHERE `alias` = ? ORDER BY metaDescription DESC, tstamp DESC')
+                    ->execute(strtolower(rawurlencode($alias)));
+                $arrOffer = $objOffer->fetchAllAssoc();
+            }
             if ($arrOffer) {
                 $arrOffer = $arrOffer[0];
                 switch ($field) {
@@ -175,7 +205,49 @@ class OfferInsertTag
                                 }
                             }
 
-                            return html_entity_decode(htmlspecialchars($metaDescription, ENT_QUOTES, 'UTF-8'));
+                            // Clean up remaining dummies to ensure valid JSON
+                            $metaDescription = str_replace([
+                                ',"addContext":"https://schema.org"',
+                                '"addContext":"https://schema.org",',
+                                '"addContext":"https://schema.org"',
+                                ',"image":"IO_OFFER_IMAGE"',
+                                '"image":"IO_OFFER_IMAGE",',
+                                '"image":"IO_OFFER_IMAGE"',
+                                ',"url":"IO_OFFER_URL"',
+                                '"url":"IO_OFFER_URL",',
+                                '"url":"IO_OFFER_URL"',
+                                ',"image":"IO_SHOWCASE_IMAGE"',
+                                '"image":"IO_SHOWCASE_IMAGE",',
+                                '"image":"IO_SHOWCASE_IMAGE"',
+                                ',"url":"IO_SHOWCASE_URL"',
+                                '"url":"IO_SHOWCASE_URL",',
+                                '"url":"IO_SHOWCASE_URL"',
+                                ',"location":"IO_SHOWCASE_LOCATION_URL"',
+                                '"location":"IO_SHOWCASE_LOCATION_URL",',
+                                '"location":"IO_SHOWCASE_LOCATION_URL"',
+                                ',"logo":"IO_SHOWCASE_LOGO"',
+                                '"logo":"IO_SHOWCASE_LOGO",',
+                                '"logo":"IO_SHOWCASE_LOGO"',
+                                ',"photo":"IO_SHOWCASE_PHOTO"',
+                                '"photo":"IO_SHOWCASE_PHOTO",',
+                                '"photo":"IO_SHOWCASE_PHOTO"',
+                                ',"photo":"IO_OFFER_PHOTO"',
+                                '"photo":"IO_OFFER_PHOTO",',
+                                '"photo":"IO_OFFER_PHOTO"'
+                            ], '', $metaDescription);
+
+                            $metaDescription = str_replace([
+                                'IO_OFFER_IMAGE',
+                                'IO_OFFER_URL',
+                                'IO_OFFER_PHOTO',
+                                'IO_SHOWCASE_IMAGE',
+                                'IO_SHOWCASE_LOCATION_URL',
+                                'IO_SHOWCASE_LOGO',
+                                'IO_SHOWCASE_PHOTO',
+                                'IO_SHOWCASE_URL'
+                            ], '', $metaDescription);
+
+                            return html_entity_decode($metaDescription, ENT_NOQUOTES, 'UTF-8');
                         }
 
                         break;
@@ -199,17 +271,31 @@ class OfferInsertTag
         }
     }
 
-    private function getAlias()
+    public static function getAliasStatic()
     {
         $currentUrl = $_SERVER['REQUEST_URI'];
         // remove query string, if it exists
         if (($pos = strpos($currentUrl, '?')) !== false) {
             $currentUrl = substr($currentUrl, 0, $pos);
         }
-        $indexOfLastSlash = strrpos($currentUrl, '/', -1);
-        // pos +1 because we want to strip the /
-        $alias = substr($currentUrl, $indexOfLastSlash + 1);
 
-        return $alias;
+        $currentUrl = trim($currentUrl, '/');
+        if ($currentUrl === '') {
+            return '';
+        }
+
+        $parts = explode('/', $currentUrl);
+        $alias = end($parts);
+
+        if (str_ends_with($alias, '.html')) {
+            $alias = substr($alias, 0, -5);
+        }
+
+        return urldecode($alias);
+    }
+
+    private function getAlias()
+    {
+        return self::getAliasStatic();
     }
 }

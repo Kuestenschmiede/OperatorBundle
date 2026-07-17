@@ -196,9 +196,23 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $itemListElement = [];
                 $position = 1;
                 foreach ($seoData as $v) {
+                    $type = $v['type'] ?? '';
+                    $itemType = "Product"; // Default to Product as most offers fit here
+                    if ($type === 'event') {
+                        $itemType = "Event";
+                    } elseif ($type === 'job') {
+                        $itemType = "JobPosting";
+                    }
+
+                    $name = htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                    $description = htmlspecialchars(strip_tags($v['description'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+                    if (!$description) {
+                        $description = $name;
+                    }
                     $itemData = [
-                        "@type" => "Thing",
-                        "name" => htmlspecialchars(strip_tags($v['name'] ?? ''), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                        "@type" => $itemType,
+                        "name" => $name,
+                        "description" => $description,
                         "url" => $v['childLink'] ?? '',
                         "image" => [
                             "@type" => "ImageObject",
@@ -208,23 +222,27 @@ class OfferListModuleController extends AbstractFrontendModuleController
                         ]
                     ];
 
-                    if (!empty($v['description'])) {
-                        $itemData["description"] = htmlspecialchars(strip_tags($v['description']), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-                    }
 
                     if (!empty($v['countRating']) && $v['countRating'] > 0) {
-                        $itemData["aggregateRating"] = [
-                            "@type" => "AggregateRating",
-                            "ratingValue" => (float)$v['avgRating'],
-                            "reviewCount" => (int)$v['countRating']
-                        ];
+                        $ratingValue = (float)$v['avgRating'];
+                        if ($ratingValue < 1) {
+                            $ratingValue = 1;
+                        }
+                        // Google supports aggregateRating for Product and Event, but not for JobPosting in Rich Results
+                        if ($itemType === "Product" || $itemType === "Event") {
+                            $itemData["aggregateRating"] = [
+                                "@type" => "AggregateRating",
+                                "ratingValue" => $ratingValue,
+                                "reviewCount" => (int)$v['countRating'],
+                                "worstRating" => 1,
+                                "bestRating" => 5
+                            ];
+                        }
                     }
 
                     // Type specific data
-                    $type = $v['type'] ?? '';
-                    if ($type === 'product' || $type === 'voucher') {
-                        $itemData["@type"] = "Product";
-                        $price = $v['productPrice'] ?? $v['voucherPrice'] ?? 0;
+                    if ($itemType === 'Product') {
+                        $price = $v['productPrice'] ?? $v['voucherPrice'] ?? $v['eventPrice'] ?? 0;
                         if ($price > 0) {
                             $itemData["offers"] = [
                                 "@type" => "Offer",
@@ -233,8 +251,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
                                 "availability" => "https://schema.org/InStock"
                             ];
                         }
-                    } elseif ($type === 'event') {
-                        $itemData["@type"] = "Event";
+                    } elseif ($itemType === 'Event') {
                         if (!empty($v['beginDate'])) {
                             $startTs = (int)$v['beginDate'];
                             if (!empty($v['beginTime'])) {
@@ -265,8 +282,22 @@ class OfferListModuleController extends AbstractFrontendModuleController
                                 "availability" => "https://schema.org/InStock"
                             ];
                         }
-                    } elseif ($type === 'job') {
-                        $itemData["@type"] = "JobPosting";
+
+                        if (!empty($v['location']['city'])) {
+                            $itemData["location"] = [
+                                "@type" => "Place",
+                                "name" => htmlspecialchars($v['location']['name'] ?: "Location", ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                "address" => [
+                                    "@type" => "PostalAddress",
+                                    "streetAddress" => htmlspecialchars(trim(($v['location']['street'] ?? '') . ' ' . ($v['location']['streetNumber'] ?? '')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                    "addressLocality" => htmlspecialchars($v['location']['city'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                    "postalCode" => htmlspecialchars($v['location']['zip'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                    "addressCountry" => "DE"
+                                ]
+                            ];
+                        }
+                    } elseif ($itemType === 'JobPosting') {
+                        $itemData["title"] = $name;
                         if (!empty($v['jobBeginDate'])) {
                             $itemData["datePosted"] = date('c', (int)$v['jobBeginDate']);
                         } else {
@@ -276,6 +307,18 @@ class OfferListModuleController extends AbstractFrontendModuleController
                             "@type" => "Organization",
                             "name" => $objSettings->domaintitle ?: "Operator"
                         ];
+                        if (!empty($v['location']['city'])) {
+                            $itemData["jobLocation"] = [
+                                "@type" => "Place",
+                                "address" => [
+                                    "@type" => "PostalAddress",
+                                    "streetAddress" => htmlspecialchars(trim(($v['location']['street'] ?? '') . ' ' . ($v['location']['streetNumber'] ?? '')), ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                    "addressLocality" => htmlspecialchars($v['location']['city'], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                    "postalCode" => htmlspecialchars($v['location']['zip'] ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                                    "addressCountry" => "DE"
+                                ]
+                            ];
+                        }
                     }
 
                     $itemListElement[] = [
@@ -288,8 +331,8 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 $schema = [
                     "@context" => "https://schema.org",
                     "@type" => "ItemList",
-                    "url" => $this->pageUrl . ltrim($request->getRequestUri(), '/'),
-                    "numberOfItems" => (string)count($seoData),
+                    "url" => $request->getUri(),
+                    "numberOfItems" => count($seoData),
                     "itemListElement" => $itemListElement
                 ];
                 $template->itemListSchema = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
@@ -1202,13 +1245,19 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $result = $database->prepare('SELECT c.uuid as uuid, c.name as name, t.type as type, c.imageCDN as image, c.alias as alias, c.shortDescription as shortDescription, ' .
             'c.avgRating as avgRating, c.countRating as countRating, ' .
             'p.price as productPrice, e.beginDate as beginDate, e.beginTime as beginTime, e.endDate as endDate, e.endTime as endTime, e.eventPrice as eventPrice, v.credit as voucherPrice, ' .
-            'j.beginDate as jobBeginDate ' .
+            'j.beginDate as jobBeginDate, ' .
+            'el.name as elName, el.locationStreet as elStreet, el.locationStreetNumber as elStreetNumber, el.locationZip as elZip, el.locationCity as elCity, ' .
+            'ee.name as eeName, ee.locationStreet as eeStreet, ee.locationStreetNumber as eeStreetNumber, ee.locationZip as eeZip, ee.locationCity as eeCity, ' .
+            'e.locationElementId as eventLocationId ' .
             'FROM tl_gutesio_data_child c ' .
             'JOIN tl_gutesio_data_child_type t ON c.typeId = t.uuid ' .
             'LEFT JOIN tl_gutesio_data_child_product p ON c.uuid = p.childId ' .
             'LEFT JOIN tl_gutesio_data_child_event e ON c.uuid = e.childId ' .
             'LEFT JOIN tl_gutesio_data_child_voucher v ON c.uuid = v.childId ' .
             'LEFT JOIN tl_gutesio_data_child_job j ON c.uuid = j.childId ' .
+            'LEFT JOIN tl_gutesio_data_child_connection conn ON c.uuid = conn.childId ' .
+            'LEFT JOIN tl_gutesio_data_element el ON conn.elementId = el.uuid ' .
+            'LEFT JOIN tl_gutesio_data_element ee ON e.locationElementId = ee.uuid ' .
             $where . ' LIMIT 5000')->execute()->fetchAllAssoc();
 
         $links = [];
@@ -1277,6 +1326,13 @@ class OfferListModuleController extends AbstractFrontendModuleController
                     'src' => (string)($row['image'] ?? ''),
                     'width' => 841,
                     'height' => 594
+                ],
+                'location' => [
+                    'name' => (string)($row['eventLocationId'] && $row['eeName'] ? $row['eeName'] : $row['elName']),
+                    'street' => (string)($row['eventLocationId'] && $row['eeStreet'] ? $row['eeStreet'] : $row['elStreet']),
+                    'streetNumber' => (string)($row['eventLocationId'] && $row['eeStreet'] ? $row['eeStreetNumber'] : $row['elStreetNumber']),
+                    'zip' => (string)($row['eventLocationId'] && $row['eeZip'] ? $row['eeZip'] : $row['elZip']),
+                    'city' => (string)($row['eventLocationId'] && $row['eeCity'] ? $row['eeCity'] : $row['elCity']),
                 ]
             ];
         }

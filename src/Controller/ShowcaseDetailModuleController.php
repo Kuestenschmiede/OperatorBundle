@@ -326,8 +326,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                         $stm = Database::getInstance()->prepare("SELECT types FROM tl_c4g_editor_configuration WHERE id = ?");
                         $configRow = $stm->execute($editorConfigId)->fetchAssoc();
                         if ($configRow && $configRow['types']) {
-                            $configTypes = StringUtil::deserialize($configRow['types'], true);
+                            $configTypes = StringUtil::deserialize($configRow['types']);
+                            if (!is_array($configTypes)) {
+                                $configTypes = json_decode($configRow['types'], true) ?: [];
+                            }
                             foreach ($configTypes as $configType) {
+                                if (!is_array($configType)) {
+                                    continue;
+                                }
                                 if (!$styleIdLine && $configType['type'] === 'linestring') {
                                     $styleIdLine = $configType['locstyle'];
                                     break;
@@ -358,8 +364,14 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
                             $stm = Database::getInstance()->prepare("SELECT types FROM tl_c4g_editor_configuration WHERE id = ?");
                             $configRow = $stm->execute($editorConfigId)->fetchAssoc();
                             if ($configRow && $configRow['types']) {
-                                $configTypes = StringUtil::deserialize($configRow['types'], true);
+                                $configTypes = StringUtil::deserialize($configRow['types']);
+                                if (!is_array($configTypes)) {
+                                    $configTypes = json_decode($configRow['types'], true) ?: [];
+                                }
                                 foreach ($configTypes as $configType) {
+                                    if (!is_array($configType)) {
+                                        continue;
+                                    }
                                     if (!$styleIdLine && $configType['type'] === 'linestring') {
                                         $styleIdLine = $configType['locstyle'];
                                     }

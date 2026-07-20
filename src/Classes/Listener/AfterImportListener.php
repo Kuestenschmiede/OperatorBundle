@@ -52,6 +52,7 @@ class AfterImportListener
 
     public function afterImportBaseData(AfterImportEvent $event, $eventName, EventDispatcherInterface $eventDispatcher)
     {
+        @set_time_limit(0);
         try {
             System::loadLanguageFile('import');
             $this->rootDir = $rootDir = System::getContainer()->getParameter('kernel.project_dir');
@@ -73,28 +74,33 @@ class AfterImportListener
 
                 //Update Search Index
                 if ($c4gSettings['updateSearchIndex'] == 1) {
-                    if (!$this->filesystem->exists($this->rootDir . '/public/robots.txt')) {
-                        $this->filesystem->touch($this->rootDir . '/public/robots.txt');
-                        $createRobots = true;
-                    }
                     $subscribers = $this->escargotFactory->getSubscriberNames();
                     $queue = new InMemoryQueue();
                     $baseUris = $this->escargotFactory->getCrawlUriCollection();
 
-                    $this->escargot = $this->escargotFactory->create($baseUris, $queue, $subscribers);
+                    if (count($baseUris) > 0) {
+                        if (!$this->filesystem->exists($this->rootDir . '/public/robots.txt')) {
+                            $this->filesystem->touch($this->rootDir . '/public/robots.txt');
+                            $createRobots = true;
+                        }
 
-                    $this->escargot = $this->escargot
-                        ->withLogger($this->createLogger())
-                        ->withConcurrency(5) //10
-                        ->withRequestDelay(0)
-                        ->withMaxRequests(20) //0
-                        ->withMaxDepth(10) //0
-                    ;
+                        $this->escargot = $this->escargotFactory->create($baseUris, $queue, $subscribers);
 
-                    $this->escargot->crawl();
+                        $this->escargot = $this->escargot
+                            ->withLogger($this->createLogger())
+                            ->withConcurrency(5) //10
+                            ->withRequestDelay(0)
+                            ->withMaxRequests(0) //0
+                            ->withMaxDepth(10) //0
+                        ;
 
-                    if ($this->filesystem->exists($this->rootDir . '/public/robots.txt') && $createRobots) {
-                        $this->filesystem->remove($this->rootDir . '/public/robots.txt');
+                        $this->escargot->crawl();
+
+                        if ($this->filesystem->exists($this->rootDir . '/public/robots.txt') && $createRobots) {
+                            $this->filesystem->remove($this->rootDir . '/public/robots.txt');
+                        }
+                    } else {
+                        C4gLogModel::addLogEntry('operator', 'No base URIs found for crawling.');
                     }
                 }
                 $automator =  new C4GMapsAutomator();

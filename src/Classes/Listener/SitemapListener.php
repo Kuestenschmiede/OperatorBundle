@@ -109,7 +109,7 @@ class SitemapListener
                 $pageIdOnSettings = $detailPages[$type];
 
                 $parents = PageModel::findParentsById($pageIdOnSettings);
-                if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$pageId) {
+                if ($parents === null || (int)$parents[count($parents) - 1]->id !== (int)$pageId) {
                     continue;
                 }
 
@@ -135,16 +135,20 @@ class SitemapListener
     {
         $db = Database::getInstance();
 
-        $stmt = $db->prepare("SELECT alias FROM tl_gutesio_data_element");
+        $stmt = $db->prepare("SELECT alias FROM tl_gutesio_data_element WHERE published = 1");
         $result = $stmt->execute()->fetchAllAssoc();
 
         $urls = [];
 
+        $objSettings = GutesioOperatorSettingsModel::findSettings();
+        if (!$objSettings) {
+            return [];
+        }
+
         foreach ($pageIds as $pageId) {
             foreach ($result as $res) {
-                $objSettings = GutesioOperatorSettingsModel::findSettings();
                 $parents = PageModel::findParentsById($objSettings->showcaseDetailPage);
-                if ($parents === null || count($parents) < 2 || (int)$parents[count($parents) - 1]->id !== (int)$pageId) {
+                if ($parents === null || (int)$parents[count($parents) - 1]->id !== (int)$pageId) {
                     continue;
                 }
 

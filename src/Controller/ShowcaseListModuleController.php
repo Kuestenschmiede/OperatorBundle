@@ -461,7 +461,6 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
 
         $rowData = [];
         foreach ($data as $key => $row) {
-            $types = [];
             if (!is_array($row) || !$row['uuid']) {
                 unset($data[$key]);
                 continue;
@@ -472,21 +471,49 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
                 $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
                 if ($result) {
                     $row['on_wishlist'] = "1";
+                    $row['not_on_wishlist'] = "0";
                 } else {
+                    $row['on_wishlist'] = "0";
                     $row['not_on_wishlist'] = "1";
                 }
             } else {
-                // Kein Client-Cookie vorhanden: Standardmäßig "Merken" anzeigen,
-                // damit die Buttons nicht ganz verschwinden, wenn gecachte/neutralisierte
-                // Antworten ausgeliefert werden.
-                if (!isset($row['on_wishlist']) && !isset($row['not_on_wishlist'])) {
-                    $row['not_on_wishlist'] = "1";
+                $row['on_wishlist'] = "0";
+                $row['not_on_wishlist'] = "1";
+            }
+
+            $row['on_wishlist'] = $row['on_wishlist'] ?? '0';
+            $row['not_on_wishlist'] = $row['not_on_wishlist'] ?? '0';
+            $row['ownerMemberId'] = (string)($row['ownerMemberId'] ?? '0');
+            $typeLabels = [];
+            if (isset($row['types']) && is_array($row['types'])) {
+                foreach ($row['types'] as $type) {
+                    $typeLabels[] = $type['label'];
                 }
             }
-            foreach ($row['types'] as $type) {
-                $types[] = $type['label'];
-                $row['types'] = implode(', ', $types);
+            $row['types'] = implode(', ', $typeLabels);
+
+            if (isset($row['tags']) && is_array($row['tags'])) {
+                foreach ($row['tags'] as $tKey => $tag) {
+                    if (is_array($tag)) {
+                        $row['tags'][$tKey]['technicalKey'] = $tag['technicalKey'] ?? '';
+                        $row['tags'][$tKey]['label'] = $tag['label'] ?? '';
+                        $row['tags'][$tKey]['name'] = $tag['name'] ?? '';
+                        $row['tags'][$tKey]['linkHref'] = $tag['linkHref'] ?? '';
+                        $row['tags'][$tKey]['class'] = $tag['class'] ?? '';
+                    }
+                }
             }
+
+            $row['releaseType'] = $row['releaseType'] ?? '';
+            $row['locationCity'] = $row['locationCity'] ?? '';
+            $row['selfHelpFocus'] = $row['selfHelpFocus'] ?? '';
+            $row['types'] = $row['types'] ?? '';
+            $row['name'] = $row['name'] ?? '';
+            $row['alias'] = $row['alias'] ?? '';
+            $row['foreignLink'] = $row['foreignLink'] ?? '';
+            $row['directLink'] = $row['directLink'] ?? '0';
+            $row['geox'] = $row['geox'] ?? '';
+            $row['geoy'] = $row['geoy'] ?? '';
 
             $found = false;
             foreach ($rowData as $existData) {

@@ -437,33 +437,23 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $elementIds = $module->gutesio_data_elements ? deserialize($module->gutesio_data_elements) : [];
 
         foreach ($results as $key => $row) {
-            $types = [];
             if ($clientUuid !== null) {
                 $db = Database::getInstance();
                 $sql = "SELECT * FROM tl_gutesio_data_wishlist WHERE `clientUuid` = ? AND `dataUuid` = ?";
                 $result = $db->prepare($sql)->execute($clientUuid, $row['uuid'])->fetchAssoc();
                 if ($result) {
                     $row['on_wishlist'] = "1";
+                    $row['not_on_wishlist'] = "0";
                 } else {
+                    $row['on_wishlist'] = "0";
                     $row['not_on_wishlist'] = "1";
                 }
             } else {
-                // Kein Client-Cookie vorhanden: Standardmäßig "Merken" anzeigen,
-                // damit die Buttons nicht ganz verschwinden, wenn neutrale Antworten ausgeliefert werden.
-                if (!isset($row['on_wishlist']) && !isset($row['not_on_wishlist'])) {
-                    $row['not_on_wishlist'] = "1";
-                }
+                $row['on_wishlist'] = "0";
+                $row['not_on_wishlist'] = "1";
             }
 
             if (isset($row['type']) && ($row['type'] === 'product' || $row['type'] === 'voucher')) {
-                // priceStartingAt: fehlend bedeutet i. d. R. kein "ab"-Preis → auf '0' setzen
-                if (!isset($row['priceStartingAt'])) {
-                    $row['priceStartingAt'] = '0';
-                }
-                // availableAmount: wenn nicht gesetzt, nicht als 0 behandeln (Button soll nicht als "nicht verfügbar" erscheinen)
-                if (!isset($row['availableAmount'])) {
-                    $row['availableAmount'] = '';
-                }
                 // rawPrice ableiten, wenn nicht vorhanden (z. B. bei vereinfachten Antworten)
                 if (!isset($row['rawPrice'])) {
                     $derivedRaw = '';
@@ -484,12 +474,56 @@ class OfferListModuleController extends AbstractFrontendModuleController
                 }
             }
 
-            if (key_exists('types', $row) && is_array($row['types'])) {
+            $row['on_wishlist'] = $row['on_wishlist'] ?? '0';
+            $row['not_on_wishlist'] = $row['not_on_wishlist'] ?? '0';
+            $row['offerForSale'] = $row['offerForSale'] ?? '0';
+            $row['rawPrice'] = $row['rawPrice'] ?? '';
+            $row['priceStartingAt'] = $row['priceStartingAt'] ?? '0';
+            $row['availableAmount'] = $row['availableAmount'] ?? '';
+            $row['ownerMemberId'] = (string)($row['ownerMemberId'] ?? '0');
+
+            $typeLabels = [];
+            if (isset($row['types']) && is_array($row['types'])) {
                 foreach ($row['types'] as $type) {
-                    $types[] = $type['label'];
-                    $row['types'] = implode(', ', $types);
+                    $typeLabels[] = $type['label'];
                 }
             }
+            $row['types'] = implode(', ', $typeLabels);
+
+            foreach (['tags', 'tagLinks'] as $tagField) {
+                if (isset($row[$tagField]) && is_array($row[$tagField])) {
+                    foreach ($row[$tagField] as $tKey => $tag) {
+                        if (is_array($tag)) {
+                            $row[$tagField][$tKey]['technicalKey'] = $tag['technicalKey'] ?? '';
+                            $row[$tagField][$tKey]['name'] = $tag['name'] ?? '';
+                            $row[$tagField][$tKey]['linkHref'] = $tag['linkHref'] ?? '';
+                            $row[$tagField][$tKey]['class'] = $tag['class'] ?? '';
+                        }
+                    }
+                }
+            }
+
+            $row['releaseType'] = $row['releaseType'] ?? '';
+            $row['locationCity'] = $row['locationCity'] ?? '';
+            $row['selfHelpFocus'] = $row['selfHelpFocus'] ?? '';
+            $row['typeName'] = $row['typeName'] ?? '';
+            $row['name'] = $row['name'] ?? '';
+            $row['shortDescription'] = $row['shortDescription'] ?? '';
+            $row['beginDateDisplay'] = $row['beginDateDisplay'] ?? '';
+            $row['beginTimeDisplay'] = $row['beginTimeDisplay'] ?? '';
+            $row['endDateDisplay'] = $row['endDateDisplay'] ?? '';
+            $row['endTimeDisplay'] = $row['endTimeDisplay'] ?? '';
+            $row['price'] = $row['price'] ?? '';
+            $row['strikePrice'] = $row['strikePrice'] ?? '';
+            $row['maxCredit'] = $row['maxCredit'] ?? '';
+            $row['credit'] = $row['credit'] ?? '';
+            $row['elementName'] = $row['elementName'] ?? '';
+            $row['customizableCredit'] = $row['customizableCredit'] ?? '0';
+            $row['elementLink'] = $row['elementLink'] ?? '';
+            $row['href'] = $row['href'] ?? '';
+            $row['alias'] = $row['alias'] ?? '';
+            $row['foreignLink'] = $row['foreignLink'] ?? '';
+            $row['directLink'] = $row['directLink'] ?? '0';
 
             $results[$key] = $row;
 

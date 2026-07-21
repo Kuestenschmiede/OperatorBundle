@@ -300,6 +300,7 @@ class OfferLoaderService
         $tags = Database::getInstance()->execute($sql)->fetchAllAssoc();
         $tagMap = [];
         foreach ($tags as $tag) {
+            $tag['technicalKey'] = $tag['technicalKey'] ?? '';
             $tagMap[$tag['uuid']] = $tag;
         }
 
@@ -647,6 +648,7 @@ class OfferLoaderService
                 if ($file) {
                     $icon = [
                         'name' => $r['name'],
+                        'technicalKey' => $r['technicalKey'] ?? '',
                         'image' => [
                             'src' => $file,
                             'alt' => $r['name']

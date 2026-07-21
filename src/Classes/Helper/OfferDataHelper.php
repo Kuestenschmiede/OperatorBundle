@@ -190,6 +190,7 @@ class OfferDataHelper
 
             $tagLinks[] = [
                 'name' => $currentTag['name'],
+                'technicalKey' => $currentTag['technicalKey'] ?? '',
                 'image' => [
                     'src' => $currentTag['imageCDN'] ? $this->getImageLink($currentTag, 100, 100) : "",
                     'alt' => $currentTag['name'],

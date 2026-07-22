@@ -234,13 +234,24 @@ services:
 
     gutesio.onImportHandleDatabaseValue:
       class: gutesio\OperatorBundle\Classes\Listener\ImportHandleValueListener
+      arguments:
+        - '%kernel.project_dir%'
       tags:
         - { name: kernel.event_listener, event: con4gis.import.handle_database_value, method: onHandleDatabaseValue, priority: 1000 }
 
     gutesio.onImportHandleSerializedValue:
       class: gutesio\OperatorBundle\Classes\Listener\ImportHandleValueListener
+      arguments:
+        - '%kernel.project_dir%'
       tags:
         - { name: kernel.event_listener, event: con4gis.import.handle_serialized_value, method: onHandleSerializedValue, priority: 1000 }
+
+    gutesio.onAfterImportEditorConfig:
+      class: gutesio\OperatorBundle\Classes\Listener\ImportHandleValueListener
+      arguments:
+        - '%kernel.project_dir%'
+      tags:
+        - { name: kernel.event_listener, event: con4gis.import.basedata.after, method: onAfterImport, priority: 500 }
 
     gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator:
       tags:

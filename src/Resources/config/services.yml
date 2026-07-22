@@ -232,15 +232,13 @@ services:
       tags:
         - { name: kernel.event_listener, event: con4gis.import.skip_dataset, method: onImportSkip, priority: 1024 }
 
-    gutesio.onImportHandleDatabaseValue:
+    gutesio.onImportHandleValue:
       class: gutesio\OperatorBundle\Classes\Listener\ImportHandleValueListener
+      arguments:
+        - '%kernel.project_dir%'
       tags:
-        - { name: kernel.event_listener, event: con4gis.import.handle_database_value, method: onHandleDatabaseValue, priority: 1000 }
-
-    gutesio.onImportHandleSerializedValue:
-      class: gutesio\OperatorBundle\Classes\Listener\ImportHandleValueListener
-      tags:
-        - { name: kernel.event_listener, event: con4gis.import.handle_serialized_value, method: onHandleSerializedValue, priority: 1000 }
+        - { name: kernel.event_listener, event: con4gis.import.skip_dataset, method: onImportSkip, priority: 1000 }
+        - { name: kernel.event_listener, event: con4gis.import.basedata.after, method: onAfterImport, priority: 1000 }
 
     gutesio\OperatorBundle\Classes\Cron\GutesBlogGenerator:
       tags:

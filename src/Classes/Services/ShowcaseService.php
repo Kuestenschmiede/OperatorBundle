@@ -586,11 +586,19 @@ class ShowcaseService
                 "WHERE (releaseType = '" . self::INTERNAL . "' OR releaseType = '" . self::INTER_REGIONAL . "' OR releaseType = '') AND alias = ?")
             ->execute($alias)->fetchAllAssoc();
 
-        if (!$arrResult || (count($typeIds) && !$this->checkTypes($arrResult['uuid'], $typeIds))) {
+        if (!$arrResult || (count($typeIds) && !$this->checkTypes($arrResult[0]['uuid'], $typeIds))) {
             return [];
         }
 
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
+        if ($returnData && !isset($returnData['uuid']) && isset($returnData[0])) {
+            $returnData = $returnData[0];
+        }
+
+        if (!$returnData) {
+            return [];
+        }
+
         $returnData['rawTypes'] = $returnData['types'];
         $tags = $returnData['tags'];
         foreach ($tags as $key => $tag) {
@@ -633,7 +641,15 @@ class ShowcaseService
         }
 
         $returnData = $this->convertDbResult($arrResult, ['loadTagsComplete' => true, 'details' => true]);
-        $returnData['rawTypes'] = $returnData['types'];
+        if ($returnData && !isset($returnData['uuid']) && isset($returnData[0])) {
+            $returnData = $returnData[0];
+        }
+
+        if (!$returnData) {
+            return [];
+        }
+
+        $returnData['rawTypes'] = $returnData['types'] ?? [];
         $typeString = '';
         foreach ($returnData['types'] as $key => $type) {
             $typeString .= $type['label'];

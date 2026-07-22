@@ -298,6 +298,9 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         MapsResourceLoader::loadResources([], $mapData);
 
         $detailData = $this->getDetailData($request, $elem['uuid'] ?? 0);
+        if (!is_array($detailData)) {
+            $detailData = [];
+        }
 
         if ($detailData && ($detailData['geojson'] ?? null)) {
             // ...
@@ -314,7 +317,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             $locationType = 'Point';
             $styleIdLine = null;
             $styleIdPoint = null;
-            if (!empty($detailData['rawTypes'])) {
+            if (!empty($detailData['rawTypes']) && is_array($detailData['rawTypes']) && isset($detailData['rawTypes'][0]) && is_array($detailData['rawTypes'][0])) {
                 $typeId = $detailData['rawTypes'][0]['value'];
                 $stm = Database::getInstance()->prepare("SELECT locstyle, loctype, editorConfig FROM tl_gutesio_data_type WHERE id = ? OR uuid = ?");
                 $typeRow = $stm->execute($typeId, $typeId)->fetchAssoc();

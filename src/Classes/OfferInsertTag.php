@@ -247,6 +247,9 @@ class OfferInsertTag
                                 'IO_SHOWCASE_URL'
                             ], '', $metaDescription);
 
+                            // Fix any double escaped quotes or invalid backslashes in JSON
+                            $metaDescription = str_replace('\\\\"', '\"', $metaDescription);
+
                             return html_entity_decode($metaDescription, ENT_NOQUOTES, 'UTF-8');
                         }
 

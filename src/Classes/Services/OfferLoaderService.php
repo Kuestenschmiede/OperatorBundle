@@ -152,13 +152,23 @@ class OfferLoaderService
             ];
         }
 
+        $elements = [];
+        if ($this->model && $this->model->gutesio_data_elements) {
+            $elements = StringUtil::deserialize($this->model->gutesio_data_elements, true);
+        }
+        if (isset($filterData['elements']) && is_array($filterData['elements']) && count($filterData['elements']) > 0) {
+            $elements = array_merge($elements, $filterData['elements']);
+            $elements = array_values(array_unique($elements));
+        }
+
         $eventFilterData = [
             'tags' => $tagFilter ? $tagIds : [],
             'categories' => $categoryFilter ? $categoryIds : [],
             'date' => $dateFilter ? ['from' => ($filterData['filterFrom'] ?? null), 'until' => ($filterData['filterUntil'] ?? null)] : [],
             'sort' => $sortFilter ? $filterData['sorting'] : 'date',
-            'location' => $filterData['location'],
-            'childs' => $childs
+            'location' => $filterData['location'] ?? null,
+            'childs' => $childs,
+            'elements' => $elements
         ];
 
         // handle category selection from module settings

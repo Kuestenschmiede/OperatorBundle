@@ -102,7 +102,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         }
         $this->offerService->setPageUrl($pageUrl);
         $this->offerService->setRequest($request);
-        $limit = (int) $model->gutesio_data_limit ?: 1;
+        $limit = (int) $model->gutesio_data_limit ?: 30;
         $max = (int) $model->gutesio_data_max_data;
         if ($max > 0 && $max < $limit) {
             $limit = $max;
@@ -405,6 +405,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
 
         $module = ModuleModel::findByPk($moduleId);
         if ($module) {
+            $elementIds = $module->gutesio_data_elements ? StringUtil::deserialize($module->gutesio_data_elements, true) : [];
+            $filterData['elements'] = $elementIds;
+
             if (!$module->gutesio_enable_filter && $module->gutesio_child_sort_by_date) {
                 $filterData['sorting'] = 'date';
             }
@@ -419,7 +422,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
             $this->offerService->setPageUrl($this->pageUrl);
             $this->offerService->setRequest($request);
 
-            $limit = (int) $module->gutesio_data_limit ?: 1;
+            $limit = (int) $module->gutesio_data_limit ?: 30;
             if ($max === 0) {
                 $this->offerService->setLimit($limit);
             } else if ($limit + $offset <= $max) {
@@ -430,11 +433,9 @@ class OfferListModuleController extends AbstractFrontendModuleController
         } else {
             return new JsonResponse([], Response::HTTP_BAD_REQUEST);
         }
-        $type = $request->getSession()->get('gutesio_child_type', '');
+        $type = $request->hasSession() ? $request->getSession()->get('gutesio_child_type', '') : '';
         $results = $this->offerService->getListData($search, $offset, $type, $filterData);
         $clientUuid = $this->checkCookieForClientUuid($request);
-
-        $elementIds = $module->gutesio_data_elements ? StringUtil::deserialize($module->gutesio_data_elements, true) : [];
 
         foreach ($results as $key => $row) {
             if ($clientUuid !== null) {
@@ -571,7 +572,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         } catch (\Throwable $t) { /* ignore */ }
 
 
-        return new JsonResponse($results);
+        return new JsonResponse(array_values($results));
     }
 
     private function checkCookieForClientUuid(Request $request)

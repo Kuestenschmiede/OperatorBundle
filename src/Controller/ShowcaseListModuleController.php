@@ -250,7 +250,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         $class .= " c4g-" . $layoutType . "-outer";
         $tileList->setClassName($class);
         $tileList->setLayoutType($layoutType);
-        $tileList->setLoadStep($this->model->gutesio_data_limit);
+        $tileList->setLoadStep((int)$this->model->gutesio_data_limit ?: 30);
         $tileList->setLoadingText(" ");
         $tileList->setTextAfterUpdate($this->languageRefs['no_results']); //ToDo
         $tileList->setUniqueField("uuid");
@@ -315,7 +315,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
         if ($max !== 0 && $offset >= $max) {
             return new JsonResponse([]);
         }
-        $limit = (int) $moduleModel->gutesio_data_limit ?: 1;
+        $limit = (int) $moduleModel->gutesio_data_limit ?: 30;
         if ($max !== 0 && ($limit + $offset) > $max) {
             $limit = $max - $offset;
         }
@@ -552,7 +552,7 @@ class ShowcaseListModuleController extends \Contao\CoreBundle\Controller\Fronten
             }
         } catch (\Throwable $t) { /* ignore */ }
 
-        return new JsonResponse($rowData);
+        return new JsonResponse(array_values($rowData));
     }
 
     /**

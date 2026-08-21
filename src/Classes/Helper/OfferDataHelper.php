@@ -248,6 +248,13 @@ class OfferDataHelper
             $parameters[] = $filterData['location'];
             $parameters[] = $filterData['location'];
         }
+        if (isset($filterData['elements']) && is_array($filterData['elements']) && count($filterData['elements']) > 0) {
+            $filterData['elements'] = array_filter(array_map('strval', $filterData['elements']));
+            if (count($filterData['elements']) > 0) {
+                $sql .= " AND tl_gutesio_data_child_connection.elementId " . C4GUtils::buildInString($filterData['elements']);
+                $parameters = array_merge($parameters, $filterData['elements']);
+            }
+        }
 
         return ['params' => $parameters, 'sql' => $sql];
     }

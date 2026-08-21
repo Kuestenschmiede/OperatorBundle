@@ -434,7 +434,7 @@ class OfferListModuleController extends AbstractFrontendModuleController
         $results = $this->offerService->getListData($search, $offset, $type, $filterData);
         $clientUuid = $this->checkCookieForClientUuid($request);
 
-        $elementIds = $module->gutesio_data_elements ? deserialize($module->gutesio_data_elements) : [];
+        $elementIds = $module->gutesio_data_elements ? StringUtil::deserialize($module->gutesio_data_elements, true) : [];
 
         foreach ($results as $key => $row) {
             if ($clientUuid !== null) {

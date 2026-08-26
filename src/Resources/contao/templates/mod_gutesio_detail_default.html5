@@ -22,7 +22,7 @@ if (!$alias) {
 
 <?php $this->block('detailpage_headerimage'); ?>
 <?php if ($image = C4GUtils::replaceInsertTags("{{showcase::".$alias."::image}}")): ?>
-
+    <?php $GLOBALS['TL_HEAD'][] = '<link rel="preload" as="image" href="' . $image . '" fetchpriority="high">'; ?>
     <style>
         .detail-hero2 {
             background-image: url(<?= $image ?>);
@@ -40,7 +40,7 @@ if (!$alias) {
         <div class="detail-hero2__blur-layer"></div>
         <!--    Image -->
         <div class="detail-hero2__image-wrapper">
-            <img src="<?= $image ?>" alt="">
+            <img src="<?= $image ?>" alt="" fetchpriority="high" loading="eager" decoding="async">
 
         </div>
 
@@ -56,7 +56,7 @@ if (!$alias) {
 
             <?php if (C4GUtils::replaceInsertTags("{{showcase::".$alias."::logo}}")): ?>
                 <div class="detail-hero2__logo">
-                    <img src="{{showcase::<?=$alias?>::logo}}" height="150" alt="{{showcase::<?=$alias?>::name}}" class="img-fluid">
+                    <img src="{{showcase::<?=$alias?>::logo}}" height="150" alt="{{showcase::<?=$alias?>::name}}" class="img-fluid" loading="lazy" decoding="async">
                 </div>
             <?php endif ?>
         </div>
@@ -178,7 +178,11 @@ if (!$alias) {
                                         $alt = $isObj ? ($galleryItem->alt ?? '') : ($galleryItem['alt'] ?? '');
                                         $width = $isObj ? ($galleryItem->width ?? '') : ($galleryItem['width'] ?? '');
                                         $height = $isObj ? ($galleryItem->height ?? '') : ($galleryItem['height'] ?? '');
-                                        if ($src): ?>
+                                        if ($src):
+                                            if ($i === 0) {
+                                                $GLOBALS['TL_HEAD'][] = '<link rel="preload" as="image" href="' . $src . '" fetchpriority="high">';
+                                            }
+                                        ?>
                                             <a data-fancybox="gallery_imageGallery"
                                                href="<?= $path ?>"
                                                class="imageGallery-item<?= ($i === 0) ? ' first' : '' ?>"><img
@@ -186,7 +190,9 @@ if (!$alias) {
                                                         src="<?= $src ?>"
                                                         alt="<?= $alt ?>"
                                                         width="<?= $width ?>"
-                                                        height="<?= $height ?>"></a>
+                                                        height="<?= $height ?>"
+                                                        <?= ($i === 0) ? 'fetchpriority="high" loading="eager"' : 'loading="lazy"' ?>
+                                                        decoding="async"></a>
                                         <?php endif;
                                     endif;
                                 endfor; ?>
@@ -637,7 +643,9 @@ if (!$alias) {
                                        class="relatedShowcaseLogos detail-view__logos"><img
                                                 src="<?= $logo->src ?>"
                                                 alt="<?= $logo->alt ?>"
-                                                class="detail-view__logos-image"></a>
+                                                class="detail-view__logos-image"
+                                                loading="lazy"
+                                                decoding="async"></a>
                                 <?php endforeach; ?>
                             </div>
                         <?php endif; ?>
@@ -1028,7 +1036,9 @@ if (!$alias) {
                                                                  data-toggle="tooltip"
                                                                  width="100" height="100"
                                                                  data-content="<?= $vName ?>"
-                                                                 title="<?= $vName ?>">
+                                                                 title="<?= $vName ?>"
+                                                                 loading="lazy"
+                                                                 decoding="async">
                                                         <?php if (strlen($vLinkHref) <= 4): ?>
                                                     </div>
                                                     <?php else: ?>

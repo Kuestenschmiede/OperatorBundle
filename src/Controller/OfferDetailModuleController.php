@@ -105,10 +105,10 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $redirectPage = $model->gutesio_offer_list_page;
         $redirectUrl = $redirectPage ? $this->urlGenerator->generate("tl_page." . $redirectPage) : $pageUrl;
 
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js|async", ResourceLoader::JAVASCRIPT, "c4g-framework");
 
         if (!$model->gutesio_without_contact) {
-            ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
+            ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js|async", ResourceLoader::JAVASCRIPT, "c4g-maps");
         }
 
         $this->setupLanguage();
@@ -180,6 +180,15 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 $template->elementLink = '';
             }
             if ($data) {
+                if (isset($data['imageGallery_0']) && !empty($data['imageGallery_0'])) {
+                    $firstGallery = $data['imageGallery_0'];
+                    $firstSrc = is_object($firstGallery) ? ($firstGallery->src ?? '') : ($firstGallery['src'] ?? '');
+                    if ($firstSrc) {
+                        $GLOBALS['TL_HEAD'][] = '<link rel="preload" as="image" href="' . $firstSrc . '" fetchpriority="high">';
+                    }
+                } elseif (isset($data['image']) && !empty($data['image'])) {
+                    $GLOBALS['TL_HEAD'][] = '<link rel="preload" as="image" href="' . $data['image'] . '" fetchpriority="high">';
+                }
                 $objPage->pageTitle = $data['name'];
                 if (!empty($data['shortDescription'])) {
                     $objPage->description = strip_tags(html_entity_decode($data['shortDescription']));

@@ -99,8 +99,8 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         $redirectPage = $model->gutesio_showcase_list_page;
         $redirectUrl = $redirectPage ? $this->generator->generate("tl_page." . $redirectPage) : '';
 
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js", ResourceLoader::JAVASCRIPT, "c4g-framework");
-        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js", ResourceLoader::JAVASCRIPT, "c4g-maps");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gisframework/build/c4g-framework.js|async", ResourceLoader::JAVASCRIPT, "c4g-framework");
+        ResourceLoader::loadJavaScriptResource("/bundles/con4gismaps/build/c4g-maps.js|async", ResourceLoader::JAVASCRIPT, "c4g-maps");
         ResourceLoader::loadCssResource("/bundles/gutesiooperator/dist/css/c4g_detail.min.css");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/util.js|async", ResourceLoader::JAVASCRIPT, "boostrap-util");
         ResourceLoader::loadJavaScriptResource("/bundles/gutesiooperator/vendor/bootstrap/modal.js|async", ResourceLoader::JAVASCRIPT, "boostrap-modal");
@@ -131,6 +131,13 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
             }
             if (!empty($detailData)) {
                 $detailData['internal_type'] = "showcase";
+                $aliasForImage = $detailData['alias'] ?? $this->alias;
+                if ($aliasForImage) {
+                    $heroImage = C4GUtils::replaceInsertTags("{{showcase::" . $aliasForImage . "::image}}");
+                    if ($heroImage) {
+                        $GLOBALS['TL_HEAD'][] = '<link rel="preload" as="image" href="' . $heroImage . '" fetchpriority="high">';
+                    }
+                }
                 $childData = $model->gutesio_without_tiles ? [] : $this->getChildTileData($request, $elementUuid ?: $detailData['uuid'], $model->gutesio_data_max_data);
                 if ($childData !== null && count($childData) > 0) {
                     $template->hasOffers = true;

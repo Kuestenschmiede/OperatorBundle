@@ -54,8 +54,8 @@ class LoadLayersListener
     private function buildPublishedCondition(): string 
     {
         $currentTime = time();
-        return " AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < $currentTime) " .
-               "AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > $currentTime)";
+        return " AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom = 0 OR {{table}}.publishFrom <= $currentTime) " .
+               "AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil = 0 OR {{table}}.publishUntil >= $currentTime)";
     }
 
     private function resolvePath($value): string

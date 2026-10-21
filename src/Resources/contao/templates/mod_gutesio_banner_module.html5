@@ -321,11 +321,23 @@ $getImageDimensions = function($url) {
     <?php endif; ?>
     <div class="banner-slide banner__tns-container">
         <?php
-        $renderSlides = [];
+        $rawSlides = [];
         if ($lazyMode === '2' && isset($this->slidesInitial) && is_array($this->slidesInitial)) {
-            $renderSlides = $this->slidesInitial;
+            $rawSlides = $this->slidesInitial;
         } elseif (!empty($this->arr) && is_array($this->arr)) {
-            $renderSlides = $this->arr;
+            $rawSlides = $this->arr;
+        }
+        $renderSlides = [];
+        foreach ($rawSlides as $slide) {
+            $sSrc = $slide['image']['src'] ?? '';
+            $sVid = $slide['video']['src'] ?? '';
+            $sYt  = $slide['youtube']['src'] ?? '';
+            if ((!empty($sSrc) && strpos($sSrc, '/default/') === false) || !empty($sVid) || !empty($sYt)) {
+                $renderSlides[] = $slide;
+            }
+        }
+        if (empty($renderSlides)) {
+            return;
         }
         ?>
         <?php $___idx = 0; $___firstPreloadHref = null; ?>
@@ -876,9 +888,15 @@ $getImageDimensions = function($url) {
         var alt = (slide.image && slide.image.alt) || title || '';
         var src = (slide.image && slide.image.src) || '';
     var videoSrc = (slide.video && slide.video.src) || '';
+    var youtubeSrc = (slide.youtube && slide.youtube.src) || '';
     var slogan = slide.slogan || '';
     var dateTime = slide.dateTime || '';
     var location = slide.location || '';
+
+    // Ignore slides without valid media source
+    if (!src && !videoSrc && !youtubeSrc) {
+      return null;
+    }
 
     var item = createEl('div', 'banner__item');
 
@@ -959,6 +977,45 @@ $getImageDimensions = function($url) {
     return item;
   }
 
+  function setupImageErrorHandling(scope) {
+    var ctx = scope || root;
+    var imgs = ctx.querySelectorAll('img.banner__image-item');
+    imgs.forEach(function(img) {
+      if (img.dataset.hasErrorHandler) return;
+      img.dataset.hasErrorHandler = '1';
+
+      var retryCount = 0;
+      var maxRetries = 3;
+
+      var handleError = function() {
+        if (retryCount < maxRetries) {
+          retryCount++;
+          var delay = retryCount * 2000;
+          setTimeout(function() {
+            var currentSrc = img.getAttribute('src') || img.getAttribute('data-src');
+            if (currentSrc) {
+              var cleanUrl = currentSrc.split('?')[0];
+              var cacheBuster = 'retry=' + Date.now();
+              var newSrc = cleanUrl + (cleanUrl.indexOf('?') >= 0 ? '&' : '?') + cacheBuster;
+              if (img.hasAttribute('src')) {
+                img.src = newSrc;
+              } else if (img.hasAttribute('data-src')) {
+                img.setAttribute('data-src', newSrc);
+              }
+            }
+          }, delay);
+        } else {
+          var slideItem = img.closest('.banner__item');
+          if (slideItem) {
+            slideItem.classList.add('slide--image-error');
+          }
+        }
+      };
+
+      img.addEventListener('error', handleError);
+    });
+  }
+
   function hydrateDeferred(){
     if (lazyMode !== '2') return;
     var jsonEl = document.getElementById('banner-deferred-<?php echo $bannerId; ?>');
@@ -983,10 +1040,13 @@ $getImageDimensions = function($url) {
     data.forEach(function(slide){
       try {
         var node = buildSlide(slide);
-        frag.appendChild(node);
+        if (node) {
+          frag.appendChild(node);
+        }
       } catch (e) { /* ignore broken slide */ }
     });
     container.appendChild(frag);
+    setupImageErrorHandling(container);
     // Ensure sizes apply to new nodes
     applyCustomSize(container);
     // After hydrating, check media orientation for new slides
@@ -1012,6 +1072,10 @@ $getImageDimensions = function($url) {
 
   function initSlider(){
     try {
+      var slideCount = container.children.length;
+      if (slideCount === 0) {
+        return;
+      }
       // For now, lazyMode '2' behaves like '1' on the client (server already limited the number if needed).
       // Apply optional custom sizing before media swap/slider init
       applyCustomSize();
@@ -1021,6 +1085,7 @@ $getImageDimensions = function($url) {
       // Swap lazy media now that items exist (only images/HTML5 videos). YouTube iframes werden bewusst NICHT vorab mit src befüllt,
       // damit Autoplay erst auf der aktiven Slide greift.
       if (lazyMode === '1' || lazyMode === '2') { swapLazyMedia(); }
+      setupImageErrorHandling(root);
       // Evaluate orientation for already available media (non-lazy first slide or eager images)
       markPortraitMedia(root);
       applyImageFitMode(root);
@@ -1067,6 +1132,7 @@ $getImageDimensions = function($url) {
   }
 
   function onEnter(){
+    setupImageErrorHandling(root);
     // In SEO Static-First, hydrate additional slides before initializing Tiny-Slider
     if (lazyMode === '2') { hydrateDeferred(); }
     if (isAutoSize) { applyAutoSizeStyles(); }

@@ -234,7 +234,12 @@ class BannerModuleController extends AbstractFrontendModuleController
         } catch (\Throwable $t) {
             // fail silently, do not block the module rendering
         }
-        $arrReturn = $arrReturn ?: [];
+        $arrReturn = array_values(array_filter($arrReturn ?: [], function($slide) {
+            $hasImg = !empty($slide['image']['src']) && strpos($slide['image']['src'], '/default/') === false;
+            $hasVid = !empty($slide['video']['src']);
+            $hasYt  = !empty($slide['youtube']['src']);
+            return $hasImg || $hasVid || $hasYt;
+        }));
         // Determine if the banner will contain only image slides (used for auto-sizing)
         $onlyImages = true;
         foreach ($arrReturn as $s) {
@@ -496,8 +501,8 @@ class BannerModuleController extends AbstractFrontendModuleController
         $shortDescription = key_exists('shortDescription', $element) ? $element['shortDescription'] : '';
         $rawShort = html_entity_decode((string)$shortDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $safeShortDescription = strip_tags($rawShort);
-        // In strict mode, skip element slide if we don't have a valid image URL
-        if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1) && empty($imageSrc)) {
+        // In strict mode, skip element slide if we don't have a valid image URL (also skip default placeholder)
+        if (empty($imageSrc) || strpos($imageSrc, '/default/') !== false) {
             return $arrReturn;
         }
 
@@ -623,13 +628,7 @@ class BannerModuleController extends AbstractFrontendModuleController
         $safeContact = strip_tags($contactRaw);
 
         // Bild-Slide nur erstellen, wenn ein valides Bild vorhanden ist. Videos sollen unabhängig davon angezeigt werden.
-        $canAddImageSlide = true;
-        if (($this->model->gutesio_banner_strict_images === '1' || $this->model->gutesio_banner_strict_images === 1) && empty($offerSrc)) {
-            $canAddImageSlide = false; // in Strict-Mode keine Bild-Slide ohne lokales/valides Bild
-        }
-        if ($offerSrc && strpos($offerSrc, '/default/') !== false) {
-            $canAddImageSlide = false; // Default-Platzhalter nicht als Bild-Slide anzeigen
-        }
+        $canAddImageSlide = !empty($offerSrc) && (strpos($offerSrc, '/default/') === false);
         $detailPage = $type['type'] . "DetailPage";
         $detailRoute =  C4GUtils::replaceInsertTags('{{link_url::' . $objSettings->$detailPage . '::absolute}}') . '/' . trim($child['uuid'],'{}');
 

@@ -271,7 +271,7 @@ class ShowcaseDetailModuleController extends AbstractFrontendModuleController
         ];
         $mapData['addIdToDiv'] = false;
 
-        $strPublishedElem = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom < ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil > ' . time() . ')';
+        $strPublishedElem = ' AND (NOT {{table}}.releaseType = "external") AND ({{table}}.publishFrom IS NULL OR {{table}}.publishFrom = 0 OR {{table}}.publishFrom <= ' . time() . ') AND ({{table}}.publishUntil IS NULL OR {{table}}.publishUntil = 0 OR {{table}}.publishUntil >= ' . time() . ')';
         $strPublishedElem = str_replace('{{table}}', 'elem', $strPublishedElem);
         $strQueryElem = 'SELECT elem.* FROM tl_gutesio_data_element AS elem WHERE elem.alias =?' . $strPublishedElem;
         $alias = $this->alias ?: $request->getSession()->get('gutesio_element_alias', '');

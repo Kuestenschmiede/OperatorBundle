@@ -197,8 +197,21 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 }
                 $conf = new FrontendConfiguration('entrypoint_' . $model->id);
                 $components = $this->getDetailComponents($data, $request);
+
+                $allElements = $components['elements'][2] ?? [];
+                $regularElements = [];
+                $sponsorElements = [];
+
+                foreach ($allElements as $element) {
+                    if ($this->isSponsorElement($element)) {
+                        $sponsorElements[] = $element;
+                    } else {
+                        $regularElements[] = $element;
+                    }
+                }
+
                 if ($data['type'] === "event" && !$model->gutesio_without_tiles) {
-                    $elementUuid = $components['elements'][2][0]['uuid'];
+                    $elementUuid = !empty($regularElements) ? $regularElements[0]['uuid'] : ($allElements[0]['uuid'] ?? $data['elementId'] ?? null);
                     if ($data['locationElementId'] || $elementUuid) {
                         $locationElementData = $this->getLocationElementData($data['locationElementId'] ?: $elementUuid, true);
                         if ($locationElementData && is_array($locationElementData) && key_exists('name', $locationElementData) && $locationElementData['name']) {
@@ -220,11 +233,21 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
                 }
 
                 if (!$model->gutesio_without_tiles) {
-                    $conf->addTileList(
-                        $components['elements'][0],
-                        $components['elements'][1],
-                        $components['elements'][2]
-                    );
+                    if (count($regularElements) > 0) {
+                        $conf->addTileList(
+                            $components['elements'][0],
+                            $components['elements'][1],
+                            $regularElements
+                        );
+                    }
+                    if (count($sponsorElements) > 0) {
+                        $sponsorList = $this->getSponsorTileList();
+                        $conf->addTileList(
+                            $sponsorList,
+                            $this->tileItems,
+                            $sponsorElements
+                        );
+                    }
                     $otherChildData = $this->getChildTileData($data, $request, $model->limit_detail_offers);
                     $childList = [];
                     //remove duplicated offers
@@ -676,6 +699,83 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         $locationList->setWrapperId("location-tiles");
         $locationList->setTileClassName("showcase-tile");
         return $locationList;
+    }
+
+    private function getSponsorTileList(): TileList
+    {
+        $sponsorList = new TileList('sponsor-tiles');
+        $sponsorList->setHeadline($this->languageRefs['sponsors'] ?? 'Partner & Sponsoren');
+        $sponsorList->setHeadlineLevel(2);
+        $sponsorList->setClassName("showcase-tiles sponsor-tiles c4g-list-outer");
+        $sponsorList->setLayoutType("list");
+        $sponsorList->setListWrapper(true);
+        $sponsorList->setWrapperId("sponsor-tiles");
+        $sponsorList->setTileClassName("showcase-tile");
+        return $sponsorList;
+    }
+
+    private function isSponsorElement(array $element): bool
+    {
+        if (isset($element['connectionType']) && $element['connectionType'] === 'sponsor') {
+            return true;
+        }
+
+        $uuid = $element['uuid'] ?? '';
+        if (!$uuid) {
+            return false;
+        }
+
+        $db = Database::getInstance();
+        $elementRow = $db->prepare('SELECT foreignKeyOrganizer, foreignKeyLocation, foreignKey FROM tl_gutesio_data_element WHERE uuid = ?')
+            ->execute($uuid)->fetchAssoc();
+
+        if ($elementRow) {
+            $keys = [
+                $elementRow['foreignKeyOrganizer'] ?? '',
+                $elementRow['foreignKeyLocation'] ?? '',
+                $elementRow['foreignKey'] ?? ''
+            ];
+            foreach ($keys as $key) {
+                if ($key !== '' && (stripos($key, 'tickets-sponsor-') !== false || stripos($key, 'sponsor_') !== false || stripos($key, 'sponsor-') !== false)) {
+                    return true;
+                }
+            }
+        }
+
+        if (!empty($element['tags']) && is_array($element['tags'])) {
+            foreach ($element['tags'] as $tag) {
+                $tagKey = strtolower($tag['technicalKey'] ?? $tag['value'] ?? '');
+                $tagName = strtolower($tag['name'] ?? $tag['label'] ?? '');
+                if (str_contains($tagKey, 'sponsor') || str_contains($tagKey, 'partner') || str_contains($tagKey, 'foerderer') ||
+                    str_contains($tagName, 'sponsor') || str_contains($tagName, 'partner') || str_contains($tagName, 'förderer') || str_contains($tagName, 'foerderer')) {
+                    return true;
+                }
+            }
+        }
+
+        $tags = $db->prepare('SELECT t.technicalKey, t.name FROM tl_gutesio_data_tag t JOIN tl_gutesio_data_tag_element te ON t.uuid = te.tagId WHERE te.elementId = ?')
+            ->execute($uuid)->fetchAllAssoc();
+        foreach ($tags as $tag) {
+            $tagKey = strtolower($tag['technicalKey'] ?? '');
+            $tagName = strtolower($tag['name'] ?? '');
+            if (str_contains($tagKey, 'sponsor') || str_contains($tagKey, 'partner') || str_contains($tagKey, 'foerderer') ||
+                str_contains($tagName, 'sponsor') || str_contains($tagName, 'partner') || str_contains($tagName, 'förderer') || str_contains($tagName, 'foerderer')) {
+                return true;
+            }
+        }
+
+        $types = $db->prepare('SELECT t.technicalKey, t.name FROM tl_gutesio_data_type t JOIN tl_gutesio_data_element_type et ON t.uuid = et.typeId WHERE et.elementId = ?')
+            ->execute($uuid)->fetchAllAssoc();
+        foreach ($types as $type) {
+            $typeKey = strtolower($type['technicalKey'] ?? '');
+            $typeName = strtolower($type['name'] ?? '');
+            if (str_contains($typeKey, 'sponsor') || str_contains($typeKey, 'partner') || str_contains($typeKey, 'foerderer') ||
+                str_contains($typeName, 'sponsor') || str_contains($typeName, 'partner') || str_contains($typeName, 'förderer') || str_contains($typeName, 'foerderer')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected function getElementFields(): array

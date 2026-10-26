@@ -312,10 +312,19 @@ class ShowcaseService
     public function loadByChildId($childId) : array
     {
         $database = Database::getInstance();
-        $elementIds = $database->prepare(
-            'SELECT DISTINCT elementId FROM tl_gutesio_data_child_connection WHERE childId = ?'
+        $elementConns = $database->prepare(
+            'SELECT elementId, connectionType FROM tl_gutesio_data_child_connection WHERE childId = ?'
         )->execute($childId)->fetchAllAssoc();
-        $elementIds = array_column($elementIds, 'elementId');
+
+        $connTypes = [];
+        foreach ($elementConns as $conn) {
+            $eId = $conn['elementId'] ?? '';
+            if ($eId) {
+                $connTypes[$eId] = $conn['connectionType'] ?: 'default';
+            }
+        }
+
+        $elementIds = array_keys($connTypes);
 
         if (count($elementIds) > 0) {
             $idString = '(';
@@ -335,6 +344,11 @@ class ShowcaseService
                 $returnData = $this->converter->convertDbResult($showcases, ['loadTagsComplete' => true]);
                 if (count($returnData) > 0 && (!isset($returnData[0]) || !is_array($returnData[0]))) {
                     $returnData = [$returnData];
+                }
+                foreach ($returnData as &$sc) {
+                    if (isset($sc['uuid']) && isset($connTypes[$sc['uuid']])) {
+                        $sc['connectionType'] = $connTypes[$sc['uuid']];
+                    }
                 }
             } else {
                 $returnData = [];

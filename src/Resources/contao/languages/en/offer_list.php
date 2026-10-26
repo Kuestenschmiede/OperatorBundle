@@ -50,6 +50,7 @@ $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Date until";
 
 $GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Other offers from the vendors";
 $GLOBALS['TL_LANG'][$strName]['location'] = "Event location";
+$GLOBALS['TL_LANG'][$strName]['sponsors'] = "Partners & Sponsors";
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [
     'free' => 'free',

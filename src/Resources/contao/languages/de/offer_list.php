@@ -76,6 +76,7 @@ $GLOBALS['TL_LANG'][$strName]['filterUntilPlaceholder'] = "Datum bis";
 
 $GLOBALS['TL_LANG'][$strName]['otherOffers'] = "Andere Inhalte der Anbieter";
 $GLOBALS['TL_LANG'][$strName]['location'] = "Veranstaltungsort";
+$GLOBALS['TL_LANG'][$strName]['sponsors'] = "Partner & Sponsoren";
 
 
 $GLOBALS['TL_LANG'][$strName]['price_replacer_options'] = [

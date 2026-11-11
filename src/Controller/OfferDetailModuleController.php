@@ -726,21 +726,6 @@ class OfferDetailModuleController extends AbstractFrontendModuleController
         }
 
         $db = Database::getInstance();
-        $elementRow = $db->prepare('SELECT foreignKeyOrganizer, foreignKeyLocation, foreignKey FROM tl_gutesio_data_element WHERE uuid = ?')
-            ->execute($uuid)->fetchAssoc();
-
-        if ($elementRow) {
-            $keys = [
-                $elementRow['foreignKeyOrganizer'] ?? '',
-                $elementRow['foreignKeyLocation'] ?? '',
-                $elementRow['foreignKey'] ?? ''
-            ];
-            foreach ($keys as $key) {
-                if ($key !== '' && (stripos($key, 'tickets-sponsor-') !== false || stripos($key, 'sponsor_') !== false || stripos($key, 'sponsor-') !== false)) {
-                    return true;
-                }
-            }
-        }
 
         if (!empty($element['tags']) && is_array($element['tags'])) {
             foreach ($element['tags'] as $tag) {
